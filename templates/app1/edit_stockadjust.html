@@ -42,11 +42,9 @@
                      
                         <label for="validationCustom01"
                         style="color: white;">Mode of Adjustment</label>
-                 <select name="mode" class="form-control" 
-                           style="background-color: #2a4964; color: white;"
-                           required>
-                           <option selected  value="{{ a.mode }}">{{ a.mode }}</option>
-                         <option value="Quandity">Quandity Adjustment</option>
+                        <select name="mode" id="adjust" class="form-control" style="background-color: #2a4964; color: white;" required onchange="changehead(this.value)">
+                           <option selected  value="{{ a.mode }}" hidden>{{ a.mode }} Adjustment </option>
+                         <option value="Quantity">Quantity Adjustment</option>
                      <option value="Value">Value Adjustment</option></select>
                     </div>
                     
@@ -106,7 +104,7 @@
           <div class="row">
             <div class="col-md-3 mt-3">
               <label class="col-form-label">Description</label>
-             <textarea name="desc" rows="5" class="form-control" value="{{ a.description }}"  ></textarea>
+             <textarea name="desc" rows="5" class="form-control" placeholder="{{ a.description }}"  ></textarea>
             </div>
             <div class="col-md-3 mt-3"></div>
             <div class="col-md-3 mt-3"></div>
@@ -116,22 +114,33 @@
             <div class="col-md-12 table-responsive-md mt-3">
               <table class="table table-bordered table-hover mt-3" id="tab_logic">
                 <thead>
+                  {% if a.mode == "Quantity" %}
                   <tr id>
                     <th  class="text-center" >#</th>
                     <th class="text-center" >Item details</th>
-                    <th class="text-center">Quandity Available</th>
-                    <th class="text-center">New Quandity on hand</th>
-                    <th class="text-center">Quandity Adjusted</th>
+                    <th class="text-center">Quantity Available</th>
+                    <th class="text-center">New Quantity on hand</th>
+                    <th class="text-center">Quantity Adjusted</th>
                   <th></th>
                   </tr>
+                  {% else %}
+                  <tr id>
+                    <th  class="text-center" >#</th>
+                    <th class="text-center" >Item details</th>
+                    <th class="text-center">Value Available</th>
+                    <th class="text-center">New Stock in Value</th>
+                    <th class="text-center">Adjusted Stock in Value</th>
+                  <th></th>
+                  </tr>
+                  {% endif %}
                 </thead>
                 <tbody id="items-table-body">
-                  <tr >
+                  <tr class="row0" id="row1">
                     <td>1</td>
                     <td style="width: 20%;">
                       <div class="d-flex">
                         <select name="item1" id="itemss" class="form-control" style="background-color: #2f516f; color: white; " required>
-                        <option value="{{ a.item1 }}" selected  >{{ a.item1 }}</option>
+                        <option value="{{ a.item1 }}" selected  hidden>{{ a.item1 }}</option>
                         {% for i in item %}
                         <option value="{{ i.name  }}">{{ i.name  }} </option>
                         {% endfor %}
@@ -141,19 +150,19 @@
                     <td><input type="text" value="{{ a.qty1 }}" id="qty" name="qty1"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
                     <td><input type="text" value="{{ a.qty_hand1 }}" id="qty_hand" name="qty_hand1" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" required></td>
                     <td><input type="number" value="{{ a.new_qty1 }}" id="nqty" name="new_qty1" class="form-control qty" style="background-color: #2f516f; color: white;" readonly></td>
-                    <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="addrow" onclick="showDiv()" >+</a></td>
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove1()">-</a>
+                    </td>
                   </tr>
 
                   <!-------------------ROW 1---------------------------->
-                  {% if a.item2 == none %}
-                  <p></p>
-                  {% else %}
-                  <tr class="row1">
+                  {% if a.item2 %}
+                  <tr class="row1" id="row2">
                     <td>2</td>
                     <td style="width: 20%;">
                       <div class="d-flex">
                         <select name="item2" id="itemss1" class="form-control" style="background-color: #2f516f; color: white; " >
-                        <option value=" " selected >{{ a.item2 }}</option>
+                        <option value="{{ a.item2 }}" selected hidden>{{ a.item2 }}</option>
                         {% for i in item %}
                         <option value="{{ i.name  }}">{{ i.name  }} </option>
                         {% endfor %}
@@ -163,20 +172,40 @@
                     <td><input type="text" value="{{ a.qty2 }}" id="qty1" name="qty2"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
                     <td><input type="text" value="{{ a.qty_hand2 }}" id="qty_hand1" name="qty_hand2" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" ></td>
                     <td><input type="number" value="{{ a.new_qty2 }}"  id="nqty1" name="new_qty2" class="form-control qty" style="background-color: #2f516f; color: white;" ></td>
-                    <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="addrow" onclick="showDiv1()" >+</a></td>
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove2()">-</a>
+                    </td>
                   </tr>
-                    {% endif %}
+                  {% else %}
+                  <tr class="row1" id="row2" style="display: none;">
+                    <td>2</td>
+                    <td style="width: 20%;">
+                      <div class="d-flex">
+                        <select name="item2" id="itemss1" class="form-control" style="background-color: #2f516f; color: white; " >
+                        <option value=" " selected hidden>None</option>
+                        {% for i in item %}
+                        <option value="{{ i.name  }}">{{ i.name  }} </option>
+                        {% endfor %}
+                        </select>
+                      </div>
+                    </td>
+                    <td><input type="text" id="qty1" name="qty2"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
+                    <td><input type="text" id="qty_hand1" name="qty_hand2" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" ></td>
+                    <td><input type="number"  id="nqty1" name="new_qty2" class="form-control qty" style="background-color: #2f516f; color: white;" ></td>
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove2()">-</a>
+                    </td>
+                  </tr>
+                  {% endif %}
                    <!-------------------ROW 2---------------------------->
-                   {% if a.item3 == none %}
-                   <p></p>
-                   {% else %}
-                  <tr class="row2">
+                   {% if a.item3 %}
+                   <tr class="row2" id="row3">
                    
                     <td>3</td>
                     <td style="width: 20%;">
                       <div class="d-flex">
                         <select name="item3" id="itemss2" class="form-control" style="background-color: #2f516f; color: white; ">
-                        <option value=" " selected >{{ a.item3 }}</option>
+                        <option value="{{ a.item3 }}" selected hidden>{{ a.item3 }}</option>
                         {% for i in item %}
                         <option value="{{ i.name  }}">{{ i.name  }} </option>
                         {% endfor %}
@@ -186,20 +215,40 @@
                     <td><input type="text" value="{{ a.qty3 }}" id="qty2" name="qty3"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
                     <td><input type="text" value="{{ a.qty_hand3 }}" id="qty_hand2" name="qty_hand3" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" ></td>
                     <td><input type="number" value="{{ a.new_qty3 }}" id="nqty2" name="new_qty3" class="form-control qty" style="background-color: #2f516f; color: white;" ></td>
-                    <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="addrow" onclick="showDiv2()" >+</a></td>
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove3()">-</a>
+                    </td>
+                  </tr>
+                   {% else %}
+                   <tr class="row2" id="row3" style="display: none;">
+                   
+                    <td>3</td>
+                    <td style="width: 20%;">
+                      <div class="d-flex">
+                        <select name="item3" id="itemss2" class="form-control" style="background-color: #2f516f; color: white; ">
+                        <option value=" " selected hidden>None</option>
+                        {% for i in item %}
+                        <option value="{{ i.name  }}">{{ i.name  }} </option>
+                        {% endfor %}
+                        </select>
+                      </div>
+                    </td>
+                    <td><input type="text"  id="qty2" name="qty3"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
+                    <td><input type="text" id="qty_hand2" name="qty_hand3" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" ></td>
+                    <td><input type="number" id="nqty2" name="new_qty3" class="form-control qty" style="background-color: #2f516f; color: white;" ></td>
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove3()">-</a>
+                    </td>
                   </tr>
                   {% endif %}
                    <!-------------------ROW 3---------------------------->
-                   {% if a.item4 == none %}
-                  <p></p>
-                  {% else %}
-
-                  <tr class="row3">
+                   {% if a.item4%}
+                   <tr class="row3" id="row4">
                     <td>4</td>
                     <td style="width: 20%;">
                       <div class="d-flex">
                         <select name="item4" id="itemss3" class="form-control" style="background-color: #2f516f; color: white; ">
-                        <option value=" " selected >{{ a.item4 }}</option>
+                        <option value="{{ a.item4 }}" selected hidden>{{ a.item4 }}</option>
                         {% for i in item %}
                         <option value="{{ i.name  }}">{{ i.name  }} </option>
                         {% endfor %}
@@ -209,21 +258,42 @@
                     <td><input type="text" value="{{ a.qty4 }}" id="qty3" name="qty4"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
                     <td><input type="text" value="{{ a.qty_hand4 }}" id="qty_hand3" name="qty_hand4" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" /></td>
                     <td><input type="number" value="{{ a.new_qty4 }}" id="nqty3" name="new_qty4" class="form-control qty" style="background-color: #2f516f; color: white;" ></td>
-                    <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="addrow" onclick="showDiv3()">+</a></td>
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove4()">-</a>
+                    </td>
                   </tr>
+                  {% else %}
+
+                  <tr class="row3" id="row4" style="display: none;">
+                    <td>4</td>
+                    <td style="width: 20%;">
+                      <div class="d-flex">
+                        <select name="item4" id="itemss3" class="form-control" style="background-color: #2f516f; color: white; ">
+                        <option value=" " selected hidden>None</option>
+                        {% for i in item %}
+                        <option value="{{ i.name  }}">{{ i.name  }} </option>
+                        {% endfor %}
+                        </select>
+                      </div>
+                    </td>
+                    <td><input type="text"  id="qty3" name="qty4"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
+                    <td><input type="text"  id="qty_hand3" name="qty_hand4" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" /></td>
+                    <td><input type="number" id="nqty3" name="new_qty4" class="form-control qty" style="background-color: #2f516f; color: white;" ></td>
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove4()">-</a>
+                    </td>
+                  </tr>
+
                   {% endif %}
 
                    <!-------------------ROW 4---------------------------->
-                   {% if a.item5 == none %}
-                  <p></p>
-                  {% else %}
-
-                  <tr class="row4">
+                   {% if a.item5 %}
+                   <tr class="row4" id="row5">
                     <td>5</td>
                     <td style="width: 20%;">
                       <div class="d-flex">
                         <select name="item5" id="itemss4" class="form-control" style="background-color: #2f516f; color: white; ">
-                        <option value=" " selected >{{ a.item5 }}</option>
+                        <option value="{{ a.item5 }}" selected hidden>{{ a.item5 }}</option>
                         {% for i in item %}
                         <option value="{{ i.name  }}">{{ i.name  }} </option>
                         {% endfor %}
@@ -233,15 +303,39 @@
                     <td><input type="text" value="{{ a.qty5 }}"  id="qty4" name="qty5"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
                     <td><input type="text" value="{{ a.qty_hand5 }}" id="qty_hand4" name="qty_hand5" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" /></td>
                     <td><input type="number" value="{{ a.new_qty5 }}" id="nqty4" name="new_qty5" class="form-control qty" style="background-color: #2f516f; color: white;" ></td>
-                    
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove5()">-</a>
+                    </td>
                   </tr>
+                  {% else %}
+
+                  <tr class="row4" id="row5" style="display: none;">
+                    <td>5</td>
+                    <td style="width: 20%;">
+                      <div class="d-flex">
+                        <select name="item5" id="itemss4" class="form-control" style="background-color: #2f516f; color: white; ">
+                        <option value=" " selected hidden>None</option>
+                        {% for i in item %}
+                        <option value="{{ i.name  }}">{{ i.name  }} </option>
+                        {% endfor %}
+                        </select>
+                      </div>
+                    </td>
+                    <td><input type="text" id="qty4" name="qty5"  class="form-control" style="background-color: #2f516f; color: white;text-align:right;" readonly></td>
+                    <td><input type="text" id="qty_hand4" name="qty_hand5" class="form-control" style="background-color: #2f516f; color: white;text-align:right;" /></td>
+                    <td><input type="number"  id="nqty4" name="new_qty5" class="form-control qty" style="background-color: #2f516f; color: white;" ></td>
+                    <td style="border: none;">
+                      <a role="button" class="btn btn-outline-secondary ml-1" onclick = "remove5()">-</a>
+                    </td>
+                  </tr>
+
                   {% endif %}
 
 
                   
                 </tbody>
               </table>
-              
+              <a class="btn btn-outline-secondary ml-1" id="addbtn" role="button" onclick="showDiv()" >+</a>
 
             </div>
           </div>
@@ -256,13 +350,17 @@
 
 
         
-          <div class="row">
+        <div class="row">
             <div class="col-md-10 mt-3"></div>
-            <div class="col-md-2 mt-3">
-              <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
-                Save To Draft
+            <div class="col-md-1 mt-3">
+              <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" name="draft">
+                Draft
               </button>
-            </div>
+          </div>
+          <div class="col-md-1 mt-3">
+            <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" name="save">
+              Save
+            </button>
           </div>
           <div class="notices mt-3">
             <div class="text-muted">NOTICE:</div>
@@ -326,14 +424,196 @@
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
+<script>
+  function selectrow1(){
+    onhand = $("#qty_hand").val();
+    onvalue = $("#qty").val();
+    if(onhand !=''){
+      document.getElementById("nqty").value = onhand-onvalue
+    }
+  }
+  function selectrow2(){
+    onhand = $("#qty_hand1").val();
+    onvalue = $("#qty1").val();
+    if(onhand !=''){
+      document.getElementById("nqty1").value = onhand-onvalue
+    }
+  }
+  function selectrow3(){
+    onhand = $("#qty_hand2").val();
+    onvalue = $("#qty2").val();
+    if(onhand !=''){
+      document.getElementById("nqty2").value = onhand-onvalue
+    }
+  }
+  function selectrow4(){
+    onhand = $("#qty_hand3").val();
+    onvalue = $("#qty3").val();
+    if(onhand !=''){
+      document.getElementById("nqty3").value = onhand-onvalue
+    }
+  }
+  function selectrow5(){
+    onhand = $("#qty_hand4").val();
+    onvalue = $("#qty4").val();
+    if(onhand !=''){
+      document.getElementById("nqty4").value = onhand-onvalue
+    }
+  }
+</script>
 
-
+<script>
+  $(document).ready(function(){
+    $('#adjust').on('change',function(){
+      select = $('#itemss').val();
+      adjust_val = $('#adjust').val();
+      if((select!=' ') && (select != null)){
+        $.ajax({
+                type: "GET",
+                url: "{% url 'getit' %}",
+                data: {id: select}
+            }).done(function (response) {
+                var json_data = JSON.parse(response);
+                for (key in json_data) {
+                  if(adjust_val=="Quantity"){
+                      document.getElementById('qty').value = json_data[key]['stock']
+                      selectrow1()
+                  }else if(adjust_val == "Value"){
+                      document.getElementById('qty').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                      selectrow1()
+                  }
+                    
+                }
+            }).fail(function () {
+                alert("failed");
+            })
+      }
+    })
+  })
+</script>
+<script>
+  $(document).ready(function(){
+    $('#adjust').on('change',function(){
+      select = $('#itemss1').val();
+      adjust_val = $('#adjust').val();
+      if((select!=' ') && (select != null)){
+        $.ajax({
+                type: "GET",
+                url: "{% url 'getit' %}",
+                data: {id: select}
+            }).done(function (response) {
+                var json_data = JSON.parse(response);
+                for (key in json_data) {
+                  if(adjust_val=="Quantity"){
+                      document.getElementById('qty1').value = json_data[key]['stock']
+                      selectrow2()
+                  }else if(adjust_val == "Value"){
+                      document.getElementById('qty1').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                      selectrow2()
+                  }
+                    
+                }
+            }).fail(function () {
+                alert("failed");
+            })
+      }
+    })
+  })
+</script>
+<script>
+  $(document).ready(function(){
+    $('#adjust').on('change',function(){
+      select = $('#itemss2').val();
+      adjust_val = $('#adjust').val();
+      if((select!=' ') && (select != null)){
+        $.ajax({
+                type: "GET",
+                url: "{% url 'getit' %}",
+                data: {id: select}
+            }).done(function (response) {
+                var json_data = JSON.parse(response);
+                for (key in json_data) {
+                  if(adjust_val=="Quantity"){
+                      document.getElementById('qty2').value = json_data[key]['stock']
+                      selectrow3()
+                  }else if(adjust_val == "Value"){
+                      document.getElementById('qty2').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                      selectrow3()
+                  }
+                    
+                }
+            }).fail(function () {
+                alert("failed");
+            })
+      }
+    })
+  })
+</script>
+<script>
+  $(document).ready(function(){
+    $('#adjust').on('change',function(){
+      select = $('#itemss3').val();
+      adjust_val = $('#adjust').val();
+      if((select!=' ') && (select != null)){
+        $.ajax({
+                type: "GET",
+                url: "{% url 'getit' %}",
+                data: {id: select}
+            }).done(function (response) {
+                var json_data = JSON.parse(response);
+                for (key in json_data) {
+                  if(adjust_val=="Quantity"){
+                      document.getElementById('qty3').value = json_data[key]['stock']
+                      selectrow4()
+                  }else if(adjust_val == "Value"){
+                      document.getElementById('qty3').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                      selectrow4()
+                  }
+                    
+                }
+            }).fail(function () {
+                alert("failed");
+            })
+      }
+    })
+  })
+</script>
+<script>
+  $(document).ready(function(){
+    $('#adjust').on('change',function(){
+      select = $('#itemss4').val();
+      adjust_val = $('#adjust').val();
+      if((select!=' ') && (select != null)){
+        $.ajax({
+                type: "GET",
+                url: "{% url 'getit' %}",
+                data: {id: select}
+            }).done(function (response) {
+                var json_data = JSON.parse(response);
+                for (key in json_data) {
+                  if(adjust_val=="Quantity"){
+                      document.getElementById('qty4').value = json_data[key]['stock']
+                      selectrow5()
+                  }else if(adjust_val == "Value"){
+                      document.getElementById('qty4').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                      selectrow5()
+                  }
+                    
+                }
+            }).fail(function () {
+                alert("failed");
+            })
+      }
+    })
+  })
+</script>
 
 
             <script>
                 $(document).ready(function () {
                     $('#itemss').on('change', function () {
                         select = $('#itemss').val();
+                        adjust_val = $('#adjust').val();
                         $.ajax({
                             type: "GET",
                             url: "{% url 'getit' %}",
@@ -341,7 +621,13 @@
                         }).done(function (response) {
                             var json_data = JSON.parse(response);
                             for (key in json_data) {
-                                document.getElementById('qty').value = json_data[key]['stock']
+                              if(adjust_val=="Quantity"){
+                                  document.getElementById('qty').value = json_data[key]['stock']
+                                  selectrow1()
+                              }else if(adjust_val == "Value"){
+                                  document.getElementById('qty').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                                  selectrow1()
+                              }
                                
                             }
                         }).fail(function () {
@@ -354,6 +640,7 @@
               $(document).ready(function () {
                   $('#itemss1').on('change', function () {
                       select = $('#itemss1').val();
+                      adjust_val = $('#adjust').val();
                       $.ajax({
                           type: "GET",
                           url: "{% url 'getit' %}",
@@ -361,7 +648,13 @@
                       }).done(function (response) {
                           var json_data = JSON.parse(response);
                           for (key in json_data) {
-                              document.getElementById('qty1').value = json_data[key]['stock']
+                            if(adjust_val=="Quantity"){
+                                  document.getElementById('qty1').value = json_data[key]['stock']
+                                  selectrow2()
+                              }else if(adjust_val == "Value"){
+                                  document.getElementById('qty1').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                                  selectrow2()
+                              }
                              
                           }
                       }).fail(function () {
@@ -374,6 +667,7 @@
             $(document).ready(function () {
                 $('#itemss2').on('change', function () {
                     select = $('#itemss2').val();
+                    adjust_val = $('#adjust').val();
                     $.ajax({
                         type: "GET",
                         url: "{% url 'getit' %}",
@@ -381,7 +675,13 @@
                     }).done(function (response) {
                         var json_data = JSON.parse(response);
                         for (key in json_data) {
-                            document.getElementById('qty2').value = json_data[key]['stock']
+                          if(adjust_val=="Quantity"){
+                                  document.getElementById('qty2').value = json_data[key]['stock']
+                                  selectrow3()
+                              }else if(adjust_val == "Value"){
+                                  document.getElementById('qty2').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                                  selectrow3()
+                              }
                            
                         }
                     }).fail(function () {
@@ -394,6 +694,7 @@
           $(document).ready(function () {
               $('#itemss4').on('change', function () {
                   select = $('#itemss4').val();
+                  adjust_val = $('#adjust').val();
                   $.ajax({
                       type: "GET",
                       url: "{% url 'getit' %}",
@@ -401,7 +702,13 @@
                   }).done(function (response) {
                       var json_data = JSON.parse(response);
                       for (key in json_data) {
-                          document.getElementById('qty4').value = json_data[key]['stock']
+                        if(adjust_val=="Quantity"){
+                                  document.getElementById('qty4').value = json_data[key]['stock']
+                                  selectrow5()
+                              }else if(adjust_val == "Value"){
+                                  document.getElementById('qty4').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                                  selectrow5()
+                              }
                          
                       }
                   }).fail(function () {
@@ -414,6 +721,7 @@
         $(document).ready(function () {
             $('#itemss3').on('change', function () {
                 select = $('#itemss3').val();
+                adjust_val = $('#adjust').val();
                 $.ajax({
                     type: "GET",
                     url: "{% url 'getit' %}",
@@ -421,7 +729,13 @@
                 }).done(function (response) {
                     var json_data = JSON.parse(response);
                     for (key in json_data) {
-                        document.getElementById('qty3').value = json_data[key]['stock']
+                      if(adjust_val=="Quantity"){
+                          document.getElementById('qty3').value = json_data[key]['stock']
+                          selectrow4()
+                      }else if(adjust_val == "Value"){
+                          document.getElementById('qty3').value = json_data[key]['stock'] * json_data[key]['sales_cost']
+                          selectrow4()
+                      }
                        
                     }
                 }).fail(function () {
@@ -494,36 +808,80 @@
             </script>
 
             
-            <script>
-            function showDiv() {
-
-              document.querySelector(".row1").style.display = "table-row";
-              
+<script>
+  function showDiv(){
+        if(document.querySelector(".row0").style.display == "table-row"){
+            if (document.querySelector(".row1").style.display == "table-row"){
+                if(document.querySelector(".row2").style.display == "table-row"){
+                    if(document.querySelector(".row3").style.display == "table-row"){
+                        if(document.querySelector(".row4").style.display != "table-row"){
+                          document.querySelector(".row4").style.display = "table-row";
+                          $("#addbtn").hide()
+                        }
+                    }else{
+                      document.querySelector(".row3").style.display = "table-row"
+                    }
+                }else{
+                  document.querySelector(".row2").style.display = "table-row"
+                }
+            }else{
+              document.querySelector(".row1").style.display = "table-row"
             }
-           
-            
-          </script>
-          <script>
-            function showDiv1() {
+        }else{
+          document.querySelector(".row0").style.display = "table-row"
+        }
+    }
+  </script>
+  <script>
+    function remove1() {
+      $("#row1").hide();
+      $("#addbtn").show()
+    }
+    function remove2() {
+      $("#row2").hide();
+      $("#addbtn").show()
+      document.getElementById("qty1").value = null;
+      document.getElementById("qty_hand1").value = null;
+      document.getElementById("nqty1").value = null;
+      document.getElementById('itemss1').value=null;
+    }
+    function remove3() {
+      $("#row3").hide();
+      $("#addbtn").show()
+      document.getElementById("qty2").value = null;
+      document.getElementById("qty_hand2").value = null;
+      document.getElementById("nqty2").value = null;
+      document.getElementById('itemss2').value=null;
+      
+    }
+    function remove4() {
+      $("#row4").hide();
+      $("#addbtn").show()
+      document.getElementById("qty3").value = null;
+      document.getElementById("qty_hand3").value = null;
+      document.getElementById("nqty3").value = null;
+      document.getElementById('itemss3').value=null;
+      
+    }
+    function remove5() {
+      $("#row5").hide();
+      $("#addbtn").show()
+      document.getElementById("qty4").value = null;
+      document.getElementById("qty_hand4").value = null;
+      document.getElementById("nqty4").value = null;
+      document.getElementById('itemss4').value=null;
+      
+    }
+  </script>  
 
-              document.querySelector(".row2").style.display = "table-row";
-              
-            }
-          </script>
-          <script>
-           
-            function showDiv2() {
-
-              document.querySelector(".row3").style.display = "table-row";
-              
-            }
-          </script>
-          <script>
-           
-            function showDiv3() {
-
-              document.querySelector(".row4").style.display = "table-row";
-              
-            }
-          </script>
+<script>
+  function changehead(headvalue){
+      var tableHeader = document.querySelector("#tab_logic thead tr");
+      if(headvalue=="Quantity"){
+          tableHeader.innerHTML = "<th class='text-center'>#</th><th class='text-center'>Item details</th><th class='text-center'>Quantity Available</th><th class='text-center'>New Quantity on hand</th><th class='text-center'>Quantity Adjusted</th>";
+      }else{
+          tableHeader.innerHTML = "<th class='text-center'>#</th><th class='text-center'>Item details</th><th class='text-center'>Value Available</th><th class='text-center'>New Stock in Value</th><th class='text-center'>Adjusted Stock in Value</th>";
+      }
+  }
+</script>
 {% endblock %}

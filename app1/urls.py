@@ -566,7 +566,8 @@ urlpatterns = [
     re_path(r'^deleteitem/(?P<id>\d+)$', views.deleteitem, name='deleteitem'),
     #re_path(r'^showservices$', views.showservices, name='showservices'),
     re_path(r'^create_unit$', views.create_unit, name='create_unit'),
-    re_path(r'^view_item/(?P<id>\d+)$', views.view_item, name='view_item'),
+    # re_path(r'^view_item/(?P<id>\d+)$', views.view_item, name='view_item'),
+    path('view_item/<int:id>/',views.view_item,name="view_item"),
     re_path(r'^itemedit_page/(?P<id>\d+)$', views.itemedit_page, name='itemedit_page'),
     re_path(r'^igoods$', views.igoods, name='igoods'),
     re_path(r'^iservices$', views.iservices, name='iservices'),
@@ -586,8 +587,8 @@ urlpatterns = [
     re_path(r'^add_mjournal$', views.add_mjournal, name='add_mjournal'),
     re_path(r'^create_mjournal$', views.create_mjournal, name='create_mjournal'),
     re_path(r'^view_mj/(?P<id>\d+)$', views.view_mj, name='view_mj'),
-    path('mj_edit_page/<int:id>/', views.mj_edit_page, name='mj_edit_page'),
-    path('update_mj/<int:id>/', views.update_mj, name='update_mj'),
+    re_path(r'^mj_edit_page/(?P<id>\d+)$', views.mj_edit_page, name='mj_edit_page'),
+    re_path(r'^update_mj/(?P<id>\d+)$', views.update_mj, name='update_mj'),
     re_path(r'^deletemj/(?P<id>\d+)$', views.deletemj, name='deletemj'),
     re_path(r'^mjdraft$', views.mjdraft, name='mjdraft'),
     re_path(r'^mjpublish$', views.mjpublish, name='mjpublish'),
@@ -928,10 +929,12 @@ urlpatterns = [
     path('gochallan1',views.gochallan1,name='gochallan1'),
     path('gochallan2',views.gochallan2,name='gochallan2'),
     path('additem_challan',views.additem_challan,name='additem_challan'),
+    path('sort_chellan_customername', views.sort_chellan_customername, name='sort_chellan_customername'),
+    path('sort_chellan_chellannumber', views.sort_chellan_chellannumber, name='sort_chellan_chellannumber'),
     
     # urls for Price list
     
-    # path('price_list/',views.pricelist,name='pricelist'),
+    path('price_list/',views.pricelist,name='pricelist'),
     path('new_price_list/',views.new_price_list,name='new_price_list'),
     path('pricelist_editpage/<int:pk>',views.pricelist_editpage,name='pricelist_editpage'),
     path('editpl/<int:pk>',views.editpl,name='editpl'),
@@ -1084,12 +1087,66 @@ urlpatterns = [
     path('getdata3',views.getdata3,name='getdata3'),
     path('removerecinv',views.removerecinv,name='removerecinv'),
     path('gorecinvoices3',views.gorecinvoices3,name='gorecinvoices3'),
-
- # Abin - Price List , Manual Journal Corrections
- 
     
+    path('update_status/<int:item_id>/', views.update_item_status, name='update_item_status'),
+    
+    # Alen Antony(vendor,bill,purchase order)-correction
+    path('activate_Vendor/<int:id>',views.activate_vendor,name='activate_vendor'),
+    path('inactivate_Vendor/<int:id>',views.inactivate_vendor,name='inactivate_vendor'),
+    path('fileupload_vendor/<int:id>',views.upload_file_vendor,name='upload_file_vendor'),
+    path('convert_to_bill/<int:id>',views.purchaseorder_convert,name='purchaseorder_convert'),
+    path('converttobill/<int:id>',views.converttobill,name='converttobill'),
+    path('get_transaction_data/<int:id>',views.get_transaction_data,name='get_transaction_data'),
+    
+    path("approve_stock_adjust/<int:pk>/",views.approve_stock_adjust,name="approve_stock_adjust"),
+    path("create_comment/<int:pk>/",views.create_comment,name="create_comment"),
+    
+    path('party_stmt',views.party_stmt,name='party_stmt'),
+    path('all_parties',views.all_parties,name='all_parties'),
+    
+    # #recurringbills_reshna_start
+    path('recurringbill_home',views.recurringbill_home,name='recurringbill_home'),
+    path('addrecurringbill',views.addrecurringbill,name='addrecurringbill'),
+    path('createrecurringbill',views.createrecurringbill,name='createrecurringbill'),
+    path('createcustomer_rbill',views.createcustomer_rbill,name='createcustomer_rbill'),
+    path('createvendor_rbill',views.createvendor_rbill,name='createvendor_rbill'),
+    path('createitem_rbill',views.createitem_rbill,name='createitem_rbill'),
+    path('createunit_rbill',views.createunit_rbill,name='createunit_rbill'),
+    path('create_repeatevery',views.create_repeatevery,name='create_repeatevery'),
+    path('vendor_dropdown_rbill',views.vendor_dropdown_rbill,name='vendor_dropdown_rbill'),
+    path('credit_period_rbill',views.credit_period_rbill,name='credit_period_rbill'),
+    path('credit_period_rbill2',views.credit_period_rbill2,name='credit_period_rbill2'),
+    path('get_vendordet',views.get_vendordet,name='get_vendordet'),
+    path('repeat_dropdown_rbill',views.repeat_dropdown_rbill,name='repeat_dropdown_rbill'),
+    path('cust_dropdown_rbill',views.cust_dropdown_rbill,name='cust_dropdown_rbill'),
+    path('get_customerdet',views.get_customerdet,name='get_customerdet'),
+    path('getperiod_rbill',views.getperiod_rbill,name='getperiod_rbill'),
+    path('credit_dropdown_rbill',views.credit_dropdown_rbill,name='credit_dropdown_rbill'),
+    path('item_dropdown_rbill',views.item_dropdown_rbill,name='item_dropdown_rbill'),
+    path('itemdata_rbill',views.itemdata_rbill,name='itemdata_rbill'),
+    path('draft_rbill',views.draft_rbill,name='draft_rbill'),
+    path('billed_rbill',views.billed_rbill,name='billed_rbill'),
+    path('view_rbill/<int:id>',views.view_rbill,name='view_rbill'),
+    path('rbillconvert/<int:id>',views.rbillconvert,name='rbillconvert'),
+    path('recur_custasc',views.recur_custasc,name='recur_custasc'),
+    path('recur_profasc',views.recur_profasc,name='recur_profasc'),
+    path('recur_billasc',views.recur_billasc,name='recur_billasc'),
+    path('deleterbill<int:id>',views.deleterbill,name='deleterbill'),
+    path('update_recurringbill<int:id>',views.update_recurringbill,name='update_recurringbill'),
+    path('edit_recurringbill<int:id>',views.edit_recurringbill,name='edit_recurringbill'),
+    path('rbill_file<int:id>',views.rbill_file,name='rbill_file'),
+    path('pdfrbill_view<int:id>',views.pdfrbill_view,name='pdfrbill_view'),
+    # # recurring_bills-Reshna-end
+    
+    path('sales_by_customer',views.sales_by_customer,name='sales_by_customer'),
+    path('sales_by_item',views.sales_by_item,name='sales_by_item'),
+    
+    path('module_settings/',views.module_settings,name='module_settings'),
+    path('hide_options/',views.hide_options, name='hide_options'),
+    path('salessummaryreport/',views.salessummaryreport,name='salessummaryreport'),
+    
+    # Abin - Price List , Manual Journal Corrections
     path('add_comment_retinvoice3/<int:id>',views.add_comment_retinvoice3,name='add_comment_retinvoice3'),
-    path('pricelist', views.pricelist, name='pricelist'),
     path('sortemployeename2', views.sortemployeename2, name='sortemployeename2'),
     path('sort_by_types', views.sort_by_types, name='sort_by_types'),
     path('sort_contactname', views.sort_contactname, name='sort_contactname'),
@@ -1101,7 +1158,83 @@ urlpatterns = [
     path('manualJournal_account',views.manualJournal_account,name='manualJournal_account'),
     path('man_Journal_acc_dropdown',views.man_Journal_acc_dropdown,name = 'man_Journal_acc_dropdown'),
     path('price_list_pdf/<int:pk>', views.price_list_pdf, name='price_list_pdf'),
-    path('send_retainer_invoice',views.send_retainer_invoice,name='send_retainer_invoice'),
+    
+    path('backup/', views.backup_view, name='backup_view'),
+    
+    path('add_man_Journal_comment/<int:id>', views.add_man_Journal_comment, name='add_man_Journal_comment'),
+    path('delete_man_Journal_comment/<int:id>', views.delete_man_Journal_comment, name='delete_man_Journal_comment'),
+    
+    # <-----E-Way Bill---shemeem---start--->
+    path('e_waybills',views.e_waybills_page,name='go_ewaybill'),
+    path('add_ewaybill',views.addnew_ewbill,name='addnew_ewbill'),
+    path('create_new_ewaybill',views.create_ewbill, name = 'create_ewbill'),
+    path('eway_bill_overview/<int:billId>',views.eWayBillOverview,name='eWayBillOverview'),
+    path('edit_eway_bill/<int:billId>',views.edit_eway_bill,name='edit_eway_bill'),
+    path('update_ewbill/<int:billId>', views.update_eway_bill, name = 'update_eway_bill'),
+    path('convert_ewbill/<int:billId>',views.convert_ewbill, name='convert_ewbill'),
+    path('delete_ewbill/<int:billId>',views.delete_ewbill, name='delete_ewbill'),
+    
+    
+    path('get_customer_details', views.get_customer, name = 'get_customer'),
+    path('new_transport_mode',views.new_transport_mode, name= 'new_transport_mode'),
+    path('get_transport_modes',views.trasportation_modes, name= 'trasportation_modes'),
+    path('get_transport_type',views.get_transport_data, name = 'get_transport_data'),
+    path('e_way_bills_draft',views.draft_ewbill, name='draft_ewbill'),
+    path('e_way_bills_billed',views.billed_ewbill, name='billed_ewbill'),
+    path('e_way_bills_cname_asc',views.ew_cname_asc, name='ew_cname_asc'),
+    path('e_way_bills_billdate_asc',views.ew_billdate_asc, name='ew_billdate_asc'),
+    path('ewbill_overview_pdf/<int:billId>',views.ewaybillPdf,name='ewaybillPdf'),
+    path('attach_ewbill_file/<int:billId>',views.attach_ewbill_file, name='attach_ewbill_file'),
+    # <-----E-Way Bill---shemeem---end--->
+    
+    ###debitnote_and_report haripriya ###
+    path('pdebitconvert/<int:id>',views.pdebitconvert,name='pdebitconvert'),
+    path('pdebt_draft',views.pdebt_draft,name='pdebt_draft'),
+    path('pdebt_save',views.pdebt_save,name='pdebt_save'),
+    path('debitnotereport',views.debitnotereport,name='debitnotereport'),
+  
+    re_path(r'^get_vendor_data_bill$',views.get_vendor_data_bill,name='get_vendor_data_bill'), 
+    path('debitnote_comments/<int:pdebitid>', views.debitnote_comments, name='debitnote_comments'),
+    path('deletedebitcomments/<int:pdebitid>/<int:commentid>', views.deletedebitcomments, name='deletedebitcomments'),
+    ##debitnote_and_report_end haripriya###
+    
+    # reshna-holidays
+    path('holidayss',views.holidayss,name='holidayss'),
+    path('addholidays',views.addholidays,name='addholidays'),
+    path('generate_pdf',views.generate_pdf,name='generate_pdf'),
+    # reshna-attendance
+    path('attendancepagee/',views.attendancepagee,name='attendancepagee'),
+    path('save_attendance',views.save_attendance,name='save_attendance'),
+    # path('fetch_employee_details/<str:employee_id>/', views.fetch_employee_details, name='fetch_employee_details'),
+    path('get_attendance_details',views.get_attendance_details,name='get_attendance_details'),
+    path('get_calendar_events',views.get_calendar_events,name='get_calendar_events'),
+    path('get_counts',views.get_counts,name='get_counts'),
+    # path('attendance_pdf',views.attendance_pdf,name='attendance_pdf'),
+    
+    path('loan',views.loan,name='loan'),
+    path('activeloan', views.activeloan, name='activeloan'),
+    path('inactiveloan', views.inactiveloan, name='inactiveloan'),
+    path('loan_list/<int:id>',views.loan_list,name='loan_list'),
+    path('loan_statement/<int:id>',views.loan_statement,name='loan_statement'),
+    path('create_loan_account',views.create_loan_account,name='create_loan_account'),
+    path('delet_loan/<int:id>',views.delet_loan,name='delet_loan'),
+    path('create_loan',views.create_loan,name='create_loan'),
+    path('edit_loan_account/<int:id>',views.edit_loan_account,name='edit_loan_account'),
+    path('edit_loan/<int:id>',views.edit_loan,name='edit_loan'),
+    path('loan_trans/<int:id>',views.loan_trans,name='loan_trans'),
+    path('crt_loan_trans/<int:id>',views.crt_loan_trans,name='crt_loan_trans'),
+    path('loan_pdf/<int:id>',views.loan_pdf,name='loan_pdf'),
+    path('active_status/<int:id>',views.active_status,name='active_status'),
+    path('inactive_status/<int:id>',views.inactive_status,name='inactive_status'),
+    path('sales_report',views.sales_report,name='sales_report'),
+    path('edit_loan_payment/<int:id>',views.edit_loan_payment,name='edit_loan_payment'),
+    
+    path('delete_loan_payment/<int:id>',views.delete_loan_payment,name='delete_loan_payment'),
+    path('edit_transaction/<int:pk>',views.edit_transaction,name='edit_transaction'),
+
+ 
+
+    path('getvendordata3',views.getvendordata3,name='getvendordata3'),
 
     
 ]

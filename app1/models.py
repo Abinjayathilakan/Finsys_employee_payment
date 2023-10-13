@@ -341,7 +341,7 @@ class invoice(models.Model):
 
     amtrecvd = models.IntegerField(default=0, null=True)
     # taxamount = models.IntegerField(default=0, null=True)
-    baldue = models.FloatField()
+    baldue = models.FloatField(default=0, null=True)
     subtotal = models.IntegerField(default=0, null=True)
     grandtotal = models.FloatField(default=0, null=True)
     invoice_orderno = models.CharField(max_length=255, default='', null=True)
@@ -354,7 +354,7 @@ class invoice(models.Model):
 
     )
     
-    status =models.CharField(max_length=150,choices=invoice_status,default='Draft')
+    status =models.CharField(max_length=150,default='Draft')
 
     note = models.CharField(max_length=255,default='', null=True)
     file = models.FileField(upload_to='invoice',default="default.jpg")
@@ -1226,6 +1226,7 @@ class itemtable(models.Model):
     stockin = models.IntegerField(default='0',blank=True,null=True)
     stockout = models.IntegerField(default='0',blank=True,null=True)
     amount = models.IntegerField(default='0',blank=True,null=True)
+    stock_rate= models.FloatField(default='0.0',blank=True,null=True)#reshna added
     status = models.CharField(max_length=100,null=True)
 
 class unittable(models.Model):
@@ -1233,25 +1234,22 @@ class unittable(models.Model):
     unit_symbol = models.CharField(max_length=100,null=True)
     name = models.CharField(max_length=100,null=True)
 
-from django.db import models
-
 class mjournal(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE, null=True)
-    date = models.DateField(null=True)  # Use DateField for date
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    date = models.CharField(max_length=100, default='')
     mj_no = models.CharField(max_length=100, default='')
     ref_no = models.CharField(max_length=100, default='')
     notes = models.CharField(max_length=100, default='')
-    j_type = models.CharField(max_length=100, null=True, blank=True)
+    j_type = models.CharField(max_length=100,null=True,blank=True)
     currency = models.CharField(max_length=100, default='')
-    attach = models.FileField(upload_to="", default='')
-    s_totaldeb = models.FloatField(default=0.0)  # Use FloatField for numeric values
-    s_totalcre = models.FloatField(default=0.0)
-    total_deb = models.FloatField(default=0.0)
-    total_cre = models.FloatField(default=0.0)
-    difference = models.FloatField(default=0.0)
-    comments = models.CharField(max_length=100, null=True)
-    status = models.CharField(max_length=100, default="Draft")
-
+    attach = models.FileField(upload_to="", default='') 
+    s_totaldeb = models.CharField(max_length=100, default='')
+    s_totalcre = models.CharField(max_length=100, default='')
+    total_deb = models.CharField(max_length=100, default='')
+    total_cre = models.CharField(max_length=100, default='')
+    difference = models.CharField(max_length=100, default='')
+    comments = models.CharField(max_length=100,null=True,default='')
+    status = models.CharField(max_length=100,default="Draft")
 
 class mjournal1(models.Model):
     mjrnl = models.ForeignKey(mjournal, on_delete=models.CASCADE,null=True)
@@ -1288,7 +1286,7 @@ class stockadjust(models.Model):
     reason = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=100, default='',null=True,blank=True)
     attach = models.FileField(upload_to="", default='') 
-    status = models.CharField(max_length=100, default='DRAFT') 
+    status = models.CharField(max_length=100, default='Draft') 
 
 
     item1 = models.CharField(max_length=100,null=True)
@@ -1315,6 +1313,8 @@ class stockadjust(models.Model):
     qty5 = models.CharField(max_length=100,null=True)
     qty_hand5 = models.CharField(max_length=100, default='')
     new_qty5 = models.CharField(max_length=100, default='')
+    
+    comment = models.CharField(max_length=500,default='')
 
 
 
@@ -1372,7 +1372,8 @@ class vendor(models.Model):
     shipstate = models.CharField(max_length=100, null=True)
     shippincode = models.CharField(max_length=100, null=True)
     shipcountry = models.CharField(max_length=100, null=True)
-    
+    opening_balance_type = models.CharField(max_length=10,null=True,blank=True)
+    attachment = models.ImageField(upload_to="vendor-files/", null=True)
     is_active =models.BooleanField(default=True)
 
 
@@ -1381,6 +1382,7 @@ class purchaseorder(models.Model):
     porderid = models.AutoField(('pid'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     vendor_name = models.CharField(max_length=100,null=True)
+    vendor_mail=models.CharField(max_length=100,null=True)
     billing_address = models.TextField(null=True)
     puchaseorder_no = models.IntegerField(default=1000)
     sourceofsupply = models.CharField(max_length=100, null=True)
@@ -1406,6 +1408,11 @@ class purchaseorder(models.Model):
     grand_total = models.CharField(max_length=100,null=True)
     note = models.CharField(max_length=255,null=True)
     file = models.FileField(upload_to='purchase/purchaseorder',default="default.png")
+    total_discount = models.CharField(max_length=100,null=True)
+    ship_charge = models.CharField(max_length=100,null=True)
+    paid_amount = models.FloatField(blank=True,null=True)
+    balance_amount = models.FloatField(blank=True,null=True)
+    payment_type = models.CharField(max_length=100,null=True)
 
     porder_status = (
         ('Draft','Draft'),
@@ -1424,11 +1431,13 @@ class purchaseorder_item(models.Model):
     rate = models.CharField(max_length=100,null=True)
     tax = models.CharField(max_length=100,null=True)
     amount = models.CharField(max_length=100,null=True)
+    discount = models.CharField(max_length=100,null=True)
 
 class purchasebill(models.Model):
     billid = models.AutoField(('bid'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     vendor_name = models.CharField(max_length=100,null=True)
+    vendor_mail=models.CharField(max_length=100,null=True)
     billing_address = models.TextField(null=True)
     bill_no = models.IntegerField(default=1000)
     sourceofsupply = models.CharField(max_length=100, null=True)
@@ -1455,12 +1464,16 @@ class purchasebill(models.Model):
     amtrecvd = models.CharField(max_length=100,null=True)
     note = models.CharField(max_length=255,null=True)
     file = models.FileField(upload_to='purchase/bill',default="default.png")
-
+    total_discount = models.CharField(max_length=100,null=True)
+    ship_charge = models.CharField(max_length=100,null=True)
+    paid_amount = models.FloatField(blank=True,null=True)
+    balance_amount = models.FloatField(blank=True,null=True)
+    payment_type = models.CharField(max_length=100,null=True)
     bill_status = (
         ('Draft','Draft'),
         ('Billed','Billed'),
     )
-    status =models.CharField(max_length=150,choices=bill_status,default='Draft')
+    status =models.CharField(max_length=150,choices=bill_status,default='Billed')
 
 class purchasebill_item(models.Model):
     bill = models.ForeignKey(purchasebill, on_delete=models.CASCADE,null=True)
@@ -1471,6 +1484,7 @@ class purchasebill_item(models.Model):
     rate = models.CharField(max_length=100,null=True)
     tax = models.CharField(max_length=100,null=True)
     amount = models.CharField(max_length=100,null=True)
+    discount = models.CharField(max_length=100,null=True)
 
 class purchase_expense(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
@@ -1538,6 +1552,22 @@ class purchasedebit(models.Model):
     igst = models.CharField(max_length=100,null=True)
     taxamount = models.CharField(max_length=100,null=True)
     grandtotal = models.CharField(max_length=100,null=True)
+    discount = models.CharField(max_length=100,default=0)
+    tcs = models.CharField(max_length=100,null=True)
+    tcs_amount = models.FloatField(blank=True,null=True)
+    round_off = models.CharField(max_length=100,null=True)
+    balance_due = models.CharField(max_length=100,null=True)
+    amtrecvd = models.CharField(max_length=100,null=True)
+    total_discount = models.CharField(max_length=100,null=True)
+    ship_charge = models.CharField(max_length=100,null=True)
+    paid_amount = models.FloatField(blank=True,null=True)
+    balance_amount = models.FloatField(blank=True,null=True)
+    payment_type = models.CharField(max_length=100,null=True)
+    debit_status = (
+        ('Draft','Draft'),
+        ('Save','Save'),
+    )
+    status =models.CharField(max_length=150,choices=debit_status ,default='Draft')
 
 class purchasedebit1(models.Model):
     pdebit = models.ForeignKey(purchasedebit, on_delete=models.CASCADE,null=True)
@@ -1548,6 +1578,7 @@ class purchasedebit1(models.Model):
     price = models.CharField(max_length=100,null=True)
     tax = models.CharField(max_length=100,null=True)
     total = models.CharField(max_length=100,null=True)
+    discount = models.CharField(max_length=100,null=True)
 
 class itemstock(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
@@ -1733,16 +1764,15 @@ class recurring_expense(models.Model):
 
 class challan(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
+    customer = models.ForeignKey(customer, on_delete=models.CASCADE)
     chal_no=models.CharField(max_length=100)
     challan_date=models.DateField()
     challan_type=models.CharField(max_length=100)
-    customer=models.CharField(max_length=100)
-    cx_mail=models.CharField(max_length=100)
     billto=models.TextField(max_length=100)
     taxamount=models.FloatField(default=0)
-    igst=models.FloatField(default=0)
-    cgst=models.FloatField(default=0)
-    sgst=models.FloatField(default=0)
+    igst=models.FloatField(default=0.00)
+    cgst=models.FloatField(default=0.00)
+    sgst=models.FloatField(default=0.00)
     subtotal=models.FloatField()
     grand=models.FloatField()
     pl=models.CharField(max_length=100)
@@ -1759,6 +1789,8 @@ class challan(models.Model):
     status =models.CharField(max_length=150,choices=invoice_status,default='Draft')
     ref=models.TextField(max_length=100)
     shipping=models.IntegerField()
+    adjustment=models.FloatField(default=0)
+    
 
 
 class challanitem(models.Model):
@@ -1959,6 +1991,7 @@ class payrollemployee(models.Model):
     alias = models.CharField(max_length=100,null=True)
     location = models.CharField(max_length=100,null=True)
     email = models.CharField(max_length=100,null=True)
+    age = models.CharField(max_length=100,null=True)
    
     mobile = models.CharField(max_length=100,null=True)
     employees = models.CharField(max_length=100,null=True)
@@ -2050,7 +2083,7 @@ class recinvoice(models.Model):
     profilename = models.CharField(max_length=100)
     recinvoiceno = models.IntegerField(default=1000)
     terms = models.CharField(max_length=100, default='')
-    startdate = models.CharField(max_length=100, default='')
+    startdate = models.DateField( default='')
     enddate = models.CharField(max_length=100, default='')
     bname = models.CharField(max_length=255, default='')
     placosupply = models.CharField(max_length=100, default='')
@@ -2103,3 +2136,176 @@ class EmployeeLoan(models.Model):
       company = models.ForeignKey(company, on_delete=models.CASCADE)
       status = models.CharField(max_length=20,null=True)
       action= models.IntegerField(blank=True,null=True)
+      
+########################recurring bill-reshna-start#############
+
+class recurring_bill(models.Model):
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    rbillid = models.AutoField(('rid'), primary_key=True)
+    # bill_no = models.IntegerField(default=1000)
+    billno =  models.CharField(max_length=100,null=True,blank=True)
+    profile_name = models.CharField(max_length=100,null=True,blank=True)
+    source_supply = models.CharField(max_length=100,null=True,blank=True)
+    vendor_name = models.CharField(max_length=100,null=True,blank=True)###vendor table
+    customer_name = models.CharField(max_length=100,null=True,blank=True)###customer table
+    repeat_every = models.CharField(max_length=100,null=True,blank=True)#####newtab
+    payment_method= models.CharField(max_length=100,null=True,blank=True)###use banktable
+    start_date=models.DateField(null=True,blank=True)##use this as date
+    end_date=models.CharField(max_length=100,null=True,blank=True)
+    payment_terms = models.CharField(max_length=100,null=True,blank=True)###newtab
+    sub_total = models.FloatField(null=True,blank=True)
+    igst = models.FloatField(null=True,blank=True)
+    cgst = models.FloatField(null=True,blank=True)
+    sgst = models.FloatField(null=True,blank=True)
+    tax_amount =  models.FloatField(null=True,blank=True)
+    shipping_charge = models.FloatField(null=True,blank=True)
+    adjustment = models.FloatField(default=0,null=True,blank=True)
+    grand_total = models.FloatField(null=True,blank=True)
+    note = models.CharField(max_length=255,null=True)
+    paid_amount= models.FloatField(default=0,max_length=100,null=True)
+    balance = models.FloatField(max_length=100,null=True)
+    file = models.FileField(upload_to='purchase/rbill',default="default.png")
+
+    bill_status = (
+        ('Draft','Draft'),
+        ('Billed','Billed'),
+    )
+    status =models.CharField(max_length=150,choices=bill_status,default='Draft')
+    
+    
+class recurringbill_item(models.Model):
+    bill = models.ForeignKey(recurring_bill, on_delete=models.CASCADE,null=True)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    item = models.CharField(max_length=100,null=True)
+    hsn = models.CharField(max_length=100,null=True)
+    qty = models.IntegerField(default=0, null=True)
+    price = models.CharField(max_length=100,null=True)
+    total = models.IntegerField(default=0, null=True)
+    discount = models.CharField(max_length=100,null=True)
+    tax = models.CharField(max_length=100,null=True)
+    
+    
+class repeatevery(models.Model):
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    repeat=models.CharField(max_length=100,null=True,blank=True)  
+    
+
+###### E-Way bills ---------shemeem------
+class Transportation(models.Model):
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    name = models.CharField(max_length=200, null= True)
+    type = models.CharField(max_length=100, null=True)
+
+
+class e_waybills(models.Model):
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    ewbillid = models.AutoField(('ewid'), primary_key=True)
+    invoice_no =  models.CharField(max_length=100,null=True,blank=True)
+    bill_date = models.DateField(null=True, blank=True)
+    document_type = models.CharField(max_length=200, null=True)
+    cust = models.ForeignKey(customer, on_delete=models.CASCADE, null=True)
+    customer_name = models.CharField(max_length=100,null=True,blank=True)
+    customer_email = models.EmailField(null=True)
+    gsttype = models.CharField(max_length=100, null=True)
+    gstin = models.CharField(max_length=100, default='')
+    trans_type = (('Goods','Goods'),('Service','Service'))
+    transaction_subtype = models.CharField(max_length=200, null= True)
+    transaction_type = models.CharField(max_length=150,choices=trans_type, null=True)
+    transaction_hsn = models.IntegerField(null=True,blank=True,default=0)
+    delivery_address = models.TextField(null=True, blank = True)
+    placeof_supply = models.CharField(max_length=100,null=True,blank=True)
+    transportation = models.ForeignKey(Transportation,on_delete=models.CASCADE,null= True)
+    vehicle_number = models.CharField(max_length=100, null=True)
+    kilometer = models.FloatField(null=True)
+    sub_total = models.FloatField(null=True,blank=True)
+    igst = models.FloatField(null=True,blank=True)
+    cgst = models.FloatField(null=True,blank=True)
+    sgst = models.FloatField(null=True,blank=True)
+    tax_amount =  models.FloatField(null=True,blank=True)
+    shipping_charge = models.FloatField(null=True,blank=True)
+    adjustment = models.FloatField(default=0,null=True,blank=True)
+    grand_total = models.FloatField(null=True,blank=True)
+    # paid_amount= models.FloatField(default=0,max_length=100,null=True)
+    # balance = models.FloatField(max_length=100,null=True)
+    note = models.TextField(null=True)
+    file = models.FileField(upload_to='purchase/ewbill',default="default.png")
+
+    bill_status = (
+        ('Draft','Draft'),
+        ('Billed','Billed'),
+    )
+    status =models.CharField(max_length=150,choices=bill_status,default='Draft')
+
+
+class e_waybill_item(models.Model):
+    bill = models.ForeignKey(e_waybills, on_delete=models.CASCADE,null=True)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    item = models.CharField(max_length=100,null=True)
+    hsn = models.CharField(max_length=100,null=True)
+    qty = models.IntegerField(default=0, null=True)
+    price = models.CharField(max_length=100,null=True)
+    total = models.IntegerField(default=0, null=True)
+    discount = models.CharField(max_length=100,null=True)
+    tax = models.CharField(max_length=100,null=True)
+    
+    
+class debitnotecomments(models.Model):
+    commentid = models.AutoField(('COMMENTID'), primary_key=True)
+    debid = models.ForeignKey(purchasedebit, on_delete=models.CASCADE)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=250,null=True)
+    
+#reshna-holidays#
+class holidays(models.Model):
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    hid = models.AutoField(('hid'), primary_key=True)
+    start_date = models.DateField(null=True,blank=True)
+    end_date = models.DateField(null=True,blank=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    
+    
+# reshna attendence#
+class attendance(models.Model):
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    atid = models.AutoField(('hid'), primary_key=True)
+    date = models.DateField(null=True,blank=True)
+    employee= models.CharField(max_length=100,null=True,blank=True)
+    status = models.CharField(max_length=100,null=True,blank=True)
+    
+    
+class man_Journal_comment(models.Model):
+    comment=models.CharField(max_length=300)
+    proj=models.ForeignKey(mjournal,on_delete=models.CASCADE,null=True,blank=True)
+    
+    
+class loan_account(models.Model):
+    account_name=models.TextField(max_length=100)
+    account_number=models.TextField(max_length=100)
+    lenderbank=models.TextField(max_length=100)
+    recieced_bank=models.TextField(max_length=100)
+    intrest=models.TextField(max_length=100)
+    term=models.TextField(max_length=100)
+    loan_amount=models.TextField(max_length=100)
+    processing=models.TextField(max_length=100)
+    paid=models.TextField(max_length=100)
+    status=models.TextField(max_length=100)
+    desc=models.TextField(max_length=100)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)
+    balance=models.IntegerField(default=0)    
+    date=models.DateField(blank=True,null=True)
+    recieved_amount=models.IntegerField(default=0)   
+    
+    
+class loan_transaction(models.Model):
+    bank_type=models.TextField(max_length=100)
+    from_trans=models.TextField(max_length=100)
+    to_trans=models.TextField(max_length=100)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)
+    loan=models.ForeignKey(loan_account, on_delete=models.CASCADE ,null=True,blank=True)
+    loan_amount=models.IntegerField(default=0,blank=True,null=True)
+    loan_desc=models.TextField(blank=True,null=True)
+    loan_date=models.DateField(blank=True,null=True)
+    loan_intrest=models.TextField(max_length=100,default=0)
+    balance=models.IntegerField(default=0)   
+    type=models.TextField(max_length=100)
+      

@@ -2,7 +2,8 @@
 {% block body %}
 {% load static %}
     {% if user.is_authenticated %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <script src="https://kit.fontawesome.com/46db3e6bea.js" crossorigin="anonymous"></script>
 
       <style>
         @import url(https://fonts.googleapis.com/css?family=Open+Sans);
@@ -83,7 +84,7 @@
                         </div>
                         <div class="col-md-2" style="width: 40%; margin-top: 9px;">
                             <div class="dropdown">
-                                <button type="button" class="btn btn-outline-info   text-grey fas fa-sort"
+                                <button type="button" class="btn btn-outline-info   text-grey "
                                         data-toggle="dropdown"> Sort by
                                 </button>
                                 <div class="dropdown-menu " style="background-color: black;">
@@ -114,7 +115,7 @@
                         <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
 
                             <div class="dropdown">
-                                <button type="button" class="btn btn-outline-info fas fa-filter dropdown-toggle text-grey"
+                                <button type="button" class="btn btn-outline-info  dropdown-toggle text-grey"
                                         data-toggle="dropdown"> filter by
                                 </button>
                                 
@@ -131,7 +132,7 @@
                         </div>
                         <div class="col-md-2" >
                             <a href="{% url 'add_mjournal' %}" >
-                                <button id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="margin-top: 8px;">&nbsp; Add Journal</button>
+                                <button id="myBtn" class="btn btn-outline-info text-grey " style="margin-top: 8px;">&nbsp;+ Add Journal</button>
                             </a>
                         </div>
 

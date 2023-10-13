@@ -2,7 +2,12 @@
 {% block body %}
 {% load static %}
     {% if user.is_authenticated %}
-    <!-- <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> -->
+  
+    
+    <script src="https://kit.fontawesome.com/46db3e6bea.js" crossorigin="anonymous"></script>
+    
+    
+
     
         <style>
             @import url(https://fonts.googleapis.com/css?family=Open+Sans);
@@ -85,7 +90,7 @@
                         </div> 
                         <div class="col-md-2" style="width: 40%; margin-top: 9px;">
                             <div class="dropdown">
-                                <button type="button" class="btn btn-outline-info dropdown-toggle fa fa-sort text-grey"
+                                <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
                                         data-toggle="dropdown"> Sort by
                                 </button>
                                 <div class="dropdown-menu " style="background-color: black;">
@@ -94,7 +99,7 @@
                                     <!-- <icon class=" fas fa-arrow-down"></icon> -->
                                </a>
                                 <a class="dropdown-item	" href="{% url 'sortemployeename2' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" > Employee Name
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" > Name
                                     <!-- <icon class=" fas fa-arrow-down"></icon> -->
                                </a>
                                  <!-- <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
@@ -115,7 +120,7 @@
                         <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
 
                             <div class="dropdown">
-                                <button type="button" class="btn btn-outline-info dropdown-toggle fa fa-filter  text-grey"
+                                <button type="button" class="btn btn-outline-info dropdown-toggle   text-grey"
                                         data-toggle="dropdown"> filter by
                                 </button>
                                     <div class="dropdown-menu" style="background-color: black;">
@@ -132,7 +137,7 @@
 
                         <div class="col-md-2" >
                             <a href="{% url 'new_price_list' %}" >
-                                <button id="myBtn" class="btn btn-outline-info fa fa-plus text-grey" style="margin-top: 8px;"> Price List</button>
+                                <button id="myBtn" class="btn btn-outline-info  text-grey" style="margin-top: 8px;">+ Price List</button>
                             </a>
                         </div>
 

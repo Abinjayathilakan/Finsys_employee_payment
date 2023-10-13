@@ -144,13 +144,30 @@
                             <h5 class="mb-0">Salary Details</h5>
                         </div>
                         <hr>
+
                         <div class="row mt-3">
                             <div class="col-3 col-md-4">
-                                <label for="effectivefrom">Effective From</label>
-                                <input type="date" class="form-control" id="effectivefrom" name="effectivefrom" 
-                                    style="background-color: #2f516f; color: white;" min="0" value="0" >
-                                <div class="text-danger m-2" id="effectivefrom"></div>
+                                <label for="effectivefrom">Payment Terms</label>
+                                <div class="d-flex">
+                                <select class="custom-select" name="effectivefrom" id="effectivefrom">
+                                    <option selected id="trmopt2"></option>
+                                    <option value="0">Due on Receipt</option>
+                                    <option value="15">NET 15</option>
+                                    <option value="30">NET 30</option>
+                                    <option value="60">NET 60</option>
+                                    {% for pd in cpd %}
+                                        <option value="{{ pd.newperiod }}">NET {{ pd.newperiod }}</option>
+                                    {% endfor %}
+                                </select>
+                                <a class="btn btn-outline-secondary ml-1" data-target="#crperiod2" data-toggle="modal">+</a>
+
                             </div>
+
+                                <!-- <input type="date" class="form-control" id="effectivefrom" name="effectivefrom" 
+                                    style="background-color: #2f516f; color: white;" min="0" value="0" >
+                                <div class="text-danger m-2" id="effectivefrom"></div> -->
+                            </div>
+
                             <div class="col-3 col-md-4">
                                 <label for="payhead">Pay Head</label>
                                 <select name="payhead" id="payhead" class="form-control">
@@ -220,6 +237,11 @@
                             style="background-color: #2f516f;color: white;"required> 
                     </div>
                     <div class="col-3 col-md-4">
+                        <label for="age">Age</label>
+                        <input type="text" class="form-control" id="age" name="age" 
+                            style="background-color: #2f516f;color: white;" required> 
+                    </div>
+                    <div class="col-3 col-md-4">
                         <label for="bloodgroup">Blood Group</label>
                         <select name="bloodgroup" id="bloodgroup" class="form-control">
                             <option value="O+ve">O+ve</option>
@@ -233,14 +255,23 @@
                             <option value="Others">Others</option>
                         </select>
                     </div>
+
+                </div>
                     
-                    <div class="col-3 col-md-4">
+                    <!-- <div class="col-3 col-md-4">
                         <label for="fathersmothersname">Father's/Mother's Name</label>
                         <input type="text" class="form-control" id="fathersmothersname" name="fathersmothersname"
                              style="background-color: #2f516f;color: white;" required>
-                    </div>
- </div>
+                    </div> -->
+
  <div class="row mt-3">
+
+    <div class="col-3 col-md-4">
+        <label for="fathersmothersname">Father's/Mother's Name</label>
+        <input type="text" class="form-control" id="fathersmothersname" name="fathersmothersname" 
+            style="background-color: #2f516f;color: white;" required>
+    </div>
+
     <div class="col-3 col-md-4">
         <label for="spousename">Spouse Name</label>
         <input type="text" class="form-control" id="spousename" name="spousename" 
@@ -628,7 +659,34 @@
     </div>
 </div>
 
-
+<div class="modal fade" id="crperiod2">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">New Credit Period</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3 m-3">
+                    <form action="" method="post" autocomplete="off" id="credit">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-2 mt-2"></div>
+                            <div class="col-md-5 mt-2">
+                                <input type="number" name="newperiod" id="period" class="form-control">
+                            </div>
+                            <div class="col-md-2 mt-2">
+                                <button class="btn btn-outline-info text-grey mb-3" type="submit" data-dismiss="modal" id="savecredit">Save</button>
+                            </div>
+                        </div>
+                    </form>  
+                </div>
+            </div>
+        </div>   
+    </div>
+</div> 
 
 
 
@@ -816,5 +874,56 @@
             tdsDiv.style.display = "none";   // Hide the div 
         }
     }
+</script>
+
+<script>
+    // Get references to the date of birth and age input fields
+    var dateOfBirthInput = document.getElementById('dateofbirth');
+    var ageInput = document.getElementById('age');
+
+    // Add an event listener to the date of birth input to calculate age
+    dateOfBirthInput.addEventListener('change', function () {
+        var dob = new Date(this.value);
+        var today = new Date();
+        var age = today.getFullYear() - dob.getFullYear();
+
+        // Check if the birthday has occurred this year
+        if (today.getMonth() < dob.getMonth() ||
+            (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        // Update the age input field with the calculated age
+        ageInput.value = age;
+    });
+</script>
+<script>
+    $(document).on("click","#savecredit",function(){
+
+        $.ajax({
+        
+        
+            type : 'POST',
+            url:"{% url '' %}",
+        
+            data:{
+                
+                newperiod : $("#period").val(),
+             
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+                
+            },
+            
+            success: function(response) {
+                console.log("AJAX Success - Response Data:", response);
+                document.getElementById("credit").reset();
+                reloadcredit();
+            },
+                    
+        });
+        
+        
+        
+        });
 </script>
 {% endblock %}

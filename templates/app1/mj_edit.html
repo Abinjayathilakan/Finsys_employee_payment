@@ -118,23 +118,23 @@
                                                     <tr>
                                                         <td>1</td>
 
-                                                        <td>
+                                                        <!-- <td>
                                                             <select name='account' id="account" class="form-control" required>
                                                                 <option value="{{ a.account }}" >{{ a.account }}</option>
                                                                 {% for a in acc %}
                                                                     <option value="{{ a.name }}">{{ a.name }}</option>
                                                                 {% endfor %}
                                                             </select>
-                                                        </td>
+                                                        </td> -->
 
-                                                        <td>
+                                                        <!-- <td>
                                                             <select name='account[]' id="account" class="form-control" required>
                                                                 <option value="{{ a.account }}" >{{ a.account }}</option>
                                                                 {% for a in acc %}
                                                                         <option   value="{{ a.name }}">{{ a.name }} </option>
                                                                 {% endfor %}
                                                             </select>
-                                                        </td>
+                                                        </td> -->
 
                                                         <!-- <td>
                                                             <input name="account" list="account" class="form-control" id="pin" style="color: yellow;">
@@ -146,14 +146,14 @@
                                                             </datalist>
                                                         </td> -->
 
-                                                        <!-- <td>
+                                                        <td>
                                                             <input name="account" list="account" class="form-control" id="pin" required value="{{ a.account }}">
                                                             <datalist id="account">
                                                               {% for a in acc %}
                                                                 <option value="{{ a.name }}">{{ a.name }}</option>
                                                               {% endfor %}
                                                             </datalist>
-                                                          </td> -->
+                                                          </td>
 
                                                           <!-- <td>
                                                             <input name="account[]" list="account" class="form-control">
@@ -169,7 +169,7 @@
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
 
-                                                        <td>
+                                                        <!-- <td>
                                                             <select name='contact' id="jcontact1" class="form-control" >
                                                                 <option value="{{ a.contact }}"  >{{ a.contact }}</option>
                                                                 {% for a in cust %}
@@ -182,11 +182,11 @@
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
                                                                 {% endfor %}
                                                             </select>
-                                                        </td>
+                                                        </td> -->
                                                         
 
-                                                        <!-- <td>
-                                                            <input name="jcontact" list="jcontact1" class="form-control" id="pin" value="{{ a.contact }}">
+                                                        <td>
+                                                            <input name="contact" list="jcontact1" class="form-control" id="pin" value="{{ a.contact }}">
                                                             <datalist id="jcontact1"  >
                                                                
                                                                 {% for a in cust %}
@@ -199,7 +199,7 @@
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
                                                                 {% endfor %}
                                                             </datalist>
-                                                        </td> -->
+                                                        </td>
                                                         <td>
                                                             <input type="number" name='debit' id="jdebit1" value="{{ a.debit }}"
                                                                    class="form-control debit" value="0" step="0" min="0"/>
@@ -231,7 +231,7 @@
                                         <div class="row clearfix" style="margin-top:20px">
                                             <div class="col-md-6">
                                                 <label for="formFileMultiple" class="form-label">Attach File(s)</label><br>
-                                                <input  type="file" name="attachment" id="formFileMultiple" value="{{ a.attach }}" multiple />
+                                                <input  type="file" name="file" id="formFileMultiple" value="{{ a.attach }}" multiple />
                                             </div>
                                             <div class="col-md-6 table-responsive-md" style="background-color:rgba(0,0,0,.2);">
                                                 <table class="table table-hover"

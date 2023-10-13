@@ -1,82 +1,142 @@
 {% extends 'app1/base.html' %}
 {% block body %}
-    {% load static %}
-    <div class="page-content">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js">
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <style>
+        /* Your CSS styles here */
 
-        <div class="row">
+        .card-registration{
+            margin-left: 100px;
+        }
+        .card-registration .select-input.form-control[readonly]:not([disabled]) {
+            font-size: 1rem;
+            line-height: 2.15;
+            padding-left: .75em;
+            padding-right: .75em;
+            border-radius: 10px;
+            
+        }
+    
+        .card-registration .select-arrow {
+            top: 13px;
+            border-radius: 10px; /* Rounded corners for this element */
+        }
+    
+        .bg-grey {
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 10px; /* Rounded corners for this element */
+        }
+    
+        @media (min-width: 992px) {
+            .card-registration-2 .bg-grey {
+                border-top-right-radius: 16px;
+                border-bottom-right-radius: 16px;
+            }
+        }
+    
+        @media (max-width: 991px) {
+            .card-registration-2 .bg-grey {
+                border-bottom-left-radius: 16px;
+                border-bottom-right-radius: 16px;
+            }
+        }
+    
+        
+    </style>
+</head>
 
-            <div class="col-lg-1"></div>
-            <div class="col-lg-10">
-                
-                <div class="card radius-15" style="background-color: #243e54;">
-                    <div class="card-body">
-                        <form action="" method="post" class="needs-validation" novalidate>
-                            {% csrf_token %}
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="card-title">
+                <center>
+                    <h2 class="mb-0">PRICE LIST OVERVIEW</h2>
+                </center>
+                <hr>
+                <div class="btn-group" style="float: left;"></div>
+                <div class="btn-group" style="float: right;">
+                    <div>
+                        <center>
+                            <a href="{% url 'pricelist_editpage' pl.id %}" class="fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button"> Edit</a>
+                            {% if pl.is_active %}
+                            <a href="{% url 'inactive_pricelist' pl.id %}" class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3">
+                                <i class="fa fa-check" aria-hidden="true"></i> Active
+                            </a>
+                            {% else %}
+                            <a href="{% url 'active_pricelist' pl.id %}" class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3">
+                                <i class="fa fa-times" aria-hidden="true"></i> Inactive
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'delete_pricelist' pl.id %}" class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i> Delete
+                            </a>
+                    
+                            <a class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button" href="{% url 'price_list_pdf' pl.id %}" id="downloadButton" >
+                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF
+                            </a>
                             
-                           
-                            
-                            <div class="row">
-                                <div class="col-lg-7">
-                                    <div class="card-title mt-2">
-                                        <h3 class="mb-0 text-center" style="font-family: monospace;">{{pl.name}}</h3>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-registration card-registration-2" style="border-radius: 15px; margin-left:50px">
+        <div class="card-body p-0">
+            <div id="details">
+                <div class="row g-0">
+                    <div class="col-lg-8">
+                        <div class="p-5">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <div class="row">
+                                        <div class="col mt-3">
+                                            <h3 class="mb-0" style="font-weight: bold;margin-left:300px">{{ pl.name }}</h3>
+                                        </div>
                                     </div>
                                 </div>
-                               
-
-                                <div class="col-lg-5">
-
-                                    <a href="{% url 'pricelist_editpage' pl.id %}" class=" fa fa-pencil btn btn-outline-info text-grey mt-2 mb-3" role="button"> Edit</a>
-                                    {% if pl.is_active %}
-                                    <a href="{% url 'inactive_pricelist' pl.id %}" class=" fa fa fa-times btn btn-outline-info text-grey mt-2 mb-3" role="button"> Inactive</a>
-                                    {% else %}
-                                    <a href="{% url 'active_pricelist' pl.id %}" class=" fa fa-check btn btn-outline-info text-grey mt-2 mb-3" role="button"> Active</a>
-                                    {% endif %}
-                                    <a href="{% url 'delete_pricelist' pl.id %}" class="fa fa-trash-o btn btn-outline-info text-grey mt-2 mb-3" role="button"> Delete</a>
-                                    <a href="{% url 'pricelist' %}" class="fa fa-arrow-left btn btn-outline-info text-grey mt-2 mb-3" role="button"> Close</a>
-                                   
-                                   
-                                     
-                                </div>
-
+                            <hr/>
+                      
+                    <div class="col-lg-15 bg-grey" >
+                        <div class="p-5">
+                            <h3 class="fw-bold mb-2 mt-2 pt-1">Price List Details</h3>
+                            <hr class="my-4">
+                            <div class="d-flex  mb-4">
+                                <h6 class="" style="font-weight: bold;">Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : </h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ pl.name }}</h6>
                             </div>
-                            <hr>
-                              
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Name</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.name}}</b></p>
-                                </div>
+                            <div class="d-flex  mb-4">
+                                <h6 class=""style="font-weight: bold;">Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : </h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ pl.types }}</h6>
                             </div>
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Type</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.types}}</b></p>
-                                </div>
+                            <div class="d-flex  mb-4">
+                                <h6 class="" style="font-weight: bold;">Item Rate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : </h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if pl.item_rate == "Customized individual rate" %}
+                                Customized individual rate
+                                {% elif pl.upordown == "Markup" %}
+                                Markup the item rates by a percentage
+                                {% elif pl.upordown == "Markdown" %}
+                                Markdown the item rates by a percentage
+                                {% else %}
+                                {{ pl.item_rate }}</h6>
+                                {% endif %}
                             </div>
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Item Rate</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.item_rate}}</b></p>
-                                </div>
+                            <div class="d-flex  mb-4">
+                                <h6 class="" style="font-weight: bold;">Description&nbsp;&nbsp; : </h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ pl.description }}</h6>
                             </div>
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Description</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.description}}</b></p>
-                                </div>
-                            </div>
-                            
-                            
                             {% if items %}
                             <hr>
                             <div class="row mb-3">
                                 <label class="col-sm-12 mb-5 text-center" style="font-size: large;"><b>Customized item rates</b></label>
                                 <div class="col-sm-2"></div>
-                                <div class="table-responsive col-sm-8">
+                                <div class="table col-sm-20">
                                     <table class="table  table-striped" style="background-color: #2f516f;color: white;font-size: large;">
                                         <thead>
                                             <tr>
@@ -88,9 +148,9 @@
                                         {% for i in items %}
                                         <tbody>
                                             <tr>
-                                                <td>{{i.itemname}}</td>
-                                                <td>{{i.itemrate}}</td>
-                                                <td><b>{{i.customrate}}</b></td>
+                                                <td style="text-align: center;">{{i.itemname}}</td>
+                                                <td style="text-align: center;">{{i.itemrate}}</td>
+                                                <td style="text-align: center;"><b>{{i.customrate}}</b></td>
 
                                             </tr>
                                         </tbody>
@@ -100,71 +160,41 @@
                                 </div>
                                 <div class="col-sm-2"></div>
                             </div>
-                            {% else %}
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Percentage</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.percentage}}%  {{pl.upordown}}</b></p>
-                                </div>
-                            </div>
-                        
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Round off to</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.roundoffto}}</b></p>
-                                </div>
-                            </div>
                             
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Currency</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.currency}}</b></p>
-                                </div>
+                            {% else %}
+                            <div class="d-flex  mb-4">
+                                <h6 class="" style="font-weight: bold;">Percentage&nbsp;&nbsp; : </h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ pl.percentage }}%  {{ pl.upordown }}</h6>
+                            </div>
+                            <div class="d-flex  mb-4">
+                                <h6 class="" style="font-weight: bold;">Round off to : </h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ pl.roundoffto }}</h6>
+                            </div>
+                            <div class="d-flex  mb-4">
+                                <h6 class="" style="font-weight: bold;">Currency&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : </h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ pl.currency }}</h6>
                             </div>
                             {% endif %}
-                            
-
-                            
-                                
-
-                            
-                                
-                            
-                                
-                        
-                                
-        
-                                                           
-                            
-                            
-                        </form>
+                        </div>
                     </div>
                 </div>
-                
-                
             </div>
-            <div class="col-lg-1"></div>
-
-           
         </div>
-       
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
+</div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function () {
+        AccountTypeChange();
+    });
+</script>
+<script>
+    $(document).ready(function ($) {
+        $(".table-row").dblclick(function () {
+            window.document.location = $(this).data("href");
+        });
+    });
+</script>
 
 
 {% endblock %}

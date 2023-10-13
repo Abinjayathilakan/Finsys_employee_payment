@@ -4,6 +4,7 @@
 
     {% load static %}
     {% if user.is_authenticated %}
+    <script src="https://kit.fontawesome.com/46db3e6bea.js" crossorigin="anonymous"></script>
 
     <!-- <link rel="stylesheet" type="text/css" href="{% static 'assets/css/estimate.css' %}"> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
@@ -357,7 +358,7 @@ footer p {
             <div class="card-body">
                 <div class="card-title">
                     <center><h2 class="mb-0">MANUAL JOURNAL VIEW</h2> <h4></h4></center>
-                    <hr>
+                 
                     <!-- <center><h5 class="mb-0">Journal No : {{ sale.mj_no }}</h5> <h4></h4></center> -->
                     
                     <center><p class="mb-0">Journal created by {{ user.first_name }}</> <h4></h4></center>
@@ -439,7 +440,8 @@ footer p {
                 <div class="my-5 page" size="A4" >
                     <div class="p-5">
                         <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
-                            <div class="ribbon-inner ribbon-open">{{sale.status}}<!----></div></div>
+                            <div class="ribbon-inner ribbon-open" style="color:black;font-weight:bold">{{sale.status}}</div>
+                        </div>
                         <!-- <section class="top-content bb d-flex justify-content-between">
                             <div class="logo">
                               
@@ -469,10 +471,10 @@ footer p {
                                     </div>
                                     <div class="col-5">
                                         
-                                        <p class="address " style="padding:5px 10px 5px 0px;font-size:13pt;">Journal No :{{ sale.mj_no }}</p>
-                                        <p class="address " style="padding:5px 10px 5px 0px;font-size:13pt;">Date :{{ sale.date }}</p>
-                                        <p class="address " style="padding:5px 10px 5px 0px;font-size:13pt;">Amount :{{ sale.total_deb }}</p>
-                                        <p class="address " style="padding:5px 10px 5px 0px;font-size:13pt;">Reference No :{{ sale.ref_no }}</p>
+                                        <p class="address " style="padding:4px 10px 4px 0px;font-size:12pt;">Journal No :{{ sale.mj_no }}</p>
+                                        <p class="address " style="padding:4px 10px 4px 0px;font-size:12pt;">Date :{{ sale.date }}</p>
+                                        <p class="address " style="padding:4px 10px 4px 0px;font-size:12pt;">Amount :{{ sale.total_deb }}</p>
+                                        <p class="address " style="padding:4px 10px 4px 0px;font-size:12pt;">Reference No :{{ sale.ref_no }}</p>
                                         
                                         
                                     </div>
@@ -492,10 +494,10 @@ footer p {
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <td>ACCOUNT</td>
-                                        <td>CONTACT</td>
-                                        <td>DEBITS</td>
-                                        <td>CREDITS</td>
+                                        <td style="color:black;font-weight:bold">ACCOUNT</td>
+                                        <td style="color:black;font-weight:bold">CONTACT</td>
+                                        <td style="color:black;font-weight:bold">DEBITS</td>
+                                        <td style="color:black;font-weight:bold">CREDITS</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -521,10 +523,6 @@ footer p {
                                         <td style="font-size:16px;color:black; font-weight:bold"><b>₹{{ sale.total_cre }}.00</b></td>
                                     </tr>
 
-                                   
-
-
-                                    
                                 </tbody>
                             </table>
                         </section>
@@ -585,7 +583,7 @@ footer p {
                         </section> -->
             
                         <!-- Cart BG -->
-                        <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+                        <!-- <img src="cart.jpg" class="img-fluid cart-bg" alt=""> -->
             
                         <!-- <footer>
                             <hr>
@@ -622,7 +620,7 @@ footer p {
             
         
             </div>
-
+<!-- 
             <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -636,14 +634,13 @@ footer p {
                             <div class="existing-comment"></div>
                             <form id="comment-form" action="{% url 'add_comment_retinvoice3' sale.id %}" method="POST">
                                 {% csrf_token %}
-                                <!-- Display existing comments if they exist -->
+                               
                                 {% if sale.comments %}
-                                <label class="text-center">Existing Comment:</label>
-                                <p>{{ sale.comments }}</p>
+                                
                                 <label for="">Change Comment If Needed..</label>
                                 <textarea style="width: 100%;" name="comment" placeholder="Edit the comment">{{ sale.comments }}</textarea>
                                 {% else %}
-                                <!-- If no existing comment, allow user to add a new one -->
+                             
                                 <textarea style="width: 100%;" name="comment" placeholder="Add a comment"></textarea>
                                 {% endif %}
                                 <div class="text-center pt-4 pb-2">
@@ -653,11 +650,72 @@ footer p {
                         </div>
                     </div>
                 </div>
+            </div> -->
+
+            <!-- modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="modal-content" style="background-color: #3b3b3b;">
+        <div class="modal-header">
+            <h3 class="modal-title" id="exampleModalLabel">Add Comments</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <form action="{% url 'add_man_Journal_comment' project.id %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-body">
+                <textarea type="text" class="form-control" style="color: white;" name="comments" id="cmt" placeholder="comment here"></textarea>
+
+                <textarea type="text" class="form-control text-dark" name="comment" id="ecmt"
+                    style="display: none;"></textarea>
+                <div class="container-fluid">
+
+                    <table class="table  mt-4">
+                        <thead>
+                            <tr>
+                                <th>sl no.</th>
+                                <th>Comments</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in cmt %}
+                            <tr class="table-row text-light">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ c.comment }}</td>
+                                <td style="font-size: 1.2rem;">
+                                    <a class="text-danger" href="{% url 'delete_man_Journal_comment' c.id  %}">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                <button type="submit" class="btn btn-success" id="save">Save</button>
+
+            </div>
+        </form>
+
+    </div>
+</div>
+</div>
+
+<!-- modal end -->
             
 
             <li class="nav-item mx-1">
-                <a href="#" class="btn btn-outline-info rounded-pill text-grey p-1" data-toggle="modal" data-target="#commentModal" data-comment="{{ inv.comments }}" data-inv-id="{{ inv.id }}">&nbsp;&nbsp;Comment&nbsp;&nbsp;</a>
+                <a href="#" class="btn btn-outline-info rounded-pill text-grey p-1" data-toggle="modal" data-target="#commentModal" data-comment="" data-inv-id="">&nbsp;&nbsp;Comment&nbsp;&nbsp;</a>
             </li>
 
             

@@ -1,0 +1,79 @@
+<!-- reshna-holidays -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin sYs</title>
+   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    
+</head>
+<style>
+    
+    
+    .table
+    {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color:azure
+       
+    }
+    
+    .table-head
+    {
+        color: rgb(52, 49, 58);
+        
+       
+    }
+    .table .tbody tr 
+    {
+       margin-bottom: 3px;
+    }
+   
+    body{
+        font-size: 14px;
+    }
+   
+    
+</style>
+
+   
+    <div class="container-fluid" id="chart-container">
+        <table class="table table-responsive-md mt-4">
+            <thead>
+            <tr>
+                <th class="text-center">Start Date</th>
+                <th class="text-center">End Date</th>
+                <th class="text-center">Holiday Name</th>
+               
+            </tr>
+            </thead>
+            <tbody>
+            {% for r in holiday %}
+          
+                <tr>
+                    <td class="text-center">{{ r.start_date | date:'d-m-Y' }}</td>
+                    <td class="text-center">{{ r.end_date | date:'d-m-Y' }}</td>
+                    <td class="text-center">{{ r.name  }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    
+<body>
+
+
+                      
+    
+    
+</body>
+
+</html>

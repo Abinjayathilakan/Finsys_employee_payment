@@ -16,7 +16,7 @@
                     <h4 class="mb-0">Edit Price List</h4>
                 </div>
                 <hr/>
-                <form action="{% url 'editpl' pl.id %}" method="post" class="needs-validation" novalidate>
+                <form action="{% url 'editpl' pl.id %}" method="post" id="editForm" class="needs-validation" novalidate>
                     {% csrf_token %}
                     {% if user.is_authenticated %}
                         <div class="row">
@@ -105,7 +105,7 @@
                                             <option value="Markdown" style="background-color: #2f516f;color: white;">Markdown</option>
                                            
                                         </select>
-                                        <input type="number" class="form-control" name="cent" aria-label="Text input with dropdown button" style="background-color: #2f516f;color: white;" value="{{pl.percentage}}" dir="rtl" required>
+                                        <input type="number" class="form-control" name="cent" aria-label="Text input with dropdown button" style="background-color: #2f516f;color: white;" value="{{pl.percentage}}" required>
                                         <input type="button" class="btn" aria-label="Text input with dropdown button" style="background-color: #2f516f;color: white;" value=" % ">
                                     </div>
                                 </div>
@@ -211,9 +211,12 @@
                                 <button class="btn btn-outline-info  text-grey w-30 mt-3 mb-3" type="submit">
                                     Save
                                 </button>
-                                <button class="btn btn-outline-info  text-grey w-30 mt-3 mb-3" type="button" onclick="window.history.back()">
+                                <button class="btn btn-outline-info text-grey w-30 mt-3 mb-3" type="button" id="cancelButton">
                                     Cancel
                                 </button>
+                                
+                            
+                                
 
                             </div>
                             
@@ -231,8 +234,26 @@
 
 
 
-
-
+    <script>
+        // Get references to the form and cancel button
+        var editForm = document.getElementById("editForm");
+        var cancelButton = document.getElementById("cancelButton");
+    
+        // Add a click event listener to the cancel button
+        cancelButton.addEventListener("click", function() {
+            // Clear the input fields within the form
+            var inputFields = editForm.querySelectorAll("input");
+            inputFields.forEach(function(input) {
+                input.value = ""; // Clear the input field's value
+            });
+            
+            // Optionally, you can also clear the textarea fields in a similar way
+            var textareaFields = editForm.querySelectorAll("textarea");
+            textareaFields.forEach(function(textarea) {
+                textarea.value = ""; // Clear the textarea field's value
+            });
+        });
+    </script>
 
 
 

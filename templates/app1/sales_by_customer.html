@@ -1,0 +1,328 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load static %}
+{% if user.is_authenticated %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<style>
+    .bar {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .bar .left {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .bar .left input {
+        height: 5vh;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media print and (color) {
+        * {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+</style>
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="card-title" id="div2">
+                <center>
+                    <h6>{{cmp1.cname}}</h6>
+                    <h2 class="my-4" id="headline">SALES BY CUSTOMER</h2>
+                    <div class="display">
+                        <div id="d1" style="display: inline-block;"></div>
+                        <div id="d2" style="display: inline-block;"></div>
+                    </div>
+
+                </center>
+                <hr>
+            </div>
+
+            <div class="bar">
+                <div class=" left">
+                    <div class="px-2">
+                        <label style="text-align:left ">From</label><br>
+                        <input name="FromDate" class="inputdate form-control" type="date" id="in1">
+                    </div>
+
+                    <div class="px-2">
+                        <label style="text-align:left ">To</label><br>
+                        <input name="ToDate" type="date" class="inputdate form-control" id="in2">
+                    </div>
+                </div>
+                <div class="right">
+                    <button class="btn btn_pdf btn-outline-info">pdf</button>
+                    <button class="btn btn_print btn-outline-info">Print</button>
+                    <button class=" btn btn-outline-info" id="export-button" onclick="exportAsExcel()">Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card radius-15 print-only" id="pdf-card">
+        <div class="card-body">
+            <div class="container-fluid">
+
+                <table class="table table-responsive-md mt-4 table-hover table-bordered"
+                    style="background-color: rgba(0, 0, 0, 0.2);" id="myTable">
+                    <thead>
+                        <tr>
+                            <th>CUSTOMER</th>
+                            <th>INVOICE COUNT</th>
+                            <th>SALES</th>
+                            <th>SALES WITH TAX</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       {% for i in inv %}
+                       <td>{{i.customername}}</td>
+                       {% endfor %}
+                    </tbody>
+                </table>
+                <script>
+
+                    $(document).ready(function () {
+                        function calctot(col, id) {
+                            var total = 0;
+
+                            $("#myTable tbody tr").each(function () {
+                                var amount = parseFloat($(this).find("td:eq(" + col + ")").text()) || 0;
+                                total += amount;
+                            });
+
+                            $("#" + id).text('₹' + total.toFixed(2)); // Display total with two decimal places
+
+                            $("#totvalue").text('₹' + total.toFixed(2));
+                        }
+
+                        calctot(5, 'tot');
+                        calctot(8, 'balance'); // Call the function initially
+                    });
+                </script>
+
+            </div>
+            <!-- <div class="row p-4">
+                <div class="col-10">
+                    <div class="row mb-2">
+                        <div class="col-4 ">Total Sale: <p class="d-inline-block" id="sales">₹{{sale}}</p>
+                        </div>
+                        <div class="col-4">Total Purchase: <p class="d-inline-block" id="purchase">₹{{purchase}}</p></div>
+                        <div class="col-4">Total Expense: <p class="d-inline-block" id="expense">₹{{exp}}</p></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4">Total Money-In: <p class="d-inline-block" id="moneyin"> ₹{{totalpayr}}</p>
+                        </div>
+                        <div class="col-4">Total Money-Out:<p class="d-inline-block" id="moneyout">₹{{totalpay}}</p> </div>
+                        <div class="col-4" id="totalAmount"></div>
+                    </div>
+                </div>
+                <div class="col-2 text-center">
+                    <h5 class="pt-3">Total Recievable</h5>
+                    <h6 id="totvalue" class="d-inline-block">0.00</h6>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <script>
+    $(document).ready(function () {
+        // Initialize the total sum
+        let totalAmount = 0;
+
+        // Iterate through the table rows
+        $('#myTable tbody tr').each(function () {
+            // Get the 'type' and 'amount' columns in this row
+            const type = $(this).find('td:eq(2)').text();
+            const amount = parseFloat($(this).find('td:eq(5)').text());
+
+            // Check if the 'type' is 'invoice'
+            if (type.trim() === 'estimate') {
+                // Add the 'amount' to the total sum
+                totalAmount += amount;
+            }
+        });
+
+        // Display the total sum
+        $('#totalAmount').text('Total Amount for Invoices: ' + totalAmount);
+    });
+</script> -->
+<script type="text/javascript">
+    function exportAsExcel() {
+        const table = document.getElementById('myTable'); // Replace 'myTable' with your table's ID
+        const wb = XLSX.utils.table_to_book(table);
+
+        XLSX.writeFile(wb, 'patystatement.xlsx');
+    }
+</script>
+<script>
+    $(document).ready(function ($) {
+
+        $(document).on('click', '.btn_print', function (event) {
+            console.log('print1');
+            event.preventDefault();
+
+
+            const pdfCard = document.getElementById('pdf-card').cloneNode(true);
+
+            // Create a new window for printing
+            const printWindow = window.open('', '');
+            // pdfCard.style.color = 'black';
+            // pdfCard.style.backgroundColor = '#243e54';
+            var name = document.getElementById("headline").innerHTML;
+            const pageTitle = printWindow.document.createElement('h1');
+            pageTitle.textContent = name; // Replace 'Page Title' with your desired title text
+            pageTitle.style.textAlign = 'center';
+            pageTitle.style.color = 'black';
+
+            // Append the <h1> element to the new window's body
+            printWindow.document.body.appendChild(pageTitle);
+
+            // Append the cloned 'pdf-card' div to the new window
+            printWindow.document.body.appendChild(pdfCard);
+
+            // Ensure the styles are preserved by copying CSS from the original document
+            const stylesheets = document.styleSheets;
+            for (let i = 0; i < stylesheets.length; i++) {
+                const stylesheet = stylesheets[i];
+                if (stylesheet.href) {
+                    const link = printWindow.document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = stylesheet.href;
+                    printWindow.document.head.appendChild(link);
+                }
+            }
+
+            // Trigger the print dialog for the new window
+            printWindow.print();
+
+            // Close the new window after printing
+            printWindow.close();
+
+
+        });
+
+    });
+    $(document).ready(function ($) {
+
+
+        $(document).on('click', '.btn_pdf', function (event) {
+            console.log('print1');
+            event.preventDefault();
+            var name = document.getElementById("headline").innerHTML;
+            var div2 = document.getElementById("div2");
+            var element = document.getElementById('pdf-card');
+            element.style.color = 'white';
+            element.style.backgroundColor = '#243e54';
+            var opt =
+            {
+                margin: 1,
+                filename: name + '.pdf',
+                image: { type: 'png', quality: 1.0 },
+                html2canvas: { scale: 3, useCORS: true, backgroundColor: null },
+                jsPDF: { unit: 'in', format: 'a3', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+
+        });
+
+
+    });
+    
+
+</script>
+<script>
+    function setDate() {
+        var startDate = new Date(document.getElementById("in1").value);
+        var endDate = new Date(document.getElementById("in2").value);
+        var rows = table.getElementsByTagName("tr")
+
+
+        for (var i = 1; i < rows.length; i++) {
+            var row = rows[i];
+
+
+            var dateCell = row.cells[1];
+            var rowDate = new Date(dateCell.textContent);
+
+            if (rowDate >= startDate && rowDate <= endDate && firstColumnValue.indexOf(filterValue) > -1) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+
+        }
+    }
+    var table = document.getElementById("myTable");
+
+    var fromDate;
+    $('#in1').on('change', function () {
+        fromDate = $(this).val();
+        $('#in2').prop('min', function () {
+            return fromDate
+        })
+        var startDate = new Date(document.getElementById("in1").value);
+        var endDate = new Date(document.getElementById("in2").value);
+        var rows = table.getElementsByTagName("tr")
+       
+        for (var i = 1; i < rows.length; i++) {
+            var firstColumnValue = rows[i].getElementsByTagName("td")[0].textContent.toLowerCase();
+            var row = rows[i];
+            var dateCell = row.cells[1];
+            var rowDate = new Date(dateCell.textContent);
+
+            if (rowDate >= startDate && firstColumnValue.indexOf(filterValue) > -1) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+
+        }
+        var tdate = new Date(fromDate)
+        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("d1").innerHTML = tdate.toLocaleDateString(undefined, options);
+
+    })
+    var toDate;
+    $('#in2').on('change', function () {
+        toDate = $(this).val();
+        $('#in1').prop('max', function () {
+            return toDate
+        })
+        var startDate = new Date(document.getElementById("in1").value);
+        var endDate = new Date(document.getElementById("in2").value);
+        var rows = table.getElementsByTagName("tr");
+      
+        for (var i = 1; i < rows.length; i++) {
+            var firstColumnValue = rows[i].getElementsByTagName("td")[0].textContent.toLowerCase();
+            var row = rows[i];
+            var dateCell = row.cells[1];
+            var rowDate = new Date(dateCell.textContent);
+
+            if (rowDate >= startDate && rowDate <= endDate && firstColumnValue.indexOf(filterValue) > -1) {
+                row.style.display = "";
+                console.log("display");
+            } else {
+                row.style.display = "none";
+
+            }
+        }
+      
+        var tdate = new Date(toDate)
+        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("d2").innerHTML = "  To  " + tdate.toLocaleDateString(undefined, options);
+
+    })
+
+</script>
+
+{% endif %}
+
+{% endblock %}
