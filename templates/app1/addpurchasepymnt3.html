@@ -5,7 +5,7 @@
         <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
-                    <center><h2 class="mb-0" style="text-transform: uppercase;;">NEW PAYMENT MADE</h2></center>
+                    <center><h2 class="mb-0" style="text-transform: uppercase;;">NEW PAYMENT</h2></center>
                 </div>
                 <hr/>
             </div>
@@ -14,144 +14,83 @@
             {% csrf_token %}
             <div class="card radius-15">
                 <div class="card-body">
-                    <div class="row">
-                    
-                        <div class="col-md-3 mt-2">
-                            <label for="">Vendor</label>
-                            <div class="d-flex">
-                                <select name="vendor" id="select" class="custom-select">
-                                    <option selected disabled>Select Vendor</option>
-                                    {% for v in vndr %}
-                                    <option value="{{ v.firstname }} {{ v.lastname }}">{{ v.firstname }} {{ v.lastname }}</option>
+                    <div id="invoice">
+                        <div class="row mt-5">
+                            <div class="col-md-4">
+                                <label class="col-form-label">Vendor</label>
+                                <select name="vendor" id="select" class="form-control">
+                                    <option value="NIL" disabled selected>Select Vendor</option>
+                                    {% for c in vndr %}
+                                        <option value="{{ c.firstname }} {{ c.lastname }}">{{ c.firstname }} {{ c.lastname }}</option>
                                     {% endfor %}
                                 </select>
-                                
-                            </div>   
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <label class="col-form-label">Payment Date</label>
+                                <input type="date" name="paymentdate" id="date" class="form-control">
+                            </div>    
                         </div>
-                       
-                        <div class="col-md-3 mt-2" id="emailField" style="display: none;">
-                            <label for="">E mail</label>
-                            <input type="text" name="email" id="email" class="form-control">
-                        </div> 
-
-                        <div class="col-md-3 mt-2" id="gstTypeField" style="display: none;">
-                            <label for="">GST Treatment</label>
-                            <input type="text" name="gsttype" id="gsttype" class="form-control">
+                        <div class="row">
+                            <div class="col-md-4 mt-3">
+                                <label class="col-form-label">Reference</label>
+                                <input type="text" name="reference" class="form-control">
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4 mt-3">
+                                <label class="col-form-label">Paid Through</label>
+                                <div class="d-flex">
+                                    <select name="depto" id="" class="form-control" style="width: 95%;">
+                                        <option disabled>Cash</option>
+                                        {% for a in acc %}
+                                            <option value="{{ a.name }}">{{ a.name }}</option>
+                                        {% endfor %}
+                                        <option disabled>Bank</option>
+                                        {% for a in acc1 %}
+                                            <option value="{{ a.name }}">{{ a.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <a role="button" class="btn btn-outline-secondary ml-1" data-target="#newaccount" data-toggle="modal">+</a>
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="col-md-3 mt-2" id="gstinField" style="display: none;">
-                            <label for="">GST Number</label>
-                            <input type="text" name="gstin" id="gstin" class="form-control">
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="row">
-                        <div class="col-md-4 mt-3">
-                            <label for="">Payment Date</label>
-                            <input type="date" name="paymentdate" id="date" class="form-control" required>
-                        </div>
-                    
-                        <div class="col-md-4 mt-3">
-                            <label for="">Reference</label>
-                            <input type="text" name="reference" id="" class="form-control" required>
-                        </div>
-
                         <div class="row mt-4">
                             <div class="col-md-4">
                                 <input type="text" id="newmethod" onchange="addtemopt(this)" class="form-control"
                                        style="display: none;">
                             </div>
                         </div>
-                        
-                        <div class="col-md-4 mt-3">
-                            <label for="">Payment Method</label>
-                            <div class="d-flex">
-                                <select name="paymentmethod" id="paymeth" class="form-control" style="width:87%">
-                                    <option value="Bank Transfer">Bank Transfer</option>
-                                    <option value="Cash" selected>Cash</option>
-                                    <option value="Cheque">Cheque</option>
-                                    <option value="Credit Card">Credit Card</option>
-                                    {% for p in pymt %}
-                                        <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
-                                    {% endfor %}
-                                </select>
-                                <a class="btn btn-outline-secondary ml-1" data-target="#pymntmeth" data-toggle="modal" role="button">+</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <br><br>
-                    
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Paid Through*</label>
-                        <div class="col-sm-10 col-md-7 col-9 ml-5">
-                            <div class="input-group mb-2">
-                                <div>
-                                    <input type="radio" id="cashRadio" name="paid_through" value="cash" style="margin-left: 40px;">
-                                    <label for="cashRadio">In-Hand Cash</label>
-                                </div>
-                
-                                <div>
-                                    <input type="radio" id="bankRadio" name="paid_through" value="bank" style="margin-left: 60px;">
-                                    <label for="bankRadio">Bank</label>
-                                </div>
-                
-                                <div>
-                                    <input type="radio" id="chequeRadio" name="paid_through" value="cheque" style="margin-left: 60px;">
-                                    <label for="chequeRadio">Cheque</label>
-                                </div>
-                
-                                <div>
-                                    <input type="radio" id="upiRadio" name="paid_through" value="upi" style="margin-left: 60px;">
-                                    <label for="upiRadio">UPI</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="col-form-label">Payment Method</label>
+                                <div class="d-flex">
+                                    <select name="paymentmethod" id="paymeth" class="form-control" style="width:87%">
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Cash" selected>Cash</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="Credit Card">Credit Card</option>
+                                        {% for p in pymt %}
+                                            <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <a class="btn btn-outline-secondary ml-1" data-target="#pymntmeth" data-toggle="modal" role="button">+</a>
                                 </div>
                             </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <label class="col-form-label">Amount</label>
+                                <input type="number" onchange="showinnum('amre', this)" id="amtrcvd"
+                                       class="form-control"
+                                       name="amtreceived">
+                            </div>
                         </div>
-                    </div>
-                
-                    <div id="bankFields" class="form-group row">
-                        <label class="col-lg-2 col-form-label" style="margin-left: -390px;">Select Bank:</label>
-                        <div class="col-sm-10 col-md-7 col-9 ml-5">
-                            <div class="input-group mb-2">
-                                <select id="bankName" style="margin-left: 40px;" name="bank_name_select" class="form-control bg-light text-white">
-                                    <!-- Add your bank options here -->
-                          {% for v in bank %}
-                          <option value=" {{ v.bank_name }}">{{ v.bank_name }}</option>
-                          {% endfor %}
-            
-                        </select>
-                        <!-- <button type="button" class="btn btn-sm" style="background-color: rgb(230, 171, 45); color: #fff;" data-toggle="modal" data-target="#Add_bank">+</button> -->
-                      </div>
-                      </div>
-                      </div>
-
-
-                      <div id="chequeFields" class="form-group row">
-                        <label class="col-lg-2 col-form-label" style="margin-left: -390px;">Cheque Number</label>
-                        <div class="col-sm-10 col-md-7 col-9 ml-5">
-                            <input type="text" name="cheque_number" class="form-control" placeholder="Cheque Number">
+                        <div class="row mt-4 mb-4">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-4">
+                                <h5 class="text-grey">AMOUNT</h5>
+                                <h5 class="text-light" id="amre">0.00</h5>
+                            </div>
                         </div>
-                    </div>
-                
-                    <div id="upiFields" class="form-group row">
-                        <label class="col-lg-2 col-form-label" style="margin-left: -390px;">UPI ID</label>
-                        <div class="col-sm-10 col-md-7 col-9 ml-5">
-                            <input type="text" name="upi_id" class="form-control" placeholder="UPI ID or number">
-                        </div>
-                    </div>
-<br>
-                    <div class="col-md-3 mt-3">
-                        <label for="">Amount</label>
-                        <input type="number" onchange="showinnum('amre', this)" id="amtrcvd"
-                                   class="form-control"
-                                   name="amtreceived" class="form-control">
-                    </div>
-                    <div class="col-md-3 mt-3">
-                        <h5 class="text-grey">AMOUNT</h5>
-                        <h5 class="text-light" id="amre">0.00</h5>
-                    </div>
-                    <br><br>
                         <div class="row clearfix">
                             <div class="col-md-12 table-responsive-md">
                                 <table class="table table-bordered table-hover" id="tab_logic" style="background-color: rgba(0,0,0,0.4);">
@@ -1125,82 +1064,5 @@
 
         }
     </script>
-
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
-
-<script>
-    $(document).ready(function () {
-        $('#select').on('change', function () {
-            var select = $('#select').val();
-            $.ajax({
-                type: "GET",
-                url: "{% url 'getvendordata3' %}",
-                data: {
-                    id: select
-                },
-                success: function (response) {
-                    var json_data = JSON.parse(response);
-                    if (json_data.length > 0) {
-                        var vendorData = json_data[0]; // Assuming you are expecting one vendor data
-                        $('#email').val(vendorData.email);
-                        $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
-
-                        // Show email and GST treatment fields
-                        $('#emailField, #gstTypeField').show();
-                        $('#gstinField').show(); // Show GST Number field if it has a value
-
-                        // Set values for email and GST treatment fields
-                        $('#email').val(vendorData.email);
-                        $('#gsttype').val(vendorData.gsttype);
-
-                        // Check if GST Number has a value, hide it if empty
-                        if (vendorData.gstin) {
-                            $('#gstin').val(vendorData.gstin);
-                        } else {
-                            $('#gstinField').hide();
-                        }
-                    } else {
-                        // Handle the case where no data was found for the selected ID.
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Handle the AJAX error.
-                }
-            });
-        });
-    });
-</script>
-
-    
-<script>
-    function showFieldsForPayment(paymentType) {
-        var bankFields = document.getElementById("bankFields");
-        var chequeFields = document.getElementById("chequeFields");
-        var upiFields = document.getElementById("upiFields");
-
-        bankFields.style.display = (paymentType === "bank") ? "block" : "none";
-        chequeFields.style.display = (paymentType === "cheque") ? "block" : "none";
-        upiFields.style.display = (paymentType === "upi") ? "block" : "none";
-    }
-
-    window.onload = function() {
-        var paymentRadios = document.getElementsByName("paid_through");
-        var bankFields = document.getElementById("bankFields");
-        var chequeFields = document.getElementById("chequeFields");
-        var upiFields = document.getElementById("upiFields");
-
-        bankFields.style.display = "none"; // Initially hide the bank fields
-        chequeFields.style.display = "none"; // Initially hide the cheque fields
-        upiFields.style.display = "none"; // Initially hide the upi fields
-
-        paymentRadios.forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                showFieldsForPayment(this.value);
-            });
-        });
-    }
-</script>
-
-
+   
 {% endblock %}

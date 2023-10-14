@@ -1235,6 +1235,11 @@ urlpatterns = [
  
 
     path('getvendordata3',views.getvendordata3,name='getvendordata3'),
+    path('credit_period_rbill3',views.credit_period_rbill3,name='credit_period_rbill3'),
+    path('credit_dropdown_rbill2',views.credit_dropdown_rbill2,name='credit_dropdown_rbill2'),
+    path('getperiod_rbill2',views.getperiod_rbill2,name='getperiod_rbill2'),
+    path('sort_payment_name',views.sort_payment_name,name='sort_payment_name'),
+    # path('getperiod_rbill2',views.getperiod_rbill2,name='getperiod_rbill2'),
 
     
 ]

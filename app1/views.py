@@ -35712,9 +35712,10 @@ def addpurchasepymnt(request):
         cmp1 = company.objects.get(id=request.session['uid'])
         vndr = vendor.objects.filter(cid=cmp1)
         pymt = paymentmethod.objects.filter(cid=cmp1)
+        bank = BankAccount.objects.all()
         acc = accounts1.objects.filter(cid=cmp1,acctype='Cash')
         acc1 = accounts1.objects.filter(cid=cmp1,acctype='Bank')
-        context = {'cmp1':cmp1,'vndr':vndr,'pymt':pymt,'acc':acc,'acc1':acc1}
+        context = {'cmp1':cmp1,'vndr':vndr,'pymt':pymt,'acc':acc,'acc1':acc1,'bank':bank}
         return render(request,'app1/addpurchasepymnt.html',context)
     return redirect('/')
 
@@ -46548,40 +46549,11 @@ def gocustomers2(request):
     except:
         return redirect('godash')
     
-# from django.db.models import OuterRef, Subquery
-
-# @login_required(login_url='regcomp')
-# def sort_payment_name(request):
-#     cmp1 = company.objects.get(id=request.session["uid"])
-    
-#     subquery = mjournal1.objects.filter(mjrnl=OuterRef('id')).order_by('id').values('contact')[:1]
-    
-#     mj = mjournal.objects.filter(cid=cmp1).annotate(
-#         first_contact=Subquery(subquery)
-#     ).order_by('first_contact')
-    
-#     return render(request, 'app1/mjournal.html', {'mj': mj, 'cmp1': cmp1})
 
 
 
-from django.shortcuts import get_object_or_404
-from .models import purchasepayment  # Import your models
 
-def sort_payment_name(request):
-    try:
-        # Assuming request.session["uid"] contains the company's ID
-        company_id = request.session.get("uid")
 
-        # Retrieve the company object based on the ID
-        cmp1 = get_object_or_404(company, id=company_id)
-
-        # Filter purchasepayment objects by the company's ID (cid field)
-        employee = purchasepayment.objects.filter(cid=cmp1).order_by('vendor')
-
-        return render(request, 'app1/gopurchasepymnt.html', {'employee': employee, 'cmp1': cmp1})
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return HttpResponse(f"An error occurred: {e}")
     
 # @login_required(login_url='login')
 # def get_vendor_credit_det(request):
@@ -46717,3 +46689,36 @@ def credit_period_rbill3(request):
             cpd=creditperiod(newperiod = period,cid=cmp1)
             cpd.save()
             return HttpResponse({"message": "success"})
+
+def credit_dropdown_rbill2(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1= company.objects.get(id=request.session["uid"])
+        options = {}
+        option_objects = creditperiod.objects.filter(cid = cmp1)
+        for option in option_objects:
+           
+            options[option.id] = option.newperiod
+
+        return JsonResponse(options)
+    
+def getperiod_rbill2(request):
+    id = request.GET.get('id')
+    list = []
+    toda = date.today() + timedelta(days=int(id))
+    newdate = toda.strftime("%d-%m-%Y")
+    dict = {'newdate': newdate}
+    list.append(dict)
+    return JsonResponse(json.dumps(list), content_type="application/json", safe=False)
+
+
+
+def sort_payment_name(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    py = purchasepayment.objects.filter(cid=cmp1).order_by('vendor')
+
+    return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
+
