@@ -46751,3 +46751,18 @@ def sort_payment_name(request):
 
     return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
 
+def sort_payment_name(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    py = purchasepayment.objects.filter(cid=cmp1).order_by('vendor')
+
+    return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
+def sort_payment_name(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    py = purchasepayment.objects.filter(cid=cmp1).order_by('vendor')
+
+    return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
+def sort_payment_name(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    py = purchasepayment.objects.filter(cid=cmp1).order_by('vendor')
+
+    return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
