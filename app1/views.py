@@ -35735,6 +35735,12 @@ def createpurchasepymnt(request):
                                     amtreceived=request.POST['amtreceived'],
                                     paymentamount=request.POST['paymentamount'],
                                     amtcredit=request.POST['amtcredit'],
+                                    
+                                    paid_through = request.POST.get("paid_through"),
+                                    bank_name = request.POST.get("bank_name_select"),
+                                    cheque_number = request.POST.get("cheque_number"),
+                                    upi_id = request.POST.get("upi_id"),
+
                                     cid=cmp1)
 
             pymnt1.save()
@@ -46715,6 +46721,29 @@ def getperiod_rbill2(request):
     return JsonResponse(json.dumps(list), content_type="application/json", safe=False)
 
 
+
+def sort_payment_name(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    py = purchasepayment.objects.filter(cid=cmp1).order_by('vendor')
+
+    return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
+
+def getperiod_rbill2(request):
+    id = request.GET.get('id')
+    list = []
+    toda = date.today() + timedelta(days=int(id))
+    newdate = toda.strftime("%d-%m-%Y")
+    dict = {'newdate': newdate}
+    list.append(dict)
+    return JsonResponse(json.dumps(list), content_type="application/json", safe=False)
+
+
+
+def sort_payment_name(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    py = purchasepayment.objects.filter(cid=cmp1).order_by('vendor')
+
+    return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
 
 def sort_payment_name(request):
     cmp1 = company.objects.get(id=request.session["uid"])
