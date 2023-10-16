@@ -35726,22 +35726,47 @@ def createpurchasepymnt(request):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
+        
         if request.method == 'POST':
-            pymnt1 = purchasepayment(vendor = request.POST['vendor'],
-                                    paymentdate = request.POST['paymentdate'],
+            paid_through = request.POST['paid_through']
+            if paid_through == 'cash':
+                cash = 'In-Hand Cash'
+                account_number = None
+                cheque_number = None
+                upi_id = None
+            elif paid_through == 'bank':
+                account_number = request.POST['account_number']
+                cash = None
+                cheque_number = None
+                upi_id = None
+            elif paid_through == 'cheque':
+                cheque_number = request.POST['cheque_number']
+                cash = None
+                account_number = None
+                upi_id = None
+            else:
+                upi_id = request.POST['upi_id']
+                cash = None
+                account_number = None
+                cheque_number = None
+
+            pymnt1 = purchasepayment(vendor=request.POST['vendor'],
+                                    paymentdate=request.POST['paymentdate'],
                                     paymentmethod=request.POST['paymentmethod'],
-                                    depositeto=request.POST['depto'],
+                                    
                                     reference=request.POST['reference'],
                                     amtreceived=request.POST['amtreceived'],
                                     paymentamount=request.POST['paymentamount'],
                                     amtcredit=request.POST['amtcredit'],
-                                    
-                                    paid_through = request.POST.get("paid_through"),
-                                    bank_name = request.POST.get("bank_name_select"),
-                                    cheque_number = request.POST.get("cheque_number"),
-                                    upi_id = request.POST.get("upi_id"),
-
+                                    paid_through=request.POST['paid_through'],
+                                    account_number=account_number,
+                                    cheque_number=cheque_number,
+                                    upi_id=upi_id,
                                     cid=cmp1)
+
+            pymnt1.save()
+            # Rest of your code remains unchanged
+
 
             pymnt1.save()
 
@@ -35773,7 +35798,7 @@ def createpurchasepymnt(request):
             bs4.cid = cmp1
             bs4.acctype = "Current Asset"
             bs4.transactions = "Vendor Payment"
-            bs4.account = pymnt1.depositeto
+            bs4.account = pymnt1.paid_through
             bs4.bill_pymnt = pymnt1
             bs4.details1 = pymnt1.pymntid
             bs4.details2 = pymnt1.reference
@@ -35804,18 +35829,18 @@ def createpurchasepymnt(request):
                 name='Accounts Payable(Creditors)',cid=cmp1)
             accont.balance = accont.balance - paymentamount
             accont.save()
-            depositeto = request.POST['depto']
+            # depositeto = request.POST['depto']
             try:
-                if accounts1.objects.get(name=depositeto,cid=cmp1):
-                    print(depositeto)
-                    acconut = accounts1.objects.get(name=depositeto,cid=cmp1)
+                if accounts1.objects.get(name=paid_through,cid=cmp1):
+                    print(paid_through)
+                    acconut = accounts1.objects.get(name=paid_through,cid=cmp1)
                     acconut.balance = acconut.balance + paymentamount
                     acconut.save()
             except:
                 pass
             try:
-                if accounts.objects.get(name=depositeto,cid=cmp1):
-                    acconut = accounts.objects.get(name=depositeto, cid=cmp1)
+                if accounts.objects.get(name=paid_through,cid=cmp1):
+                    acconut = accounts.objects.get(name=paid_through, cid=cmp1)
                     acconut.balance = acconut.balance + paymentamount
                     acconut.save()
             except:
@@ -35835,7 +35860,7 @@ def createpurchasepymnt(request):
                 for i in pymtbill:
                     if i.billno != "Vendor Opening Balance":
                         if purchasebill.objects.get(bill_no=i.billno) and i.billno != 'undefined':
-                            print(depositeto)
+                            print(paid_through)
                             pbl = purchasebill.objects.get(bill_no=i.billno)
                             pbl.amtrecvd = int(pbl.amtrecvd) + int(i.payments)
                             pbl.balance_due = float(i.amountdue) - float(i.payments)
@@ -46737,3 +46762,81 @@ def getperiod_rbill2(request):
     list.append(dict)
     return JsonResponse(json.dumps(list), content_type="application/json", safe=False)
 
+# def sort_employee_name(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     employee = payrollemployee.objects.filter(cid=cmp1).order_by('firstname','lastname')
+
+#     return render(request, 'app1/listemployee.html', {'employee': employee, 'cmp1': cmp1})
+
+from django.shortcuts import render
+
+def sort_employee_name(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employees = payrollemployee.objects.filter(cid=cmp1).order_by('firstname', 'lastname')
+
+    return render(request, 'app1/listemployee.html', {'employee': employees, 'cmp1': cmp1})
+
+
+# from django.db import connection
+
+# def sort_employeesalary(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     queryset = payrollemployee.objects.filter(cid=cmp1).order_by('-amount')
+    
+#     print(queryset.query)  # Print the generated SQL query for debugging purposes
+
+#     return render(request, 'app1/listemployee.html', {'employee': queryset, 'cmp1': cmp1})
+from django.db.models.functions import Cast
+from django.db.models import IntegerField
+
+@login_required(login_url='regcomp')
+def sort_employeesalary(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    
+    # Annotate and cast 'amount' to an integer
+    employee = payrollemployee.objects.filter(cid=cmp1).annotate(
+        mj_no_int=Cast('amount', IntegerField())
+    ).order_by('-mj_no_int')  # Use '-' to sort in descending order
+    
+    return render(request, 'app1/listemployee.html', {'employee': employee, 'cmp1': cmp1})
+
+
+
+# from django.shortcuts import render, redirect
+# from .models import payrollemployee
+
+# @login_required(login_url='regcomp')
+# def emp_active(request):
+#     cmp1 = company.objects.get(id=request.session['uid'])
+#     employee = payrollemployee.objects.filter(cid=cmp1, is_active=True)
+#     context = {'cmp1': cmp1, 'employee': employee}
+#     return render(request, 'app1/emp_active.html', context)
+
+# @login_required(login_url='regcomp')
+# def emp_inactive(request):
+#     cmp1 = company.objects.get(id=request.session['uid'])
+#     employee = payrollemployee.objects.filter(cid=cmp1, is_active=False)
+#     context = {'cmp1': cmp1, 'employee': employee}
+#     return render(request, 'app1/emp_inactive.html', context)
+
+@login_required(login_url='regcomp')
+def emp_active(request):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        employee=payrollemployee.objects.filter(cid=cmp1,is_active=True)
+        context = {'cmp1': cmp1, 'employee':employee}
+        return render(request,'app1/emp_active.html',context)
+            
+    except:
+        return redirect('listpayrollemployee')
+
+@login_required(login_url='regcomp')
+def emp_inactive(request):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        employees = payrollemployee.objects.filter(cid=cmp1, is_active=False)  # Filter for inactive employees
+        context = {'cmp1': cmp1, 'employee': employees}
+        return render(request, 'app1/emp_inactive.html', context)
+    except:
+        return redirect('listpayrollemployee')
+   

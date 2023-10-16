@@ -67,7 +67,7 @@
             <div class="card radius-15">
                 <div class="card-body">
                     <div class="card-title">
-                        <center><h2 class="mb-0">ALL EMPLOYEES</h2></center>
+                        <center><h2 class="mb-0">INACTIVE EMPLOYEES</h2></center>
                         <hr>
                         <div class="btn-group col-md-2" style="float: right;">
                             <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
@@ -163,12 +163,8 @@
                                     <td>{{ emp.email }}</td>
                                     <td>{{ emp.amount }}</td>
                                     <td>{{emp.effectivefrom}}</td>
-                                    <!-- <td>{{emp.status}}</td> -->
-                                    {% if emp.is_active %}
-                                            <td>Active</td>
-                                            {% else %}
-                                            <td>Inactive</td>
-                                            {% endif %}
+                                    <td>{{emp.status}}</td>
+                                    
                                 </tr>
                                 {% endfor %}
                             </tbody>

@@ -1239,7 +1239,10 @@ urlpatterns = [
     path('credit_dropdown_rbill2',views.credit_dropdown_rbill2,name='credit_dropdown_rbill2'),
     path('getperiod_rbill2',views.getperiod_rbill2,name='getperiod_rbill2'),
     path('sort_payment_name',views.sort_payment_name,name='sort_payment_name'),
-    # path('getperiod_rbill2',views.getperiod_rbill2,name='getperiod_rbill2'),
+    path('sort_employee_name',views.sort_employee_name,name='sort_employee_name'),
+    path('sort_employeesalary',views.sort_employeesalary,name='sort_employeesalary'),
+    path('emp_active/',views.emp_active,name='emp_active'),
+    path('emp_inactive/',views.emp_inactive,name='emp_inactive'),
 
     
 ]

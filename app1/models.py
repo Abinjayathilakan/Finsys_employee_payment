@@ -1521,6 +1521,15 @@ class purchasepayment(models.Model):
     amtreceived = models.CharField(max_length=100,null=True)
     paymentamount = models.CharField(max_length=100,null=True)
     amtcredit = models.CharField(max_length=100, default='0')
+    
+    paid_through = models.CharField(max_length=100,null=True)
+    account_number = models.CharField(max_length=100,null=True)
+    cheque_number = models.CharField(max_length=100,null=True)
+    upi_id = models.CharField(max_length=100,null=True)
+    cash = models.CharField(max_length=100,null=True)
+    
+    
+    
 
 class purchasepayment1(models.Model):
     pymnt = models.ForeignKey(purchasepayment, on_delete=models.CASCADE,null=True)
@@ -2035,6 +2044,8 @@ class payrollemployee(models.Model):
     tempcountry = models.CharField(max_length=100,null=True)
     payhead = models.CharField(max_length=100,null=True)
     status = models.CharField(max_length=100,default='Active')
+    is_active=models.BooleanField(default=True,null=True,blank=True)
+    
     file = models.FileField(upload_to='payrollemployee',default="")
     adharnumber = models.CharField(max_length=250,null=True)
     istds = models.CharField(max_length=100,null=True)
