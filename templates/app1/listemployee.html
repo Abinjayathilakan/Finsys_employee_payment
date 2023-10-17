@@ -121,9 +121,9 @@
                                     <div class="dropdown-menu" style="background-color: black;">
                                         <a class="dropdown-item" href="{% url 'listpayrollemployee' %}"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
-                                        <a class="dropdown-item" href="{% url 'emp_active' %}"
+                                        <a class="dropdown-item" href="{% url 'listpayrollemployee' %}?status=active"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;" >Active</a>
-                                        <a class="dropdown-item" href="{% url 'emp_inactive' %}"
+                                        <a class="dropdown-item" href="{% url 'listpayrollemployee' %}?status=inactive"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;">Inactive</a>
                                        
                                     </div> 
@@ -155,22 +155,18 @@
                             <tbody>
                                 {% for emp in employee %}
                                 <tr class="table-row " data-href="{% url 'payrollemployeeprofile' emp.employeeid%}">
-                                   
                                     <td>{{ emp.firstname }} {{ emp.lastname }}</td>
                                     <td>{{ emp.employees }}</td>
                                     <td>{{ emp.pannumber }}</td>
                                     <td>{{ emp.mobile }}</td>
                                     <td>{{ emp.email }}</td>
                                     <td>{{ emp.amount }}</td>
-                                    <td>{{emp.effectivefrom}}</td>
-                                    <!-- <td>{{emp.status}}</td> -->
-                                    {% if emp.is_active %}
-                                            <td>Active</td>
-                                            {% else %}
-                                            <td>Inactive</td>
-                                            {% endif %}
+                                    <td>{{ emp.effectivefrom }}</td>
+                                    <td>{{ emp.status }}</td>
+                                    
                                 </tr>
-                                {% endfor %}
+                            {% endfor %}
+
                             </tbody>
                         </table>
                     </div>

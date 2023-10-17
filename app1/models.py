@@ -1514,6 +1514,7 @@ class purchasepayment(models.Model):
     pymntid = models.AutoField(('pyid'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     reference = models.CharField(max_length=100,null=True)
+    
     vendor = models.CharField(max_length=100)
     paymentdate = models.DateField(null=True)
     paymentmethod = models.CharField(max_length=100,null=True)
@@ -1527,6 +1528,23 @@ class purchasepayment(models.Model):
     cheque_number = models.CharField(max_length=100,null=True)
     upi_id = models.CharField(max_length=100,null=True)
     cash = models.CharField(max_length=100,null=True)
+    email = models.CharField(max_length=100,null=True)
+    gst_treatment = models.CharField(max_length=100,null=True)
+    gst_number = models.CharField(max_length=100,null=True)
+    status = models.CharField(max_length=100,default="Draft")
+    def save(self, *args, **kwargs):
+        if not self.reference:
+            # Get the current maximum reference number from the database
+            max_reference = purchasepayment.objects.all().aggregate(models.Max('reference'))['reference__max']
+
+            # If no reference numbers exist yet, start with 1, otherwise increment the max reference number
+            if max_reference is None:
+                self.reference = "1"
+            else:
+                self.reference = str(int(max_reference) + 1)
+
+        super(purchasepayment, self).save(*args, **kwargs)
+    
     
     
     
@@ -2044,14 +2062,13 @@ class payrollemployee(models.Model):
     tempcountry = models.CharField(max_length=100,null=True)
     payhead = models.CharField(max_length=100,null=True)
     status = models.CharField(max_length=100,default='Active')
-    is_active=models.BooleanField(default=True,null=True,blank=True)
+    is_active = models.BooleanField(default=True,null=True,blank=True)
     
     file = models.FileField(upload_to='payrollemployee',default="")
     adharnumber = models.CharField(max_length=250,null=True)
     istds = models.CharField(max_length=100,null=True)
     tdstype = models.CharField(max_length=100,null=True)
     tds = models.CharField(max_length=100,null=True)
-
 
 
 class payrollcomments(models.Model):

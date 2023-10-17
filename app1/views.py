@@ -35750,23 +35750,35 @@ def createpurchasepymnt(request):
                 account_number = None
                 cheque_number = None
 
-            pymnt1 = purchasepayment(vendor=request.POST['vendor'],
-                                    paymentdate=request.POST['paymentdate'],
-                                    paymentmethod=request.POST['paymentmethod'],
-                                    
-                                    reference=request.POST['reference'],
-                                    amtreceived=request.POST['amtreceived'],
-                                    paymentamount=request.POST['paymentamount'],
-                                    amtcredit=request.POST['amtcredit'],
-                                    paid_through=request.POST['paid_through'],
-                                    account_number=account_number,
-                                    cheque_number=cheque_number,
-                                    upi_id=upi_id,
-                                    cid=cmp1)
+            if 'action' in request.POST:
+                action = request.POST['action']
+                if action == 'draft':
+                    status = "Draft"
+                elif action == 'save':
+                    status = "Save"
 
-            pymnt1.save()
-            # Rest of your code remains unchanged
+            # Generate the reference number based on the current maximum reference in the database
+            max_reference = purchasepayment.objects.aggregate(models.Max('reference'))['reference__max']
+            next_reference = str(int(max_reference) + 1) if max_reference else "1"
 
+            pymnt1 = purchasepayment(
+                vendor=request.POST['vendor'],
+                email=request.POST['email'],
+                gst_treatment=request.POST['gsttype'],
+                gst_number=request.POST['gstin'],
+                paymentdate=request.POST['paymentdate'],
+                paymentmethod=request.POST['paymentmethod'],
+                reference=next_reference,  # Use the generated reference number
+                amtreceived=request.POST['amtreceived'],
+                paymentamount=request.POST['paymentamount'],
+                amtcredit=request.POST['amtcredit'],
+                paid_through=request.POST['paid_through'],
+                account_number=account_number,
+                cheque_number=cheque_number,
+                upi_id=upi_id,
+                status=status,
+                cid=cmp1
+            )
 
             pymnt1.save()
 
@@ -46753,6 +46765,12 @@ def sort_payment_name(request):
 
     return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
 
+def sort_paid_through(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    py = purchasepayment.objects.filter(cid=cmp1).order_by('paid_through')
+
+    return render(request, 'app1/gopurchasepymnt.html', {'py': py, 'cmp1': cmp1})
+
 def getperiod_rbill2(request):
     id = request.GET.get('id')
     list = []
@@ -46819,24 +46837,43 @@ def sort_employeesalary(request):
 #     context = {'cmp1': cmp1, 'employee': employee}
 #     return render(request, 'app1/emp_inactive.html', context)
 
-@login_required(login_url='regcomp')
-def emp_active(request):
-    try:
-        cmp1 = company.objects.get(id=request.session['uid'])
-        employee=payrollemployee.objects.filter(cid=cmp1,is_active=True)
-        context = {'cmp1': cmp1, 'employee':employee}
-        return render(request,'app1/emp_active.html',context)
-            
-    except:
-        return redirect('listpayrollemployee')
+# from django.db.models import Q
 
-@login_required(login_url='regcomp')
-def emp_inactive(request):
+# # ...
+
+# @login_required(login_url='regcomp')
+# def emp_active(request):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         employees = payrollemployee.objects.filter(cid=cmp1)  # Get all employees
+#         context = {'cmp1': cmp1, 'employee': employees}
+#         return render(request, 'app1/emp_active.html', context)
+#     except:
+#         return redirect('listpayrollemployee')
+
+
+# def emp_inactive(request):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         inactive_employees = payrollemployee.objects.filter(cid=cmp1, is_active=False)
+#         context = {'cmp1': cmp1, 'employee': inactive_employees}
+#         return render(request, 'app1/emp_inactive.html', context)
+#     except:
+#         return redirect('listpayrollemployee')
+
+   
+def payment_save(request):
     try:
         cmp1 = company.objects.get(id=request.session['uid'])
-        employees = payrollemployee.objects.filter(cid=cmp1, is_active=False)  # Filter for inactive employees
-        context = {'cmp1': cmp1, 'employee': employees}
-        return render(request, 'app1/emp_inactive.html', context)
+        py = purchasepayment.objects.filter(status='Save',cid=cmp1)
+        return render(request,'app1/gopurchasepymnt.html',{'py':py})
     except:
-        return redirect('listpayrollemployee')
-   
+        return redirect('gopurchasepymnt')
+    
+def payment_draft(request):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        py = purchasepayment.objects.filter(status='Draft',cid=cmp1)
+        return render(request,'app1/gopurchasepymnt.html',{'py':py})
+    except:
+        return redirect('gopurchasepymnt') 

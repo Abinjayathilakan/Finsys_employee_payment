@@ -95,7 +95,7 @@
                                 <!-- <a class="dropdown-item  " href="{% url 'sales_num_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number <icon class=" fas fa-arrow-up"></icon></a> -->
 
-                                <a class="dropdown-item " href="{% url 'sort_journal' %}"
+                                <a class="dropdown-item " href="{% url 'sort_paid_through' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center; " >Paid Through</a>
                                 <!-- <a class="dropdown-item " href="{% url 'sales_date_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
@@ -122,10 +122,10 @@
                         <div class="dropdown-menu" style="background-color: black;">
                             <a class="dropdown-item" href="{% url 'gopurchasepymnt' %}"
                                style="height: 40px; font-size: 15px; color: white;" >All</a>
-                            <a class="dropdown-item" href="{% url 'mjdraft' %}"
+                            <a class="dropdown-item" href="{% url 'payment_draft' %}"
                                style="height: 40px; font-size: 15px; color: white;">Draft</a>
-                            <a class="dropdown-item" href="{% url 'mjpublish' %}"
-                               style="height: 40px; font-size: 15px; color: white;">Published</a>
+                            <a class="dropdown-item" href="{% url 'payment_save' %}"
+                               style="height: 40px; font-size: 15px; color: white;">Save</a>
                             
                     </div>  
                             </div>
@@ -142,22 +142,27 @@
                             <thead>
                                 <tr>
                                     <th>Payment</th>
-                                    <th>Reference</th>
-                                    <th>Payment Date</th>
                                     <th>Vendor</th>
-                                    <th>Payment Method</th>
-                                    <th>Amount Recieved</th>
+                                    <th>E mail</th>
+                                    <!-- <th>Reference</th> -->
+                                    <th>Payment Date</th>
+                                    <th>Paid Through</th>
+                                    <th>Amount</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for p in py %}
                                 <tr onclick="window.location='viewpurchasepymnt/{{ p.pymntid }}';">
                                     <td><strong>{{ p.pymntid }}</strong></td>
-                                    <td>{{ p.reference }}</td>
-                                    <td>{{ p.paymentdate |date:'d-m-Y' }}</td>
                                     <td>{{ p.vendor }}</td>
-                                    <td>{{ p.paymentmethod }}</td>
+                                    <td>{{ p.email }}</td>
+                                    <td>{{ p.paymentdate |date:'d-m-Y' }}</td>
+                                    <td>{{ p.paid_through }}</td>
                                     <td>{{ p.paymentamount }}</td>
+                                    <td>{{ p.paymentamount }}</td>
+                                    <td>{{ p.status }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>

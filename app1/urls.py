@@ -1241,8 +1241,10 @@ urlpatterns = [
     path('sort_payment_name',views.sort_payment_name,name='sort_payment_name'),
     path('sort_employee_name',views.sort_employee_name,name='sort_employee_name'),
     path('sort_employeesalary',views.sort_employeesalary,name='sort_employeesalary'),
-    path('emp_active/',views.emp_active,name='emp_active'),
-    path('emp_inactive/',views.emp_inactive,name='emp_inactive'),
+    path('sort_paid_through/',views.sort_paid_through,name='sort_paid_through'),
+    path('payment_save/',views.payment_save,name='payment_save'),
+    path('payment_draft/',views.payment_draft,name='payment_draft'),
+    # path('emp_inactive/',views.emp_inactive,name='emp_inactive'),
 
     
 ]
