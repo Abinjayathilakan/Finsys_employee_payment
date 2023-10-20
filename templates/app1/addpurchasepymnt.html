@@ -389,17 +389,15 @@
             } else {
                 pass
             }
-        }
-
-
-        
+        }      
     </script>
+    
     <script>
         $("#select").change(function () {
             const select = $(this).val();  
             $.ajax({                      
                 type: "POST",
-                url: "{% url 'getbilldata' %}",
+                url: "{% url 'getbilldata2' %}",
                 data: {
                     'select': select,     
                     'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),

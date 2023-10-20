@@ -1244,7 +1244,12 @@ urlpatterns = [
     path('sort_paid_through/',views.sort_paid_through,name='sort_paid_through'),
     path('payment_save/',views.payment_save,name='payment_save'),
     path('payment_draft/',views.payment_draft,name='payment_draft'),
-    # path('emp_inactive/',views.emp_inactive,name='emp_inactive'),
+    path('convert_to_save/<int:id>',views.convert_to_save,name='convert_to_save'),
+    path('getbilldata2/',views.getbilldata2,name='getbilldata2'),
+    
+    # path('getbilldata2/',views.getbilldata2,name='getbilldata2'),
+    # path('getbilldata2/',views.getbilldata2,name='getbilldata2'),
+    
 
     
 ]

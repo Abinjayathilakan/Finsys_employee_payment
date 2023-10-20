@@ -429,21 +429,20 @@
                               </li>
                                 
                                 
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-light btn" href="#" id="navbarDropdown" role="button"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-exchange">Convert</i>
+                              <li class="nav-item dropdown">
+                                {% if paymt.status == "Draft" %}
+                                    <a class="nav-link dropdown-toggle text-light btn" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-exchange"></i> Convert
                                     </a>
-                                    {% if rbill.status == "Draft"  %}
-                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                            <a class="dropdown-item" href="{% url 'rbillconvert' rbill.rbillid %}">
-                                                <i class="fas fa-receipt">To Bill</i>
-                                            </a>
-                                        </div>
-                                    {% endif %}
-                                  
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{% url 'convert_to_save' paymt.pymntid %}">
+                                            <i class="fas fa-receipt"></i> Save
+                                        </a>
+                                    </div>
+                                {% endif %}
                             </li>
-                                </li>
+                            
+                            
                                 <li class="nav-item">
                                     <a class="nav-link text-light btn" role="button" href="{%url 'render_pdfpurpym_view' paymt.pymntid %}">
                                         <i class="fa fa-file-pdf-o">Pdf</i>

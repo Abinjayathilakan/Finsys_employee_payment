@@ -35691,6 +35691,9 @@ def getbilldata(request):
         
         return JsonResponse({"status":" not","billitm":x_data,"ct":vd,'opb':opb,'obdue':obdue,'date':date})
 
+from django.shortcuts import render, redirect
+from .models import company, purchasepayment
+
 def gopurchasepymnt(request):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
@@ -35698,9 +35701,20 @@ def gopurchasepymnt(request):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
-        py = purchasepayment.objects.filter(cid=cmp1)
-        return render(request,'app1/gopurchasepymnt.html',{'cmp1': cmp1,'py':py})
-    return redirect('/') 
+        
+        # Retrieve the 'id' from query parameters, or set it to a default value
+        id = request.GET.get('id', None)
+        
+        if id is not None:
+            py = purchasepayment.objects.filter(cid=cmp1, id=id)
+        else:
+            py = purchasepayment.objects.filter(cid=cmp1)
+            
+        return render(request, 'app1/gopurchasepymnt.html', {'cmp1': cmp1, 'py': py})
+    
+    return redirect('/')
+
+
 
 @login_required(login_url='regcomp')
 def addpurchasepymnt(request):
@@ -46877,3 +46891,76 @@ def payment_draft(request):
         return render(request,'app1/gopurchasepymnt.html',{'py':py})
     except:
         return redirect('gopurchasepymnt') 
+    
+from django.shortcuts import render, redirect
+
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='regcomp')
+def convert_to_save(request, id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        paymt = purchasepayment.objects.get(pymntid=id)
+        paymt.status = 'Save'
+        paymt.save()
+        return redirect(viewpurchasepymnt, id=id)  # Use the correct URL name and pass the 'id' parameter
+    return redirect('/')
+
+
+# @login_required(login_url='regcomp')
+# def convert_to_save(request, id):
+#     if 'uid' in request.session:
+#         if request.session.has_key('uid'):
+#             uid = request.session['uid']
+#         else:
+#             return redirect('/')
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         paymt = purchasepayment.objects.get(pymntid=id)
+#         paymt.status = 'Save'
+#         paymt.save()
+#         return redirect(viewpurchasepymnt, id=id)  # Use the correct URL name and pass the 'id' parameter
+#     return redirect('/')
+
+def getbilldata2(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+        id = request.POST['select']
+        print (id)
+
+        x = id.split()
+        x.append(" ")
+        a = x[0]
+        b = x[1]
+        if x[2] is not None:
+            b = x[1] + " " + x[2]
+
+        venobject = vendor.objects.values().filter(firstname=a, lastname=b, cid=cmp1)
+        billitm = purchasepayment1.objects.values().filter(vendor_name=id ,cid =cmp1,status='Billed')
+
+        venopenbl = vendor.objects.get(firstname=a,lastname=b,cid =cmp1)
+
+        if venopenbl.openingbalance != 0.0:
+
+            vend1 = vendor.objects.get(firstname=a,lastname=b,cid =cmp1)
+            date = vend1.date
+            opbs = vend1.openingbalance
+            
+            if opbs=="":
+                opb=None
+            else:
+                opb=opbs
+          
+            obdue = vend1.opblnc_due
+
+        x_data = list(billitm)
+        vd= list(venobject)
+        
+        return JsonResponse({"status":" not","billitm":x_data,"ct":vd,'opb':opb,'obdue':obdue,'date':date})
