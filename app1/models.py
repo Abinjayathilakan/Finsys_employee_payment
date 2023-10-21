@@ -2337,3 +2337,32 @@ class loan_transaction(models.Model):
     balance=models.IntegerField(default=0)   
     type=models.TextField(max_length=100)
       
+# class payment_made_comments_class(models.Model):
+#     comment=models.CharField(max_length=300)
+#     proj=models.ForeignKey(purchasepayment,on_delete=models.CASCADE,null=True,blank=True)
+    
+# class payment_made_comment(models.Model):
+#     # commentid = models.AutoField(('COMMENTID'), primary_key=True)
+#     commentid = models.AutoField(primary_key=True)
+#     empid = models.ForeignKey(purchasepayment, on_delete=models.CASCADE,default=1)
+#     cid = models.ForeignKey(company, on_delete=models.CASCADE, default=1)
+#     comment = models.CharField(max_length=250,null=True)
+    
+class paymnt_made_comments(models.Model):
+    commentid = models.AutoField(('COMMENTID'), primary_key=True)
+    empid = models.ForeignKey(purchasepayment, on_delete=models.CASCADE)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=250,null=True)
+
+# CREATE TABLE app1_paymnt_made_comments (
+#     COMMENTID INT AUTO_INCREMENT PRIMARY KEY,
+#     EMPID INT,
+#     CID INT,
+#     COMMENT VARCHAR(250)
+# );
+
+# ALTER TABLE app1_paymnt_made_comments
+#     ADD FOREIGN KEY (EMPID) REFERENCES purchasepayment(id) ON DELETE CASCADE;
+
+# ALTER TABLE app1_paymnt_made_comments
+#     ADD FOREIGN KEY (CID) REFERENCES company(id) ON DELETE CASCADE;

@@ -35783,7 +35783,7 @@ def createpurchasepymnt(request):
                 paymentdate=request.POST['paymentdate'],
                 paymentmethod=request.POST['paymentmethod'],
                 reference=next_reference,  # Use the generated reference number
-                amtreceived=request.POST['amtreceived'],
+                # amtreceived=request.POST['amtreceived'],
                 paymentamount=request.POST['paymentamount'],
                 amtcredit=request.POST['amtcredit'],
                 paid_through=request.POST['paid_through'],
@@ -35916,11 +35916,25 @@ def viewpurchasepymnt(request,id):
         cmp1 = company.objects.get(id=request.session['uid'])
         paymt=purchasepayment.objects.get(pymntid=id)
         paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
-    
-        
-        
-        return render(request,'app1/viewpurchasepymnt.html',{'cmp1': cmp1,'paymt':paymt,'py':paymt1})
-    return redirect('gopurchasepymnt')
+        # cmt = payment_made_comment.objects.filter(proj=paymt)
+        comments = paymnt_made_comments.objects.filter(cid_id=request.session["uid"],empid_id=paymt)
+          
+        context = {
+            'cmp1': cmp1,
+            'paymt': paymt,  # Include paymt in the context
+            'py': paymt1,
+            'comments': comments
+        }
+
+    return render(request, 'app1/viewpurchasepymnt.html', context)
+
+# @login_required(login_url='login')
+# def payrollemployeeprofile(request,employeeid): 
+#   cmp1 = company.objects.get(id=request.session["uid"])
+#   employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+#   comments = payrollcomments.objects.filter(cid_id=request.session["uid"],empid_id=employeeid)
+#   return render(request,'app1/payrollemployeeprofile.html',{'employee': employee,'cmp1': cmp1,'comments': comments})
+
 
 
 def render_pdfpurpym_view(request,id):
@@ -46911,56 +46925,92 @@ def convert_to_save(request, id):
     return redirect('/')
 
 
+
+  
+    
+@login_required(login_url='regcomp')
+def add_paymt_made_comment(request, id):
+    if request.method == 'POST':
+        emp = purchasepayment.objects.get(cid_id=request.session["uid"], pymntid=id) 
+        cmp = company.objects.get(id=request.session["uid"])
+        comments= paymnt_made_comments(empid=emp,cid=cmp,comment=request.POST['comments'])
+        comments.save()
+        return redirect('viewpurchasepymnt', id)
+
+
+@login_required(login_url='regcomp')
+def delete_paymt_made_comment(request,id, commentid):
+    try:
+        comment = paymnt_made_comments.objects.get(cid_id=request.session["uid"],empid = pymntid ,commentid=commentid)
+        comment.delete()
+        return redirect('viewpurchasepymnt', id)
+    except:
+        return redirect('viewpurchasepymnt', id) 
+
+
+
+# @login_required(login_url='login')
+# def payrollemployeeprofile(request,employeeid): 
+#   cmp1 = company.objects.get(id=request.session["uid"])
+#   employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+#   comments = payrollcomments.objects.filter(cid_id=request.session["uid"],empid_id=employeeid)
+#   return render(request,'app1/payrollemployeeprofile.html',{'employee': employee,'cmp1': cmp1,'comments': comments})
+
 # @login_required(login_url='regcomp')
-# def convert_to_save(request, id):
-#     if 'uid' in request.session:
-#         if request.session.has_key('uid'):
-#             uid = request.session['uid']
-#         else:
-#             return redirect('/')
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         paymt = purchasepayment.objects.get(pymntid=id)
-#         paymt.status = 'Save'
-#         paymt.save()
-#         return redirect(viewpurchasepymnt, id=id)  # Use the correct URL name and pass the 'id' parameter
-#     return redirect('/')
+# def employeecomments(request, employeeid):
+#     if request.method == 'POST':
+#         emp = payrollemployee.objects.get(cid_id=request.session["uid"], employeeid=employeeid) 
+#         cmp = company.objects.get(id=request.session["uid"])
+#         comments= payrollcomments(empid=emp,cid=cmp,comment=request.POST['comments'])
+#         comments.save()
+#         return redirect('payrollemployeeprofile', employeeid)
 
-def getbilldata2(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session["uid"])
-        id = request.POST['select']
-        print (id)
 
-        x = id.split()
-        x.append(" ")
-        a = x[0]
-        b = x[1]
-        if x[2] is not None:
-            b = x[1] + " " + x[2]
+# @login_required(login_url='regcomp')
+# def deleteemployeecomments(request,employeeid, commentid):
+#     try:
+#         comment = payrollcomments.objects.get(cid_id=request.session["uid"],empid = employeeid,commentid=commentid)
+#         comment.delete()
+#         return redirect('payrollemployeeprofile', employeeid)
+#     except:
+#         return redirect('payrollemployeeprofile', employeeid) 
 
-        venobject = vendor.objects.values().filter(firstname=a, lastname=b, cid=cmp1)
-        billitm = purchasepayment1.objects.values().filter(vendor_name=id ,cid =cmp1,status='Billed')
 
-        venopenbl = vendor.objects.get(firstname=a,lastname=b,cid =cmp1)
 
-        if venopenbl.openingbalance != 0.0:
 
-            vend1 = vendor.objects.get(firstname=a,lastname=b,cid =cmp1)
-            date = vend1.date
-            opbs = vend1.openingbalance
-            
-            if opbs=="":
-                opb=None
-            else:
-                opb=opbs
-          
-            obdue = vend1.opblnc_due
 
-        x_data = list(billitm)
-        vd= list(venobject)
+# def add_man_Journal_comment(request,id):
+#     p=mjournal.objects.get(id=id)
+#     if request.method== 'POST':
+#         comment=request.POST['comments']
+#         c= man_Journal_comment(comment=comment,proj=p)
+#         c.save()
+#         print("=====================================dddddddddddd")
+#     return redirect('view_mj',id)
+
+
+# def delete_man_Journal_comment(request, id): 
+#     try:
+#         comment = man_Journal_comment.objects.get(id=id)
+#         p = comment.proj
+#         comment.delete()
+#         return redirect('view_mj', p.id)
+#     except man_Journal_comment.DoesNotExist:
+#         # Handle the case where the comment does not exist
+#         return redirect('view_mj', p.id)
         
-        return JsonResponse({"status":" not","billitm":x_data,"ct":vd,'opb':opb,'obdue':obdue,'date':date})
+# def view_mj(request, id):
+#     cmp1 = company.objects.get(id=request.session['uid'])
+#     upd = mjournal.objects.get(id=id, cid=cmp1)
+#     saleitem = mjournal1.objects.filter(mjrnl=id)
+#     cmt = man_Journal_comment.objects.filter(proj=upd)  # Retrieve comments related to the project
+
+#     context = {
+#         'sale': upd,
+#         'cmp1': cmp1,
+#         'saleitem': saleitem,
+#         'project': upd,
+#         'cmt': cmt,  # Include comments in the context
+#     }
+
+#     return render(request, 'app1/view_mj.html', context)

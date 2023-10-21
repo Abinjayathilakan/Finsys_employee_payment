@@ -155,16 +155,14 @@
 
                     <br>
                     
-                    <div class="col-md-3 mt-3">
+                    <!-- <div class="col-md-3 mt-3">
                         <label for="">Amount</label>
-                        <input type="number" onchange="showinnum('amre', this)" id="amtrcvd"
-                                   class="form-control"
-                                   name="amtreceived" class="form-control">
+                        <input type="number" onchange="updateAmountFields(this.value)" id="amtrcvd" class="form-control" name="amtreceived">
                     </div>
                     <div class="col-md-3 mt-3">
                         <h5 class="text-grey">AMOUNT</h5>
                         <h5 class="text-light" id="amre">0.00</h5>
-                    </div>
+                    </div> -->
                     <br><br>
                         <div class="row clearfix">
                             <div class="col-md-12 table-responsive-md">
@@ -197,12 +195,12 @@
                                     <tbody>
                                     <tr>
                                         <th class="text-center">Amount to Apply</th>
-                                        <td class="text-center"><input type="number" name='paymentamount' id="amtoapply"
-                                            placeholder='0.00' class="form-control">
+                                        <td class="text-center">
+                                            <input type="number" name="paymentamount" id="amtoapply" placeholder="0.00" class="form-control">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center">Amount to Credit</th>
+                                        <th class="text-center">Balance Amount</th>
                                         <td class="text-center"><input type="number" name='amtcredit' id="amtcredit"
                                             placeholder='0.00' class="form-control"></td>
                                     </tr>
@@ -397,7 +395,7 @@
             const select = $(this).val();  
             $.ajax({                      
                 type: "POST",
-                url: "{% url 'getbilldata2' %}",
+                url: "{% url 'getbilldata' %}",
                 data: {
                     'select': select,     
                     'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
@@ -421,11 +419,17 @@
                                         class="form-control qty" step="0" min="0"/>
                                     </td>
                                     <td><input type="text" name="duedate[]" id="" value="${date}" class="form-control"/></td>
-                                    <td><input type="number" name='amountdue[]' id="openbal0" value="${obdue}"
-                                        class="form-control price" step="0.00" min="0"/>
+
+
+                                   
+
+
+                                    <td>
+                                        <input type="number" name='amountdue[]' id="openbal0" value="${obdue}" class="form-control price"
+                                         step="0.00" min="0" />
                                     </td>
-                                    <td><input type="number" name='payment[]' onchange="addagain()" id="payment0" placeholder='0.00'
-                                        class="form-control total" value="0"/>
+                                    <td>
+                                        <input type="number" name='payment[]' id="payment0" onchange="addagain()" class="form-control total" value="0" />
                                     </td>
                                 </tr>
                             `        
@@ -1144,6 +1148,25 @@
 
         }
     </script>
+    <script>
+        function addagain() {
+        var totalAmountDue = parseFloat(document.getElementById('openbal0').value);
+        var totalPayment = 0;
+    
+        for (var i = 0; i <= j; i++) {
+            var paymentField = document.getElementById('payment' + i);
+            if (paymentField) {
+                var payment = parseFloat(paymentField.value);
+                if (!isNaN(payment)) {
+                    totalPayment += payment;
+                }
+            }
+        }
+    
+        var balanceAmount = totalAmountDue - totalPayment;
+        document.getElementById('amtcredit').value = balanceAmount;
+    }
+    </script>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
@@ -1221,5 +1244,41 @@
     }
 </script>
 
+<!-- <script>
+    $(document).ready(function() {
+        $('#amre').on('input', function() {
+            var balance = parseFloat($('#amountdue').val());
+            var amount = parseFloat($(this).val());
+            var difference = amountdue - amre;
+            
+            // Update the difference input field with the calculated value
+            $('#amtcredit').val(amtcredit);
+        });
+    });
+</script> -->
+
+<script>
+    function updateAmountFields() {
+        var totalPayment = 0;
+        for (var i = 0; i <= j; i++) {
+            var paymentField = document.getElementById('payment' + i);
+            if (paymentField) {
+                var payment = parseFloat(paymentField.value);
+                if (!isNaN(payment)) {
+                    totalPayment += payment;
+                }
+            }
+        }
+    
+        // Update "Amount" and "Amount to Apply" fields with the total payment
+        var amountField = document.getElementById('amtrcvd');
+        var amountToApplyField = document.getElementById('amtoapply');
+    
+        if (amountField && amountToApplyField) {
+            amountField.value = totalPayment;
+            amountToApplyField.value = totalPayment;
+        }
+    }
+    </script>
 
 {% endblock %}

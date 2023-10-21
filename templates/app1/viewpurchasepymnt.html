@@ -452,6 +452,15 @@
                                     <a class="nav-link text-light btn" role="button" href="goeditpurchasepymnt/{{ paymt.pymntid }}{{ py.pymnt }}"><i class=" fa fa-pencil">Edit</i></a>
                                 </li>
                                 <li class="nav-item">
+                                    <a class="nav-link text-light btn" role="button" data-toggle="modal" data-target="#commentModal"><i class=" fa fa-comment">Comments</i></a>
+                                </li>
+
+                                <!-- <li class="nav-item ">
+                                    <a href="#" class=" btn btn-outline-info rounded-pill text-grey p-1" data-toggle="modal" data-target="#commentModal" 
+                                    data-comment="{{ inv.comments }}" data-inv-id="{{ inv.id }}">&nbsp;&nbsp;Comment&nbsp;&nbsp;</a>
+                              
+                                </li> -->
+                                <li class="nav-item">
                                     <a class="nav-link text-light btn" role="button" href="deletepurchasepymnt/{{ paymt.pymntid }}{{ py.pymnt }}"><i class="fa fa-trash-o delete">Delete</i></a>
                                 </li>
                                 <!-- <li class="nav-item dropdown">
@@ -472,6 +481,10 @@
                 </div>
             </div>
         </div>
+
+        <!-- Add Comments Modal -->
+
+
     
         <div class="card card-registration card-registration-2" style="border-radius: 15px;"  >
             <div class="card-body p-0" >
@@ -756,6 +769,13 @@
                                 {% for p in py %}
                                 <h6>{{p.payments }}</h6>
                                 {% endfor %} 
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Balance</h5>
+                                
+                                <h6>{{paymt.amtcredit }}</h6>
+                                
                             </div>
                             
                             <!-- <div class="d-flex justify-content-between mb-4">
