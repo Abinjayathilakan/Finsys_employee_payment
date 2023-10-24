@@ -67,7 +67,7 @@
             <div class="card radius-15">
                 <div class="card-body">
                     <div class="card-title">
-                        <center><h2 class="mb-0">ACTIVE EMPLOYEES</h2></center>
+                        <center><h2 class="mb-0">ALL EMPLOYEES</h2></center>
                         <hr>
                         <div class="btn-group col-md-2" style="float: right;">
                             <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
@@ -121,9 +121,9 @@
                                     <div class="dropdown-menu" style="background-color: black;">
                                         <a class="dropdown-item" href="{% url 'listpayrollemployee' %}"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
-                                        <a class="dropdown-item" href="{% url 'emp_active' %}"
+                                        <a class="dropdown-item" href="{% url 'empactive' %}"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;" >Active</a>
-                                        <a class="dropdown-item" href="{% url 'emp_inactive' %}"
+                                        <a class="dropdown-item" href="{% url 'empinactive' %}"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;">Inactive</a>
                                        
                                     </div> 
@@ -154,19 +154,25 @@
                             </thead>
                             <tbody>
                                 {% for emp in employee %}
+                                
                                 <tr class="table-row " data-href="{% url 'payrollemployeeprofile' emp.employeeid%}">
-                                   
                                     <td>{{ emp.firstname }} {{ emp.lastname }}</td>
                                     <td>{{ emp.employees }}</td>
                                     <td>{{ emp.pannumber }}</td>
                                     <td>{{ emp.mobile }}</td>
                                     <td>{{ emp.email }}</td>
                                     <td>{{ emp.amount }}</td>
-                                    <td>{{emp.effectivefrom}}</td>
-                                    <td>{{emp.status}}</td>
-                                 
+                                    <td>{{ emp.effectivefrom }}</td>
+                                    <!-- <td>{{ emp.is_active }}</td> -->
+                                    {% if emp.is_active %}
+                                    <td>Active</td>
+                                    {% else %}
+                                    <td>Inactive</td>
+                                    {% endif %}
+                                    
                                 </tr>
-                                {% endfor %}
+                            {% endfor %}
+
                             </tbody>
                         </table>
                     </div>

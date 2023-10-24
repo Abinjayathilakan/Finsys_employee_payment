@@ -1247,10 +1247,12 @@ urlpatterns = [
     path('convert_to_save/<int:id>',views.convert_to_save,name='convert_to_save'),
     # path('getbilldata2/',views.getbilldata2,name='getbilldata2'),
     path('add_paymt_made_comment/<int:id>', views.add_paymt_made_comment, name='add_paymt_made_comment'),
-    path('delete_paymt_made_comment/<int:id>', views.delete_paymt_made_comment, name='delete_paymt_made_comment'),
+    # path('delete_paymt_made_comment/<int:id>', views.delete_paymt_made_comment, name='delete_paymt_made_comment'),
+    path('delete_paymt_made_comment/<int:id>/<int:commentid>', views.delete_paymt_made_comment, name='delete_paymt_made_comment'),
+
     
-    # path('getbilldata2/',views.getbilldata2,name='getbilldata2'),
-    # path('getbilldata2/',views.getbilldata2,name='getbilldata2'),
+    path('empactive/',views.empactive,name='empactive'),
+    path('empinactive/',views.empinactive,name='empinactive'),
     
 
     

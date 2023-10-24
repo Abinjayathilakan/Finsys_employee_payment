@@ -2061,7 +2061,7 @@ class payrollemployee(models.Model):
     temppincode = models.CharField(max_length=100,null=True)
     tempcountry = models.CharField(max_length=100,null=True)
     payhead = models.CharField(max_length=100,null=True)
-    status = models.CharField(max_length=100,default='Active')
+    # status = models.CharField(max_length=100,default='Active')
     is_active = models.BooleanField(default=True,null=True,blank=True)
     
     file = models.FileField(upload_to='payrollemployee',default="")

@@ -121,9 +121,9 @@
                                     <div class="dropdown-menu" style="background-color: black;">
                                         <a class="dropdown-item" href="{% url 'listpayrollemployee' %}"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
-                                        <a class="dropdown-item" href="{% url 'listpayrollemployee' %}?status=active"
+                                        <a class="dropdown-item" href="{% url 'empactive' %}"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;" >Active</a>
-                                        <a class="dropdown-item" href="{% url 'listpayrollemployee' %}?status=inactive"
+                                        <a class="dropdown-item" href="{% url 'empinactive' %}"
                                             style="height: 40px; font-size: 15px; color: white; text-align: center;">Inactive</a>
                                        
                                     </div> 
@@ -154,6 +154,7 @@
                             </thead>
                             <tbody>
                                 {% for emp in employee %}
+                                
                                 <tr class="table-row " data-href="{% url 'payrollemployeeprofile' emp.employeeid%}">
                                     <td>{{ emp.firstname }} {{ emp.lastname }}</td>
                                     <td>{{ emp.employees }}</td>
@@ -162,7 +163,12 @@
                                     <td>{{ emp.email }}</td>
                                     <td>{{ emp.amount }}</td>
                                     <td>{{ emp.effectivefrom }}</td>
-                                    <td>{{ emp.status }}</td>
+                                    <!-- <td>{{ emp.is_active }}</td> -->
+                                    {% if emp.is_active %}
+                                    <td>Active</td>
+                                    {% else %}
+                                    <td>Inactive</td>
+                                    {% endif %}
                                     
                                 </tr>
                             {% endfor %}

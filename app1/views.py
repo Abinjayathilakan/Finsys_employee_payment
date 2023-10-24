@@ -46947,70 +46947,60 @@ def delete_paymt_made_comment(request,id, commentid):
     except:
         return redirect('viewpurchasepymnt', id) 
 
-
-
-# @login_required(login_url='login')
-# def payrollemployeeprofile(request,employeeid): 
-#   cmp1 = company.objects.get(id=request.session["uid"])
-#   employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
-#   comments = payrollcomments.objects.filter(cid_id=request.session["uid"],empid_id=employeeid)
-#   return render(request,'app1/payrollemployeeprofile.html',{'employee': employee,'cmp1': cmp1,'comments': comments})
-
 # @login_required(login_url='regcomp')
-# def employeecomments(request, employeeid):
-#     if request.method == 'POST':
-#         emp = payrollemployee.objects.get(cid_id=request.session["uid"], employeeid=employeeid) 
-#         cmp = company.objects.get(id=request.session["uid"])
-#         comments= payrollcomments(empid=emp,cid=cmp,comment=request.POST['comments'])
-#         comments.save()
-#         return redirect('payrollemployeeprofile', employeeid)
-
-
-# @login_required(login_url='regcomp')
-# def deleteemployeecomments(request,employeeid, commentid):
+# def plactive(request):
 #     try:
-#         comment = payrollcomments.objects.get(cid_id=request.session["uid"],empid = employeeid,commentid=commentid)
-#         comment.delete()
-#         return redirect('payrollemployeeprofile', employeeid)
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         employee=Pricelist.objects.filter(cid=cmp1,is_active=True)
+#         context = {'cmp1': cmp1, 'employee':employee}
+#         return render(request,'app1/plactive.html',context)
+            
 #     except:
-#         return redirect('payrollemployeeprofile', employeeid) 
+#         return redirect('pricelist')
 
-
-
-
-
-# def add_man_Journal_comment(request,id):
-#     p=mjournal.objects.get(id=id)
-#     if request.method== 'POST':
-#         comment=request.POST['comments']
-#         c= man_Journal_comment(comment=comment,proj=p)
-#         c.save()
-#         print("=====================================dddddddddddd")
-#     return redirect('view_mj',id)
-
-
-# def delete_man_Journal_comment(request, id): 
+# @login_required(login_url='regcomp')
+# def plinactive(request):
 #     try:
-#         comment = man_Journal_comment.objects.get(id=id)
-#         p = comment.proj
-#         comment.delete()
-#         return redirect('view_mj', p.id)
-#     except man_Journal_comment.DoesNotExist:
-#         # Handle the case where the comment does not exist
-#         return redirect('view_mj', p.id)
-        
-# def view_mj(request, id):
-#     cmp1 = company.objects.get(id=request.session['uid'])
-#     upd = mjournal.objects.get(id=id, cid=cmp1)
-#     saleitem = mjournal1.objects.filter(mjrnl=id)
-#     cmt = man_Journal_comment.objects.filter(proj=upd)  # Retrieve comments related to the project
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         employee=Pricelist.objects.filter(cid=cmp1,is_active=False)
+#         context = {'cmp1': cmp1, 'employee':employee}
+#         return render(request,'app1/plinactive.html',context)
+            
+#     except:
+#         return redirect('pricelist')
 
-#     context = {
-#         'sale': upd,
-#         'cmp1': cmp1,
-#         'saleitem': saleitem,
-#         'project': upd,
-#         'cmt': cmt,  # Include comments in the context
-#     }
 
-#     return render(request, 'app1/view_mj.html', context)
+
+
+
+# @login_required(login_url='regcomp')
+# def empactive(request):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         employee=payrollemployee.objects.filter(cid=cmp1,is_active=True)
+#         context = {'cmp1': cmp1, 'employee':employee}
+#         return render(request,'app1/emp_active.html',context)
+            
+#     except:
+#         return redirect('listpayrollemployee')
+
+# @login_required(login_url='regcomp')
+# def empinactive(request):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         employee=payrollemployee.objects.filter(cid=cmp1,is_active=False)
+#         context = {'cmp1': cmp1, 'employee':employee}
+#         return render(request,'app1/emp_inactive.html',context)
+            
+#     except:
+#         return redirect('listpayrollemployee')
+    
+def empactive(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    emp = payrollemployee.objects.filter(cid=cmp1,is_active=True).all()
+    return render(request,'app1/emp_active.html',{'cmp1':cmp1,'emp':emp})
+
+def empinactive(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    emp = payrollemployee.objects.filter(cid=cmp1,is_active=False).all()
+    return render(request,'app1/emp_inactive.html',{'cmp1':cmp1,'emp':emp})
