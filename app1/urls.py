@@ -1253,6 +1253,8 @@ urlpatterns = [
     
     path('empactive/',views.empactive,name='empactive'),
     path('empinactive/',views.empinactive,name='empinactive'),
+    # path('active_emp/<str:employeeid>/<str:status>', views.active_emp, name='active_emp'),
+    path('inactive_emp/<str:employeeid>/<str:status>', views.inactive_emp, name='inactive_emp'),
     
 
     

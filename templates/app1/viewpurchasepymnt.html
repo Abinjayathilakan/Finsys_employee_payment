@@ -654,7 +654,66 @@
 
                                         </div>
                                     </div>
+                                    
                                     <hr>
+
+                                    {% if paymt.account_number %}
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5  mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Account Number </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ paymt.account_number }}</b></label>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    {% endif %}
+
+                                    <!-- <div class="row">
+                                        <div class="col-md-4 ml-5 mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Account Number </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ paymt.account_number }}</b></label>
+
+                                        </div>
+                                    </div>
+                                    <hr> -->
+                                    {% if paymt.cheque_number %}
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5 mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Cheque Number </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ paymt.cheque_number }}</b></label>
+
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    {% endif %}
+
+                                    {% if paymt.upi_id %}
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5 mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>UPI ID </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ paymt.upi_id }}</b></label>
+
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    {% endif %}
                                    
                                 </div>
                         <!-- </div> -->

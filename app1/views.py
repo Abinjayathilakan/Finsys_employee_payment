@@ -35694,6 +35694,9 @@ def getbilldata(request):
 from django.shortcuts import render, redirect
 from .models import company, purchasepayment
 
+from django.shortcuts import render, redirect
+from .models import purchasepayment, purchasepayment1, company
+
 def gopurchasepymnt(request):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
@@ -35709,10 +35712,11 @@ def gopurchasepymnt(request):
             py = purchasepayment.objects.filter(cid=cmp1, id=id)
         else:
             py = purchasepayment.objects.filter(cid=cmp1)
-            
+        
         return render(request, 'app1/gopurchasepymnt.html', {'cmp1': cmp1, 'py': py})
     
     return redirect('/')
+
 
 
 
@@ -35784,7 +35788,7 @@ def createpurchasepymnt(request):
                 paymentmethod=request.POST['paymentmethod'],
                 reference=next_reference,  # Use the generated reference number
                 # amtreceived=request.POST['amtreceived'],
-                paymentamount=request.POST['paymentamount'],
+                # paymentamount=request.POST['paymentamount'],
                 amtcredit=request.POST['amtcredit'],
                 paid_through=request.POST['paid_through'],
                 account_number=account_number,
@@ -35803,7 +35807,7 @@ def createpurchasepymnt(request):
             statment2.paymnt = pymnt1
             statment2.details = pymnt1.reference
             statment2.date = pymnt1.paymentdate
-            statment2.payments = pymnt1.paymentamount
+            statment2.payments = pymnt1.amtcredit
             statment2.save()
 
             bs3=balance_sheet()
@@ -35816,7 +35820,7 @@ def createpurchasepymnt(request):
             bs3.details1 = pymnt1.pymntid
             bs3.details2 = pymnt1.reference
             bs3.date = pymnt1.paymentdate
-            bs3.payments = pymnt1.paymentamount
+            bs3.payments = pymnt1.amtcredit
             bs3.save()
 
             bs4=balance_sheet()
@@ -35829,7 +35833,7 @@ def createpurchasepymnt(request):
             bs4.details1 = pymnt1.pymntid
             bs4.details2 = pymnt1.reference
             bs4.date = pymnt1.paymentdate
-            bs4.payments = pymnt1.paymentamount
+            bs4.payments = pymnt1.amtcredit
             bs4.save()
 
             billdate = request.POST.getlist("billdate[]")
@@ -35850,24 +35854,24 @@ def createpurchasepymnt(request):
                     duedate=ele[3],amountdue=ele[4],payments=ele[5],pymnt=pyitm,cid=cmp1)
                     
             
-            paymentamount = float(request.POST['paymentamount'])
+            amtcredit = float(request.POST['amtcredit'])
             accont = accounts1.objects.get(
                 name='Accounts Payable(Creditors)',cid=cmp1)
-            accont.balance = accont.balance - paymentamount
+            accont.balance = accont.balance - amtcredit
             accont.save()
             # depositeto = request.POST['depto']
             try:
                 if accounts1.objects.get(name=paid_through,cid=cmp1):
                     print(paid_through)
                     acconut = accounts1.objects.get(name=paid_through,cid=cmp1)
-                    acconut.balance = acconut.balance + paymentamount
+                    acconut.balance = acconut.balance + amtcredit
                     acconut.save()
             except:
                 pass
             try:
                 if accounts.objects.get(name=paid_through,cid=cmp1):
                     acconut = accounts.objects.get(name=paid_through, cid=cmp1)
-                    acconut.balance = acconut.balance + paymentamount
+                    acconut.balance = acconut.balance + amtcredit
                     acconut.save()
             except:
                 pass
@@ -46998,9 +47002,36 @@ def delete_paymt_made_comment(request,id, commentid):
 def empactive(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     emp = payrollemployee.objects.filter(cid=cmp1,is_active=True).all()
+    
     return render(request,'app1/emp_active.html',{'cmp1':cmp1,'emp':emp})
 
 def empinactive(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     emp = payrollemployee.objects.filter(cid=cmp1,is_active=False).all()
     return render(request,'app1/emp_inactive.html',{'cmp1':cmp1,'emp':emp})
+
+# @login_required(login_url='regcomp')
+# def active_emp(request,employeeid):
+#     employee=payrollemployee.objects.get(id=employeeid)
+#     employee.is_active=True
+#     employee.save()
+#     return redirect('payrollemployeeprofile',employeeid=employeeid)
+
+@login_required(login_url='regcomp')
+def inactive_emp(request,employeeid):
+    employee=payrollemployee.objects.get(id=employeeid)
+    employee.is_active=False
+    employee.save()
+    return redirect('payrollemployeeprofile',employeeid=employeeid)
+
+# @login_required(login_url='regcomp')
+# def active_emp(request,employeeid,status):
+    
+#     employee=payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+#     if status == "Active":
+#         employee.status="Active"
+#     else:
+#          employee.status="Inactive"
+
+#     employee.save()
+#     return redirect('payrollemployeeprofile',employeeid)

@@ -1532,22 +1532,7 @@ class purchasepayment(models.Model):
     gst_treatment = models.CharField(max_length=100,null=True)
     gst_number = models.CharField(max_length=100,null=True)
     status = models.CharField(max_length=100,default="Draft")
-    def save(self, *args, **kwargs):
-        if not self.reference:
-            # Get the current maximum reference number from the database
-            max_reference = purchasepayment.objects.all().aggregate(models.Max('reference'))['reference__max']
-
-            # If no reference numbers exist yet, start with 1, otherwise increment the max reference number
-            if max_reference is None:
-                self.reference = "1"
-            else:
-                self.reference = str(int(max_reference) + 1)
-
-        super(purchasepayment, self).save(*args, **kwargs)
-    
-    
-    
-    
+     
 
 class purchasepayment1(models.Model):
     pymnt = models.ForeignKey(purchasepayment, on_delete=models.CASCADE,null=True)
@@ -2061,7 +2046,7 @@ class payrollemployee(models.Model):
     temppincode = models.CharField(max_length=100,null=True)
     tempcountry = models.CharField(max_length=100,null=True)
     payhead = models.CharField(max_length=100,null=True)
-    # status = models.CharField(max_length=100,default='Active')
+    status = models.CharField(max_length=100,default='Active')
     is_active = models.BooleanField(default=True,null=True,blank=True)
     
     file = models.FileField(upload_to='payrollemployee',default="")
