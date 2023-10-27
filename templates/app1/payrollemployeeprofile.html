@@ -289,10 +289,21 @@
                                 class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                 role="button">Inactivate</a> &nbsp;&nbsp;&nbsp;
                             {% else %}
-                            <a href="{% url 'active_emp' employee.employeeid 'Active' %}"
+                            <a href="{% url 'inactive_emp' employee.employeeid 'Active' %}"
                                 class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                 role="button">Activate</a> &nbsp;&nbsp;&nbsp;
                             {% endif %}
+                            <!-- {% if employee.is_active %}
+                            <a href="{% url 'inactive_emp' employee.id 'inactive' %}"
+                                class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                role="button"> Active </a>
+                        {% else %}
+                            <a href="{% url 'active_emp' employee.id 'active' %}"
+                                class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                role="button"> Inactive </a> 
+                        {% endif %}
+                         -->
+
 
                             <!-- <a class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">
 

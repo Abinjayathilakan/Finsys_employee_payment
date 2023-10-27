@@ -35991,6 +35991,9 @@ def goeditpurchasepymnt(request,id):
         cmp1 = company.objects.get(id=request.session['uid'])
         paymt=purchasepayment.objects.get(pymntid=id)
         paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
+        vndr = vendor.objects.filter(cid=cmp1)
+        bank = BankAccount.objects.all()
+        
 
         count = purchasepayment1.objects.filter(pymnt=paymt).count()
         print(count)
@@ -35999,7 +36002,9 @@ def goeditpurchasepymnt(request,id):
                     'cmp1': cmp1,
                     'paymt':paymt,
                     'paymt1':paymt1, 
-                    'count':count       
+                    'count':count ,
+                    'vndr':vndr, 
+                    'bank':bank    
                 }
         return render(request,'app1/editpurchasepymnt.html',context)
     return redirect('/')
@@ -40423,17 +40428,17 @@ def gopayrollfilter(request,filters,values):
 
 
 
-@login_required(login_url='regcomp')
-def active_emp(request,employeeid,status):
+# @login_required(login_url='regcomp')
+# def active_emp(request,employeeid,status):
     
-    employee=payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
-    if status == "Active":
-        employee.status="Active"
-    else:
-         employee.status="Inactive"
+#     employee=payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+#     if status == "Active":
+#         employee.status="Active"
+#     else:
+#          employee.status="Inactive"
 
-    employee.save()
-    return redirect('payrollemployeeprofile',employeeid)
+#     employee.save()
+#     return redirect('payrollemployeeprofile',employeeid)
 
 
 
@@ -47010,19 +47015,20 @@ def empinactive(request):
     emp = payrollemployee.objects.filter(cid=cmp1,is_active=False).all()
     return render(request,'app1/emp_inactive.html',{'cmp1':cmp1,'emp':emp})
 
-# @login_required(login_url='regcomp')
-# def active_emp(request,employeeid):
-#     employee=payrollemployee.objects.get(id=employeeid)
-#     employee.is_active=True
-#     employee.save()
-#     return redirect('payrollemployeeprofile',employeeid=employeeid)
+@login_required(login_url='regcomp')
+def active_emp(request, employeeid, status):
+    employee = payrollemployee.objects.get(id=employeeid)
+    employee.is_active = True
+    employee.save()
+    return redirect('payrollemployeeprofile', employeeid=employeeid)
 
 @login_required(login_url='regcomp')
-def inactive_emp(request,employeeid):
-    employee=payrollemployee.objects.get(id=employeeid)
-    employee.is_active=False
+def inactive_emp(request, employeeid, status):
+    employee = payrollemployee.objects.get(id=employeeid)
+    employee.is_active = False
     employee.save()
-    return redirect('payrollemployeeprofile',employeeid=employeeid)
+    return redirect('payrollemployeeprofile', employeeid=employeeid)
+
 
 # @login_required(login_url='regcomp')
 # def active_emp(request,employeeid,status):

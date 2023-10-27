@@ -1,19 +1,7 @@
 {% extends 'app1/base.html' %}
 {% block body %}
     {% load static %}
-    <style>
-        .center-align {
-          text-align: center;
-        }
-      
-        .center-input {
-          margin: 0 auto;
-        }
-      
-        .narrow-input {
-          max-width: 600px; /* Adjust the maximum width as needed */
-        }
-      </style>
+
     <div class="page-content">
         <div class="card radius-15">
             <div class="card-body">
@@ -27,60 +15,25 @@
             {% csrf_token %}
             <div class="card radius-15">
                 <div class="card-body">
-                    <div class="row">
-                    
-                        <div class="col-md-3 mt-2">
-                            <label for="">Vendor</label>
-                            <div class="d-flex">
-                                <select name="vendor" id="select" class="custom-select">
-                                    <option value="{{ paymt.vendor }}">{{ paymt.vendor }}</option>
-                                    {% for v in vndr %}
-                                    <option value="{{ v.firstname }} {{ v.lastname }}">{{ v.firstname }} {{ v.lastname }}</option>
-                                    {% endfor %}
-                                </select>
-                                
-                            </div>   
-                        </div>
-                       
-                        <div class="col-md-3 mt-2" id="emailField" >
-                            <label for="">E mail</label>
-                            <input type="text" name="email" id="email" class="form-control" value="{{ paymt.email }}">
-                        </div> 
-
-                        <div class="col-md-3 mt-2" id="gstTypeField" >
-                            <label for="">GST Treatment</label>
-                            <input type="text" name="gsttype" id="gsttype" class="form-control" value="{{ paymt.gst_treatment }}">
-                        </div>
-
-                        <div class="col-md-3 mt-2" id="gstinField"  >
-                            <label for="">GST Number</label>
-                            <input type="text" name="gstin" id="gstin" class="form-control" value="{{ paymt.gst_number }}">
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="row">
-                        <div class="col-md-4 mt-3">
-                            <label for="">Payment Date</label>
-                            <input type="date" name="paymentdate" id="date" class="form-control" value="{{ paymt.paymentdate | date:'Y-m-d' }}" required>
-                        </div>
-                    
-                        <div class="col-md-4 mt-3">
-                            <label for="">Reference</label>
-                            <input type="text" name="reference" value="{{ paymt.reference }}" class="form-control" required>
-                        </div>
-
-                        <div class="row mt-4">
+                    <div id="invoice">
+                        <div class="row mt-5">
                             <div class="col-md-4">
-                                <input type="text" id="newmethod" onchange="addtemopt(this)" class="form-control"
-                                       style="display: none;">
+                                <label class="col-form-label">Vendor</label>
+                                <select name="vendor" id="select" class="form-control" style="width: 95%;">
+                                    <option value="{{ paymt.vendor }}">{{ paymt.vendor }}</option>
+                                </select>
                             </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <label class="col-form-label">Payment Date</label>
+                                <input type="date" name="paymentdate" value="{{ paymt.paymentdate | date:'Y-m-d' }}" class="form-control">
+                            </div>    
                         </div>
-                        
-                        <div class="col-md-4 mt-3">
-                            <label for="">Payment Method</label>
-                            <div class="d-flex">
-                                <select name="paymentmethod" id="paymeth" class="form-control" style="width:87%">
+                        <div class="row">
+                            <div class="col-md-4 mt-3">
+                                <label class="col-form-label">Payment Method</label>
+                                <div class="d-flex">
+                                    <select name="paymentmethod" id="paymeth" class="form-control" style="width:87%">
                                         <option value="{{ paymt.paymentmethod }}">{{ paymt.paymentmethod }}</option>
                                         <option value="Cash">Cash</option>
                                         <option value="Cheque">Cheque</option>
@@ -89,79 +42,69 @@
                                             <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
                                         {% endfor %}
                                     </select>
-                                <a class="btn btn-outline-secondary ml-1" data-target="#pymntmeth" data-toggle="modal" role="button">+</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <br><br>
-                    
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Paid Through*</label>
-                        <div class="col-sm-10 col-md-7 col-9 ml-5">
-                            <div class="input-group mb-2">
-                                <div>
-                                    <input type="radio" id="cashRadio" name="paid_through" value="cash" style="margin-left: 40px;" {% if payment.paid_through == 'cash' %}checked{% endif %}>
-                                    <label for="cashRadio">In-Hand Cash</label>
-                                </div>
-                    
-                                <div>
-                                    <input type="radio" id="bankRadio" name="paid_through" value="bank" style="margin-left: 60px;" {% if payment.paid_through == 'bank' %}checked{% endif %}>
-                                    <label for="bankRadio">Bank</label>
-                                </div>
-                    
-                                <div>
-                                    <input type="radio" id="chequeRadio" name="paid_through" value="cheque" style="margin-left: 60px;" {% if payment.paid_through == 'cheque' %}checked{% endif %}>
-                                    <label for="chequeRadio">Cheque</label>
-                                </div>
-                    
-                                <div>
-                                    <input type="radio" id="upiRadio" name="paid_through" value="upi" style="margin-left: 60px;" {% if payment.paid_through == 'upi' %}checked{% endif %}>
-                                    <label for="upiRadio">UPI</label>
+                                    <a class="btn btn-outline-secondary ml-1" data-target="#pymntmeth" data-toggle="modal" role="button">+</a>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-
-
-                    <div id="bankFields" class="form-group row center-align">
-                        <label for="bankName" class="col-lg-2 col-form-label">Select Bank:</label>
-                        <div class="col-sm-6 col-md-5 col-6 center-input">
-                            <div class="input-group mb-2">
-                                <select id="bankName" name="account_number" class="form-control bg-light text-white narrow-input">
-                                    <!-- Add your bank options here -->
-                                    <option value="">Select Bank</option> <!-- A default option to prompt selection -->
-                                    {% for v in bank %}
-                                    {% if v.account_number == paymt.account_number %}
-                                    <option value="{{ v.account_number }}" selected>{{ v.account_number }}</option>
-                                    {% endif %}
-                                    {% endfor %}
-                                </select>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4 mt-3">
+                                <label class="col-form-label">Deposit to</label>
+                                <div class="d-flex">
+                                    <select name="depto" id="" class="form-control" style="width: 95%;">
+                                        <option value="{{ paymt.depositeto }}">{{ paymt.depositeto }}</option>
+                                        {% for acc in accoun %}
+                                            <option value="{{ acc.name }}">{{ acc.name }}</option>
+                                        {% endfor %}
+                                        <option value="Deferred CGST">Deferred CGST</option>
+                                        <option value="Deferred GST Input Credit">Deferred GST Input Credit</option>
+                                        <option value="Deferred IGST">Deferred IGST</option>
+                                        <option value="Deferred Krishi Kalyan Cess Input Credit">Deferred Krishi
+                                            Kalyan
+                                            Cess Input Credit
+                                        </option>
+                                        <option value="Deferred SGST">Deferred SGST</option>
+                                        <option value="Deferred Service Tax Input Credit">Deferred Service Tax Input
+                                            Credit
+                                        </option>
+                                        <option value="Deferred VAT Input Credit">Deferred VAT Input Credit</option>
+                                        <option value="GST Refund">GST Refund</option>
+                                        <option value="Inventory Asset">Inventory Asset</option>
+                                        <option value="Krishi Kalyan Cess Refund">Krishi Kalyan Cess Refund</option>
+                                        <option value="Prepaid Insurance">Prepaid Insurance</option>
+                                        <option value="Service Tax Refund">Service Tax Refund</option>
+                                        <option value="TDS Receivable">TDS Receivable</option>
+                                        <option value="Uncategorised Asset">Uncategorised Asset</option>
+                                        <option value="Undeposited Fund">Undeposited Fund</option>
+                                    </select>
+                                    <a href="{% url 'paymentcoacreate' %}"><button type="button" class="btn btn-outline-secondary ml-1">+</button></a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div id="chequeFields" class="form-group row center-align">
-                        <label for="chequeNumber" class="col-lg-2 col-form-label">Cheque Number:</label>
-                        <div class="col-sm-6 col-md-5 col-6 center-input">
-                            <input type="text" id="chequeNumber" name="cheque_number" class="form-control narrow-input" placeholder="Cheque Number" value="{{ paymt.cheque_number }}">
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <input type="text" id="newmethod" onchange="addtemopt(this)" class="form-control"
+                                       style="display: none;">
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div id="upiFields" class="form-group row center-align">
-                        <label for="upiId" class="col-lg-2 col-form-label">UPI ID:</label>
-                        <div class="col-sm-6 col-md-5 col-6 center-input">
-                            <input type="text" id="upiId" name="upi_id" class="form-control narrow-input" value="{{ paymt.upi_id }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Reference</label>
+                                <input type="text" name="reference" value="{{ paymt.reference }}" class="form-control">
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <label class="col-form-label">Amount</label>
+                                <input type="number" onchange="showinnum('amre', this)" id="amtrcvd"
+                                       class="form-control"
+                                       name="amtreceived" value="{{ paymt.amtreceived }}">
+                            </div>
                         </div>
-                    </div>
-                    
-                    
-
-                    <br>
-
-                      <br><br>
-
+                        <div class="row mt-4 mb-4">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-4">
+                                <h5 class="text-grey">AMOUNT</h5>
+                                <h5 class="text-light" id="amre">{{ paymt.paymentamount }}</h5>
+                            </div>
+                        </div>
                         <div class="row clearfix">
                             <div class="col-md-12 table-responsive-md">
                                 <table class="table table-bordered table-hover" id="tab_logic" style="background-color: rgba(0,0,0,0.4);">
@@ -984,136 +927,5 @@
 
         }
     </script>
-
-    <script>
-        $(document).ready(function () {
-            $('#select').on('change', function () {
-                var select = $('#select').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'getvendordata3' %}",
-                    data: {
-                        id: select
-                    },
-                    success: function (response) {
-                        var json_data = JSON.parse(response);
-                        if (json_data.length > 0) {
-                            var vendorData = json_data[0]; // Assuming you are expecting one vendor data
-                            $('#email').val(vendorData.email);
-                            $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
-    
-                            // Show email and GST treatment fields
-                            $('#emailField, #gstTypeField').show();
-                            $('#gstinField').show(); // Show GST Number field if it has a value
-    
-                            // Set values for email and GST treatment fields
-                            $('#email').val(vendorData.email);
-                            $('#gsttype').val(vendorData.gsttype);
-    
-                            // Check if GST Number has a value, hide it if empty
-                            if (vendorData.gstin) {
-                                $('#gstin').val(vendorData.gstin);
-                            } else {
-                                $('#gstinField').hide();
-                            }
-                        } else {
-                            // Handle the case where no data was found for the selected ID.
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle the AJAX error.
-                    }
-                });
-            });
-        });
-    </script>
-    
-
-    
-
-    
-    <script>
-        function updateAmountFields() {
-            var totalPayment = 0;
-            for (var i = 0; i <= j; i++) {
-                var paymentField = document.getElementById('payment' + i);
-                if (paymentField) {
-                    var payment = parseFloat(paymentField.value);
-                    if (!isNaN(payment)) {
-                        totalPayment += payment;
-                    }
-                }
-            }
-        
-            // Update "Amount" and "Amount to Apply" fields with the total payment
-            var amountField = document.getElementById('amtrcvd');
-            var amountToApplyField = document.getElementById('amtoapply');
-        
-            if (amountField && amountToApplyField) {
-                amountField.value = totalPayment;
-                amountToApplyField.value = totalPayment;
-            }
-        }
-        </script>
-        <script>
-            document.getElementById("paymentForm").addEventListener("submit", function (event) {
-                event.preventDefault(); // Prevent the default form submission
-                
-                // Get the selected payment type
-                var selectedPaymentType = document.querySelector('input[name="paid_through"]:checked').value;
-        
-                // Get the values of other form fields (bank, cheque, upi)
-                var bankValue = document.getElementById("bankName").value;
-                var chequeValue = document.getElementById("chequeNumber").value;
-                var upiValue = document.getElementById("upiId").value;
-        
-                // Display the values (you can modify this part)
-                console.log("Selected Payment Type: " + selectedPaymentType);
-                console.log("Bank Value: " + bankValue);
-                console.log("Cheque Value: " + chequeValue);
-                console.log("UPI Value: " + upiValue);
-            });
-        </script>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var gstinField = document.getElementById("gstinField");
-                var gstinInput = document.getElementById("gstin");
-        
-                if (gstinInput.value.trim() === "") {
-                    // If GST Number field is empty, hide the corresponding div
-                    gstinField.style.display = "none";
-                }
-            });
-        </script>
-        
-        <!-- <script>
-            function showFieldsForPayment(paymentType) {
-                var bankFields = document.getElementById("bankFields");
-                var chequeFields = document.getElementById("chequeFields");
-                var upiFields = document.getElementById("upiFields");
-        
-                bankFields.style.display = (paymentType === "bank") ? "block" : "none";
-                chequeFields.style.display = (paymentType === "cheque") ? "block" : "none";
-                upiFields.style.display = (paymentType === "upi") ? "block" : "none";
-            }
-        
-            window.onload = function() {
-                var paymentRadios = document.getElementsByName("paid_through");
-                var bankFields = document.getElementById("bankFields");
-                var chequeFields = document.getElementById("chequeFields");
-                var upiFields = document.getElementById("upiFields");
-        
-                bankFields.style.display = "none"; // Initially hide the bank fields
-                chequeFields.style.display = "none"; // Initially hide the cheque fields
-                upiFields.style.display = "none"; // Initially hide the upi fields
-        
-                paymentRadios.forEach(function(radio) {
-                    radio.addEventListener('change', function() {
-                        showFieldsForPayment(this.value);
-                    });
-                });
-            }
-        </script> -->
    
 {% endblock %}
