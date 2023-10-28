@@ -284,26 +284,21 @@
                                 role="button">
                                 Edit
                             </a>&nbsp;&nbsp;&nbsp;
-                            {% if employee.status == "Active"%}
-                            <a href="{% url 'active_emp' employee.employeeid 'Inactive' %}"
-                                class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
-                                role="button">Inactivate</a> &nbsp;&nbsp;&nbsp;
-                            {% else %}
-                            <a href="{% url 'inactive_emp' employee.employeeid 'Active' %}"
-                                class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
-                                role="button">Activate</a> &nbsp;&nbsp;&nbsp;
-                            {% endif %}
-                            <!-- {% if employee.is_active %}
-                            <a href="{% url 'inactive_emp' employee.id 'inactive' %}"
+
+
+
+                            {% if employee.is_active %}
+                            <a href="{% url 'active_emp2' employee.employeeid %}"
                                 class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                 role="button"> Active </a>
                         {% else %}
-                            <a href="{% url 'active_emp' employee.id 'active' %}"
+                            <a href="{% url 'inactive_emp2' employee.employeeid %}"
                                 class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                 role="button"> Inactive </a> 
                         {% endif %}
-                         -->
+                        
 
+                        
 
                             <!-- <a class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">
 
@@ -555,7 +550,11 @@
                             <hr class="my-4">
                             <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Status</h6>
-                                {{ employee.status }}
+                                {% if employee.is_active %}
+                                    <td>Active</td>
+                                    {% else %}
+                                    <td>Inactive</td>
+                                    {% endif %}
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Designation</h6>
@@ -580,6 +579,10 @@
                                 {{ employee.mobile }}
                             </div>
                             <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Age</h6>
+                                {{ employee.age }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Email</h6>
                                 {{ employee.email }}
                             </div>
@@ -596,7 +599,7 @@
                            
                             <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Salary Effective From</h6>
-                                {{ employee.effectivefrom }}
+                                NET {{ employee.effectivefrom }}
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Pay Head</h6>

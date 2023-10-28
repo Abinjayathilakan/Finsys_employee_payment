@@ -46817,11 +46817,7 @@ def getperiod_rbill2(request):
     list.append(dict)
     return JsonResponse(json.dumps(list), content_type="application/json", safe=False)
 
-# def sort_employee_name(request):
-#     cmp1 = company.objects.get(id=request.session["uid"])
-#     employee = payrollemployee.objects.filter(cid=cmp1).order_by('firstname','lastname')
 
-#     return render(request, 'app1/listemployee.html', {'employee': employee, 'cmp1': cmp1})
 
 from django.shortcuts import render
 
@@ -46832,15 +46828,6 @@ def sort_employee_name(request):
     return render(request, 'app1/listemployee.html', {'employee': employees, 'cmp1': cmp1})
 
 
-# from django.db import connection
-
-# def sort_employeesalary(request):
-#     cmp1 = company.objects.get(id=request.session["uid"])
-#     queryset = payrollemployee.objects.filter(cid=cmp1).order_by('-amount')
-    
-#     print(queryset.query)  # Print the generated SQL query for debugging purposes
-
-#     return render(request, 'app1/listemployee.html', {'employee': queryset, 'cmp1': cmp1})
 from django.db.models.functions import Cast
 from django.db.models import IntegerField
 
@@ -46856,47 +46843,6 @@ def sort_employeesalary(request):
     return render(request, 'app1/listemployee.html', {'employee': employee, 'cmp1': cmp1})
 
 
-
-# from django.shortcuts import render, redirect
-# from .models import payrollemployee
-
-# @login_required(login_url='regcomp')
-# def emp_active(request):
-#     cmp1 = company.objects.get(id=request.session['uid'])
-#     employee = payrollemployee.objects.filter(cid=cmp1, is_active=True)
-#     context = {'cmp1': cmp1, 'employee': employee}
-#     return render(request, 'app1/emp_active.html', context)
-
-# @login_required(login_url='regcomp')
-# def emp_inactive(request):
-#     cmp1 = company.objects.get(id=request.session['uid'])
-#     employee = payrollemployee.objects.filter(cid=cmp1, is_active=False)
-#     context = {'cmp1': cmp1, 'employee': employee}
-#     return render(request, 'app1/emp_inactive.html', context)
-
-# from django.db.models import Q
-
-# # ...
-
-# @login_required(login_url='regcomp')
-# def emp_active(request):
-#     try:
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         employees = payrollemployee.objects.filter(cid=cmp1)  # Get all employees
-#         context = {'cmp1': cmp1, 'employee': employees}
-#         return render(request, 'app1/emp_active.html', context)
-#     except:
-#         return redirect('listpayrollemployee')
-
-
-# def emp_inactive(request):
-#     try:
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         inactive_employees = payrollemployee.objects.filter(cid=cmp1, is_active=False)
-#         context = {'cmp1': cmp1, 'employee': inactive_employees}
-#         return render(request, 'app1/emp_inactive.html', context)
-#     except:
-#         return redirect('listpayrollemployee')
 
    
 def payment_save(request):
@@ -46956,79 +46902,105 @@ def delete_paymt_made_comment(request,id, commentid):
     except:
         return redirect('viewpurchasepymnt', id) 
 
-# @login_required(login_url='regcomp')
-# def plactive(request):
-#     try:
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         employee=Pricelist.objects.filter(cid=cmp1,is_active=True)
-#         context = {'cmp1': cmp1, 'employee':employee}
-#         return render(request,'app1/plactive.html',context)
-            
-#     except:
-#         return redirect('pricelist')
-
-# @login_required(login_url='regcomp')
-# def plinactive(request):
-#     try:
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         employee=Pricelist.objects.filter(cid=cmp1,is_active=False)
-#         context = {'cmp1': cmp1, 'employee':employee}
-#         return render(request,'app1/plinactive.html',context)
-            
-#     except:
-#         return redirect('pricelist')
 
 
-
-
-
-# @login_required(login_url='regcomp')
-# def empactive(request):
-#     try:
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         employee=payrollemployee.objects.filter(cid=cmp1,is_active=True)
-#         context = {'cmp1': cmp1, 'employee':employee}
-#         return render(request,'app1/emp_active.html',context)
-            
-#     except:
-#         return redirect('listpayrollemployee')
-
-# @login_required(login_url='regcomp')
-# def empinactive(request):
-#     try:
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         employee=payrollemployee.objects.filter(cid=cmp1,is_active=False)
-#         context = {'cmp1': cmp1, 'employee':employee}
-#         return render(request,'app1/emp_inactive.html',context)
-            
-#     except:
-#         return redirect('listpayrollemployee')
-    
-def empactive(request):
-    cmp1 = company.objects.get(id=request.session["uid"])
-    emp = payrollemployee.objects.filter(cid=cmp1,is_active=True).all()
-    
-    return render(request,'app1/emp_active.html',{'cmp1':cmp1,'emp':emp})
-
-def empinactive(request):
-    cmp1 = company.objects.get(id=request.session["uid"])
-    emp = payrollemployee.objects.filter(cid=cmp1,is_active=False).all()
-    return render(request,'app1/emp_inactive.html',{'cmp1':cmp1,'emp':emp})
 
 @login_required(login_url='regcomp')
-def active_emp(request, employeeid, status):
-    employee = payrollemployee.objects.get(id=employeeid)
+def active_employee(request):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        employee=payrollemployee.objects.filter(cid=cmp1,is_active=True)
+        context = {'cmp1': cmp1, 'employee':employee}
+        return render(request,'app1/emp_active.html',context)
+            
+    except:
+        return redirect('listpayrollemployee')
+
+@login_required(login_url='regcomp')
+def inactive_employee(request):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        employee=payrollemployee.objects.filter(cid=cmp1,is_active=False)
+        context = {'cmp1': cmp1, 'employee':employee}
+        return render(request,'app1/emp_inactive.html',context)
+            
+    except:
+        return redirect('listpayrollemployee')  
+    
+from django.shortcuts import get_object_or_404
+
+@login_required(login_url='regcomp')
+def active_emp2(request, employeeid):
+    employee = get_object_or_404(payrollemployee, cid_id=request.session["uid"], employeeid=employeeid)
     employee.is_active = True
     employee.save()
     return redirect('payrollemployeeprofile', employeeid=employeeid)
 
 @login_required(login_url='regcomp')
-def inactive_emp(request, employeeid, status):
-    employee = payrollemployee.objects.get(id=employeeid)
+def inactive_emp2(request, employeeid):
+    employee = get_object_or_404(payrollemployee, cid_id=request.session["uid"], employeeid=employeeid)
     employee.is_active = False
     employee.save()
     return redirect('payrollemployeeprofile', employeeid=employeeid)
 
+
+# @login_required(login_url='regcomp')
+# def active_emp(request, employeeid):
+#     employee = payrollemployee.objects.get(employeeid=employeeid)
+#     employee.is_active = True
+#     employee.save()
+#     return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
+
+# @login_required(login_url='regcomp')
+# def inactive_emp(request, employeeid):
+#     employee = payrollemployee.objects.get(employeeid=employeeid)
+#     employee.is_active = False
+#     employee.save()
+#     return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
+
+
+
+
+
+
+# @login_required(login_url='regcomp')
+# def deletepayrollemp(request, employeeid):
+#     try:
+#         employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+#         employee.delete()
+#         return redirect('listpayrollemployee')
+#     except:
+#         return redirect('listpayrollemployee')
+
+# @login_required(login_url='regcomp')
+# def active_emp(request, employeeid):
+#     employee = payrollemployee.objects.get(employeeid=employeeid)
+#     employee.is_active = True
+#     employee.save()
+#     return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
+
+# @login_required(login_url='regcomp')
+# def inactive_emp(request, employeeid):
+#     employee = payrollemployee.objects.get(employeeid=employeeid)
+#     employee.is_active = False
+#     employee.save()
+#     return redirect('payrollemployeeprofile', employeeid=employeeid)
+
+
+
+
+
+# @login_required(login_url='regcomp')
+# def active_emp(request,employeeid,status):
+    
+#     employee=payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+#     if status == "Active":
+#         employee.status="Active"
+#     else:
+#          employee.status="Inactive"
+
+#     employee.save()
+#     return redirect('payrollemployeeprofile',employeeid)
 
 # @login_required(login_url='regcomp')
 # def active_emp(request,employeeid,status):

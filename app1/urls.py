@@ -961,7 +961,7 @@ urlpatterns = [
     path('editpayrollemployee/<int:employeeid>', views.editpayrollemployee, name='editpayrollemployee'), 
     re_path(r'^gopayrollsearch',views.gopayrollsearch,name='gopayrollsearch'),
     path('gopayrollfilter/<str:filters>/<str:values>', views.gopayrollfilter, name='gopayrollfilter'),
-    path('active_emp/<str:employeeid>/<str:status>', views.active_emp, name='active_emp'),
+    # path('active_emp/<str:employeeid>/<str:status>', views.active_emp, name='active_emp'),
     path('deletepayrollemp/<int:employeeid>', views.deletepayrollemp, name='deletepayrollemp'),
     path('employee_add_file/<int:employeeid>', views.employee_add_file, name='employee_add_file'),
     path('employeecomments/<int:employeeid>', views.employeecomments, name='employeecomments'),
@@ -1251,11 +1251,14 @@ urlpatterns = [
     path('delete_paymt_made_comment/<int:id>/<int:commentid>', views.delete_paymt_made_comment, name='delete_paymt_made_comment'),
 
     
-    path('empactive/',views.empactive,name='empactive'),
-    path('empinactive/',views.empinactive,name='empinactive'),
-    # path('active_emp/<str:employeeid>/<str:status>', views.active_emp, name='active_emp'),
-    path('inactive_emp/<str:employeeid>/<str:status>', views.inactive_emp, name='inactive_emp'),
+    # path('empactive/',views.empactive,name='empactive'),
+    # path('empinactive/',views.empinactive,name='empinactive'),
+    path('active_employee/', views.active_employee, name='active_employee'),
+    path('inactive_employee/', views.inactive_employee, name='inactive_employee'),
     
+    path('active_emp2/<int:employeeid>',views.active_emp2,name='active_emp2'),
+    path('inactive_emp2/<int:employeeid>',views.inactive_emp2,name='inactive_emp2'),
+    path('deletepayrollemp/<int:employeeid>', views.deletepayrollemp, name='deletepayrollemp'),
 
     
 ]
