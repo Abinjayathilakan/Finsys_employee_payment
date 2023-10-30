@@ -36015,17 +36015,64 @@ def editpurchasepymnt(request,id):
             uid = request.session['uid']
         else:
             return redirect('/')
+        
         cmp1 = company.objects.get(id=request.session['uid'])
+        
         if request.method == 'POST':
+            
+            paid_through = request.POST['paid_through']
+            if paid_through == 'cash':
+                cash = 'In-Hand Cash'
+                account_number = None
+                cheque_number = None
+                upi_id = None
+            elif paid_through == 'bank':
+                account_number = request.POST['account_number']
+                cash = None
+                cheque_number = None
+                upi_id = None
+            elif paid_through == 'cheque':
+                cheque_number = request.POST['cheque_number']
+                cash = None
+                account_number = None
+                upi_id = None
+            else:
+                upi_id = request.POST['upi_id']
+                cash = None
+                account_number = None
+                cheque_number = None
+
+            if 'action' in request.POST:
+                action = request.POST['action']
+                if action == 'draft':
+                    status = "Draft"
+                elif action == 'save':
+                    status = "Save"
+                    
             paymt=purchasepayment.objects.get(pymntid=id)
             paymt.vendor = request.POST['vendor']
             paymt.reference= request.POST['reference']
             paymt.paymentdate=request.POST['paymentdate']
             paymt.paymentmethod=request.POST['paymentmethod']
-            paymt.depositeto=request.POST['depto']
-            paymt.amtreceived=request.POST['amtreceived']
-            paymt.paymentamount=request.POST['paymentamount']
+            # paymt.depositeto=request.POST['depto']
+            # paymt.amtreceived=request.POST['amtreceived']
+            # paymt.paymentamount=request.POST['paymentamount']
             paymt.amtcredit=request.POST['amtcredit']
+            
+            
+            paymt.email=request.POST['email']
+            paymt.gst_treatment=request.POST['gsttype']
+            if 'gstin' in request.POST:
+                paymt.gst_number = request.POST['gstin']
+            else:
+                paymt.gst_number = None  # Set to None or an empty string depending on your field type
+
+            paymt.paid_through=request.POST['paid_through']
+            paymt.account_number=account_number
+            paymt.cheque_number=cheque_number
+            paymt.upi_id=upi_id
+        
+            paymt.status=status         
 
             paymt.save()
 

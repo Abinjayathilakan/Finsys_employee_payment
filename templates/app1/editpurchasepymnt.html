@@ -101,22 +101,24 @@
                         <div class="col-sm-10 col-md-7 col-9 ml-5">
                             <div class="input-group mb-2">
                                 <div>
-                                    <input type="radio" id="cashRadio" name="paid_through" value="cash" style="margin-left: 40px;" {% if payment.paid_through == 'cash' %}checked{% endif %}>
+                                    <input type="radio" id="cashRadio" name="paid_through" value="cash" style="margin-left: 40px;" {% if paymt.paid_through == 'cash' %}checked{% endif %} >
+                                    
                                     <label for="cashRadio">In-Hand Cash</label>
                                 </div>
                     
                                 <div>
-                                    <input type="radio" id="bankRadio" name="paid_through" value="bank" style="margin-left: 60px;" {% if payment.paid_through == 'bank' %}checked{% endif %}>
+                                    <input type="radio" id="bankRadio" name="paid_through" value="bank" style="margin-left: 60px;" {% if paymt.paid_through == 'bank' %}checked{% endif %} >
                                     <label for="bankRadio">Bank</label>
                                 </div>
                     
                                 <div>
-                                    <input type="radio" id="chequeRadio" name="paid_through" value="cheque" style="margin-left: 60px;" {% if payment.paid_through == 'cheque' %}checked{% endif %}>
+                                    <input type="radio" id="chequeRadio" name="paid_through" value="cheque" style="margin-left: 60px;" {% if paymt.paid_through == 'cheque' %}checked{% endif %} >
                                     <label for="chequeRadio">Cheque</label>
                                 </div>
                     
                                 <div>
-                                    <input type="radio" id="upiRadio" name="paid_through" value="upi" style="margin-left: 60px;" {% if payment.paid_through == 'upi' %}checked{% endif %}>
+                                    <input type="radio" id="upiRadio" name="paid_through" value="upi" style="margin-left: 60px;" {% if paymt.paid_through == 'upi' %}checked{% endif %} >
+                                    
                                     <label for="upiRadio">UPI</label>
                                 </div>
                             </div>
@@ -125,36 +127,35 @@
                     
 
 
-                    <div id="bankFields" class="form-group row center-align">
+                    <div id="bankFields" class="form-group row center-align" {% if paymt.account_number %}style="display: block;"{% else %}style="display: none;"{% endif %} >
                         <label for="bankName" class="col-lg-2 col-form-label">Select Bank:</label>
                         <div class="col-sm-6 col-md-5 col-6 center-input">
                             <div class="input-group mb-2">
                                 <select id="bankName" name="account_number" class="form-control bg-light text-white narrow-input">
                                     <!-- Add your bank options here -->
-                                    <option value="">Select Bank</option> <!-- A default option to prompt selection -->
+                                    <option value="{{paymt.account_number}}">{{paymt.account_number}}</option> <!-- A default option to prompt selection -->
                                     {% for v in bank %}
-                                    {% if v.account_number == paymt.account_number %}
-                                    <option value="{{ v.account_number }}" selected>{{ v.account_number }}</option>
-                                    {% endif %}
+                                    <option value="{{ v.account_number }}" {% if v.account_number == paymt.account_number %}selected{% endif %}>{{ v.account_number }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
                     </div>
                     
-                    <div id="chequeFields" class="form-group row center-align">
+                    <div id="chequeFields" class="form-group row center-align" {% if paymt.cheque_number %}style="display: block;"{% else %}style="display: none;"{% endif %}>
                         <label for="chequeNumber" class="col-lg-2 col-form-label">Cheque Number:</label>
                         <div class="col-sm-6 col-md-5 col-6 center-input">
                             <input type="text" id="chequeNumber" name="cheque_number" class="form-control narrow-input" placeholder="Cheque Number" value="{{ paymt.cheque_number }}">
                         </div>
                     </div>
                     
-                    <div id="upiFields" class="form-group row center-align">
+                    <div id="upiFields" class="form-group row center-align" {% if paymt.upi_id %}style="display: block;"{% else %}style="display: none;"{% endif %}>
                         <label for="upiId" class="col-lg-2 col-form-label">UPI ID:</label>
                         <div class="col-sm-6 col-md-5 col-6 center-input">
                             <input type="text" id="upiId" name="upi_id" class="form-control narrow-input" value="{{ paymt.upi_id }}">
                         </div>
                     </div>
+                    
                     
                     
 
@@ -192,7 +193,7 @@
                                                 <td ><input type="number" name='amountdue[]' id="openbal{{forloop.counter}}" value="{{ p.amountdue }}"
                                                      class="form-control price" step="0.00" min="0"/>
                                                 </td>
-                                                <td><input type="number" name='payments[]' onchange="addagain()" id="payment{{forloop.counter}}" placeholder='0.00'
+                                                <td><input type="number" name='payments[]'  id="payment{{forloop.counter}}" placeholder='0.00'
                                                     class="form-control total" value="{{ p.payments }}"/>
                                                 </td>
                                             </tr>
@@ -206,16 +207,16 @@
                             <div class="col-md-5 table-responsive-md">
                                 <table class="table table-bordered table-hover" id="tab_logic_total" style="background-color: rgba(0,0,0,0.4);">
                                     <tbody>
-                                    <tr>
+                                    <!-- <tr>
                                         <th class="text-center">Amount to Apply</th>
                                         <td class="text-center"><input type="number" name='paymentamount' id="amtoapply"
                                             placeholder='0.00' value="{{ paymt.paymentamount }}" class="form-control">
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                     <tr>
-                                        <th class="text-center">Amount to Credit</th>
+                                        <th class="text-center">Balance amount</th>
                                         <td class="text-center"><input type="number" name='amtcredit' id="amtcredit"
-                                            placeholder='0.00' class="form-control" value="{{ paymt.amtcredit }}">
+                                            placeholder='0.00' class="form-control balance-amount" value="{{ paymt.amtcredit }}">
                                         </td>
                                     </tr>
                                     </tbody>
@@ -224,12 +225,9 @@
                         </div>
                         <div class="row mt-4">
                             <div class="col-md-10"></div>
-                            <div class="col-md-2">
-                                <button type="submit"
-                                        onclick="alert('Are you sure you wants to save the payment?\nNo corrections after submission')"
-                                        class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
-                                    Save
-                                </button>
+                            <div class="" style="margin-left: 30rem; text-align: center;">
+                                <button type="submit" name="action" value="draft" class="btn btn-outline-info rounded-pill w-10 text-light">Save as Draft</button>&nbsp;
+                                <button type="submit" name="action" value="save" onclick="alert('Are you sure you wants to save the payment?\nNo corrections after submission')" class="btn btn-outline-info rounded-pill w-10 text-light">Save And Send</button>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -984,6 +982,33 @@
 
         }
     </script>
+<!-- Include this JavaScript in your HTML template -->
+<script>
+    function updateBalanceAmount() {
+      var rows = document.querySelectorAll('tr[id^="addr"]');
+      
+      rows.forEach(function (row) {
+        var amountDue = parseFloat(row.querySelector('.openbal').value) || 0;
+        var payment = parseFloat(row.querySelector('.payment').value) || 0;
+        var balanceAmount = amountDue - payment;
+        row.querySelector('.balance-amount').value = balanceAmount.toFixed(2);
+      });
+    }
+  
+    // Call the function when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+      updateBalanceAmount();
+      
+      // Add an event listener to update the balance amount on input change
+      document.querySelectorAll('.payment').forEach(function (input) {
+        input.addEventListener('input', updateBalanceAmount);
+      });
+    });
+  </script>
+  
+
+
+
 
     <script>
         $(document).ready(function () {
@@ -1001,19 +1026,22 @@
                             var vendorData = json_data[0]; // Assuming you are expecting one vendor data
                             $('#email').val(vendorData.email);
                             $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
-    
+        
                             // Show email and GST treatment fields
                             $('#emailField, #gstTypeField').show();
-                            $('#gstinField').show(); // Show GST Number field if it has a value
-    
+        
                             // Set values for email and GST treatment fields
                             $('#email').val(vendorData.email);
                             $('#gsttype').val(vendorData.gsttype);
-    
-                            // Check if GST Number has a value, hide it if empty
+        
+                            // Check if GST Number has a value
                             if (vendorData.gstin) {
+                                // Set the GST Number field to the value and show the field
                                 $('#gstin').val(vendorData.gstin);
+                                $('#gstinField').show();
                             } else {
+                                // If GST Number is empty, set the field to null or empty and hide it
+                                $('#gstin').val(null); // or $('#gstin').val('');
                                 $('#gstinField').hide();
                             }
                         } else {
@@ -1026,6 +1054,8 @@
                 });
             });
         });
+        
+        
     </script>
     
 
@@ -1115,5 +1145,50 @@
                 });
             }
         </script> -->
+        <script>
+            // Get references to the radio buttons and related fields
+            const cashRadio = document.getElementById("cashRadio");
+            const bankRadio = document.getElementById("bankRadio");
+            const chequeRadio = document.getElementById("chequeRadio");
+            const upiRadio = document.getElementById("upiRadio");
+            const bankFields = document.getElementById("bankFields");
+            const chequeFields = document.getElementById("chequeFields");
+            const upiFields = document.getElementById("upiFields");
+        
+            // Function to show/hide fields based on the selected radio button
+            function updateFieldVisibility() {
+                if (cashRadio.checked) {
+                    bankFields.style.display = "none";
+                    chequeFields.style.display = "none";
+                    upiFields.style.display = "none";
+                } else if (bankRadio.checked) {
+                    bankFields.style.display = "block";
+                    chequeFields.style.display = "none";
+                    upiFields.style.display = "none";
+                } else if (chequeRadio.checked) {
+                    bankFields.style.display = "none";
+                    chequeFields.style.display = "block";
+                    upiFields.style.display = "none";
+                } else if (upiRadio.checked) {
+                    bankFields.style.display = "none";
+                    chequeFields.style.display = "none";
+                    upiFields.style.display = "block";
+                }
+            }
+        
+            // Add event listeners to radio buttons
+            cashRadio.addEventListener("click", updateFieldVisibility);
+            bankRadio.addEventListener("click", updateFieldVisibility);
+            chequeRadio.addEventListener("click", updateFieldVisibility);
+            upiRadio.addEventListener("click", updateFieldVisibility);
+        
+            // Call the function to set the initial field visibility
+            updateFieldVisibility();
+        </script>
+
+<!-- Include this JavaScript in your HTML template -->
+
+
+        
    
 {% endblock %}
