@@ -1245,20 +1245,15 @@ urlpatterns = [
     path('payment_save/',views.payment_save,name='payment_save'),
     path('payment_draft/',views.payment_draft,name='payment_draft'),
     path('convert_to_save/<int:id>',views.convert_to_save,name='convert_to_save'),
-    # path('getbilldata2/',views.getbilldata2,name='getbilldata2'),
     path('add_paymt_made_comment/<int:id>', views.add_paymt_made_comment, name='add_paymt_made_comment'),
-    # path('delete_paymt_made_comment/<int:id>', views.delete_paymt_made_comment, name='delete_paymt_made_comment'),
     path('delete_paymt_made_comment/<int:id>/<int:commentid>', views.delete_paymt_made_comment, name='delete_paymt_made_comment'),
-
-    
-    # path('empactive/',views.empactive,name='empactive'),
-    # path('empinactive/',views.empinactive,name='empinactive'),
     path('active_employee/', views.active_employee, name='active_employee'),
     path('inactive_employee/', views.inactive_employee, name='inactive_employee'),
-    
-    path('active_emp2/<int:employeeid>',views.active_emp2,name='active_emp2'),
-    path('inactive_emp2/<int:employeeid>',views.inactive_emp2,name='inactive_emp2'),
+    path('active_emp2/<int:employeeid>/', views.active_emp2, name='active_emp2'),
+    path('inactive_emp2/<int:employeeid>/', views.inactive_emp2, name='inactive_emp2'),
     path('deletepayrollemp/<int:employeeid>', views.deletepayrollemp, name='deletepayrollemp'),
+    path('option_dropdown',views.option_dropdown,name='option_dropdown'),
+    path('add_option',views.add_option,name='add_option'),
 
     
 ]

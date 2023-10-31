@@ -35729,7 +35729,7 @@ def addpurchasepymnt(request):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         vndr = vendor.objects.filter(cid=cmp1)
-        pymt = paymentmethod.objects.filter(cid=cmp1)
+        pymt = paymentmethod.objects.all()
         bank = BankAccount.objects.all()
         acc = accounts1.objects.filter(cid=cmp1,acctype='Cash')
         acc1 = accounts1.objects.filter(cid=cmp1,acctype='Bank')
@@ -35776,8 +35776,8 @@ def createpurchasepymnt(request):
                     status = "Save"
 
             # Generate the reference number based on the current maximum reference in the database
-            max_reference = purchasepayment.objects.aggregate(models.Max('reference'))['reference__max']
-            next_reference = str(int(max_reference) + 1) if max_reference else "1"
+            # max_reference = purchasepayment.objects.aggregate(models.Max('reference'))['reference__max']
+            # next_reference = str(int(max_reference) + 1) if max_reference else "1"
 
             pymnt1 = purchasepayment(
                 vendor=request.POST['vendor'],
@@ -35786,7 +35786,8 @@ def createpurchasepymnt(request):
                 gst_number=request.POST['gstin'],
                 paymentdate=request.POST['paymentdate'],
                 paymentmethod=request.POST['paymentmethod'],
-                reference=next_reference,  # Use the generated reference number
+                # newmethod = paymentmethod.objects.get(id=payment_method),
+                reference=request.POST['reference'],
                 # amtreceived=request.POST['amtreceived'],
                 # paymentamount=request.POST['paymentamount'],
                 amtcredit=request.POST['amtcredit'],
@@ -35920,6 +35921,7 @@ def viewpurchasepymnt(request,id):
         cmp1 = company.objects.get(id=request.session['uid'])
         paymt=purchasepayment.objects.get(pymntid=id)
         paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
+        pymt = paymentmethod.objects.all()
         # cmt = payment_made_comment.objects.filter(proj=paymt)
         comments = paymnt_made_comments.objects.filter(cid_id=request.session["uid"],empid_id=paymt)
           
@@ -35927,7 +35929,8 @@ def viewpurchasepymnt(request,id):
             'cmp1': cmp1,
             'paymt': paymt,  # Include paymt in the context
             'py': paymt1,
-            'comments': comments
+            'comments': comments,
+            'pymt' : pymt
         }
 
     return render(request, 'app1/viewpurchasepymnt.html', context)
@@ -40363,9 +40366,24 @@ def listpayrollemployee(request):
 def payrollemployeeprofile(request,employeeid): 
   cmp1 = company.objects.get(id=request.session["uid"])
   employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+  
   comments = payrollcomments.objects.filter(cid_id=request.session["uid"],empid_id=employeeid)
   return render(request,'app1/payrollemployeeprofile.html',{'employee': employee,'cmp1': cmp1,'comments': comments})
 
+# @login_required(login_url='regcomp')
+# def pricelist_viewpage(request,pk):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         pricelist=Pricelist.objects.filter(cid=cmp1)
+#         pl=Pricelist.objects.get(id=pk,cid=cmp1)
+#         items=pricelist_individual.objects.filter(pricelist1=pk)
+       
+        
+#         context = {'cmp1': cmp1, 'pricelist':pricelist, 'pl':pl,'items':items,}
+#         return render(request,'app1/pricelist_viewpage.html',context) 
+            
+#     except:
+#         return redirect('pricelist')  
 
 
 @login_required(login_url='login')
@@ -46678,90 +46696,10 @@ def gocustomers2(request):
     
 
 
-
+# Abin - employee and Payment Made Updation
 
 
     
-# @login_required(login_url='login')
-# def get_vendor_credit_det(request):
-
-#     company= company_details.objects.get(user = request.user)
-
-#     # fname = request.POST.get('fname')
-#     # lname = request.POST.get('lname')
-#     id = request.POST.get('id')
-#     vdr = vendor.objects.get(user=company.user_id, id=id)
-#     vemail = vdr.email
-#     gstnum = vdr.gsttype
-#     gsttr = vdr.gstin
-    
-
-#     return JsonResponse({'email' :vemail, 'gsttype' : gstnum,'gstin':gsttr},safe=False)
-
-# from django.http import JsonResponse
-
-# def get_vendor_data(request):
-#     vendor_name = request.GET.get('vendor_name')
-    
-#     try:
-#         vendor = vendor.objects.get(firstname=vendor_name)
-#         vendor_data = {
-#             'email': vendor.email,
-#             'gsttype': vendor.gsttype,
-#             'gstin': vendor.gstin
-#         }
-#         return JsonResponse(vendor_data)
-#     except vendor.DoesNotExist:
-#         return JsonResponse({'error': 'Vendor not found'})
-
-# def get_vendor_credit_det(request):
-
-#     company= company_details.objects.get(user = request.user)
-
-#     # fname = request.POST.get('fname')
-#     # lname = request.POST.get('lname')
-#     id = request.POST.get('id')
-#     vdr = vendor.objects.get(user=company.user_id, id=id)
-#     vemail = vdr.email
-#     gstnum = vdr.gsttype
-#     gsttr = vdr.gstin
- 
-
-#     return JsonResponse({'email' :vemail, 'gsttype' : gstnum,'gstin':gsttr},safe=False)
-
-# def get_vendor_credit_det(request):
-#     company = company_details.objects.get(user=request.user)
-#     vendor_id = request.POST.get('id')
-#     vendor = vendor.objects.filter(user=company.user_id, vendorid=vendor_id).first()
-    
-#     if vendor:
-#         vemail = vendor.email
-#         gstnum = vendor.gsttype
-#         gsttr = vendor.gstin
-#         return JsonResponse({'email': vemail, 'gsttype': gstnum, 'gstin': gsttr}, safe=False)
-#     else:
-#         return JsonResponse({'error': 'Vendor not found'}, status=404)
-
-
-
-# @login_required(login_url='regcomp')
-# def cust_details(request):
-#     if 'uid' in request.session:
-#         if request.session.has_key('uid'):
-#             uid = request.session['uid']
-#         else:
-#             return redirect('/')
-#         comp = company.objects.get(id=request.session['uid'])
-#         id = request.POST.get('id').split(" ")[0]
-#         cust = customer.objects.get(customerid = id, cid = request.session['uid'])
-#         email = cust.email
-#         street = cust.street
-#         city = cust.city
-#         state = cust.state
-#         pincode = cust.pincode
-#         country = cust.country
-       
-#     return JsonResponse({'email': email,'street': street,'city':city,'pincode': pincode,"state": state,'country' : country},safe=False)
 
 def getvendordata3(request):
     if 'uid' in request.session:
@@ -46974,89 +46912,57 @@ def inactive_employee(request):
     except:
         return redirect('listpayrollemployee')  
     
-from django.shortcuts import get_object_or_404
-
 @login_required(login_url='regcomp')
 def active_emp2(request, employeeid):
     employee = get_object_or_404(payrollemployee, cid_id=request.session["uid"], employeeid=employeeid)
     employee.is_active = True
     employee.save()
-    return redirect('payrollemployeeprofile', employeeid=employeeid)
+    return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
 
 @login_required(login_url='regcomp')
 def inactive_emp2(request, employeeid):
     employee = get_object_or_404(payrollemployee, cid_id=request.session["uid"], employeeid=employeeid)
     employee.is_active = False
     employee.save()
-    return redirect('payrollemployeeprofile', employeeid=employeeid)
+    return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
 
 
-# @login_required(login_url='regcomp')
-# def active_emp(request, employeeid):
-#     employee = payrollemployee.objects.get(employeeid=employeeid)
-#     employee.is_active = True
-#     employee.save()
-#     return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from .models import paymentmethod
 
-# @login_required(login_url='regcomp')
-# def inactive_emp(request, employeeid):
-#     employee = payrollemployee.objects.get(employeeid=employeeid)
-#     employee.is_active = False
-#     employee.save()
-#     return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
+def add_option(request):
+    if request.method == 'POST':
+        option_name = request.POST['newmethod']
+        paymentmethod.objects.create(newmethod=option_name)
+        return redirect('addpurchasepymnt')
+    return render(request, "addpurchasepymnt.html")
 
 
+from django.http import JsonResponse
+from .models import paymentmethod
 
-
-
-
-# @login_required(login_url='regcomp')
-# def deletepayrollemp(request, employeeid):
-#     try:
-#         employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
-#         employee.delete()
-#         return redirect('listpayrollemployee')
-#     except:
-#         return redirect('listpayrollemployee')
-
-# @login_required(login_url='regcomp')
-# def active_emp(request, employeeid):
-#     employee = payrollemployee.objects.get(employeeid=employeeid)
-#     employee.is_active = True
-#     employee.save()
-#     return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
-
-# @login_required(login_url='regcomp')
-# def inactive_emp(request, employeeid):
-#     employee = payrollemployee.objects.get(employeeid=employeeid)
-#     employee.is_active = False
-#     employee.save()
-#     return redirect('payrollemployeeprofile', employeeid=employeeid)
-
-
+def option_dropdown(request):
+    options = {}
+    option_objects = paymentmethod.objects.all()
+    for newmethod in option_objects:
+        options[newmethod.id] = newmethod.newmethod
+    return JsonResponse(options)
 
 
 
 # @login_required(login_url='regcomp')
-# def active_emp(request,employeeid,status):
-    
-#     employee=payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
-#     if status == "Active":
-#         employee.status="Active"
-#     else:
-#          employee.status="Inactive"
-
-#     employee.save()
-#     return redirect('payrollemployeeprofile',employeeid)
-
-# @login_required(login_url='regcomp')
-# def active_emp(request,employeeid,status):
-    
-#     employee=payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
-#     if status == "Active":
-#         employee.status="Active"
-#     else:
-#          employee.status="Inactive"
-
-#     employee.save()
-#     return redirect('payrollemployeeprofile',employeeid)
+# def payment_method(request):
+#     if 'uid' in request.session:
+#         if request.session.has_key('uid'):
+#             uid = request.session['uid']
+#         else:
+#             return redirect('/')
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         if request.method=='POST':
+#             meth = request.POST['newmethod']
+#             npm=paymentmethod(newmethod = meth)
+#             npm.save()
+#             return redirect('addpurchasepymnt')
+#         return render(request,'app1/addpurchasepymnt.html',{'cmp1':cmp1})
+#     return redirect('/')

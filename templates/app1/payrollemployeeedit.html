@@ -136,10 +136,24 @@
                         <div class="row mt-3">
                             <div class="col-3 col-md-4">
                                 <label for="effectivefrom">Effective From</label>
-                                <input type="date" class="form-control" id="effectivefrom" name="effectivefrom" value="{{employee.effectivefrom}}"
-                                    style="background-color: #2f516f; color: white;" min="0" value="0" >
+                                <div class="d-flex">
+                                    <select class="custom-select" name="effectivefrom" id="termadd2" style="width: 500px;">
+                                        <option value="" id="trmopt2"></option>
+                                        <option value="0" {% if employee.effectivefrom == "0" %}selected{% endif %}>Due on Receipt</option>
+                                        <option value="15" {% if employee.effectivefrom == "15" %}selected{% endif %}>NET 15</option>
+                                        <option value="30" {% if employee.effectivefrom == "30" %}selected{% endif %}>NET 30</option>
+                                        <option value="60" {% if employee.effectivefrom == "60" %}selected{% endif %}>NET 60</option>
+                                        {% for pd in cpd %}
+                                            <option value="{{ pd.newperiod }}" {% if pd.newperiod == employee.effectivefrom %}selected{% endif %}>NET {{ pd.newperiod }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    
+                                <a class="btn btn-outline-secondary ml-1" data-target="#crperiod2" data-toggle="modal">+</a>
+
                                 <div class="text-danger m-2" id="effectivefrom"></div>
                             </div>
+
+                        </div>
                             <div class="col-3 col-md-4">
                                 <label for="payhead">Pay Head</label>
                                 <select name="payhead" id="payhead" class="form-control" value="{{employee.payhead}}">
@@ -620,6 +634,37 @@
             </div>
             {% endif %}
         </form>
+
+        <div class="modal fade" id="crperiod2">
+            <div class="modal-dialog">
+                <div class="modal-content" style="background-color: #213b52;">
+                    <div class="modal-header">
+                        <h5 class="m-3">New Credit Period</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card p-3 m-3">
+                            <form action="{% url 'credit_period_rbill3' %}" method="post" autocomplete="off" id="credit">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-2 mt-2"></div>
+                                    <div class="col-md-5 mt-2">
+                                        <input type="number" name="newperiod" id="period" class="form-control">
+                                    </div>
+                                    <div class="col-md-2 mt-2">
+                                        <button class="btn btn-outline-info text-grey mb-3" type="submit" data-dismiss="modal" id="savecredit">Save</button>
+                                    </div>
+                                </div>
+                            </form>  
+                        </div>
+                    </div>
+                </div>   
+            </div>
+        </div> 
+
+
     </div>
 </div>
 
@@ -846,4 +891,91 @@
         });
 
 </script>
+
+<script>
+    $(document).on("click","#savecredit",function(){
+
+        $.ajax({
+        
+        
+            type : 'POST',
+            url:"{% url 'credit_period_rbill3' %}",
+        
+            data:{
+                
+                newperiod : $("#period").val(),
+             
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+                
+            },
+            
+            success: function(response) {
+                console.log("AJAX Success - Response Data:", response);
+                document.getElementById("credit").reset();
+                reloadcredit();
+            },
+                    
+        });
+        
+        
+        
+        });
+        
+        
+        
+        function reloadcredit() {
+        console.log("reloadrepeat Function Called");
+        $.ajax({
+        url: "{% url 'credit_dropdown_rbill2' %}",
+        type: "GET",
+        dataType: "json",
+        data: $(this).serialize(),
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        
+        success: function(data) {
+            console.log("AJAX Success - Dropdown Data:", data);
+            var dropdown = $('#termadd2');
+            dropdown.empty()
+            dropdown.append(`<option selected id="trmopt"></option>
+                             <option value="0">Due on Receipt</option>
+                            <option value="15">NET 15</option>
+                            <option value="30">NET 30</option>
+                            <option value="60">NET 60</option>
+                                       `);
+            $.each(data, function(key, value) {
+            var netValue = "NET " + value;
+                dropdown.append($('<option></option>').attr('value', key).text(netValue).val(value));
+            // dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                
+            });
+        
+        
+        
+        },
+        error: function(xhr, status, error) {
+        console.error(xhr.responseText);
+        }
+        });
+        
+        }
+        $(document).ready(function() {
+            $('#termadd2').on('change', function() {
+                        select = $('#termadd2').val();
+                        $.ajax({
+                                type: "GET",
+                                url: "{% url 'getperiod_rbill2' %}",
+                                data: {
+                                id: select
+                            }
+                        }).done(function(response) {
+                            var json_data = JSON.parse(response);
+                            for (key in json_data) {
+                            document.getElementById('duedat').value = json_data[key]['newdate'];
+                            }
+                        }).fail(function() { });
+                    });
+        });
+
+</script>
+
 {% endblock %}

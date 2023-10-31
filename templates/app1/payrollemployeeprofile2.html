@@ -277,28 +277,22 @@
                     <div>
                         <center>
                             <a data-toggle="modal"
-                                class=" fa fa-comment btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
-                                data-target="#commentModal"> Comments</a>
+                                class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                data-target="#commentModal">Comments</a>
                             <a href="{% url 'payrollemployeeedit' employee.employeeid %}"
                                 class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                 role="button">
                                 Edit
                             </a>&nbsp;&nbsp;&nbsp;
-
-
-
-                            {% if employee.is_active %}
-                            <a href="{% url 'inactive_emp2' employee.employeeid %}"
-                                class="fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
-                                role="button"> Active </a>
-                        {% else %}
-                            <a href="{% url 'active_emp2' employee.employeeid %}"
-                                class="fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
-                                role="button"> Inactive </a> 
-                        {% endif %}
-                        
-
-                        
+                            {% if employee.status == "Active"%}
+                            <a href="{% url 'active_emp' employee.employeeid 'Inactive' %}"
+                                class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                role="button">Inactivate</a> &nbsp;&nbsp;&nbsp;
+                            {% else %}
+                            <a href="{% url 'active_emp' employee.employeeid 'Active' %}"
+                                class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                role="button">Activate</a> &nbsp;&nbsp;&nbsp;
+                            {% endif %}
 
                             <!-- <a class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">
 
@@ -550,11 +544,7 @@
                             <hr class="my-4">
                             <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Status</h6>
-                                {% if employee.is_active %}
-                                    <td>Active</td>
-                                    {% else %}
-                                    <td>Inactive</td>
-                                    {% endif %}
+                                {{ employee.status }}
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Designation</h6>
@@ -579,10 +569,6 @@
                                 {{ employee.mobile }}
                             </div>
                             <div class="d-flex justify-content-between mb-4">
-                                <h6 class="">Age</h6>
-                                {{ employee.age }}
-                            </div>
-                            <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Email</h6>
                                 {{ employee.email }}
                             </div>
@@ -599,7 +585,7 @@
                            
                             <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Salary Effective From</h6>
-                                NET {{ employee.effectivefrom }}
+                                {{ employee.effectivefrom }}
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h6 class="">Pay Head</h6>

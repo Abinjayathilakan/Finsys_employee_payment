@@ -89,7 +89,7 @@
                                         <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
                                     {% endfor %}
                                 </select>
-                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#Add_option" data-toggle="modal" role="button">+</a> -->
+                                <a class="btn btn-outline-secondary ml-1" data-target="#Add_option" data-toggle="modal" role="button">+</a>
                             </div>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
                             <select id="bankName" name="account_number" class="form-control bg-light text-white narrow-input">
                               <!-- Add your bank options here -->
                               {% for v in bank %}
-                              <option value="{{ v.account_number }}">{{ v.account_number }}</option>
+                              <option value="{{ v.bank_name }}">{{ v.bank_name }}</option>
                               {% endfor %}
                             </select>
                           </div>
@@ -332,7 +332,6 @@
                 </div>
             </div>
         </div>
-        
 
         <div class="modal fade" id="Add_option">
             <div class="modal-dialog">
@@ -345,16 +344,14 @@
                     </div>
                     <div class="modal-body">
                         <div class="card p-3 m-3">
-                           
-                            <form action="" method="post" autocomplete="off" id="newmethod-form">
-
+                            <form action="" method="post" autocomplete="off">
                                 {% csrf_token %}
                                 <div class="row">
                                     <div class="col-md-8 mt-2">
-                                        <input type="text" name="newmethod" id="option" class="form-control">
+                                        <input type="text" name="newmethod" class="form-control">
                                     </div>
                                     <div class="col-md-2 mt-2">
-                                        <button id="CreateOption" class="btn btn-outline-info text-grey mb-3" type="submit">Save</button>
+                                        <button class="btn btn-outline-info text-grey mb-3" id="CreateOption" type="submit">Save</button>
                                     </div>
                                 </div>
                             </form>  
@@ -439,50 +436,8 @@
                         )
                     }   
 
-                    for (i=0;i<6;i++){
-                        j=i;
-                        $('#tab_logic ').append(
-                            `
-                                <tr id='addr1'>
-                                    <td>${i+2}</td>
-                                    <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
-                                    <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
-                                    <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
-                                        class="form-control qty" step="0" min="0"/>
-                                    </td>
-                                    <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
-                                    <td><input type="number" name='amountdue[]' id="openbal${i+1}" value="${data[i].balance_due}"
-                                        class="form-control price" step="0.00" min="0"/>
-                                    </td>
-                                    <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i+1}" placeholder='0.00'
-                                        class="form-control total" value="0"/>
-                                    </td>
-                                </tr>
-                            `        
-                        )
-                    }    
-                    for (i=0;i<7;i++){
-                        j=i;
-                        $('#tab_logic ').append(
-                            `
-                                <tr id='addr1'>
-                                    <td>${i+2}</td>
-                                    <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
-                                    <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
-                                    <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
-                                        class="form-control qty" step="0" min="0"/>
-                                    </td>
-                                    <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
-                                    <td><input type="number" name='amountdue[]' id="openbal${i}" value="${data[i].balance_due}"
-                                        class="form-control price" step="0.00" min="0"/>
-                                    </td>
-                                    <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i}" placeholder='0.00'
-                                        class="form-control total" value="0"/>
-                                    </td>
-                                </tr>
-                            `        
-                        )
-                    }    
+                      
+                      
                 }  
             });
         });
@@ -1284,59 +1239,5 @@
     }
     </script>
 
-    <script>
-        $(document).on("click", "#CreateOption", function (event) {
-            event.preventDefault(); // Prevent the default form submission behavior
-        
-            $.ajax({
-                type: "POST",
-                url: "{% url 'add_option' %}",
-                data: {
-                    newmethod: $("input[name='newmethod']").val(),
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
-                success: function (response) {
-                    $("#Add_option").modal("hide"); // Close the modal
-                    reloadVendor(); // Refresh the dropdown
-                },
-                error: function (xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
-        });
-        
-    
-        function reloadVendor() {
-            $.ajax({
-                url: "{% url 'option_dropdown' %}",
-                type: "GET",
-                dataType: "json",
-                data: {
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
-                success: function (data) {
-                    var dropdown = $('#paymeth');
-                    dropdown.empty();
-        
-                    // Add the default options
-                    dropdown.append($('<option>').attr('value', 'Bank Transfer').text('Bank Transfer'));
-                    dropdown.append($('<option>').attr('value', 'Cash').text('Cash'));
-                    dropdown.append($('<option>').attr('value', 'Cheque').text('Cheque'));
-                    dropdown.append($('<option>').attr('value', 'Credit Card').text('Credit Card'));
-        
-                    // Add the new options from the server
-                    $.each(data, function (id, name) {
-                        dropdown.append($("<option>").attr("value", id).text(name));
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
-        }
-        
-    </script>
-    
-    
 
 {% endblock %}
