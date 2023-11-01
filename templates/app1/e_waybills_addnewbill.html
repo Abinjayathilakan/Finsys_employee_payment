@@ -8,7 +8,8 @@
 			display: none;
     	}
         input:read-only {
-            background-color: rgba(0,0,0,.4) !important;
+            /* background-color: rgba(0,0,0,.4) !important; */
+            background-color: rgb(255 255 255 / 14%) !important;
             color: #fff;
         }
         .cust-data{
@@ -64,6 +65,24 @@
                                     </select>
                                 </div>
                             </div>
+                            <!-- <div class="row"> -->
+                                <div class="col-md-4 mt-2">
+                                    <label for="transaction_type">Transaction Type</label>
+                                    <div class="d-flex">
+                                        <select name="transaction_type" id="transaction_type" class="custom-select" required>
+                                            <option value="">--Transaction Type--</option>
+                                            <option value="Goods">Goods</option>
+                                            <option value="Service">Service</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-2 d-none " id="transaction_hsn" style="flex-direction: column;">
+                                <label for="trasaction_hsn_value">HSN</label>
+                                <div class="d-flex">
+                                <input type="number" class="form-control" id="trasaction_hsn_value" name="transaction_hsn" value="0">
+                                </div>
+                                </div>
+                            <!-- </div> -->
                         </div>
                         <hr>
                           <div class="row">
@@ -105,27 +124,60 @@
                                 <input type="text" class="form-control"  id="gstin_inp1" name="gstin_inp" readonly>
                               </div>
                         </div>
-                       
-                        <!-- <div class="row d-flex" id="email_row">
-                            <div class="col-md-3 mt-2">
-                              <label for="email_inp">Vendor Email</label>
-                              <input type="text" class="form-control" id="email_inp" name="email_inp">
+                        <div class="row mt-3">
+                            <div class="col-md-4 mt-2">
+                                <label for="addressdetails">Address Details</label>
+                                <div class="d-flex">
+                                    <textarea name="customer_address" id="customer_address" class="form-control" cols="30" rows="4"></textarea>
+                                    <!-- <input type="text" class="form-control" id="invoice_number" name="ew_invoice_number"> -->
+                                </div>
                             </div>
-                          </div>
-                    
-                          <div class="row d-flex" id="gst_trt_row">
-                            <div class="col-md-3  mt-2">
-                              <label for="gst_trt_inp">GST Treatment</label>
-                              <input type="text" class="form-control" id="gst_trt_inp" name="gst_trt_inp">
+                            <div class="col-md-4 mt-2">
+                                <label for="">Place of Supply</label>
+                              <select name="placeofsupply" id="placeofsupply" class="form-control">
+                                <!-- <option selected disabled>--Place of Supply--</option> -->
+                                <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                                <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                <option value="Damn anad Diu">Damn anad Diu</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Predesh">Himachal Predesh</option>
+                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                <option value="Jharkhand">Jharkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala" selected>Kerala</option>
+                                <option value="Ladakh">Ladakh</option>
+                                <option value="Lakshadweep">Lakshadweep</option>
+                                <option value="Madhya Predesh">Madhya Predesh</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Odisha">Odisha</option>
+                                <option value="Puducherry">Puducherry</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Uttar Predesh">Uttar Predesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>
+                                <option value="Other Territory">Other Territory</option>
+                              </select>
                             </div>
-                          </div>
-                    
-                          <div class="row d-flex" id="gstin_row">
-                            <div class="col-md-3  mt-2">
-                            <label for="gstin_inp">GST Number</label>
-                             <input type="text" class="form-control"  id="gstin_inp" name="gstin_inp">
                             </div>
-                          </div> -->
+
                           <hr>
                           <div class="row">
                               <div class="col-md-3 mt-2"><h5>Invoice</h5></div>
@@ -154,79 +206,6 @@
                             </div>
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col-md-4 mt-2">
-                                    <label for="transaction_type">Transaction Type</label>
-                                    <div class="d-flex">
-                                        <select name="transaction_type" id="transaction_type" class="custom-select" required>
-                                            <option value="">--Transaction Type--</option>
-                                            <option value="Goods">Goods</option>
-                                            <option value="Service">Service</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mt-2 d-none " id="transaction_hsn" style="flex-direction: column;">
-                                <label for="trasaction_hsn_value">HSN</label>
-                                <div class="d-flex">
-                                <input type="number" class="form-control" id="trasaction_hsn_value" name="transaction_hsn" value="0">
-                                </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-md-4 mt-2">
-                                    <label for="addressdetails">Address Details</label>
-                                    <div class="d-flex">
-                                        <textarea name="customer_address" id="customer_address" class="form-control" cols="30" rows="4"></textarea>
-                                        <!-- <input type="text" class="form-control" id="invoice_number" name="ew_invoice_number"> -->
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mt-2">
-                                    <label for="">Place of Supply</label>
-                                  <select name="placeofsupply" id="placeofsupply" class="form-control">
-                                    <!-- <option selected disabled>--Place of Supply--</option> -->
-                                    <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
-                                    <option value="Andhra Predhesh">Andhra Predhesh</option>
-                                    <option value="Arunachal Predesh">Arunachal Predesh</option>
-                                    <option value="Assam">Assam</option>
-                                    <option value="Bihar">Bihar</option>
-                                    <option value="Chandigarh">Chandigarh</option>
-                                    <option value="Chhattisgarh">Chhattisgarh</option>
-                                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                    <option value="Damn anad Diu">Damn anad Diu</option>
-                                    <option value="Delhi">Delhi</option>
-                                    <option value="Goa">Goa</option>
-                                    <option value="Gujarat">Gujarat</option>
-                                    <option value="Haryana">Haryana</option>
-                                    <option value="Himachal Predesh">Himachal Predesh</option>
-                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                    <option value="Jharkhand">Jharkhand</option>
-                                    <option value="Karnataka">Karnataka</option>
-                                    <option value="Kerala" selected>Kerala</option>
-                                    <option value="Ladakh">Ladakh</option>
-                                    <option value="Lakshadweep">Lakshadweep</option>
-                                    <option value="Madhya Predesh">Madhya Predesh</option>
-                                    <option value="Maharashtra">Maharashtra</option>
-                                    <option value="Manipur">Manipur</option>
-                                    <option value="Meghalaya">Meghalaya</option>
-                                    <option value="Mizoram">Mizoram</option>
-                                    <option value="Nagaland">Nagaland</option>
-                                    <option value="Odisha">Odisha</option>
-                                    <option value="Puducherry">Puducherry</option>
-                                    <option value="Punjab">Punjab</option>
-                                    <option value="Rajasthan">Rajasthan</option>
-                                    <option value="Sikkim">Sikkim</option>
-                                    <option value="Tamil Nadu">Tamil Nadu</option>
-                                    <option value="Telangana">Telangana</option>
-                                    <option value="Tripura">Tripura</option>
-                                    <option value="Uttar Predesh">Uttar Predesh</option>
-                                    <option value="Uttarakhand">Uttarakhand</option>
-                                    <option value="West Bengal">West Bengal</option>
-                                    <option value="Other Territory">Other Territory</option>
-                                  </select>
-                                </div>
-                                </div>
-                                 <hr>
                           <!--<div class="row">
                               <div class="col-md-3 mt-2">
                                   <label for="">Place of Supply</label>
@@ -332,8 +311,9 @@
                             <div class="col-md-3 mt-2 d-none" id="vehicle_number_segment" style="flex-direction: column;">
                                 <label for="vehicle_number">Vehicle #</label>
                                 <div class="d-flex">
-                                    <input type="text" class="form-control" id="vehicle_number" name="vehicle_number">
+                                    <input type="text" onchange="checkvehicle_num(this)" class="form-control" id="vehicle_number" name="vehicle_number">
                                 </div>
+                                <div class="text-danger m-2" id="warnv_num"></div>
                             </div>
                             <div class="col-md-3 mt-2">
                                 <label for="kilometer_input">Kilometers</label>
@@ -398,10 +378,11 @@
                                             {% endfor %}
                                            </select>
                 
-                                            <a href="#">
+                                            <!-- <a href="#">
                                                 <button type="button" class="btn btn-outline-secondary ml-1" 
                                                 data-target="#newitem" data-toggle="modal">+</button>
-                                            </a>
+                                            </a> -->
+                                            <button class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal">+</button>
                                         </div>
                                       
                                      
@@ -583,7 +564,7 @@
                             <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
-                                    <label>Agree to terms and conditions</label>
+                                    <label for="invalidCheck">Agree to terms and conditions</label>
                                     <div class="invalid-feedback">You must agree before submitting.</div>
                                 </div>
                             </div>
@@ -1522,19 +1503,57 @@
         </div>
     </div>
   </div>
-  <div class="modal fade" id="newitem">
-    <div class="modal-dialog modal-xl">
+<!-- New Item Modal -->
+
+<div class="modal fade" id="newUnitAddModal" aria-hidden="true" aria-labelledby="newUnitAddModalLabel" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content" style="background-color: #213b52;">
+        <div class="modal-header">
+          <h3 class="m-3" id="newUnitAddModalLabel">Unit Create</h3>
+          <button type="button" class="close"  data-bs-toggle="modal" data-bs-target="#newitem" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="card p-3 m-3">
+            <form method="post" autocomplete="off" id="newunitform">
+                {% csrf_token %}
+                <div class="row mt-2 mb-2">
+                    <div class="col-md-6">
+                        <label for="acctyp">Unit Symbol</label>
+                        <input type="text" name="unitsymbol" id="unitsymbol" class="custom-select-md form-control w-100">        
+                    </div>
+                    <div class="col-md-6">
+                        <label for="name">Name</label>
+                        <input name="uname" id="unitname" class="custom-select-md form-control w-100">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 mt-4 mb-4">
+                        <button type="button" id="saveNewUnit" class="btn btn-outline-info rounded-pill w-100">Create</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </form>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+
+  <div class="modal fade" id="newitem" aria-hidden="true" aria-labelledby="newItemAddLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <div class="modal-content" style="background-color: #213b52;">
             <div class="modal-header">
-                <h3 class="m-3">New Item</h3>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h3 class="m-3" id="newItemAddLabel">New Item</h3>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="card p-3 m-3">
-                    <form action="" method="post"  autocomplete="off" id="modalItem">
-  
+                    <form method="post" autocomplete="off" id="modalItem">
+                        {%csrf_token%}
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
@@ -1567,11 +1586,11 @@
                                                             <label for="unit" style="color: white;">Unit
                                                                 </label>
                                                             <div class="d-flex">
-                                                                <select class="custom-select" name="unit" id="unit"
+                                                                <select class="custom-select" name="unit" id="itemunit"
                                                                         required
                                                                         style="background-color: #2a4964; color: white;">
                                                                         <option selected disabled value="">Choose...</option>
-                                                                        {% for a in unit %}
+                                                                        {% for a in itemunits %}
                                                                         <option style="text-transform:Uppercase;">{{ a.unit_symbol}}-{{ a.name }}</option>
                                                                         {% endfor %}
                                                                         <option>BAG-BAGS</option>
@@ -1625,6 +1644,7 @@
                                                                             class="btn btn-outline-secondary ml-1">+
                                                                     </button>
                                                                 </a> -->
+                                                                <a class="btn btn-outline-secondary ml-1" data-bs-target="#newUnitAddModal" data-bs-toggle="modal" data-bs-dismiss="modal">+</a>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 mt-3">
@@ -1633,8 +1653,8 @@
                                                         <input type="text" name="hsn" class="form-control" id="hsn"
                                                                    style="background-color: #2a4964; color: white;"
                                                                   
-                                                                   placeholder="Enter a valid HSN code" required>
-                                                          
+                                                                   placeholder="Enter a valid HSN code" required oninput="validateHSN()">
+                                                                   <div id="errorText" style="color: red;"></div>
                                                         </div>
                                                        
                                                     </div>
@@ -1654,10 +1674,9 @@
                                         <div class="col-md-3">
                                             <div class="form-check mt-1">
                                                
-                                                    <input class="form-check-input" name="taxref" type="checkbox" id="inclusive"
-                                                         value="taxable" checked >Taxable
-                                                    <label style="color: white;">
-                                                        </label>
+                                                    <input class="form-check-input" name="taxref" onchange="ShowHideTax(inclusive)" type="checkbox" id="inclusive"
+                                                         value="taxable">
+                                                    <label style="color: white;" for="inclusive">Taxable</label>
                                               
                                             </div>
                                         </div>
@@ -1665,7 +1684,38 @@
                                             <input class="form-check-input" name="taxref" type="checkbox"
                                                    value="non taxable" 
                                                    id="check">
-                                            <label style="color: white;">Non Taxable</label>
+                                            <label style="color: white;" for="check">Non Taxable</label>
+                                        </div>
+                                    </div>
+                                    <div class="row"  id="intrastateFiled" style="display: none;">
+                                        <div class="col-md-6 mt-3">
+                                            <label for="validationCustom05"
+                                                   style="color: white;">Intra State Tax Rate</label>
+                                                   <select name="intra_st" class="form-control" 
+                                                   style="background-color: #2a4964; color: white;"
+                                                   id="intra_st" >
+                                                  
+                                                   <option value=0>GST 0 (0%)</option>
+                                                   <option value=5>GST 5 (5%)</option>
+                                                   <option value=12>GST 12 (12%)</option>
+                                                   <option value=18>GST 18 (18%)</option>
+                                                   <option value=28>GST 28 (28%)</option>
+                                                   
+                                        </select>
+                                        <br>
+                                            <label for="validationCustom05"
+                                                   style="color: white;">Inter State Tax Rate</label>
+                                            <select name="inter_st" class="form-control" 
+                                                      style="background-color: #2a4964; color: white;"
+                                                      id="inter_st" >
+                                                     
+                                                      <option value=0>IGST 0 (0%)</option>
+                                                   <option value=5>IGST 5 (5%)</option>
+                                                   <option value=12>IGST 12 (12%)</option>
+                                                   <option value=18>IGST 18 (18%)</option>
+                                                   <option value=28>IGST 28 (28%)</option>
+                                                   
+                                        </select>
                                         </div>
                                     </div>
                                 </div>
@@ -1756,40 +1806,7 @@
                                     
                                     <div class="row">
                                         <div class="col-md-12 mx-0">
-                                            <div class="row">
-                                                <div class="col-md-6 mt-3">
-                                                    <label for="validationCustom01"
-                                                           style="color: white;">Intra State Tax Rate</label>
-                                                           <select name="intra_st" class="form-control" 
-                                                           style="background-color: #2a4964; color: white;"
-                                                           id="intra_st" >
-                                                           <option >Choose...</option>
-                                                           <option value=0>GST 0 (0%)</option>
-                                                           <option value=5>GST 5 (5%)</option>
-                                                           <option value=12>GST 12 (12%)</option>
-                                                           <option value=18>GST 18 (18%)</option>
-                                                           <option value=28>GST 28 (28%)</option>
-                                                           <option value=0>Out of Scope(0%)</option>
-                                                </select>
-                                                </div>
-                                            
-                                                <div class="col-md-6 mt-3">
-                                                    <label for="inter_st"
-                                                           style="color: white;">Inter State Tax Rate</label>
-                                                    <select name="inter_st" class="form-control" 
-                                                              style="background-color: #2a4964; color: white;"
-                                                              id="inter_st" >
-                                                              <option >Choose...</option>
-                                                              <option value=0>IGST 0 (0%)</option>
-                                                           <option value=5>IGST 5 (5%)</option>
-                                                           <option value=12>IGST 12 (12%)</option>
-                                                           <option value=18>IGST 18 (18%)</option>
-                                                           <option value=28>IGST 28 (28%)</option>
-                                                           <option value=0>Out of Scope(0%)</option>
-                                                </select>
-                                                </div>
-                                            </div><br>
-                                            <div class="row" >
+                                            <div class="row mt-3" >
                                                
                                                
                                   
@@ -1817,11 +1834,19 @@
                                                        
                                                 </select>
                                                 </div>
-                                                <div class="col-md-6 mt-3">
+                                                <div class="col-md-3 mt-3">
                                                     <label for="validationCustom01"
                                                            style="color: white;">Stock on hand</label>
                                                            <input type="number" name="stock" class="form-control" id="stock"
-                                                           style="width:540px;background-color: #2a4964; color: white;"
+                                                           style="background-color: #2a4964; color: white;"
+                                                           value="0"
+                                                           >
+                                                </div>
+                                                <div class="col-md-3 mt-3">
+                                                    <label for="validationCustom01"
+                                                           style="color: white;">Stock Rate per Unit</label>
+                                                           <input type="number" name="stock_rate" class="form-control" id="stock_rate"
+                                                           style="background-color: #2a4964; color: white;"
                                                            value="0"
                                                            >
                                                 </div>
@@ -1867,7 +1892,7 @@
                                         <div class="row">
                                             <div class="col-md-4"></div>
                                             <div class="col-md-4">
-                                            <button class="btn btn-outline-info rounded-pill w-100 text-light" data-dismiss="modal" type="submit" id="itemSave">SUBMIT</button>
+                                            <button class="btn btn-outline-info rounded-pill w-100 text-light" data-dismiss="modal" type="button" id="itemSave">SUBMIT</button>
                                         
                                         <div class="col-md-4"></div>
                                     </div>
@@ -1879,44 +1904,287 @@
               </div>
           </div>
       </div>
+    </div> 
   </div> 
-  </div>  
-  <div class="modal fade" id="unit">
-    <div class="modal-dialog">
+
+
+
+<!-- <div class="modal fade" id="newitem">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content" style="background-color: #213b52;">
             <div class="modal-header">
-                <h5 class="m-3">Unit Create</h5>
+                <h3 class="m-3">New Item</h3>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="card p-3 m-3">
-                    <form method="post" action="{% url 'createunit_rbill'%}" autocomplete="off">
+                    <form method="post" class="needs-validation" novalidate autocomplete="off" id="modalItem">
                         {% csrf_token %}
-                        <div class="row mt-2 mb-2">
-                            <div class="col-md-6">
-                                <label for="acctyp">Unit Symbol</label>
-                                <input type="text" name="usymbol" id="select1" class="custom-select-md form-control w-100">        
+
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <label for="validationCustom02">Name</label>
+                                <input type="text" class="form-control" id="item_name" name="name"
+                                    required>
+                                
                             </div>
-                            <div class="col-md-6">
-                                <label for="name">Name</label>
-                                <input name="uname" id="name" class="custom-select-md form-control w-100">
+                            <div class="col-md-4 mt-2">
+                                <label for="validationCustom03">Type</label>
+                                <select name="type" class="form-control" id="type">
+                                    <option >Choose...</option>
+                                    <option value="Goods">Goods</option>
+                                    <option value="Services">Services</option></select>
+                                
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <label for="validationCustom03">Unit</label>
+                                <div class="d-flex">
+                                    <select class="custom-select" name="unit" id="itemunit">
+                                        <option selected disabled value="">Choose...</option>
+                                        {% for a in unit %}
+                                            <option style="text-transform:Uppercase;">{{ a.unit_symbol}}-{{ a.name }}</option>
+                                        {% endfor %}
+                                        <option>BAG-BAGS</option>
+                                        <option>BAL-BALE</option>
+                                        <option>BDL-BUNDLES</option>
+                                        <option>BKL-BUCKLES</option>
+                                        <option>BOX-BOX</option>
+                                        <option>BOU-BILLIONS OF UNITS</option>
+                                        <option>BTL-BOTTLES</option>
+                                        <option>BUN-BUNCHES</option>
+                                        <option>CAN-CANS</option>
+                                        <option>CBM-CUBIC METER</option>
+                                        <option>CMS-CENTIMETER</option>
+                                        <option>CCM-CUBIC CENTIMETER</option>
+                                        <option>CTN-CARTONS</option>
+                                        <option>DOZ-DOZEN</option>
+                                        <option>DRM-DRUM</option>
+                                        <option>GGR-GREAT GROSS</option>
+                                        <option>GMS-GRAMS</option>
+                                        <option>GRS-GROSS</option>
+                                        <option>GYD-GROSS YARDS</option>
+                                        <option>KGS-KILOGRAMS</option>
+                                        <option>KLR-KILOLITER</option>
+                                        <option>KME-KILOMETRE</option>
+                                        <option>MTS Metric ton</option>
+                                        <option>MLT-MILLILITRE</option>
+                                        <option>MTR-METERS</option>
+                                        <option>NOS-NUMBER</option>
+                                        <option>PAC-PACKS</option>
+                                        <option>PCS-PIECES</option>
+                                        <option>PRS-PAIRS</option>
+                                        <option>QTL-QUINTAL</option>
+                                        <option>ROL-ROLLS</option>
+                                        <option>SQF-SQUARE FEET</option>
+                                        <option>SET-SETS</option>
+                                        <option>SQM-SQUARE METERS</option>
+                                        <option>SQY-SQUARE YARDS</option>
+                                        <option>TBS-TABLETS</option>
+                                        <option>TGM-TEN GROSS</option>
+                                        <option>THD-THOUSANDS</option>
+                                        <option>TON-TONNES</option>
+                                        <option>TUB-TUBES</option>                                            
+                                        <option>UNT-UNITS</opion>
+                                        <option>UGS-US GALLONS</option>
+                                        <option>YDS-YARDS</otion> 
+                                    </select>
+                                    <a class="btn btn-outline-secondary ml-1" data-target="#unit" data-toggle="modal">+</a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <label for="validationCustom02">HSN Code</label>
+                                <input type="text" name="hsn" class="form-control" placeholder="Enter a valid HSN code"
+                                required id="hsn">
+                                
+                            </div>
+                            <div class="col-md-3 mt-5"><label for="">Tax Preference : </label></div>
+                            <div class="col-md-2 mt-5">
+                                <div class="form-check">
+                                    <input class="form-check-input" name="taxref" type="checkbox" value="Taxable" 
+                                    id="inclusive" checked>Taxable
+                                </div>
+                            </div>
+                            <div class="col-md-2 mt-5">
+                                <div class="form-check">
+                                    <input class="form-check-input" name="taxref" type="checkbox" value="Non Taxable" id="check">Non Taxable
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <h5>Purchase Price Details</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <label for="">Purchase Price</label>
+                                <div class="d-flex">
+                                    <p class="form-control" style="width:60px">INR</p>
+                                    <input type="text" name="pcost" class="form-control" id="purprice">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <label for="">Account</label>
+                                <select name="pur_account" class="form-control" id="pur_account">
+                                    
+                                    {% for a in acc1 %}
+                                        <option value="{{ a.name }}">{{ a.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <label for="">Description</label>
+                                <textarea class="form-control" name="pur_desc" id="pur_desc"></textarea>  
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <h5>Sales Price Details</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <label for="">Sales Price</label>
+                                <div class="d-flex">
+                                    <p class="form-control" style="width:60px">INR</p>
+                                    <input type="text" name="salesprice" class="form-control" id="saleprice">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <label for="">Account</label>
+                                <select name="sale_account" class="form-control" id="sale_account">
+                                    <option value="Sales">Sales</option>
+                                    {% for a in acc2 %}
+                                        <option value="{{ a.name }}">{{ a.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <label for="">Description</label>
+                                <textarea class="form-control" name="sale_desc" id="sale_desc"></textarea>  
+                            </div>
+                        </div>   
+                        <hr> 
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <h5>Tax Rate Details</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            
+                            <div class="col-md-6 mt-2">
+                                <label for="">Intra State Tax Rate</label>
+                                <select name="intra_st" class="form-control" id="intra_st">
+                                    <option selected >Choose...</option>
+                                    <option value=0>GST 0 (0%)</option>
+                                    <option value=5>GST 5 (5%)</option>
+                                    <option value=12>GST 12 (12%)</option>
+                                    <option value=18>GST 18 (18%)</option>
+                                    <option value=28>GST 28 (28%)</option>
+                                    <option value=0>Out of Scope(0%)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <label for="">Inter State Tax Rate</label>
+                                <select name="inter_st" class="form-control" id="inter_st">
+                                    <option selected>Choose...</option>
+                                    <option value=0>IGST 0 (0%)</option>
+                                    <option value=5>IGST 5 (5%)</option>
+                                    <option value=12>IGST 12 (12%)</option>
+                                    <option value=18>IGST 18 (18%)</option>
+                                    <option value=28>IGST 28 (28%)</option>
+                                    <option value=0>Out of Scope(0%)</option>
+                                </select>   
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <h5>Inventory</h5>
+                                <div class="form-check">
+                                    <input class="form-check-input" onclick="ShowHideDiv(this)" type="checkbox"  id="track">
+                                    <label class="form-check-label" for="track" >
+                                    Track Inventory
+                                    </label>
+                                </div>  
+                            </div>
+                        </div> 
+                        <div class="row"  id="inventorytrack" style="display: none">
+                            <div class="col-md-6 mt-2">
+                                <label for="">Inventory Account</label>
+                                <select name="invacc" class="form-control" id="invacc">
+                                    <option selected value="">Choose...</option>
+                                    <option value="Inventory Assets">Inventory Assets</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <label for="">Stock on hand</label>
+                                <input type="number" name="stock" value="0" class="form-control" id="stock">
+                            </div>
+                        
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <label for="" name style="color: white;">Active / Inactive</label>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" value="Active" type="radio" 
+                                    name="status" id="flexRadioDefault1" checked>
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                    Active
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" value="Inactive" type="radio" name="status" id="flexRadioDefault2" >
+                                    <label class="form-check-label" for="flexRadioDefault2">
+                                    Inactive
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3" style="display: none;">
+                                <input type="date" name="itmdate" id="date3" class="form-control">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                                    <label>Agree to terms and conditions</label>
+                                    <div class="invalid-feedback">You must agree before submitting.</div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4"></div>
-                            <div class="col-md-4 mt-4 mb-4">
-                                <button type="submit" class="btn btn-outline-info rounded-pill w-100">Create</button>
+                            <div class="col-md-4">
+                                <button class="btn btn-outline-info rounded-pill text-grey w-100 mt-3 mb-3"
+                                        type="submit" id="itemSave">
+                                    Submit form
+                                </button>
                             </div>
                             <div class="col-md-4"></div>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>   
-    </div>
-</div> 
+        </div>
+    </div> 
+</div> -->
+
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -1924,6 +2192,7 @@
   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <script>
     // var enteredVName = "";
     $(document).on("click","#vendorSave",function(){
@@ -2109,7 +2378,7 @@ success: function(data) {
     dropdown.append(`<option selected disabled>Choose Transportation</option>`);
     $.each(data, function(key, value) {
     var netValue = "NET " + value;
-    dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+    dropdown.append($('<option></option>').attr('value', key).text(value).val(key+" "+value));
     // dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
         
     });
@@ -2262,7 +2531,17 @@ $(document).on("click", "#customerSave", function(){
 
     $(document).ready(function() {
     $('#customer').change(function() {
-
+        if($('#customer').val() == ""){
+            $("#email_row1").removeClass('d-flex');
+            $("#email_row1").addClass('d-none');
+            $("#gstin_row1").removeClass('d-flex');
+            $("#gstin_row1").addClass('d-none');
+            $("#gst_trt_row1").removeClass('d-flex');
+            $("#gst_trt_row1").addClass('d-none');
+            document.getElementById('customer_address').value = "";
+            document.querySelector("#placeofsupply").value = 'Kerala'
+            alert('Choose a customer')
+        }
         $.ajax({
             url: "{% url 'get_customer' %}", 
             data: { 
@@ -2294,15 +2573,42 @@ $(document).on("click", "#customerSave", function(){
                 }
                 const $select = document.querySelector("#placeofsupply");
                 $select.value = json_data[key]['state'];
+
                 if ( json_data[key]['state'] == document.getElementById("cmpstate").value ) {
-                    document.getElementById('cgst1').style.display = 'flex';
-                    document.getElementById('sgst1').style.display = 'flex';
-                    document.getElementById('igst1').style.display = 'none'; 
+                    // document.getElementById('cgst1').style.display = 'flex';
+                    // document.getElementById('sgst1').style.display = 'flex';
+                    // document.getElementById('igst1').style.display = 'none';
+                    $("#cgst1").addClass('d-flex');
+                    $("#cgst1").removeClass('d-none');
+                    $("#sgst1").addClass('d-flex');
+                    $("#sgst1").removeClass('d-none');
+                    $("#igst1").addClass('d-none');
+                    $("#igst1").removeClass('d-flex');
+
+                    $("#select_tax").removeClass('d-flex')
+                    $("#select_tax").addClass('d-none')
+                    $("#tax21").addClass('d-none')
+                    $("#tax21").removeClass('d-flex')
+                    $("#tax11").addClass('d-flex')
+                    $("#tax11").removeClass('d-none')
 
                 } else {
-                    document.getElementById('cgst1').style.display = 'none';
-                    document.getElementById('sgst1').style.display = 'none';
-                    document.getElementById('igst1').style.display = 'flex';
+                    // document.getElementById('cgst1').style.display = 'none';
+                    // document.getElementById('sgst1').style.display = 'none';
+                    // document.getElementById('igst1').style.display = 'flex';
+                    $("#cgst1").addClass('d-none');
+                    $("#cgst1").removeClass('d-flex');
+                    $("#sgst1").addClass('d-none');
+                    $("#sgst1").removeClass('d-flex');
+                    $("#igst1").addClass('d-flex');
+                    $("#igst1").removeClass('d-none');
+
+                    $("#select_tax").removeClass('d-flex')
+                    $("#select_tax").addClass('d-none')
+                    $("#tax11").addClass('d-none')
+                    $("#tax11").removeClass('d-flex')
+                    $("#tax21").addClass('d-flex')
+                    $("#tax21").removeClass('d-none')
 
                 }
                 }
@@ -2506,6 +2812,17 @@ $(document).ready(function() {
             }
         }
 
+        function checkvehicle_num(element) {
+            var v_number = element.value;
+            var v_numregexp = /^[A-Z]{2}[ -][0-9]{1,2} [A-Z]{1,2} [0-9]{4}$/;
+            if (v_number.match(v_numregexp)) {
+                document.getElementById('warnv_num').innerHTML = '';
+            } else {
+                document.getElementById('warnv_num').innerHTML = 'Vehicle # format should be "XX 11 X 1111" or "XX 11 XX 1111"';
+                // alert('Please provide a valid PAN Number')
+            }
+        }
+
         function checkweb(element) {
             var webinput = element.value;
             var webregexp = "www."
@@ -2697,6 +3014,29 @@ $(document).ready(function(){
                 inventorytrack.style.display = track.checked ? "flex" : "none";
     
             }
+
+            function ShowHideTax(inclusive) {
+                var inter = document.getElementById("intrastateFiled");
+    
+                inter.style.display = inclusive.checked ? "block" : "none";
+    
+            }
+
+            function validateHSN() {
+                var hsnField = document.getElementById("hsn");
+                var errorText = document.getElementById("errorText");
+                var hsnValue = hsnField.value;
+
+                // Check if the HSN value has more than 6 digits
+                if (isNaN(hsnValue) || hsnValue.length !== 6) {
+                    errorText.innerText = "HSN must be exactly 6 digits ";
+                    hsnField.style.borderColor = "red";
+                } else {
+                    errorText.innerText = "";
+                    hsnField.style.borderColor = ""; // Reset border color
+                }
+            }
+            
             $(document).on('click','.remove_row',function(){
                 var row_id = $(this).attr("id");
                 $('#addr0'+row_id+'').remove();
@@ -2728,12 +3068,12 @@ $(document).ready(function(){
             $.ajax({
             
             type : 'POST',
-            url:"{% url 'createitem_rbill' %}",
+            url:"{% url 'createitem_ewbill' %}",
             
             data:{
                 type : $("#type").val(),
                 name : $("#item_name").val(),
-                unit : $("#unit").val(),
+                unit : $("#itemunit").val(),
                 hsn : $("#hsn").val(),
                 taxref : tax,
                 salesprice : $("#saleprice").val(),
@@ -2746,17 +3086,19 @@ $(document).ready(function(){
                 inter_st : $("#inter_st").val(),
                 invacc : $("#invacc").val(),
                 stock : $("#stock").val(),
+                stock_rate:$("#stock_rate").val(),
                 // itmdate : $("#date3").val(),
                 status : status1,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
+                csrfmiddlewaretoken: $("input[name = csrfmiddlewaretoken]").val(),
                 
                 },
             
                 success: function(response) {
                     console.log(response)
                     document.getElementById("modalItem").reset();
+                    $('#newitem').modal('toggle');
                     reloadItem();
-                    reloadItem2()
+                    reloadItem2();
                 },
             });        
             });
@@ -2811,6 +3153,108 @@ $(document).ready(function(){
             }
             });
             }
+
+            $(document).on("click","#saveNewUnit",function(){
+    var unitsymbol = $("#unitsymbol").val();
+    var unitname = $("#unitname").val();
+    if (unitname !="" && unitsymbol != ""){
+        $.ajax({
+        type : 'POST',
+        url:"{% url 'createitemunit_ewbill' %}",
+        data:{
+            uname : unitname,
+            usymbol : unitsymbol,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        
+        success: function(response) {
+            console.log("AJAX Success - Response Data:", response);
+            document.getElementById("newunitform").reset();
+            $('#newUnitAddModal').modal('toggle');
+            $('#newitem').modal('toggle');
+            reloadItemUnit();
+            
+            if(response.message == "success"){
+                // alert('unit added')
+            }else{
+                alert('Something went wrong..!')
+            }
+        },         
+    });
+    }
+    else{
+        alert('Invalid')
+    }
+});
+
+function reloadItemUnit() {
+$.ajax({
+url: "{% url 'getitemunitewbill' %}",
+type: "GET",
+dataType: "json",
+data: $(this).serialize(),
+csrfmiddlewaretoken: '{{ csrf_token }}',
+
+success: function(data) {
+    console.log("AJAX Success - Dropdown Data:", data);
+
+    var dropdown = $('#itemunit');
+    dropdown.empty()
+    dropdown.append(`<option selected disabled value="">Choose...</option>`,
+                `<option>BAG-BAGS</option>`,
+                `<option>BDL-BUNDLES</option>`,
+                `<option>BKL-BUCKLES</option>`,
+                `<option>BOX-BOX</option>`,
+                `<option>BOU-BILLIONS OF UNITS</option>`,
+                `<option>BTL-BOTTLES</option>`,
+                `<option>BUN-BUNCHES</option>`,
+                `<option>CAN-CANS</option>`,
+                `<option>CBM-CUBIC METER</option>`,
+                `<option>CMS-CENTIMETER</option>`,
+                `<option>CCM-CUBIC CENTIMETER</option>`,
+                `<option>CTN-CARTONS</option>`,
+                `<option>DOZ-DOZEN</option>`,
+                `<option>DRM-DRUM</option>`,
+                `<option>GGR-GREAT GROSS</option>`,
+                `<option>GMS-GRAMS</option>`,
+                `<option>GRS-GROSS</option>`,
+                `<option>GYD-GROSS YARDS</option>`,
+                `<option>KGS-KILOGRAMS</option>`,
+                `<option>KLR-KILOLITER</option>`,
+                `<option>KME-KILOMETRE</option>`,
+                `<option>MTS Metric ton</option>`,
+                `<option>MLT-MILLILITRE</option>`,
+                `<option>MTR-METERS</option>`,
+                `<option>NOS-NUMBER</option>`,
+                `<option>PAC-PACKS</option>`,
+                `<option>PCS-PIECES</option>`,
+                `<option>PRS-PAIRS</option>`,
+                `<option>QTL-QUINTAL</option>`,
+                `<option>ROL-ROLLS</option>`,
+                `<option>SQF-SQUARE FEET</option>`,
+                `<option>SET-SETS</option>`,
+                `<option>SQM-SQUARE METERS</option>`,
+                `<option>SQY-SQUARE YARDS</option>`,
+                `<option>TBS-TABLETS</option>`,
+                `<option>TGM-TEN GROSS</option>`,
+                `<option>THD-THOUSANDS</option>`,
+                `<option>TON-TONNES</option>`,
+                `<option>TUB-TUBES</option>`,
+                `<option>UGS-US GALLONS</option>`,
+                `<option>UNT-UNITS</option>`,
+                `<option>YDS-YARDS</option>`);
+    $.each(data, function(key, value) {
+        for(let i=0; i<value.length; i++){
+            dropdown.append($('<option></option>').attr('value', key).text(value[i].symbol+"-"+value[i].name).val(value[i].symbol+"-"+value[i].name))
+        }
+        
+    });
+},
+error: function(xhr, status, error) {
+console.error(xhr.responseText);
+}
+});
+}
 
    // calculation---------------------------
 
@@ -3094,16 +3538,29 @@ $(document).ready(function(){
                 $(".inter_tax").addClass('d-none');
                 var bc = document.getElementById("placeofsupply").value;
                 var compstate = document.getElementById("cmpstate").value;
+                // alert(compstate)
                 if (bc == compstate ) {
-                    document.getElementById('cgst1').style.display = 'flex';
-                    document.getElementById('sgst1').style.display = 'flex';
-                    document.getElementById('igst1').style.display = 'none'; 
+                    // document.getElementById('cgst1').style.display = 'flex';
+                    // document.getElementById('sgst1').style.display = 'flex';
+                    // document.getElementById('igst1').style.display = 'none';
+                    $("#cgst1").addClass('d-flex');
+                    $("#cgst1").removeClass('d-none');
+                    $("#sgst1").addClass('d-flex');
+                    $("#sgst1").removeClass('d-none');
+                    $("#igst1").addClass('d-none');
+                    $("#igst1").removeClass('d-flex');
 
                 } else {
-                    document.getElementById('cgst1').style.display = 'none';
-                    document.getElementById('sgst1').style.display = 'none';
-                    document.getElementById('igst1').style.display = 'flex';
+                    // document.getElementById('cgst1').style.display = 'none';
+                    // document.getElementById('sgst1').style.display = 'none';
+                    // document.getElementById('igst1').style.display = 'flex';
 
+                    $("#cgst1").addClass('d-none');
+                    $("#cgst1").removeClass('d-flex');
+                    $("#sgst1").addClass('d-none');
+                    $("#sgst1").removeClass('d-flex');
+                    $("#igst1").addClass('d-flex');
+                    $("#igst1").removeClass('d-none');
                 }
                     
             });

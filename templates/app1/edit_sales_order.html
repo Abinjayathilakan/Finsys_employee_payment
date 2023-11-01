@@ -145,10 +145,16 @@
 
             <div class="row mt-3">
                 <div class="col-md-4">
-                    <label class="col-form-label">Customer</label>
+                    <div class="d-flex">
+                        <label class="col-form-label">Sales Order No.</label><span class="text-danger mt-1 ml-3" id="dangerdiv" style="display: none;"><span class="text-white"> (</span>This Id Should be Continous<span class="text-white">)</span></span>
+                    </div>
+                    <input type="text" class="form-control" name="ord_no" value="{{sale.saleno}}"  id="ord_no" style="background-color: #43596c;"><br>
+                   
+
+                    <label class="col-form-label mt-2">Customer</label>
                     <div class="d-flex">
                       <select name="customer" id="customer" class="form-control" style="width: 95%;">
-                          <option value="{{ sale.salename }}" selected>{{cust.title}} {{cust.firstname}} {{cust.lastname}}
+                          <option value="{{ sale.salename }}" selected hidden>{{cust.title}} {{cust.firstname}} {{cust.lastname}}
                           </option>
                           {% for cust in customers %}
                               {% if cust.cid_id == cmp1.cid %}
@@ -160,84 +166,155 @@
                       <a data-toggle="modal" href="#customercreation">
                           <button type="button" class="btn btn-outline-secondary ml-1">+</button>
                       </a>
-                  </div>
+                    </div><br>
+
+                    <label class="col-form-label mt-2">Place of supply</label>
+                    <select type="text" class="form-control" id="plosu" name="placosupply" style="background-color: #43596c; color: white;" onchange="state(this)">
+                      <option value="{{ sale.placeofsupply}}" selected> {{ sale.placeofsupply}}</option>
+                      <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                      <option value="Andhra Predhesh">Andhra Predhesh</option>
+                      <option value="Arunachal Predesh">Arunachal Predesh</option>
+                      <option value="Assam">Assam</option>
+                      <option value="Bihar">Bihar</option>
+                      <option value="Chandigarh">Chandigarh</option>
+                      <option value="Chhattisgarh">Chhattisgarh</option>
+                      <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                      <option value="Damn anad Diu">Damn anad Diu</option>
+                      <option value="Delhi">Delhi</option>
+                      <option value="Goa">Goa</option>
+                      <option value="Gujarat">Gujarat</option>
+                      <option value="Haryana">Haryana</option>
+                      <option value="Himachal Predesh">Himachal Predesh</option>
+                      <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                      <option value="Jharkhand">Jharkhand</option>
+                      <option value="Karnataka">Karnataka</option>
+                      <option value="Kerala">Kerala</option>
+                      <option value="Ladakh">Ladakh</option>
+                      <option value="Lakshadweep">Lakshadweep</option>
+                      <option value="Madhya Predesh">Madhya Predesh</option>
+                      <option value="Maharashtra">Maharashtra</option>
+                      <option value="Manipur">Manipur</option>
+                      <option value="Meghalaya">Meghalaya</option>
+                      <option value="Mizoram">Mizoram</option>
+                      <option value="Nagaland">Nagaland</option>
+                      <option value="Odisha">Odisha</option>
+                      <option value="Puducherry">Puducherry</option>
+                      <option value="Punjab">Punjab</option>
+                      <option value="Rajasthan">Rajasthan</option>
+                      <option value="Sikkim">Sikkim</option>
+                      <option value="Tamil Nadu">Tamil Nadu</option>
+                      <option value="Telangana">Telangana</option>
+                      <option value="Tripura">Tripura</option>
+                      <option value="Uttar Predesh">Uttar Predesh</option>
+                      <option value="Uttarakhand">Uttarakhand</option>
+                      <option value="West Bengal">West Bengal</option>
+                      <option value="Other Territory">Other Territory</option>
+                    </select>
+
 
                 </div>
                 <div class="col-md-4">
-                  <label class="col-form-label">Email</label>
-                  <input type="text" class="form-control" id="cust_email" name="email" placeholder="Email" value="{{ sale.saleemail  }}">
+                    <label class="col-form-label">Reference Number</label>
+                    <input type="text" class="form-control" name="Ref_No" value="{{ sale.reference_number}}" style="background-color: #43596c;"  readonly ><br>
+
+                  <label class="col-form-label mt-2">Email</label>
+                  <input type="text" class="form-control" id="cust_email" name="email" placeholder="Email" value="{{ sale.saleemail }}" style="background-color: #43596c;"  readonly><br>
+
+                  
+                  <label class="col-form-label mt-2">GST Type</label>
+                  <input type="text" class="form-control" id="gsttype" name="gsttype" style="background-color: #43596c;" value="{{cust.gsttype}}" readonly>
               </div>
                 
                 <div class="col-md-4">
-                  <label class="col-form-label">Billing Address</label>
-                  <label for="billingaddress"></label>
-                  <textarea class="form-control" rows="7" id="bname" name="billingaddress" value="{{ sale.saleaddress }}"> {{ sale.saleaddress }}</textarea>
-              </div>
+                    <label class="col-form-label">Billing Address</label>
+                    <label for="billingaddress"></label>
+                    <textarea class="form-control" rows="6" id="bname" name="billingaddress" value="{{ sale.saleaddress }}" style="background-color: #43596c; margin-bottom: 10px;" readonly>{{ sale.saleaddress }}</textarea>
+                    {% if cust.gstin %}
+                    <div id="gstnodiv" >
+                        <label class="col-form-label">GSTIN</label>
+                        <input type="text" class="form-control" id="gstno" name="gstno" style="background-color: #43596c;" value="{{cust.gstin}}" readonly>
+                    </div>
+                    {% else %}
+                        <div id="gstnodiv" style="display: none;">
+                        <label class="col-form-label">GSTIN</label>
+                        <input type="text" class="form-control" id="gstno" name="gstno" style="background-color: #43596c;" readonly>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
+            <br>
             <div class="row mt-3">
-                
-            </div>
-            <div class="row mt-3">
-                
-                
                 <div class="col-md-3">
                     <label class="col-form-label">Sales Order Date</label>
-                    <input type="date" class="form-control" value="{{ sale.saledate | date:'Y-m-d'  }}" name="Salesdate"><br>
+                    <input type="date" class="form-control" value="{{ sale.saledate | date:'Y-m-d'  }}" id="Salesdate" name="Salesdate"><br>
                 </div>
                 <div class="col-md-3">
                     <label class="col-form-label"> Expected Shipment Date </label>
-                    <input type="date" class="form-control" value="{{ sale.shipmentdate | date:'Y-m-d' }}"  name="Shipmentdate" required><br>
+                    <input type="date" class="form-control" value="{{ sale.shipmentdate | date:'Y-m-d' }}" id="Shipmentdate"  name="Shipmentdate" style="background-color: #43596c;" required readonly><br>
                 </div>
                 <div class="col-md-3">
-                    <label class="col-form-label">Reference Number</label>
-                    <input type="text" class="form-control" name="Ref_No" value="{{ sale.reference_number}}" ><br>
+                    <label class="col-form-label">Payment Term</label>
+                    <div class="d-flex">
+                        <select type="text" class="form-control" id="pay_term" name="pay_term" style="background-color: #43596c; color: white;" >
+                          <option value="{{sale.term_days}}" selected hidden>NET {{sale.term_days}}</option>
+                          <option value="0">Due On Receipt</option>
+                          <option value="30">NET 30</option>
+                          <option value="60">NET 60</option>
+                          {% for term in terms %}
+                              <option value="{{term.days}}">{{term.term}}</option>
+                          {% endfor %}
+                        </select>
+                        <a class="btn btn-outline-secondary ml-1" role="button" data-target="#newpayment" data-toggle="modal" id="termadd">+</a>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                      <label class="col-form-label">Payment Type</label>
+                      <select class="form-control my-select" id="pay_method" name="method" style="background-color: #43596c;">
+                          <option value="{{sale.pay_method}}" selected hidden>{{sale.pay_method}}</option>
+                          <option value="cash">Cash</option>
+                          <option value="cheque">Cheque</option>
+                          <option value="upi">UPI</option>
+                          {% for i in bank %}
+                            <option value="{{i.bankname}}">{{i.bankname}}</option>
+                          {% endfor %}
+                        </select>
+                  </div>
+                  {% if sale.cheque_no %}
+                  <div class="col-md-3" id="chequediv">
+                      <label class="col-form-label" >Cheque ID</label>
+                      <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID" value="{{sale.cheque_no}}">
+                  </div>
+                  {% else %}
+                  <div class="col-md-3" style="display:none;"  id="chequediv">
+                      <label class="col-form-label" >Cheque ID</label>
+                      <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID">
+                  </div>
+                  {% endif %}
+                  {% if sale.upi_no %}
+                  <div class="col-md-3" id="upidiv">
+                      <label class="col-form-label" >UPI ID</label>
+                      <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID" value="{{sale.upi_no}}">
+                    </div>
+                    {% else %}
+                    <div class="col-md-3"  style="display:none;" id="upidiv">
+                        <label class="col-form-label" >UPI ID</label>
+                        <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID">
+                    </div>
+                  {% endif %}
+                  {% if acc_no %}
+                  <div class="col-md-3"  >
+                      <label class="col-form-label" >Bank Account</label>
+                      <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" value="{{acc_no}}" readonly>
+                  </div>
+                  {% else %}
+                  <div class="col-md-3" id="bnkdiv" style="display:none;" id="bnkdiv">
+                    <label class="col-form-label" >Bank Account</label>
+                    <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;"  readonly>
                 </div>
-                <div class="col-md-3 ">
-                  <label class="col-form-label">Place of supply</label>
-                  <select type="text" class="form-control" id="plosu" name="placosupply" style="background-color: #2f516f; color: white;" onchange="state(this)">
-                    <option value="{{ sale.placeofsupply}}" selected> {{ sale.placeofsupply}}</option>
-                    <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
-                    <option value="Andhra Predhesh">Andhra Predhesh</option>
-                    <option value="Arunachal Predesh">Arunachal Predesh</option>
-                    <option value="Assam">Assam</option>
-                    <option value="Bihar">Bihar</option>
-                    <option value="Chandigarh">Chandigarh</option>
-                    <option value="Chhattisgarh">Chhattisgarh</option>
-                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                    <option value="Damn anad Diu">Damn anad Diu</option>
-                    <option value="Delhi">Delhi</option>
-                    <option value="Goa">Goa</option>
-                    <option value="Gujarat">Gujarat</option>
-                    <option value="Haryana">Haryana</option>
-                    <option value="Himachal Predesh">Himachal Predesh</option>
-                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                    <option value="Jharkhand">Jharkhand</option>
-                    <option value="Karnataka">Karnataka</option>
-                    <option value="Kerala">Kerala</option>
-                    <option value="Ladakh">Ladakh</option>
-                    <option value="Lakshadweep">Lakshadweep</option>
-                    <option value="Madhya Predesh">Madhya Predesh</option>
-                    <option value="Maharashtra">Maharashtra</option>
-                    <option value="Manipur">Manipur</option>
-                    <option value="Meghalaya">Meghalaya</option>
-                    <option value="Mizoram">Mizoram</option>
-                    <option value="Nagaland">Nagaland</option>
-                    <option value="Odisha">Odisha</option>
-                    <option value="Puducherry">Puducherry</option>
-                    <option value="Punjab">Punjab</option>
-                    <option value="Rajasthan">Rajasthan</option>
-                    <option value="Sikkim">Sikkim</option>
-                    <option value="Tamil Nadu">Tamil Nadu</option>
-                    <option value="Telangana">Telangana</option>
-                    <option value="Tripura">Tripura</option>
-                    <option value="Uttar Predesh">Uttar Predesh</option>
-                    <option value="Uttarakhand">Uttarakhand</option>
-                    <option value="West Bengal">West Bengal</option>
-                    <option value="Other Territory">Other Territory</option>
-                  </select>
-                </div>
+                  {% endif %}
+              </div>
             </div>
-         
+
           <div class="row clearfix">
             <div class="col-md-12 table-responsive-md mt-3">
               <table class="table table-bordered table-hover mt-3" id="tab_logic">
@@ -258,13 +335,13 @@
                 <tbody id="items-table-body">
 
                   {% for j in itemsale%}
-                  <tr id='addr0{{ forloop.counter }}'>
+                  <tr id='addr0{{ forloop.counter }}' style="text-align:center;">
                     <td class="nnum">{{ forloop.counter }} <input type="text"  name='id[]' value="{{ j.id }}" hidden></td>
                     <td style="width: 20%;">
                         <div class="d-flex">
-                      <select name='product[]' id="product{{ forloop.counter }}" class="form-control product" style="background-color: #2f516f; color: white;">
+                      <select name='product[]' id="product{{ forloop.counter }}" class="form-control product" style="background-color: #43596c; color: white;" onchange="changeprd(this.id)">
 
-                        <option value="{{ j.product }}" selected>{{ j.product }}</option>
+                        <option value="{{ j.product }}" selected hidden>{{ j.product }}</option>
                         {% for i in item %}
                         {% if i.cid_id == cmp1.cid %}
                             <option 
@@ -279,20 +356,20 @@
                     </a>
                     </div>
                     </td>
-                    <td><input type="text" name='hsn[]'  value="{{ j.hsn }}" id="hsn{{ forloop.counter }}" placeholder='Enter HSN Code' class="form-control" style="background-color: #2f516f; color: white;" /></td>
-                    <!-- <td><input type="text" name='description[]'  value="{{ j.description }}"  id="description{{ forloop.counter }}" placeholder='Description' class="form-control" style="background-color: #2f516f; color: white;" /></td> -->
-                    <td><input type="number" name='qty[]' value="{{ j.qty  }}"  placeholder='Enter Qty' id="qty{{ forloop.counter }}" value=0 class="form-control qty" step=0 min=0 style="background-color: #2f516f; color: white;" />
-                      <span id="qtyspan{{ forloop.counter }}" class='text-muted'></span>
+                    <td><input type="text" name='hsn[]'  value="{{ j.hsn }}" id="hsn{{ forloop.counter }}" placeholder='Enter HSN Code' class="form-control" style="background-color: #43596c; color: white;" /></td>
+                    <!-- <td><input type="text" name='description[]'  value="{{ j.description }}"  id="description{{ forloop.counter }}" placeholder='Description' class="form-control" style="background-color: #43596c; color: white;" /></td> -->
+                    <td><input type="number" name='qty[]' value="{{ j.qty  }}"  placeholder='Enter Qty' id="qty{{ forloop.counter }}" value=0 class="form-control qty" step=0 min=0 style="background-color: #43596c; color: white; margin-top: 27px;" onchange="changeqty(this.id)"/>
+                        <div style="margin-top: 5Px;" class="d-flex"><span>Available Qty :</span> <span id="qtyspan{{ forloop.counter }}" class=''></span></div>
                     </td>
-                    <td><input type="number" name='price[]' value="{{ j.price}}" id="unit{{ forloop.counter }}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #2f516f; color: white;" /></td>
+                    <td><input type="number" name='price[]' value="{{ j.price}}" id="unit{{ forloop.counter }}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #43596c; color: white;" /></td>
                     
                     
                    
                     <td>
                       <input hidden value="{{cmp1.state}}" id="cmpstate">
-                      <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-none">
-                      <select name='tax1[]' id="tax1{{ forloop.counter }}" class="form-control tax intra_tax d-none">
-                        <option selected value="{{j.tax}}">{{j.tax}}% GST ({{j.tax}}%)</option>
+                      <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-none" style="background-color: #43596c;">
+                      <select name='tax1[]' id="tax1{{ forloop.counter }}" class="form-control tax intra_tax d-none" style="background-color: #43596c;">
+                        <option selected value="{{j.tax}}" hidden>{{j.tax}}% GST ({{j.tax}}%)</option>
                           <option value=28 >28.0% GST(28%)</option>
                           <option value=18 >18.0% GST(18%)</option>
                           <option value=12  >12.0% GST(12%)</option>
@@ -301,7 +378,7 @@
                             <option value=0  >0.0% GST(0%)</option>
                       </select>
                       <select name='tax2[]' id="tax2{{ forloop.counter }}" class="form-control tax inter_tax d-none">
-                        <option selected value="{{j.tax}}">{{j.tax}}% IGST ({{j.tax}}%)</option>
+                        <option selected value="{{j.tax}}" hidden>{{j.tax}}% IGST ({{j.tax}}%)</option>
                           <option value=28 >28.0% IGST(28%)</option>
                           <option value=18 >18.0% IGST(18%)</option>
                           <option value=12  >12.0% IGST(12%)</option>
@@ -312,14 +389,14 @@
                                        
                     </td>
                     <td>
-                      <input type="number" name='discount[]' placeholder='Enter Discount' id="disc{{forloop.counter}}" value="{{j.discount|default:0}}" class="form-control disc" step=0 min=0>
+                      <input type="number" name='discount[]' placeholder='Enter Discount' id="disc{{forloop.counter}}" value="{{j.discount|default:0}}" class="form-control disc" step=0 min=0 style="background-color: #43596c;">
                    </td>
-                    <td><input type="number" name='total[]' value="{{ j.total }}" id="total{{ forloop.counter }}" placeholder=0 class="form-control total" value=0 step="any" readonly style="background-color: #2f516f; color: white;" /></td>
+                    <td><input type="number" name='total[]' value="{{ j.total }}" id="total{{ forloop.counter }}" placeholder=0 class="form-control total" value=0 step="any" readonly style="background-color: #43596c; color: white;" /></td>
                     <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount{{ forloop.counter }}" class="form-control taxamount" />
                     </td>
                     <td>
-                      <button type="button" id="{{forloop.counter}}" class="btn  font-weight-bold clone_row fas fa-clone px-2 my-1 py-1" title="Clone Row" style="background-color:rgb(88, 107, 143);"></button><br>
-                      <button type="button" id="{{forloop.counter}}" class="btn btn-danger remove_row px-2 py-1 mx-1 fas fa-close" title="Remove Row"> </button>
+                      <button type="button" id="{{forloop.counter}}" class="btn  font-weight-bold clone_row fa fa-clone px-2 my-1 py-1" title="Clone Row" style="background-color:rgb(88, 107, 143);"></button><br>
+                      <button type="button" id="{{forloop.counter}}" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row"> </button>
                   </td>
                   </tr>
                   {% endfor %}
@@ -327,25 +404,21 @@
                 </tbody>
                 <tr>
                   <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="add">+</a></td>
-              </tr>
-                
-              
+                </tr>
               </table>
-              
-
             </div>
           </div>
           <div class="row clearfix" style="margin-top:20px">
             <div class="col-md-6">
 
-                <textarea class="form-control"  id="" name="Note" placeholder="Note" style="height: 190px;" value="{{ sale.note  }}">{{ sale.note  }}</textarea>
+                <textarea class="form-control mt-3"  id="" name="Note" placeholder="Note" style="height: 190px;" value="{{ sale.note  }}">{{ sale.note  }}</textarea>
 
                 <input type="file" name="file"  style="margin-top: 10px; width: 70%;">
             </div>
 
            
             <div class="col-md-1"></div>
-              <div class="col-md-5 table-responsive-md mt-3" id="tab_logic_total" style="background-color:rgba(0,0,0,.4); border: 1px solid rgba(128, 128, 128, 0.6);">
+              <div class="col-md-5 table-responsive-md mt-3" id="tab_logic_total" style="background-color:rgba(0,0,0,.4); border: 1px solid rgba(128, 128, 128, 0.6); margin-left: -2vh;">
                   <div class="p-3">
                       <div class="row container-fluid p-2 m-0">
                           <div class="col-sm-4 mt-2"><label class="text-center">Sub Total</label></div>
@@ -400,7 +473,7 @@
                       <div class="row container-fluid p-2 m-0">
                           <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
                           <div class="col-sm-1 mt-2">:</div>
-                          <div class="col-sm-7 mt-2"><input type="number" step="any" name='adj' id="adj" placeholder='0.00' 
+                          <div class="col-sm-7 mt-2"><input type="number" step="any" name='adj' id="adj" placeholder='0.00'  value="{{sale.adjust}}"
                               class="form-control"/>
                           </div>
                           <div class="col-sm-4 m-0 p-0"></div>
@@ -408,13 +481,36 @@
                       <div class="row container-fluid p-2 m-0">
                           <div class="col-sm-4 mt-2"><label for="a" class="text-center">Grand Total</label></div>
                           <div class="col-sm-1 mt-2">:</div>
-                          <div class="col-sm-7 mt-2"><input type="number" name='grandtotal' value="{{sale.salestotal}}" id="grandtotal" placeholder='0.00' readonly
+                          <div class="col-sm-7 mt-2">
+                            <input type="number" name='grandtotal' value="{{sale.salestotal}}" id="grandtotal" placeholder='0.00' readonly style="background-color: #37444f;;"
                               class="form-control"/>
                           </div>
                           <div class="col-sm-4 m-0 p-0"></div>
                       </div>
                   </div>
                   
+              </div> 
+              <div class="col-md-7"></div>
+              <div class="col-md-5 table-responsive-md mt-3 " id="tab_logic_total" style="background-color:rgba(0,0,0,.4); border: 1px solid rgba(128, 128, 128, 0.6); margin-left: -2vh;">
+                  <div class="p-3">
+                      <div class="row container-fluid p-2 m-0">
+                          <div class="col-sm-4 mt-2"><label for="a" class="text-center">Paid Off</label></div>
+                          <div class="col-sm-1 mt-2">:</div>
+                          <div class="col-sm-7 mt-2"><input type="number" step="any" name='advance' id="advance" placeholder='0.00' value="{{sale.paidoff}}"
+                              class="form-control"/>
+                          </div>
+                          <div class="col-sm-4 m-0 p-0"></div>
+                      </div>
+                      <div class="row container-fluid p-2 m-0">
+                          <div class="col-sm-4 mt-2"><label for="a" class="text-center">Balance</label></div>
+                          <div class="col-sm-1 mt-2">:</div>
+                          <div class="col-sm-7 mt-2">
+                            <input type="number" name='balance' id="balance" placeholder='0.00' readonly style="background-color: #37444f;"  value="{{sale.balance}}"
+                              class="form-control" readonly />
+                          </div>
+                          <div class="col-sm-4 m-0 p-0"></div>
+                      </div>
+                  </div>
               </div>
         
         </div>
@@ -445,6 +541,70 @@
 </form>
 
 <!--   modal -->
+<div class="modal fade" id="newpayment">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h3 class="m-3">New Payment Term</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3 m-3">
+                    <form action="" autocomplete="off" id="modalForm" onsubmit="return false">
+                        <div id="terms-container">
+                            <div class="form-row" id="termdrop">
+                                <div class="col-6" >
+                                    <input type="text" value="Due On Receipt" class="form-control" style="background-color: #191c24; color: white;" readonly>
+                                  </div>
+
+                                  <div class="col-6">
+                                    <input type="text" value="0" class="form-control" style="background-color: #191c24; color: white;" readonly>
+                                  </div>       
+
+                                  <div class="col-6" >
+                                    <input type="text" value="NET 30" class="form-control" style="background-color: #191c24; color: white;" readonly>
+                                  </div>
+                                  <div class="col-6">
+                                    <input type="text" value="30" class="form-control" style="background-color: #191c24; color: white;" readonly>
+                                  </div>                                
+                                  
+                                  <div class="col-6" >
+                                    <input type="text" value="NET 60" class="form-control" style="background-color: #191c24; color: white;" readonly>
+                                  </div>
+                                  <div class="col-6">
+                                    <input type="text" value="60" class="form-control" style="background-color: #191c24; color: white;" readonly>
+                                  </div>
+                              {% for term in terms %}
+                                <div class="col-6" >
+                                  <input type="text" value="{{term.term}}" class="form-control" placeholder="Terms" style="background-color: #191c24; color: white;" readonly>
+                                </div>
+                                <div class="col-6">
+                                  <input type="text" value="{{term.days}}" class="form-control" placeholder="No of Days" style="background-color: #191c24; color: white;" readonly>
+                                </div>
+                              {% endfor %}
+                              <div class="col-6">
+                                <input type="text" name="terms" class="form-control" placeholder="Terms" style="background-color: #191c24;">
+                              </div>
+                              <div class="col-6">
+                                <input type="text" name="days" class="form-control" placeholder="No of Days" style="background-color: #191c24;">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-row mt-3">
+                            <div class="col-12">
+                              <button type="button" class="btn btn-outline-secondary add-term-row text-white" >Add New</button>
+                              <input type="submit" class="btn btn-success" value="Submit" id="payment">
+                            </div>
+                          </div>
+                </form>
+              </div>
+          </div>
+      </div>
+  </div> 
+  </div>
+
 
     <div class="modal fade" id="customercreation">
       <div class="modal-dialog modal-xl">
@@ -473,13 +633,13 @@
                       <div class="col-md-4 mt-3">
                           <label for="validationCustom02">First name</label>
                           <input type="text" class="form-control" id="firstname" name="firstname" 
-                                 required style="background-color: #2f516f;color: white;">
+                                 required style="background-color: 43596c;color: white;">
                           <div class="valid-feedback">Looks good!</div>
                       </div>
                       <div class="col-md-4 mt-3">
                           <label for="validationCustom02">Last name</label>
                           <input type="text" class="form-control" id="lastname" name="lastname"
-                                 required style="background-color: #2f516f;color: white;">
+                                 required style="background-color: 43596c;color: white;">
                           <div class="valid-feedback">Looks good!</div>
                       </div>
                   </div>
@@ -487,13 +647,13 @@
                       <div class="col-md-4 mt-3">
                           <label for="validationCustom03">Company</label>
                           <input type="text" class="form-control" id="company" name="company"
-                                 required style="background-color: #2f516f;color: white;">
+                                 required style="background-color: 43596c;color: white;">
                           <div class="valid-feedback">Looks good!</div>
                       </div>
                       <div class="col-md-4 mt-3">
                           <label for="validationCustom03">Location</label>
                           <input type="text" class="form-control" id="location" name="location"
-                                 required style="background-color: #2f516f;color: white;">
+                                 required style="background-color: 43596c;color: white;">
                           <div class="valid-feedback">Looks good!</div>
                       </div>
                       <div class="col-md-4 mt-3"></div>
@@ -502,11 +662,11 @@
                     <div class="col-md-4 mt-3">
                         <label for="gsttype">GST type</label>
                         <select class="custom-select" id="gsttype" name="gsttype"
-                                onclick="hidinput('hello1',this)   "
+                                onchange="hidinput('hello1',this)   "
                                 
                                 required
-                                style="background-color: #243e54; color: white;">
-                                <option selected disabled value="">Select GST Type</option>
+                                style="background-color: 43596c; color: white;">
+                                <option selected disabled value="" hidden>Select GST Type</option>
                                 <option value="Registered Business - Regular">Registered Business - Regular <span><i>(Business that is registered under gst)</i></span></option>
                                 <option value="Registered Business - Composition">Registered Business - Composition (Business that is registered under composition scheme in gst)</option>
                                 <option value="unregistered Business">Unregistered Business (Business that has not been registered under gst)</option>
@@ -526,7 +686,7 @@
                             <label for="gstin">GSTIN</label>
                             <input type="text" class="form-control" onchange="showMessage(this)"
                                    id="gstin" name="gstin"
-                                   style="background-color: #2f516f;color: white;"
+                                   style="background-color: 43596c;color: white;"
                                    value=""
                                    placeholder="29APPCK7465F1Z1">
                                    <a data-toggle="modal" href="#exampleModal"
@@ -541,7 +701,7 @@
                               <label for="validationCustom05">BUSINESS LEGAL NAME</label>
                               <input type="text" class="form-control" 
                                      
-                                     style="background-color: #2f516f;color: white;"
+                                     style="background-color: 43596c;color: white;"
                                      >
                               <div class="text-danger m-2" id="warngst"></div>
                           </div>
@@ -552,7 +712,7 @@
                               <label for="validationCustom05">BUSINESS TRADE NAME</label>
                               <input type="text" class="form-control" 
                                      
-                                     style="background-color: #2f516f;color: white;"
+                                     style="background-color: 43596c;color: white;"
                                      >
                               <div class="text-danger m-2" id="warngst"></div>
                           </div>
@@ -563,7 +723,7 @@
                       <div class="col-md-4 mt-3">
                           <label for="validationCustom03">PAN NO</label>
                           <input type="text" class="form-control" id="panno" name="panno"
-                                 required style="background-color: #2f516f;color: white;"
+                                 required style="background-color: 43596c;color: white;"
                                  onchange="checkpan(this)" placeholder="APPCK7465F">
                           <div class="text-danger m-2" id="warnpan"></div>
                       </div>
@@ -573,7 +733,7 @@
                               <label for="validationCustom05">PLACE OF SUPPLY</label>
                               <input type="text" class="form-control" 
                                      
-                                     style="background-color: #2f516f;color: white;"
+                                     style="background-color: 43596c;color: white;"
                                      >
                               <div class="text-danger m-2" id="warngst"></div>
                           </div>
@@ -584,7 +744,7 @@
                               <label for="validationCustom05">TAX PERFERENCE</label>
                               <input type="text" class="form-control" 
                                      
-                                     style="background-color: #2f516f;color: white;">
+                                     style="background-color: 43596c;color: white;">
                               <div class="text-danger m-2" id="warngst"></div>
                           </div>
                       </div>
@@ -593,12 +753,34 @@
                               <label for="validationCustom05">TAX RETURNS</label><br>
                               <input type="radio" name="Returns" 
                                      
-                                     style="background-color: #2f516f;color: white;"> Taxable
+                                     style="background-color: 43596c;color: white;"> Taxable
                                      <input type="radio" name="Returns"  
-                                     style="background-color: #2f516f;color: white;"> Non Taxable
+                                     style="background-color: 43596c;color: white;"> Non Taxable
                               <div class="text-danger m-2" id="warngst"></div>
                           </div>
                       </div> -->
+
+                      <div class="col-md-4 mt-3" >
+                        <label for="openbalance">Opening Balance</label>
+                        <div class="d-flex">
+                            <select name="bal" id="bal" class="form-select text-white pl-1" style="background-color: #243e54; width: 25%; border-radius: 5px;">
+                                <option value="credit">Credit</option>
+                                <option value="debit">Debit</option>
+                            </select>
+                            <input type="number" class="form-control" id="openbalance"  name="openbalance"
+                                style="background-color: #43596c;color: white;">
+                            <div class="text-danger m-2" ></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mt-3" >
+                        <div>
+                            <label for="openbalance">Credit Limit</label>
+                            <input type="number" class="form-control" id="crd_lmt"  name="crd_lmt"
+                                style="background-color: #43596c;color: white;">
+                            <div class="text-danger m-2" ></div>
+                        </div>
+                    </div>
                   </div>
 
                   
@@ -609,7 +791,7 @@
                       <div class="col-md-4 mt-3">
                           <label for="validationCustom03">Email</label>
                           <input type="email" class="form-control" id="email" name="email"
-                                 required style="background-color: #2f516f;color: white;"
+                                 required style="background-color: 43596c;color: white;"
                                  placeholder="finsys@mail.com">
                           <div class="invalid-feedback">Please provide a valid Email</div>
                       </div>
@@ -617,14 +799,14 @@
                           <label for="validationCustom03">Website</label>
                           <input type="text" class="form-control" id="website"
                                  placeholder="www.finsys.com" onchange="checkweb(this)" name="website"
-                                 style="background-color: #2f516f;color: white;">
+                                 style="background-color: 43596c;color: white;">
                           <div id="warnweb" class="text-danger"></div>
                       </div>
                       <div class="col-md-4 mt-3">
                           <label for="validationCustom01">Mobile</label>
                           <input type="text" class="form-control" id="mobile"
                                  onchange="checkphone(this)" name="mobile"
-                                 required style="background-color: #2f516f;color: white;">
+                                 required style="background-color: 43596c;color: white;">
                           <div class="text-danger m-2" id="warnphone"></div>
                       </div>
                   </div>
@@ -642,7 +824,7 @@
                                       <label for="street">Street</label>
                                       <textarea class="form-control street" id="street" name="street"
                                                 required
-                                                style="background-color: #2f516f;color: white;"></textarea>
+                                                style="background-color: 43596c;color: white;"></textarea>
                                       <div class="invalid-feedback">Please provide a valid Street</div>
                                   </div>
                               </div>
@@ -654,7 +836,7 @@
                                       <input type="text" class="form-control" id="city"
                                              name="city"
                                              required
-                                             style="background-color: #2f516f;color: white;" placeholder="City">
+                                             style="background-color: 43596c;color: white;" placeholder="City">
                                       <div class="invalid-feedback">Please provide a valid City</div>
                                   </div>
                               </div>
@@ -662,8 +844,8 @@
                                   <div class="form-row">
                                       <label for="state">State</label>
                                       <select type="text" class="form-control" id="state" name="state"
-                                              style="background-color: #2f516f; color: white;">
-                                          <option value="" disabled selected>Choose</option>
+                                              style="background-color: 43596c; color: white;">
+                                          <option value="" disabled selected hidden>Choose</option>
                                           <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads
                                           </option>
                                           <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -714,7 +896,7 @@
                                       <label for="pinco">Pin Code</label>
                                       <input type="text" class="form-control" id="pincode"
                                              name="pincode"
-                                             required style="background-color: #2f516f;color: white;"
+                                             required style="background-color: 43596c;color: white;"
                                              placeholder="PIN code">
                                       <div class="invalid-feedback">Please provide a valid Pin Code</div>
                                   </div>
@@ -724,7 +906,7 @@
                                       <label for="country">Country</label>
                                       <input type="text" class="form-control" id="country"
                                              name="country"
-                                             required style="background-color: #2f516f;color: white;"
+                                             required style="background-color: 43596c;color: white;"
                                              placeholder="Country">
                                       <div class="invalid-feedback">Please provide a valid Country</div>
                                   </div>
@@ -735,7 +917,7 @@
                           <div class="row">
                               <div class="col-md-12 d-flex">
                                   <h5>Shipping Address</h5>
-                                  <input class="ml-4 mt-2 ml-2" type="checkbox" onclick="poppins()" id="okay"
+                                  <input class="ml-4 ml-5" type="checkbox" onclick="poppins()" id="okay"
                                          name="okay">
                                   <label class="ml-2 mt-1 ml-2" for="okay">Same As Billing Address</label>
                               </div>
@@ -747,7 +929,7 @@
                                       <textarea class="form-control" id="shipstreet"
                                                 name="shipstreet"
                                                 required
-                                                style="background-color: #2f516f;color: white;"></textarea>
+                                                style="background-color: 43596c;color: white;"></textarea>
                                       <div class="invalid-feedback">Please provide a valid Street</div>
                                   </div>
                               </div>
@@ -759,7 +941,7 @@
                                       <input type="text" class="form-control" id="shipcity"
                                              name="shipcity"
                                              required
-                                             style="background-color: #2f516f;color: white;" placeholder="City">
+                                             style="background-color: 43596c;color: white;" placeholder="City">
                                       <div class="invalid-feedback">Please provide a valid City</div>
                                   </div>
                               </div>
@@ -767,8 +949,8 @@
                                   <div class="form-row">
                                       <label for="shipstate">State</label>
                                       <select type="text" class="form-control" id="shipstate" name="shipstate"
-                                              style="background-color: #2f516f; color: white;">
-                                          <option id="shipst" selected>Choose</option>
+                                              style="background-color: 43596c; color: white;">
+                                          <option id="shipst" selected hidden>Choose</option>
                                           <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads
                                           </option>
                                           <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -819,7 +1001,7 @@
                                       <label for="shippinco">Pin Code</label>
                                       <input type="text" class="form-control" id="shippincode"
                                              name="shippincode"
-                                             required style="background-color: #2f516f;color: white;"
+                                             required style="background-color: 43596c;color: white;"
                                              placeholder="PIN code">
                                       <div class="invalid-feedback">Please provide a valid Pin Code</div>
                                   </div>
@@ -829,7 +1011,7 @@
                                       <label for="shipcountry">Country</label>
                                       <input type="text" class="form-control" id="shipcountry"
                                              name="shipcountry"
-                                             required style="background-color: #2f516f;color: white;"
+                                             required style="background-color: 43596c;color: white;"
                                              placeholder="Country">
                                       <div class="invalid-feedback">Please provide a valid Country</div>
                                   </div>
@@ -841,7 +1023,7 @@
                       <div class="col">
                           <div class="form-check">
                               <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required
-                                     style="background-color: #2f516f;">
+                                     style="background-color: 43596c;">
                               <label>Agree to terms and conditions</label>
                               <div class="invalid-feedback">You must agree before submitting.</div>
                           </div>
@@ -870,363 +1052,312 @@
 
       
     </div>
+
     <div class="modal fade" id="newitem">
-      <div class="modal-dialog modal-xl">
-          <div class="modal-content" style="background-color: #213b52;">
-              <div class="modal-header">
-                  <h3 class="m-3">New Item</h3>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                  </button>
-              </div>
-              <div class="modal-body">
-                  <div class="card p-3 m-3">
-                      <form action="" method="post"  autocomplete="off" id="modalItem">
-  
-                          <div class="row">
-                              <div class="col-md-12">
-                                  <div class="row">
-                                      <div class="col-md-12 mx-0">
-                                          <div class="row">
-                                          <div class="col-md-6 mt-3">
-                                              <label for="item_name"
-                                                     style="color: white;">Name</label>
-                                              <input type="text" name="name" class="form-control" id="item_name"
-                                                        style="background-color: #2a4964; color: white;"
-                                                       autocomplete="off" required>
-                                          </div>
-                                          <div class="col-md-6 mt-3">
-                                              <label for="type"
-                                                     style="color: white;">Type</label>
-                                              <select name="type" class="form-control"  id="type"
-                                                        style="background-color: #2a4964; color: white;"
-                                                        required>
-                                                        <option selected disabled value="">Choose...</option>
-                                                      <option value="goods">Goods</option>
-                                                  <option value="services">Services</option></select>
-                                          </div>
-                                      </div>
-                                      <div class="row">
-                                          <div class="col-md-12">
-                                              <div class="row">
-                                                  <div class="col-md-12 mx-0">
-                                                      <div class="row">
-                                                          <div class="col-md-6 mt-3">
-                                                              <label for="unit" style="color: white;">Unit
-                                                                  </label>
-                                                              <div class="d-flex">
-                                                                  <select class="custom-select" name="unit" id="unit"
-                                                                          required
-                                                                          style="background-color: #2a4964; color: white;">
-                                                                          <option selected disabled value="">Choose...</option>
-                                                                          {% for a in unit %}
-                                                                          <option style="text-transform:Uppercase;">{{ a.unit_symbol}}-{{ a.name }}</option>
-                                                                          {% endfor %}
-                                                                          <option>BAG-BAGS</option>
-                                                                          <option>BAL-BALE</option>
-                                                                          <option>BDL-BUNDLES</option>
-                                                                          <option>BKL-BUCKLES</option>
-                                                                          <option>BOX-BOX</option>
-                                                                          <option>BOU-BILLIONS OF UNITS</option>
-                                                                          <option>BTL-BOTTLES</option>
-                                                                          <option>BUN-BUNCHES</option>
-                                                                          <option>CAN-CANS</option>
-                                                                          <option>CBM-CUBIC METER</option>
-                                                                          <option>CMS-CENTIMETER</option>
-                                                                          <option>CCM-CUBIC CENTIMETER</option>
-                                                                          <option>CTN-CARTONS</option>
-                                                                          <option>DOZ-DOZEN</option>
-                                                                          <option>DRM-DRUM</option>
-                                                                          <option>GGR-GREAT GROSS</option>
-                                                                          <option>GMS-GRAMS</option>
-                                                                          <option>GRS-GROSS</option>
-                                                                          <option>GYD-GROSS YARDS</option>
-                                                                          <option>KGS-KILOGRAMS</option>
-                                                                          <option>KLR-KILOLITER</option>
-                                                                          <option>KME-KILOMETRE</option>
-                                                                          <option>MTS Metric ton</option>
-                                                                          <option>MLT-MILLILITRE</option>
-                                                                          <option>MTR-METERS</option>
-                                                                          <option>NOS-NUMBER</option>
-                                                                          <option>PAC-PACKS</option>
-                                                                          <option>PCS-PIECES</option>
-                                                                          <option>PRS-PAIRS</option>
-                                                                          <option>QTL-QUINTAL</option>
-                                                                          <option>ROL-ROLLS</option>
-                                                                          <option>SQF-SQUARE FEET</option>
-                                                                          <option>SET-SETS</option>
-                                                                          <option>SQM-SQUARE METERS</option>
-                                                                          <option>SQY-SQUARE YARDS</option>
-                                                                          <option>TBS-TABLETS</option>
-                                                                          <option>TGM-TEN GROSS</option>
-                                                                          <option>THD-THOUSANDS</option>
-                                                                          <option>TON-TONNES</option>
-                                                                          <option>TUB-TUBES</option>
-                                                                          <option>UGS-US GALLONS</option>
-                                                                          <option>UNT-UNITS</option>
-                                                                          <option>YDS-YARDS</option>
-                                          
-                                                                     
-                                                                  </select>
-                                                                  <!-- <a href="{% url 'add_unit' %}">
-                                                                      <button type="button"
-                                                                              class="btn btn-outline-secondary ml-1">+
-                                                                      </button>
-                                                                  </a> -->
-                                                              </div>
-                                                          </div>
-                                                          <div class="col-md-6 mt-3">
-                                                              <label for="hsn" style="color: white;">HSN
-                                                                  Code</label>
-                                                          <input type="text" name="hsn" class="form-control" id="hsn"
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" style="background-color: #213b52;">
+                <div class="modal-header">
+                    <h3 class="m-3">New Item</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card p-3 m-3">
+                        <form method="post" class="needs-validation" novalidate autocomplete="off" id="modalItem">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12 mx-0">
+                                            <div class="row">
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="item_name" style="color: white;">Name</label>
+                                                    <input type="text" name="name" class="form-control" id="item_name"
+                                                        style="background-color: #2a4964; color: white;" autocomplete="off" required>
+                                                </div>
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="type" style="color: white;">Type</label>
+                                                    <select name="type" class="form-control"  id="type"
+                                                        style="background-color: #2a4964; color: white;" required>
+                                                        <option selected disabled value="" hidden>Choose...</option>
+                                                        <option value="goods">Goods</option>
+                                                        <option value="services">Services</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-12 mx-0">
+                                                            <div class="row">
+                                                                <div class="col-md-6 mt-3">
+                                                                    <label for="unit" style="color: white;">Unit </label>
+                                                                    <div class="d-flex">
+                                                                        <select class="custom-select" name="unit" id="unit" required
+                                                                            style="background-color: #2a4964; color: white;">
+                                                                            <option selected disabled value="" hidden>Choose...</option>
+                                                                            {% for a in unit %}
+                                                                                <option style="text-transform:Uppercase;">{{ a.unit_symbol}}-{{ a.name }}</option>
+                                                                            {% endfor %}
+                                                                            <option>BAG-BAGS</option>
+                                                                            <option>BAL-BALE</option>
+                                                                            <option>BDL-BUNDLES</option>
+                                                                            <option>BKL-BUCKLES</option>
+                                                                            <option>BOX-BOX</option>
+                                                                            <option>BOU-BILLIONS OF UNITS</option>
+                                                                            <option>BTL-BOTTLES</option>
+                                                                            <option>BUN-BUNCHES</option>
+                                                                            <option>CAN-CANS</option>
+                                                                            <option>CBM-CUBIC METER</option>
+                                                                            <option>CMS-CENTIMETER</option>
+                                                                            <option>CCM-CUBIC CENTIMETER</option>
+                                                                            <option>CTN-CARTONS</option>
+                                                                            <option>DOZ-DOZEN</option>
+                                                                            <option>DRM-DRUM</option>
+                                                                            <option>GGR-GREAT GROSS</option>
+                                                                            <option>GMS-GRAMS</option>
+                                                                            <option>GRS-GROSS</option>
+                                                                            <option>GYD-GROSS YARDS</option>
+                                                                            <option>KGS-KILOGRAMS</option>
+                                                                            <option>KLR-KILOLITER</option>
+                                                                            <option>KME-KILOMETRE</option>
+                                                                            <option>MTS Metric ton</option>
+                                                                            <option>MLT-MILLILITRE</option>
+                                                                            <option>MTR-METERS</option>
+                                                                            <option>NOS-NUMBER</option>
+                                                                            <option>PAC-PACKS</option>
+                                                                            <option>PCS-PIECES</option>
+                                                                            <option>PRS-PAIRS</option>
+                                                                            <option>QTL-QUINTAL</option>
+                                                                            <option>ROL-ROLLS</option>
+                                                                            <option>SQF-SQUARE FEET</option>
+                                                                            <option>SET-SETS</option>
+                                                                            <option>SQM-SQUARE METERS</option>
+                                                                            <option>SQY-SQUARE YARDS</option>
+                                                                            <option>TBS-TABLETS</option>
+                                                                            <option>TGM-TEN GROSS</option>
+                                                                            <option>THD-THOUSANDS</option>
+                                                                            <option>TON-TONNES</option>
+                                                                            <option>TUB-TUBES</option>
+                                                                            <option>UGS-US GALLONS</option>
+                                                                            <option>UNT-UNITS</option>
+                                                                            <option>YDS-YARDS</option>
+                                                                        </select>
+                                                                        <!-- <button type="button" class="btn btn-outline-secondary ml-1" 
+                                                                        data-target="#newunit" data-toggle="modal">+</button> -->
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 mt-3">
+                                                                    <label for="hsn" style="color: white;">HSN Code</label>
+                                                                    <input type="text" name="hsn" class="form-control" id="hsn"
                                                                      style="background-color: #2a4964; color: white;"
-                                                                    
                                                                      placeholder="Enter a valid HSN code" required>
-                                                            
-                                                          </div>
-                                                         
-                                                      </div>
-                                                      <div class="row">
-                                                          <div class="col-md-6 mt-3">
-                                                             
-                                                          </div>
-                                                         
-                                                      </div>
-                                                      
-                                      <div class="row">
-                                          <div class="col-md-3 mt-3">
-                                              <label for="validationCustom05" name style="color: white;">Tax Reference
-                                                  </label>
-                                           
-                                          </div>
-                                          <div class="col-md-3">
-                                              <div class="form-check mt-1">
-                                                 
-                                                      <input class="form-check-input" name="taxref" type="checkbox" id="inclusive"
-                                                           value="taxable" checked >Taxable
-                                                      <label style="color: white;">
-                                                          </label>
-                                                
-                                              </div>
-                                          </div>
-                                          <div class="form-check mt-1">
-                                              <input class="form-check-input" name="taxref" type="checkbox"
-                                                     value="non taxable" 
-                                                     id="check">
-                                              <label style="color: white;">Non Taxable</label>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  </div>
-                                      <div class="row">
-                                          <div class="col-md-6 mt-3">
-                                              <label for="validationCustom01"
-                                                     style="color: white;">Purchase Price</label>
-                                                  <div class="row">
-                                                     <div >
-                                                     <input type="text" class="form-control" value="INR"
-                                                      style="margin-left:20px;width:60px;background-color: #2a4960; color: white;"></div>
-                                                     <div >
-                                                     <input type="number" name="pcost" class="form-control" 
-                                                     id="purprice" style="width:540px;background-color: #2a4964; color: white; width:200%"
-                                                     value="0"
-                                                     >
-                                                     </div>
-                                                  </div>
-  
-                                          </div>
-                                          <div class="col-md-6 mt-3">
-                                              <label for="validationCustom01"
-                                                     style="color: white;">Sales Price</label>
-                                                     <div class="row">
-                                                      <div >
-                                                          <input type="text" class="form-control" value="INR"
-                                                           style="margin-left:20px;width:60px;background-color: #2a4960; color: white;"></div>
-                                                          <div >
-                                                      <div >
-                                                     <input type="text" name="salesprice" class="form-control"
-                                                     id="saleprice" style="width:540px;background-color: #2a4964; color: white; width:200%"
-                                                     value="0"
-                                                     >
-                                                      </div>
-                                                  </div>
-  
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <div class="row">
-                                      <div class="col-md-12 mx-0">
-                                          <div class="row">
-                                              <div class="col-md-6 mt-3">
-                                                  <label for="validationCustom01"
-                                                         style="color: white;">Account</label>
-                                                         <select name="pur_account" class="form-control" 
-                                                         style="background-color: #2a4964; color: white;"
-                                                         id="pur_account" >
-                                                         <option >Cost of Goods Sold</option>
-                                                         {% for a in acc %}
-                                                         <option value="goods">{{ a.name }}</option>
-                                                         {% endfor %}</select>
-                                              </div>
-                                              <div class="col-md-6 mt-3">
-                                                  <label for="validationCustom01"
-                                                         style="color: white;">Account</label>
-                                                  <select name="sale_account" class="form-control" 
-                                                            style="background-color: #2a4964; color: white;"
-                                                            id="sale_account" >
-                                                            <option >Sales</option>
-                                                         {% for a in acc1 %}
-                                                         <option value="goods">{{ a.name }}</option>
-                                                         {% endfor %}</select>
-                                              </div>
-                                          </div>
-                                          <div class="row">
-                                              <div class="col-md-12 mx-0">
-                                                  <div class="row">
-                                                      <div class="col-md-6 mt-3">
-                                                          <label for="validationCustom01"
-                                                                 style="color: white;">Description</label>
-                                                                 <textarea class="form-control" name="pur_desc"
-                                                                 id="pur_desc" 
-                                                                 style="background-color: #2a4964; color: white;"
-                                                                 ></textarea>  
-                                                      </div>
-                                                      <div class="col-md-6 mt-3">
-                                                          <label for="validationCustom01"
-                                                                 style="color: white;">Description</label>
-                                                                 <textarea class="form-control" name="sale_desc"
-                                                                 id="sale_desc"
-                                                                 style="background-color: #2a4964; color: white;"
-                                                                 ></textarea>
-                                                      </div>
-                                                  </div>
-                                       
-                                      
-                                      <div class="row">
-                                          <div class="col-md-12 mx-0">
-                                              <div class="row">
-                                                  <div class="col-md-6 mt-3">
-                                                      <label for="validationCustom01"
-                                                             style="color: white;">Intra State Tax Rate</label>
-                                                             <select name="intra_st" class="form-control" 
-                                                             style="background-color: #2a4964; color: white;"
-                                                             id="intra_st" >
-                                                             <option >Choose...</option>
-                                                             <option value=0>GST 0 (0%)</option>
-                                                             <option value=5>GST 5 (5%)</option>
-                                                             <option value=12>GST 12 (12%)</option>
-                                                             <option value=18>GST 18 (18%)</option>
-                                                             <option value=28>GST 28 (28%)</option>
-                                                             <option value=0>Out of Scope(0%)</option>
-                                                  </select>
-                                                  </div>
-                                              
-                                                  <div class="col-md-6 mt-3">
-                                                      <label for="inter_st"
-                                                             style="color: white;">Inter State Tax Rate</label>
-                                                      <select name="inter_st" class="form-control" 
-                                                                style="background-color: #2a4964; color: white;"
-                                                                id="inter_st" >
-                                                                <option >Choose...</option>
-                                                                <option value=0>IGST 0 (0%)</option>
-                                                             <option value=5>IGST 5 (5%)</option>
-                                                             <option value=12>IGST 12 (12%)</option>
-                                                             <option value=18>IGST 18 (18%)</option>
-                                                             <option value=28>IGST 28 (28%)</option>
-                                                             <option value=0>Out of Scope(0%)</option>
-                                                  </select>
-                                                  </div>
-                                              </div><br>
-                                              <div class="row" >
-                                                 
-                                                 
-                                    
-                                                  <div class="col-md-3">
-                                                      <div class="form-check">
-                                                          <input class="form-check-input" onclick="ShowHideDiv(this)" type="checkbox"  id="track">
-                                                          <label class="form-check-label" for="track" >
-                                                            Track Inventory
-                                                          </label>
+                                                                </div>
+                                                            </div>
+                                                        <div class="row">
+                                                            <div class="col-md-3 mt-3">
+                                                                <label for="validationCustom05" name style="color: white;">Tax Reference</label>
+                                                            </div>
+                                                            <div class="col-md-3 mt-3">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" name="taxref" type="checkbox" id="inclusive" value="taxable" >
+                                                                    <label style="color: white;">Taxable</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 mt-3">
+                                                                <div class="form-check" >
+                                                                    <input class="form-check-input" name="taxref" type="checkbox" value="non taxable" id="check">
+                                                                    <label style="color: white;">Non Taxable</label>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                       
-                                                  </div>
-                                              
-                                              </div>
-  
-                                              <div class="row" id="inventorytrack" style="display: none">
-                                                  <div class="col-md-6 mt-3">
-                                                      <label for="validationCustom01"
-                                                             style="color: white;">Inventory Account</label>
-                                                             <select name="invacc" class="form-control" id="invacc"
-                                                                style="background-color: #2a4964; color: white;"
-                                                                >
-                                                             <option selected disabled value="" >Choose...</option>
-                                                             <option value="Inventory Assets">Inventory Assets</option>
-                                                         
-                                                  </select>
-                                                  </div>
-                                                  <div class="col-md-6 mt-3">
-                                                      <label for="validationCustom01"
-                                                             style="color: white;">Stock on hand</label>
-                                                             <input type="number" name="stock" class="form-control" id="stock"
-                                                             style="width:540px;background-color: #2a4964; color: white;"
-                                                             value="0"
-                                                             >
-                                                  </div>
-                                              </div>
-                                             
-  
-                                          
-                             
-                                              <div class="row">
-                                                  <div class="col-md-6 mt-3">
-                                                     
-                                                  </div>
-                                                 
-                                              </div>
-                                              <div class="row">
-                                                  <div class="col-md-3 mt-3">
-                                                      <label for="validationCustom05" name style="color: white;">Active/Inactive
-                                                          </label>
-                                                   
-                                                  </div>
-                                                  <div class="col-md-3">
-                                                      <div class="form-check">
-                                                          <input class="form-check-input" value="Active" type="radio" name="status" id="flexRadioDefault1" checked>
-                                                          <label class="form-check-label" for="flexRadioDefault1">
-                                                            Active
-                                                          </label>
-                                                        </div>
-                                                       
-                                                  </div>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" value="Inactive" type="radio" name="status" id="flexRadioDefault2" >
-                                                      <label class="form-check-label" for="flexRadioDefault2">
-                                                        Inactive
-                                                      </label>
+                                                            <div class="row" id="taxdiv" style="display: none;">
+                                                                <div class="d-flex">
+                                                                    <div class="col-md-6 mt-3">
+                                                                        <label for="validationCustom01"
+                                                                            style="color: white;">Intra State Tax Rate</label>
+                                                                        <select name="intra_st" class="form-control" 
+                                                                            style="background-color: #2a4964; color: white;"
+                                                                            id="intra_st" >
+                                                                            <option value=" " hidden>Choose...</option>
+                                                                            <option value=0>GST 0 (0%)</option>
+                                                                            <option value=5>GST 5 (5%)</option>
+                                                                            <option value=12>GST 12 (12%)</option>
+                                                                            <option value=18>GST 18 (18%)</option>
+                                                                            <option value=28>GST 28 (28%)</option>
+                                                                            <option value=0>Out of Scope(0%)</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-3">
+                                                                        <label for="inter_st"
+                                                                            style="color: white;">Inter State Tax Rate</label>
+                                                                        <select name="inter_st" class="form-control" 
+                                                                                style="background-color: #2a4964; color: white;"
+                                                                                id="inter_st" >
+                                                                                <option value= ' ' hidden>Choose...</option>
+                                                                                <option value=0>IGST 0 (0%)</option>
+                                                                            <option value=5>IGST 5 (5%)</option>
+                                                                            <option value=12>IGST 12 (12%)</option>
+                                                                            <option value=18>IGST 18 (18%)</option>
+                                                                            <option value=28>IGST 28 (28%)</option>
+                                                                            <option value=0>Out of Scope(0%)</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                     </div>
-                                              </div>
-                                          </div>
-                                          </div>
-                                     
-                                      <div class="row mt-5 mb-5">
-                                          <div class="col-md-4">
-                                              <a href="{% url 'goitem' %}"class="btn btn-outline-info rounded-pill w-25 text-light">BACK</a>                                   </div>
-                                          <div class="col-md-4">
-                                              <button class="btn btn-outline-info rounded-pill w-100 text-light" data-dismiss="modal" type="submit" id="itemSave">SUBMIT</button>
-                                          </div>
-                                          <div class="col-md-4"></div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </form>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mt-3">
+                                                        <label for="validationCustom01" style="color: white;">Purchase Price</label>
+                                                        <div class="row">
+                                                            <div>
+                                                                <input type="text" class="form-control" value="INR"
+                                                                style="margin-left:20px;width:60px;background-color: #2a4960; color: white;">
+                                                            </div>
+                                                            <div>
+                                                                <input type="number" name="pcost" class="form-control" 
+                                                                    id="purprice" style="width:540px;background-color: #2a4964; color: white; width:200%" value="0" >
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mt-3">
+                                                        <label for="validationCustom01"
+                                                                style="color: white;">Sales Price</label>
+                                                        <div class="row">
+                                                            <div>
+                                                                <input type="text" class="form-control" value="INR"
+                                                                style="margin-left:20px;width:60px;background-color: #2a4960; color: white;">
+                                                            </div>
+                                                            <div >
+                                                                <div >
+                                                                    <input type="text" name="salesprice" class="form-control"
+                                                                        id="saleprice" style="width:540px;background-color: #2a4964; color: white; width:200%" value="0">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12 mx-0">
+                                                        <div class="row">
+                                                            <div class="col-md-6 mt-3">
+                                                                <label for="validationCustom01" style="color: white;">Account</label>
+                                                                <select name="pur_account" class="form-control" 
+                                                                    style="background-color: #2a4964; color: white;" id="pur_account" >
+                                                                    <option >Cost of Goods Sold</option>
+                                                                    {% for a in acc %}
+                                                                        <option value="goods">{{ a.name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6 mt-3">
+                                                                <label for="validationCustom01" style="color: white;">Account</label>
+                                                                <select name="sale_account" class="form-control" 
+                                                                style="background-color: #2a4964; color: white;" id="sale_account" >
+                                                                    <option >Sales</option>
+                                                                    {% for a in acc1 %}
+                                                                        <option value="goods">{{ a.name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12 mx-0">
+                                                                <div class="row">
+                                                                    <div class="col-md-6 mt-3">
+                                                                        <label for="validationCustom01" style="color: white;">Description</label>
+                                                                        <textarea class="form-control" name="pur_desc"id="pur_desc" 
+                                                                        style="background-color: #2a4964; color: white;"></textarea>  
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-3">
+                                                                        <label for="validationCustom01" style="color: white;">Description</label>
+                                                                        <textarea class="form-control" name="sale_desc" id="sale_desc"
+                                                                        style="background-color: #2a4964; color: white;"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12 mx-0">
+                                                                        <br>
+                                                                        <div class="row" >
+                                                                            <div class="col-md-3">
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" onclick="ShowHideDiv(this)" type="checkbox"  id="track">
+                                                                                    <label class="form-check-label" for="track" >
+                                                                                        Track Inventory
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                    
+                                                                        </div>
+                                                                        <div class="row" id="inventorytrack" style="display: none">
+                                                                            <div class="col-md-6 mt-3">
+                                                                                <label for="validationCustom01" style="color: white;">Inventory Account</label>
+                                                                                <select name="invacc" class="form-control" id="invacc"
+                                                                                    style="background-color: #2a4964; color: white;">
+                                                                                    <option selected disabled value="" hidden>Choose...</option>
+                                                                                    <option value="Inventory Assets">Inventory Assets</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-md-3 mt-3">
+                                                                                <label for="validationCustom01" style="color: white;">Stock on hand</label>
+                                                                                <input type="number" name="stock" class="form-control" id="stock" 
+                                                                                style="background-color: #2a4964; color: white;" value="0">
+                                                                            </div>
+                                                                            <div class="col-md-3 mt-3">
+                                                                                <label for="validationCustom01" style="color: white;">Stock Rate per Unit</label>
+                                                                                <input type="number" name="stock_rate" class="form-control" id="stock_rate" 
+                                                                                style="background-color: #2a4964; color: white;" value="0">
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                        <div class="row">
+                                                                            <div class="col-md-3 mt-3">
+                                                                                <label for="validationCustom05" name style="color: white;">Active/Inactive
+                                                                                    </label>
+                                                                            
+                                                                            </div>
+                                                                            <div class="col-md-3 mt-3">
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" value="Active" type="radio" name="status" id="flexRadioDefault1" checked>
+                                                                                    <label class="form-check-label" for="flexRadioDefault1">
+                                                                                        Active
+                                                                                    </label>
+                                                                                    </div>
+                                                                                
+                                                                            </div>
+                                                                            <div class="form-check mt-3">
+                                                                                <input class="form-check-input" value="Inactive" type="radio" name="status" id="flexRadioDefault2" >
+                                                                                <label class="form-check-label" for="flexRadioDefault2">
+                                                                                    Inactive
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mt-5 mb-5">
+                                                                    <div class="col-md-4"></div>
+                                                                    <div class="col-md-4">
+                                                                        <button class="btn btn-outline-info rounded-pill w-100 text-light" data-dismiss="modal" type="submit" id="itemSave">SUBMIT</button>
+                                                                    </div>
+                                                                    <div class="col-md-4"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </div> 
     </div> 
-  </div> 
+    
+    
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
@@ -2311,6 +2442,450 @@
 //     }).trigger('change');
 //   });
 // </script>-->
+
+
+<script>
+    $('#tab_logic tbody tr').each(function () {
+
+        var html = $(this).html();
+        if (html != '') {
+            var qty = $(this).find('.qty').val();
+
+            var price = $(this).find('.price').val();
+
+            var dis = $(this).find('.disc').val();
+            var bc = $("#plosu").val();
+            var compstate = $("#cmpstate").val();
+            if(bc==compstate){
+                tax = $(this).find('.intra_tax').val();
+            }
+            else{
+                tax = $(this).find('.inter_tax').val();
+            }
+            $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).on('change','#ord_no', function() {
+        ord = '{{sale.saleno}}'
+        ord_value = $('#ord_no').val();
+        if(ord_value != ord){
+            document.getElementById('dangerdiv').style.display = 'block';
+        }else{
+            document.getElementById('dangerdiv').style.display = 'none';
+        }
+        var sale_list = "{{sale_list}}";
+        salelist = sale_list.split(",");
+        for(let i=0; i<salelist.length; i++){
+            if (ord_value == salelist[i]){
+                alert('Sale Order Number already in use.')
+                document.getElementById('dangerdiv').style.display = 'none';
+                document.getElementById('ord_no').value = '';
+            }
+        }
+    })
+</script>
+
+<script>
+    $(document).on('change','#Salesdate', function() {
+        var days = parseInt($('#pay_term').val());
+        order_date =new Date( document.getElementById("Salesdate").value)
+        if (!isNaN(order_date.getTime())) {
+            // Calculate the new date by adding 20 days
+            const endDate = new Date(order_date);
+            endDate.setDate(endDate.getDate() + days);
+            // Format the new date as YYYY-MM-DD
+            const formattedDate = endDate.toISOString().split("T")[0];
+            // Set the result in the second input
+            document.getElementById("Shipmentdate").value = formattedDate;
+        } else {
+                alert("Please enter a valid date.");
+        }
+    })
+</script>
+
+<script>
+    $(document).ready(function() {
+    item_table_rows = document.getElementById('items-table-body').querySelectorAll('tr')
+    
+    for(let i= 1; i<=item_table_rows.length;i++){
+        itm = $(`#product${i}`).val();
+        $.ajax({
+        url: "{% url 'stockdata' %}",
+        type : 'GET',
+        data:{
+            id : itm,
+            },
+        
+            success: function(response) {
+                data2 = response.stock
+
+                document.getElementById('qtyspan'+i).innerHTML = data2;
+
+            },
+        });
+    }  
+});        
+
+</script>
+
+
+<script>
+         
+    // Select the form and the container for the terms rows
+  const form = document.getElementById('terms-form');
+  const termsContainer = document.getElementById('terms-container');
+  
+  // Select the button that adds new rows
+  const addTermRowBtn = document.querySelector('.add-term-row');
+  
+  // Add event listener to the button
+  addTermRowBtn.addEventListener('click', () => {
+    // Create a new row div
+    const newRow = document.createElement('div');
+    newRow.classList.add('form-row');
+    newRow.id = "newtermrow";
+  
+    // Create the first input field for the new row
+    const termsInput = document.createElement('div');
+    termsInput.classList.add('col-6');
+    const termsField = document.createElement('input');
+    termsField.type = 'text';
+    termsField.name = 'terms';
+    termsField.placeholder = 'Terms';
+    termsField.classList.add('form-control');
+    termsField.classList.add('text-white');
+    termsField.style.backgroundColor = "#191c24";
+    termsInput.appendChild(termsField);
+    newRow.appendChild(termsInput);
+  
+    // Create the second input field for the new row
+    const daysInput = document.createElement('div');
+    daysInput.classList.add('col-5');
+    const daysField = document.createElement('input');
+    daysField.type = 'text';
+    daysField.name = 'days';
+    daysField.placeholder = 'No of Days';
+    daysField.classList.add('form-control');
+    daysField.classList.add('text-white');
+    daysField.style.backgroundColor = "#191c24";
+    daysInput.appendChild(daysField);
+    newRow.appendChild(daysInput);
+  
+    // Create the delete button for the new row
+    const deleteBtn = document.createElement('div');
+    deleteBtn.classList.add('col-1');
+    const deleteBtnEl = document.createElement('button');
+    deleteBtnEl.type = 'button';
+    deleteBtnEl.classList.add('btn', 'btn-outline-secondary', 'delete-term-row', 'mt-1');
+    deleteBtnEl.innerText = '-';
+    deleteBtnEl.style.height = '4vh';
+    deleteBtn.appendChild(deleteBtnEl);
+    newRow.appendChild(deleteBtn);
+  
+    // Append the new row to the container
+    termsContainer.appendChild(newRow);
+  });
+  
+  // Add event listener to the form to delete rows
+  termsContainer.addEventListener('click', (event) => {
+    // If the target element is a delete button
+    if (event.target.classList.contains('delete-term-row')) {
+      // Find the row to delete
+      const row = event.target.closest('.form-row');
+      // Remove the row
+      row.remove();
+    }
+  });
+  
+  
+  
+  </script>
+  
+
+<script>
+    $(document).ready(function() {
+      $("#pay_method").change(function() {
+        var x=$('#pay_method').val();
+        if(x==='cash'){
+          $('#chequediv').hide()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+        }else if(x==='cheque'){
+          $('#chequediv').show()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('upi_id').value=null
+        }else if(x==='upi'){
+          $('#upidiv').show()
+          $('#bnkdiv').hide()
+          $('#chequediv').hide()
+          document.getElementById('cheque_id').value=null
+        }else{
+          $('#bnkdiv').show()
+          $('#chequediv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+
+          $.ajax({
+              type: "GET",
+              url: "{% url 'bankdata' %}",
+              data: {
+                  id: x,
+              },
+              success: function (response) {
+                  data = response.bank
+                  document.getElementById('cheque_id').value=null
+                  document.getElementById('upi_id').value=null
+                  document.getElementById("bnk_id").value = data
+              }
+          });
+        }
+      });
+    });
+</script>
+
+<script>
+    $(document).on("click", "#payment", function() {
+  var array1 = [];
+  var array2 = [];
+  array1.length = 0;
+  array2.length = 0;
+  $("input:text[name=terms]").each(function() {
+    array1.push($(this).val());
+    
+  });
+
+  $("input:text[name=days]").each(function() {
+    array2.push($(this).val());
+  });
+ 
+
+  $.ajax({
+    url: "{% url 'payment_term_for_sales' %}",
+    type: 'POST',
+    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+    data: {
+      terms: JSON.stringify(array1),
+      days: JSON.stringify(array2)
+    },
+    success: function(response) {
+      
+      
+      $('#newpayment').hide();
+      $(".modal-backdrop").remove();
+      data = response.pay_term;
+      const pay = document.getElementById("pay_term");
+      const termsField = document.createElement('option');
+      termsField.innerHTML = data;
+      pay.appendChild(termsField);
+
+    document.getElementById("modalForm").reset();
+    reloadterms()
+      
+  // Iterate through the data and create options
+    },
+  });
+});
+
+function reloadterms(){
+  $.ajax({
+    url: "{% url 'terms_dropdowns' %}",
+    type: "GET",
+    success: function(response) {
+      term_data = response.term_data
+      day_data = response.day_data
+      
+      var term_container = document.getElementById('terms-container');
+      var dropdow = document.getElementById('termdrop');
+      term_container.removeChild(dropdow);
+      
+      new_row = `<div class="form-row" id="termdrop"></div>`
+      $('#terms-container').append(new_row)
+
+      new_row = `      
+        <div class="col-6" >
+        <input type="text" value="Due On Receipt" class="form-control" style="background-color: #191c24; color: white;" readonly>
+        </div>
+
+        <div class="col-6">
+        <input type="text" value="0" class="form-control" style="background-color: #191c24; color: white;" readonly>
+        </div>       
+
+        <div class="col-6" >
+        <input type="text" value="NET 30" class="form-control" style="background-color: #191c24; color: white;" readonly>
+        </div>
+        <div class="col-6">
+        <input type="text" value="30" class="form-control" style="background-color: #191c24; color: white;" readonly>
+        </div>                                
+        
+        <div class="col-6" >
+        <input type="text" value="NET 60" class="form-control" style="background-color: #191c24; color: white;" readonly>
+        </div>
+        <div class="col-6">
+        <input type="text" value="60" class="form-control" style="background-color: #191c24; color: white;" readonly>
+        </div>`
+        $('#termdrop').append(new_row)
+      
+      for(let i=0; i<term_data.length;i++){
+        
+        new_row = `      
+        <div class="col-6">
+          <input type="text" value="${term_data[i]}" class="form-control" style="background-color: #191c24; color: white;" readonly>
+          </div>
+          <div class="col-6">
+            <input type="text" value="${day_data[i]}" class="form-control" style="background-color: #191c24; color: white;" readonly>
+            </div>`
+            $('#termdrop').append(new_row)
+          }
+          
+          new_row = `      
+          <div class="col-6">
+            <input type="text"  class="form-control" style="background-color: #191c24; color: white;" placeholder="Terms" name="terms">
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" style="background-color: #191c24; color: white;" placeholder="No of Days" name="days">
+              </div>`
+          $('#termdrop').append(new_row)
+
+          let select = document.getElementById("pay_term");
+
+          while (select.options.length > 0) {
+          select.remove(0);
+          }
+
+          var dropdow = $('#pay_term');
+          dropdow.append($('<option value="" selected hidden>Select Payment Term</option>'));
+          dropdow.append($('<option value="0">Due On Receipt</option>'));
+          dropdow.append($('<option value="30">NET 30</option>'));
+          dropdow.append($('<option value="60">NET 60</option>'));
+          
+          for(let i=0; i<term_data.length;i++){
+                      // Create a new option element
+          let newOption = document.createElement("option");
+          newOption.text = term_data[i];
+          newOption.value = day_data[i]; // Set a value for the new option
+
+          // Append the new option to the select field
+          select.appendChild(newOption);
+          }
+    },
+    error: function(xhr, status, error) {
+    console.error(xhr.responseText);
+    }
+  });
+}
+
+</script>
+<script>
+    $(document).on('change', '#pay_term', function () {
+        var days = parseInt($('#pay_term').val());
+        order_date =new Date( document.getElementById("Salesdate").value)
+        if (!isNaN(order_date.getTime())) {
+            // Calculate the new date by adding 20 days
+            const endDate = new Date(order_date);
+            endDate.setDate(endDate.getDate() + days);
+            // Format the new date as YYYY-MM-DD
+            const formattedDate = endDate.toISOString().split("T")[0];
+            // Set the result in the second input
+            document.getElementById("Shipmentdate").value = formattedDate;
+        } else {
+                alert("Please enter a valid date.");
+        }
+    });
+  </script>
+
+<script>
+   function changeprd(id){
+    id_val = id.charAt(id.length - 1)
+    document.getElementById(`qty${id_val}`).value = 0 
+    document.getElementById(`tax1${id_val}`).value =  ' '
+    document.getElementById(`tax2${id_val}`).value = ' '
+    document.getElementById(`disc${id_val}`).value = 0
+    document.getElementById(`total${id_val}`).value = 0
+    document.getElementById(`taxamount${id_val}`).value = 0
+    calc()
+   }
+</script>
+
+<script>
+    function changeqty(id){
+        id_val = id.charAt(id.length - 1)
+        qty = document.getElementById(id).value
+        avl = document.getElementById(`qtyspan${id_val}`).innerText
+        if( parseFloat(qty) > parseFloat(avl) ){
+            alert("Quantity Greater than Available Quantity")
+            document.getElementById(id).value = 0
+            document.getElementById(`tax1${id_val}`).value = 0
+            document.getElementById(`tax2${id_val}`).value = 0
+            document.getElementById(`disc${id_val}`).value = 0
+            document.getElementById(`taxamount${id_val}`).value = 0
+            document.getElementById(`total${id_val}`).value = 0
+            calc()
+        }else{
+            calc()
+        }
+    }
+</script>
+
+
+<script>
+$(document).ready(function() {
+    $("#advance").change(function() {
+        tot_val = parseFloat($('#grandtotal').val())
+        adv_val = parseFloat($('#advance').val())
+        if (tot_val<adv_val){
+            $('#advance').val(0)
+            $('#balance').val(tot_val.toFixed(2));
+            alert("Advance Greater than Total Amount")
+
+        }else{
+            tot_val = tot_val - adv_val
+            $('#balance').val(tot_val.toFixed(2));
+        }
+    })
+})
+</script>
+
+
+<script>
+    $(document).ready(function () {
+    $('#customer').on('change', function() {
+        // console.log($('#customer').val());
+        // console.log($('#customer').text());
+        $.ajax({
+            type : 'POST',
+            
+            url: "{% url 'cust_details' %}",
+            data: {
+                id: $('#customer').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            
+            success: function(data){
+                // console.log(data.email);
+                document.getElementById('cust_email').value = data.email;
+                document.getElementById('plosu').value = data.shipstate;
+                document.getElementById('gsttype').value = data.gsttype;
+                document.getElementById('bname').value = data.street + '\n' + data.city + '\n' + data.state + '\n' + data.country  + '\n' + data.pincode ;
+                if(data.gstno){
+                    document.getElementById('gstnodiv').style.display = 'block';
+                    document.getElementById('gstno').value = data.gstno;
+                }else{
+                    document.getElementById('gstnodiv').style.display = 'none';
+                    document.getElementById('gstno').value = '';
+                }
+            }
+        });
+    });
+});
+</script>
+
 <script>
     $(document).ready(function() {
               $("#gsttype").change(function() {
@@ -2522,117 +3097,88 @@
               });
           });
   
-
+          function ShowHideDiv(track) {
+                var inventorytrack = document.getElementById("inventorytrack");
+    
+                inventorytrack.style.display = track.checked ? "flex" : "none";
+    
+            }
  
   $(document).ready(function(){
     
-   $('#add').click(function(){
-    
-    var table = document.getElementById("items-table-body");
-               var roinc = table.rows.length;
-               var bc = document.getElementById("plosu").value;
-               var compstate = document.getElementById("cmpstate").value;
-               
-               roinc++;
-  
-        $('#items-table-body').append(
-  
-            `<tr id='addr0${roinc}'>
-                    <td class="nnum">${roinc} <input type="text"  name='id[]' value= 0 hidden></td></td>
-                    <td style="width: 20%;">
-                      <div class="d-flex">
-                      <select name='product[]' id="product${roinc}" class="form-control product" style="background-color: #2f516f; color: white;">
-                        <option value=" " selected>Select Product</option>
-                        
-                        {% for i in item %}
-                                {% if i.cid_id == cmp1.cid %}
-                                    <option 
-                                            value="{{ i.name  }}">{{ i.name  }} </option>
-                                {% endif %}
-                            {% endfor %}
+        $('#add').click(function(){
+            
+            var table = document.getElementById("items-table-body");
+                    var roinc = table.rows.length;
+                    var bc = document.getElementById("plosu").value;
+                    var compstate = document.getElementById("cmpstate").value;
+                    
+                    roinc++;
         
-                            
-                        
-                               
-                              </select>
+            $('#items-table-body').append(
+        
+                    `<tr id='addr0${roinc}'>
+                            <td class="nnum" style="text-align:center;">${roinc} <input type="text"  name='id[]' value= 0 hidden></td></td>
+                            <td style="width: 20%;">
+                            <div class="d-flex">
+                            <select name='product[]' id="product${roinc}" class="form-control product" style="background-color: #43596c; color: white;" onchange="changeprd(this.id)">
+                                <option value=" " selected hidden>Select Product</option>
+                                
+                                    {% for i in item %}
+                                        {% if i.cid_id == cmp1.cid %}
+                                            <option 
+                                                    value="{{ i.name  }}">{{ i.name  }} </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </select>
 
-                            <a href="#">
-                                <button type="button" class="btn btn-outline-secondary ml-1" 
-                                data-target="#newitem" data-toggle="modal">+</button>
-                            </a>
-                        </div>
-                    </td>
-                    <td><input type="text" name='hsn[]' id="hsn${roinc}" placeholder='Enter HSN Code' class="form-control" style="background-color: #2f516f; color: white;" /></td>
-                    <td><input type="number" name='qty[]'  placeholder='Enter Qty' id="qty${roinc}" value=0 class="form-control qty" step=0 min=0 style="background-color: #2f516f;margin-top: 25px;  color: white;" />
-                      <div><span>Available Qty :</span><span id="qtyspan${roinc}" class=''></span></div>
-                    </td>
-                    <td><input type="number" name='price[]' id="unit${roinc}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #2f516f; color: white;" /></td>
-                    
-                    
-                   
-                    <td>
-                                <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-flex">
-
-                                <select name='tax1[]' id="tax1${roinc}" class="form-control intra_tax d-none">
-                                    <option selected disabled > Select GST</option>
-                                     <option value=28 >28.0% GST(28%)</option>
-                                    <option value=18 >18.0% GST(18%)</option>
-                                    <option value=12  >12.0% GST(12%)</option>
-                                        <option value=5  >05.0% GST(05%)</option>
-                                    <option value=3  >03.0% GST(03%)</option>
-                                        <option value=0  >0.0% GST(0%)</option>
-                                </select>
-                                <select name='tax2[]' id="tax2${roinc}" class="form-control inter_tax d-none">
-                                    <option selected disabled > Select IGST</option>
-                                     <option value=28 >28.0% IGST(28%)</option>
-                                    <option value=18 >18.0% IGST(18%)</option>
-                                    <option value=12  >12.0% IGST(12%)</option>
-                                        <option value=5  >05.0% IGST(05%)</option>
-                                    <option value=3  >03.0% IGST(03%)</option>
-                                        <option value=0  >0.0% IGST(0%)</option>
-                                </select>
-                            </td>  
+                                    <a href="#">
+                                        <button type="button" class="btn btn-outline-secondary ml-1" 
+                                        data-target="#newitem" data-toggle="modal">+</button>
+                                    </a>
+                                </div>
+                            </td>
+                            <td><input type="text" name='hsn[]' id="hsn${roinc}" placeholder='Enter HSN Code' class="form-control" style="background-color: #43596c; color: white;" /></td>
+                            <td><input type="number" name='qty[]'  placeholder='Enter Qty' id="qty${roinc}" value=0 class="form-control qty" step=0 min=0 style="background-color: #43596c;margin-top: 27px;;  color: white;" onchange="changeqty(this.id)" />
+                            <div><span>Available Qty :</span><span id="qtyspan${roinc}" class=''></span></div>
+                            </td>
+                            <td><input type="number" name='price[]' id="unit${roinc}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #43596c; color: white;" /></td>
                             <td>
-                                <input type="number" name='discount[]' placeholder='Enter Discount' value=0 id="disc${roinc}" class="form-control disc" step=0 min=0>
-                            </td>
-                    <td><input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control total" value=0 step="any" readonly style="background-color: #2f516f; color: white;" /></td>
-                    <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class="form-control taxamount" />
-                        <td>
-                                <button type="button" id="${roinc}" class="btn  font-weight-bold clone_row fas fa-clone px-2 py-1 my-1" style="background-color:rgb(88, 107, 143);"></button><br>
-                                <button type="button" id="${roinc}" class="btn btn-danger px-2 mx-1 py-1 remove_row fas fa-close"></button>
-                            </td>
-                  </tr>
-  
-  `
-    
- 
- );
- $('.product').each(function(index, dropdown) {
-                    var row = $(dropdown).closest('.items-table-body'); // Assuming each row has a class 'item-row'
-                    $.ajax({
-                        url: "{% url 'item_dropdown' %}",
-                        type: "GET",
-                        dataType: "json",
-                        data: row.find('select').serialize(),
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                                        <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-flex">
 
-                        success: function(data) {
-                            var dropdown = $('.product');
-                            dropdown.empty();
-                            dropdown.append(`<option selected>Select Item</option>`);
-                            $.each(data, function(key, value) {
-                            
-                                dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
-                            });
+                                        <select name='tax1[]' id="tax1${roinc}" class="form-control intra_tax d-none">
+                                            <option selected disabled hidden> Select GST</option>
+                                            <option value=28 >28.0% GST(28%)</option>
+                                            <option value=18 >18.0% GST(18%)</option>
+                                            <option value=12  >12.0% GST(12%)</option>
+                                                <option value=5  >05.0% GST(05%)</option>
+                                            <option value=3  >03.0% GST(03%)</option>
+                                                <option value=0  >0.0% GST(0%)</option>
+                                        </select>
+                                        <select name='tax2[]' id="tax2${roinc}" class="form-control inter_tax d-none">
+                                            <option selected disabled hidden > Select IGST</option>
+                                            <option value=28 >28.0% IGST(28%)</option>
+                                            <option value=18 >18.0% IGST(18%)</option>
+                                            <option value=12  >12.0% IGST(12%)</option>
+                                                <option value=5  >05.0% IGST(05%)</option>
+                                            <option value=3  >03.0% IGST(03%)</option>
+                                                <option value=0  >0.0% IGST(0%)</option>
+                                        </select>
+                                    </td>  
+                                    <td>
+                                        <input type="number" name='discount[]' placeholder='Enter Discount' value=0 id="disc${roinc}" class="form-control disc" step=0 min=0>
+                                    </td>
+                            <td><input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control total" value=0 step="any" readonly style="background-color: #43596c; color: white;" /></td>
+                            <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class="form-control taxamount" />
+                                <td>
+                                        <button type="button" id="${roinc}" class="btn  font-weight-bold clone_row fa fa-clone px-2 py-1 my-1" style="background-color:rgb(88, 107, 143);"></button><br>
+                                        <button type="button" id="${roinc}" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
+                                    </td>
+                        </tr>`);
 
-                        },
-                        error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        }
-                    });
-                });
-  });
-});
+            
+        });
+    });
 
 $(document).on('change','#plosu',function()   {
                 $(".seltax").removeClass('d-none');
@@ -2660,11 +3206,9 @@ $(document).on('change','#plosu',function()   {
 
   // calculation---------------------------
 
-  $(document).on('change', '.product',function(){ 
+        $(document).on('change', '.product',function(){ 
                 
-                // console.log('y');
                 var n = $(this).attr("id").slice(7);
-                // console.log(n);
                 $.ajax({
                 url: "{% url 'itemdata' %}",
                 type : 'GET',
@@ -2678,10 +3222,7 @@ $(document).on('change','#plosu',function()   {
                     data2 = response.qty
                     data3 = response.price
                     data4 = response.gst
-                    data5 = response.sgst
-
-                    console.log(data2)
-                    
+                    data5 = response.sgst                    
                     document.getElementById('hsn'+n).value = data;
                     document.getElementById('qtyspan'+n).innerHTML = data2;
                     document.getElementById('unit'+n).value = data3;
@@ -2743,15 +3284,14 @@ $(document).on('change','#plosu',function()   {
             $('#tax').on('keyup change', function () {
                 calc_total();
             });
-         
 
         function calc() {
             $('#tab_logic tbody tr').each(function () {
                 var html = $(this).html();
                 if (html != '') {
                     var qty = $(this).find('.qty').val();
-                    var price = $(this).find('.price').val();
 
+                    var price = $(this).find('.price').val();
                     var dis = $(this).find('.disc').val();
                     var bc = $("#plosu").val();
                     var compstate = $("#cmpstate").val();
@@ -2771,6 +3311,7 @@ $(document).on('change','#plosu',function()   {
         function calc_total() {
              
             total = 0;
+            
             $('.total').each(function () {
                 total += parseFloat($(this).val());
             });
@@ -2778,13 +3319,20 @@ $(document).on('change','#plosu',function()   {
             $('.taxamount').each(function () {
                 taxamount += parseFloat($(this).val());
             });
+
+
             $('#sub_total').val(total.toFixed(2));
             $('#tax_amount').val(taxamount.toFixed(2));
             ship = parseFloat($("#ship").val());
             // console.log( ship);
-            gtot = taxamount + total + ship;
+
+            adj_val = parseFloat($('#adj').val())
+            gtot = taxamount + total + ship+adj_val;
             $('#grandtotal').val(gtot.toFixed(2));
-            $('#baldue').val(gtot.toFixed(2));
+            adv_val = parseFloat($('#advance').val())
+
+            adv_val = gtot - adv_val
+            $('#balance').val(adv_val.toFixed(2));
 
             test()
         }
@@ -2794,6 +3342,7 @@ $(document).on('change','#plosu',function()   {
             var bc = $("#plosu").val();
             var compstate = $("#cmpstate").val();
             d=0
+
             if (bc == compstate  ) {
                 gst = taxamount/2
                 $('#cgst').val(parseFloat(gst.toFixed(2)));
@@ -2821,14 +3370,20 @@ $(document).on('change','#plosu',function()   {
             var subtot = $('#sub_total').val();
             var tax = $('#tax_amount').val();
             var sh = $("#ship").val();
-            $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
-            $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+            var adj = $("#adj").val();
+            var adv = $("#advance").val();
+            $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(adj)).toFixed(2));
+            $('#balance').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(adj)-parseFloat(adv)).toFixed(2));
         });
 
         $(document).on("change", "#adj", function(){
-            var round = parseFloat($("#grandtotal").val()) + parseFloat($("#adj").val()) 
-            $("#grandtotal").val(round);
-            $('#baldue').val(round);
+            var subtot = $('#sub_total').val();
+            var tax = $('#tax_amount').val();
+            var sh = $("#ship").val();
+            var adj = $("#adj").val();
+            var adv = $("#advance").val();
+            $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(adj)).toFixed(2));
+            $('#balance').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(adj)-parseFloat(adv)).toFixed(2));
         });
 
 
@@ -2849,6 +3404,7 @@ $(document).on('change','#plosu',function()   {
                     company_name : $("#company").val(),
                     location : $("#location").val(),
                     openbalance : $("#openbalance").val(),
+                    credit_limit : $("#crd_lmt").val(),
                     email : $("#email").val(),
                     website :$("#website").val(),
                     mobile :$("#mobile").val(),
@@ -2887,14 +3443,25 @@ $(document).on('change','#plosu',function()   {
                 data: $(this).serialize(),
                 csrfmiddlewaretoken: '{{ csrf_token }}',
 
-                success: function(data) {
+                success: function(response) {
+                    id_list = response.id_list
+                    title_list = response.title_list
+                    first_name = response.first_name
+                    last_name = response.last_name
                     var dropdown = $('#customer');
                     dropdown.empty();
-                dropdown.append(`<option selected>Select Customer</option>`);
-                    $.each(data, function(key, value) {
-                        console.log(value)
-                        dropdown.append($('<option></option>').attr('value', key).text(value[1] + " " +value[2] + " "+ value[3]).val(value[0] + " " +value[2] + " "+ value[3]));
-                    });
+                    dropdown.append(`<option value='NIL' selected hidden>Select Customer</option>`);
+
+                    let select = document.getElementById("customer");
+                    for(let i=0; i<id_list.length;i++){
+                        // Create a new option element    
+                        let newOption = document.createElement("option");
+                        newOption.text = title_list[i] + ' ' + first_name[i] + ' ' + last_name[i];
+                        newOption.value = id_list[i] + ' ' + first_name[i] + ' ' + last_name[i]; // Set a value for the new option
+
+                        // Append the new option to the select field
+                        select.appendChild(newOption);
+                    }
                 },
                 error: function(xhr, status, error) {
                 console.error(xhr.responseText);
@@ -2903,6 +3470,29 @@ $(document).on('change','#plosu',function()   {
         }
 
         // item modal
+
+        var checkbox1 = document.getElementById('inclusive');
+        checkbox1.addEventListener('click', function () {
+            if (checkbox1.checked) {
+                document.getElementById('taxdiv').style.display = 'block';
+                document.getElementById('check').checked = false;
+            } else {
+                document.getElementById('taxdiv').style.display = 'none';
+                document.getElementById('intra_st').value = ' ';
+                document.getElementById('inter_st').value = ' ';
+            }
+        });
+
+        var checkbox = document.getElementById('check');
+        checkbox.addEventListener('click', function () {
+            if (checkbox.checked) {
+                document.getElementById('taxdiv').style.display = 'none';
+                document.getElementById('inclusive').checked = false;
+                document.getElementById('intra_st').value = ' ';
+                document.getElementById('inter_st').value = ' ';
+            } 
+
+        });
 
         $(document).on("click","#itemSave",function(){
             var taxref,status1;
@@ -2973,7 +3563,7 @@ $(document).on('change','#plosu',function()   {
                 success: function(data) {
                     var dropdown = $('.product');
                     dropdown.empty();
-                    dropdown.append(`<option selected>Select Item</option>`);
+                    dropdown.append(`<option selected hidden>Select Item</option>`);
                     $.each(data, function(key, value) {
                     
                         dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
@@ -2986,28 +3576,6 @@ $(document).on('change','#plosu',function()   {
             });
         }
 
-
-
-            $(document).ready(function () {
-                $('#customer').on('change', function() {
-                    console.log($('#customer').val())
-                    $.ajax({
-                        type : 'POST',
-                        
-                        url: "{% url 'cust_details' %}",
-                        data: {
-                            id: $('#customer').val(),
-                            csrfmiddlewaretoken: '{{ csrf_token }}',
-                        },
-                        
-                        success: function(data){
-                            console.log(data.email);
-                            document.getElementById('cust_email').value = data.email;
-                            document.getElementById('bname').value = data.street + '\n' + data.city + '\n' + data.state + '\n' + data.country  + '\n' + data.pincode ;
-                        }
-                    });
-                });
-            });
 
             $(document).on("click",".seltax",function(){
                 
@@ -3084,10 +3652,11 @@ $(document).on('change','#plosu',function()   {
         }
    
         function hidinput(divId, element) {
-            if (element.value == 'GST-registered-Regular') {
-                document.getElementById(divId).style.display = 'block';
-            } else {
+            if (element.value == 'unregistered Business'  || element.value == 'Consumer' || element.value == 'Overseas') {
                 document.getElementById(divId).style.display = 'none';
+            } else {
+                document.getElementById(divId).style.display = 'block';
+                document.getElementById("gstin").value = '';
             }
         }
 
@@ -4196,5 +4765,46 @@ $(document).on('change','#plosu',function()   {
  
    // });
 
+</script>
+
+
+<script>
+    $(document).on('change', '#openbalance',function () {
+        openbal = $("#openbalance").val()
+        if($('#bal').val()=='credit'){
+            if(openbal.slice(0,1) != '-'){
+                if(parseFloat(openbal) != 0){
+                    document.getElementById("openbalance").value = "-"+openbal
+                }else{
+                    document.getElementById("openbalance").value = openbal
+                }
+            }else{
+                if(parseFloat(openbal) != 0){
+                    document.getElementById("openbalance").value = openbal
+                }else{
+                    document.getElementById("openbalance").value = -1 * parseFloat(openbal)
+                }
+            }
+        }else{
+            document.getElementById("openbalance").value = openbal
+        }
+    });
+
+    $(document).on('change', '#bal',function () {
+        openbal = $("#openbalance").val()
+        if(openbal != ""){
+            if($('#bal').val()=='credit'){
+                openbal = $("#openbalance").val()
+                if (parseFloat(openbal) != 0){
+                    document.getElementById("openbalance").value = "-"+openbal
+                }else{
+                    document.getElementById("openbalance").value = openbal
+                }
+            }else{
+                openbal = $("#openbalance").val()
+                document.getElementById("openbalance").value = -1*(parseFloat(openbal))
+            }
+        }
+    });
 </script>
 {% endblock %}

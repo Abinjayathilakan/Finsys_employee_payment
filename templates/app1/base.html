@@ -148,8 +148,9 @@
                   <li><a href="{% url 'cash_in_hand' %}">Cash In Hand</a></li>
                   <li><a href="{% url 'bnnk' %}">Offline Banking</a></li>
                   <li><a href="{% url 'loan' %}">Loan Account</a>
-                    <li><a href="{% url 'sales_report' %}">Sales</a>
-                  </li>
+                    <li><a href="{% url 'sales_report' %}">Sales</a></li>                   
+                  <li><a href="{% url 'listpayrollemployee' %}">Employee</a></li>
+                  <li><a href="{% url 'employeeloanpage' %}">Employee Loan</a></li>
 
                 </ul>
               </div>
@@ -412,7 +413,7 @@
               </li>
               <li id="expense"><a href="{% url 'goexpenses' %}"><i class="bx bx-right-arrow-alt"></i>Expense</a>
               </li>
-              <li id="payment"><a href="{% url 'gopurchasepymnt' %}"><i class="bx bx-right-arrow-alt"></i>Payment Made</a>
+              <li id="payment"><a href="{% url 'gopurchasepymnt' %}"><i class="bx bx-right-arrow-alt"></i>Payment</a>
               </li>
               <li id="debitnote"><a href="{% url 'gopurchasedebit' %}"><i class="bx bx-right-arrow-alt"></i>Debit Note</a>
               </li>

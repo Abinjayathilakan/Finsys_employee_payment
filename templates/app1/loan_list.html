@@ -24,14 +24,23 @@
     
 <div class="card radius-15">
     <div class="card-body">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
+                <div class="search-bar">
+                    <div class="input-group">
+                        <div class="input-group-prepend search-arrow-back">
+                            <button class="btn btn-search-back" type="button"><i class="bx bx-arrow-back"></i></button>
+                        </div>
+                        <input class="form-control" type="search" id="searchInput" placeholder="Search" aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
+                        </div>
+                       
+                
+                            </div>
+                        </div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col-md-1">
-               
-                      </div>
-               
                   
                   <div class="col">
                     
@@ -50,7 +59,7 @@
                   </div>
                 </div>
               </div>
-              <h3 class="ml-3">All Transactions</h3>
+              <h3 class="ml-5">All Transactions</h3>
             <div class="table-responsive">
                 <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
                     <thead>
@@ -69,33 +78,23 @@
                         </th>
                         <!-- Inside the <thead> section of your table -->
             <th>
-                <div class="dropdown">
-                    <h6 class=" dropdown-toggle text-grey" data-toggle="dropdown"><b>NAME</b>
-                        <i class="fas fa-search"></i>
+                
+                    <h6 class=" text-grey" ><b>NAME</b>
                     </h6>
-                    <div class="dropdown-menu " style="background-color: black;">
-                        <form class="form-inline">
-                            <input class="form-control" type="search" id="searchInput" placeholder="Search" aria-label="Search">
-                        </form>
-                    </div>
-                </div>
+                    
+                
             </th>
 
             <th>
-                <div class="dropdown">
-                    <h6 class=" dropdown-toggle text-grey" data-toggle="dropdown"><b>DATE</b>
-                        <i class="fas fa-search"></i>
+                
+                    <h6 class="e text-grey" ><b>DATE</b>
                     </h6>
-                    <div class="dropdown-menu " style="background-color: black;">
-                        <form class="form-inline">
-                            <input class="form-control" type="search" id="searchDateInput" placeholder="Search" aria-label="Search">
-                        </form>
-                    </div>
-                </div>
+                    
+                
             </th>                     
             <th><h6><b>AMOUNT</b></h6></th>
             <th><h6><b>INTEREST</b></h6></th>
-
+            <th><h6><b>TOTAL AMOUNT</b></h6></th>
             <th><h6><b>ACTION</b></h6></th>
             <th style="display:none;"><h6><b><td></td></b></h6></th>
                         
@@ -116,21 +115,41 @@
                                 
                                 <td>{{a.loan_amount}}</td>
                                 <td>{{a.loan_intrest}}</td>
+                                <td>{{a.total}}</td>
                                 <td>
                                     <div class="dropdown">
                                         <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item " href="{% url 'edit_transaction' a.id %}">Edit</a>
-                                            <a class="dropdown-item delete-item" href="{% url 'delete_loan_payment' a.id %}" >Delete</a>
+                                            {% if a.bank_type == 'PROCESSING FEE' or a.bank_type == 'OPENING BAL' %}
+                                                <a class="dropdown-item" href="#" onclick="showAlert('{{ a.bank_type }}')">Edit</a>
+                                            {% else %}
+                                                <a class="dropdown-item" href="{% url 'edit_transaction' a.id %}">Edit</a>
+                                            {% endif %}
+
+                                            {% if a.bank_type == 'PROCESSING FEE' or a.bank_type == 'OPENING BAL' %}
+                                                <a class="dropdown-item" href="#" onclick="shoAlert('{{ a.bank_type }}')">Deleet</a>
+                                            {% else %}
+                                            <a class="dropdown-item delete-item" href="{% url 'delete_loan_payment' a.id %}">Delete</a>
+                                            {% endif %}
+                                            
                                         </div>
                                     </div>
                                 </td>
                                 
                             </tr>
-                            
-{% endfor %}
+                              
+                            <script>
+                                function showAlert(bankType) {
+                                    alert("You can't edit this transaction with bank type: " + bankType);
+                                }
 
-                            
+                                function shoAlert(bankType) {
+                                    alert("You can't delete this transaction with bank type: " + bankType);
+                                }
+                            </script>         
+{% endfor %}
+</tbody>
+                       
 
 
     
@@ -213,24 +232,6 @@
     });
 </script>
 
-<script>
-    const searchDateInput = document.getElementById('searchDateInput');
-    const tableRow = document.querySelectorAll('#tabletobe tbody tr');
-
-    searchDateInput.addEventListener('input', function () {
-        const searchDate = this.value.toLowerCase();
-
-        tableRow.forEach(row => {
-            const dateCell = row.querySelector('td:nth-child(3)');
-            const date = dateCell.textContent.toLowerCase();
-            if (date.includes(searchDate)) {
-                row.style.display = 'table-row';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-</script>
 
 
 {% endblock %}

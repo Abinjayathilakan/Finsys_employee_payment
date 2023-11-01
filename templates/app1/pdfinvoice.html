@@ -238,12 +238,12 @@
                 
                 <td style="font-weight: bold;"> {{invoice.taxamount}}</td>
                 </tr>
-                
+                {% if ship != 0 %}
                 <tr >
                 <th colspan="9"  ><span style="float: right;margin-right: 14px;">Shipping Charge</span></th>
-                
                 <td style="font-weight: bold;"> {{invoice.shipping_charge}}</td>
-                </tr>
+                <tr>
+                {% endif %}
                 <tr>
                 <th colspan="9"  ><span style="float: right;margin-right: 14px;">Grand Total</span></th>
                 

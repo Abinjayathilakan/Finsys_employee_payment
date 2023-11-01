@@ -45,26 +45,30 @@
 
    
     <div class="container-fluid" id="chart-container">
-        <table class="table table-responsive-md mt-4">
+        <div class="col-md-12 p-3">
+            <h4 style="color: #000000; text-align: center;">Holidays for {{ month }} {{ year }}</h4>
+            <p style="color: #000000; text-align: center;">Total Holidays: {{ total_holidays }} | Working Days: {{ total_working_days }}</p>
+           </div>
+        <table class="table table-hover table-bordered">
             <thead>
-            <tr>
-                <th class="text-center">Start Date</th>
-                <th class="text-center">End Date</th>
-                <th class="text-center">Holiday Name</th>
-               
-            </tr>
+                <tr>
+                    <th class="text-center" style="color:#000">Start Date</th>
+                    <th class="text-center" style="color:#000">End Date</th>
+                    <th class="text-center" style="color:#000">Holiday Name</th>
+                  
+                </tr>
             </thead>
             <tbody>
-            {% for r in holiday %}
-          
+                {% for holiday in holiday_data %}
                 <tr>
-                    <td class="text-center">{{ r.start_date | date:'d-m-Y' }}</td>
-                    <td class="text-center">{{ r.end_date | date:'d-m-Y' }}</td>
-                    <td class="text-center">{{ r.name  }}</td>
+                  <td class="text-center" style="color:#000">{{ holiday.start_date }}</td>
+                  <td class="text-center" style="color:#000">{{ holiday.end_date }}</td>
+                  <td class="text-center" style="color:#000">{{ holiday.name }}</td>
                 </tr>
-            {% endfor %}
+                {%endfor%}
             </tbody>
         </table>
+
     </div>
 
     

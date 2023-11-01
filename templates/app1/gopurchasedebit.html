@@ -39,7 +39,7 @@
 
 
                                 <div class="dropdown-menu " style="background-color: black;">
-                                    
+                                    <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'gopurchasedebit' %}">All</a>   
                                 <a class="dropdown-item" href=""
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;"id="sort-debit-number" >Debit Number </a>
                                     <a class="dropdown-item" href=""
@@ -52,24 +52,21 @@
                      
                        
                       
-                           <div class="btn-group col-md-2"></div>
-                           <div style="padding-left:35% ;">
-                            <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
-                            data-toggle="dropdown">Filter by
-                    </button>
-
-
-                    <div class="dropdown-menu " style="background-color: black;">
-                        <a class="dropdown-item" href="{% url 'gopurchasedebit' %}">All</a>
-                        <a class="dropdown-item" href="{% url 'pdebt_draft' %}">Draft</a>
-                        <a class="dropdown-item" href="{% url 'pdebt_save' %}">save</a>
-                    </div>
-                        
-                        </div>&nbsp;&nbsp;&nbsp;&nbsp;
-                           
-                            <a href="{% url 'addpurchasedebit' %}" class="btn btn-outline-info fa fa-plus" role="button">&nbsp;New</a>
+                           <div class="btn-group col-md-5"></div>
+                           <div class="btn-group col-md-2" style="margin-left:100px ;" >
+                            <a class="btn btn-outline-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                role="button">Filter By
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item"  style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'gopurchasedebit' %}">All</a>
+                                <a class="dropdown-item"  style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'pdebt_draft' %}">Draft</a>
+                                <a class="dropdown-item"  style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'pdebt_save' %}">save</a>
+                            </div>
+                            <a href="{%url 'addpurchasedebit' %}" class="btn btn-outline-info fa fa-plus" role="button"> &nbsp;New</a>
                         </div>
                     </div>
+                        
+                
 
                     <div class="container-fluid">
                         <table class="table table-responsive-md mt-4" id="table">
@@ -88,7 +85,7 @@
                             {% for p in pdebit %}
                                 <tr onclick="window.location='viewpurchasedebit/{{ p.pdebitid }}';" style="text-align: center;">
                                     <th>{{ p.debitdate |date:'d-m-Y' }}</th>
-                                    <td>DN - {{ p.debit_no }}</td>
+                                    <td>{{ p.debit_no }}</td>
                                     <td>{{ p.vendor }}</a></td>
                                     <td>{{ p.email}}</a></td>
                                     <td>{{ p.grandtotal }}</td>
@@ -128,29 +125,32 @@
         }
     
    
-        function restoreOriginalTableContent() {
-            var $table = $('#table');
-            $table.html(originalTableContent);
-        }
+        // function restoreOriginalTableContent() {
+        //     var $table = $('#table');
+        //     $table.html(originalTableContent);
+        // }
         function sortDebitNumberAscending(event) {
-                event.preventDefault(); 
-                var $table = $('#table tbody');
-                var rows = $table.find('tr').toArray();
-        
-                rows.sort(function(a, b) {
-                    var debitNumberA = parseInt($(a).find('td:nth-child(2)').text().split(' - ')[1]);
-                    var debitNumberB = parseInt($(b).find('td:nth-child(2)').text().split(' - ')[1]);
-        
-                    return debitNumberA - debitNumberB;
-                });
-        
-                $table.empty().append(rows);
-            }
-        
-            
-            $('#sort-debit-number').click(function(event) {
-                sortDebitNumberAscending(event);
-            });
+      event.preventDefault();
+      var $table = $('#table tbody');
+      var rows = $table.find('tr').toArray();
+
+      rows.sort(function(a, b) {
+        var debitNumberA = parseInt($(a).find('td:nth-child(2)').text().split(' - ')[1]);
+        var debitNumberB = parseInt($(b).find('td:nth-child(2)').text().split(' - ')[1]);
+
+        // Extract numeric part from bill number
+        var billNumberA = $(a).find('td:nth-child(2)').text().replace(/\D/g, '');
+        var billNumberB = $(b).find('td:nth-child(2)').text().replace(/\D/g, '');
+
+        return debitNumberA - debitNumberB || parseInt(billNumberA) - parseInt(billNumberB);
+      });
+
+      $table.empty().append(rows);
+    }
+
+    $('#sort-debit-number').click(function(event) {
+      sortDebitNumberAscending(event);
+    });
         
         function sortVendorNameAscending(event) {
             event.preventDefault(); 

@@ -277,99 +277,49 @@
         
     </script>
     <script>
-        $("#select").change(function () {
-            const select = $(this).val();  
-            $.ajax({                      
-                type: "POST",
-                url: "{% url 'getbilldata' %}",
-                data: {
-                    'select': select,     
-                    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-                },
-                success:function(response){
-                    console.log(response)
-                    data = response.billitm
-                    date = response.date
-                    opb = response.opb 
-                    obdue = response.obdue
-                    xt= response.ct
-
-                    if (opb != null) {
-                        $('#tab_logic #vendordata').append(
-                            `
-                                <tr id='addr1'>
-                                    <td>1</td>
-                                    <td><input type="text" name="billdate[]" id="" value="${date}" class="form-control"/></td>
-                                    <td><input type="text" name='billno[]' id="" value="Vendor Opening Balance" class="form-control"/></td>
-                                    <td><input type="text" name='billamount[]' value="${opb}" id=""
-                                        class="form-control qty" step="0" min="0"/>
-                                    </td>
-                                    <td><input type="text" name="duedate[]" id="" value="${date}" class="form-control"/></td>
-
-
-                                   
-
-
-                                    <td>
-                                        <input type="number" name='amountdue[]' id="openbal0" value="${obdue}" class="form-control price"
-                                         step="0.00" min="0" />
-                                    </td>
-                                    <td>
-                                        <input type="number" name='payment[]' id="payment0" onchange="addagain()" class="form-control total" value="0" />
-                                    </td>
-                                </tr>
-                            `        
-                        )
-                    }   
-
-                    for (i=0;i<6;i++){
-                        j=i;
-                        $('#tab_logic ').append(
-                            `
-                                <tr id='addr1'>
-                                    <td>${i+2}</td>
-                                    <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
-                                    <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
-                                    <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
-                                        class="form-control qty" step="0" min="0"/>
-                                    </td>
-                                    <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
-                                    <td><input type="number" name='amountdue[]' id="openbal${i+1}" value="${data[i].balance_due}"
-                                        class="form-control price" step="0.00" min="0"/>
-                                    </td>
-                                    <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i+1}" placeholder='0.00'
-                                        class="form-control total" value="0"/>
-                                    </td>
-                                </tr>
-                            `        
-                        )
-                    }    
-                    for (i=0;i<7;i++){
-                        j=i;
-                        $('#tab_logic ').append(
-                            `
-                                <tr id='addr1'>
-                                    <td>${i+2}</td>
-                                    <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
-                                    <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
-                                    <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
-                                        class="form-control qty" step="0" min="0"/>
-                                    </td>
-                                    <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
-                                    <td><input type="number" name='amountdue[]' id="openbal${i}" value="${data[i].balance_due}"
-                                        class="form-control price" step="0.00" min="0"/>
-                                    </td>
-                                    <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i}" placeholder='0.00'
-                                        class="form-control total" value="0"/>
-                                    </td>
-                                </tr>
-                            `        
-                        )
-                    }    
-                }  
-            });
-        });
-
+        // $("#select").change(function () {
+        //     const select = $(this).val();  
+        //     $.ajax({                      
+        //         type: "POST",
+        //         url: "{% url 'getbilldata' %}",
+        //         data: {
+        //             'select': select,     
+        //             'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+        //         },
+        //         success:function(response){
+        //             console.log(response)
+        //             data = response.billitm
+        //             xt= response.ct
+        //             for (i=0;i<data.length;i++){
+        //                 j=i;
+        //                 $('#tab_logic tbody').append(
+        //                     `
+        //                         {% for p in paymt1 %}
+        //                             <tr id='addr1'>
+        //                                 <td>${i+1}</td>
+        //                                 <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
+        //                                 <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
+        //                                 <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
+        //                                     class="form-control qty" step="0" min="0"/>
+        //                                 </td>
+        //                                 <td><input type="number" name='duedate[]' value="${data[i].duedate}"
+        //                                     class="form-control"/>
+        //                                 </td>
+        //                                 <td><input type="number" name='amountdue[]' id="openbal${i}" value="${data[i].balance_due}"
+        //                                     class="form-control price" step="0.00" min="0"/>
+        //                                 </td>
+        //                                 <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i}" placeholder='0.00'
+        //                                     class="form-control total" value="0"/>
+        //                                 </td>
+        //                             </tr>
+        //                         {% endfor %}
+        //                     `        
+        //                 )
+        //             }    
+        //         }  
+        //     });
+        // });
+        j='{{count}}'
         function showinnum(divId, element) {
             if (element.value) {
                 document.getElementById(divId).innerHTML = element.value;

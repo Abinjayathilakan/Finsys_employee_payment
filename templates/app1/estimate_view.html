@@ -515,7 +515,8 @@ function uplodfile(){
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <td>Item Description</td>
+                                        <td>Item</td>
+                                        <td>HSN</td>
                                         <td>Price</td>
                                         <td>Quantity</td>
                                         <td>Tax</td>
@@ -527,15 +528,9 @@ function uplodfile(){
 
                                     {% for j in estitem  %}
                                     <tr>
-                                        <td>
-                                            <div class="media">
-                                                
-                                                <div class="media-body">
-                                                    <p class="mt-0 title" style="color:black">{{j.item}}</p>
-                                                    <span style="color:black">{{j.description}}</span>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        
+                                        <td style="color:black">{{j.item}}</td>
+                                        <td style="color:black">{{j.hsn}}</td>
                                         <td style="color:black">{{j.rate}}</td>
                                         <td style="color:black">{{j.quantity}}</td>
                                         <td style="color:black">{{j.tax}} %</td>
@@ -571,6 +566,9 @@ function uplodfile(){
                                             <td id="sply">
                                                 {{estimate.placeofsupply}}
                                             </td>
+                                            <td id="shipchrg">
+                                                {{estimate.shipping_charge}}
+                                            </td>
                                         </tr>
                                         <tr id="igstrow" style="display:none;">
                                             <td style="color:black;font-weight:bold">IGST</td>
@@ -590,7 +588,7 @@ function uplodfile(){
                                             <td style="color:black; font-weight:bold">{{estimate.taxamount}}</td>
                                         </tr>
 
-                                        <tr>
+                                        <tr id="shipchrgrow" style="display: none;">
                                             <td style="color:black; font-weight:bold">Shipping Charge</td>
                                             <td style="color:black; font-weight:bold">{{estimate.shipping_charge}}</td>
                                         </tr>
@@ -673,6 +671,13 @@ function uplodfile(){
                 $('#igstrow').show();
                 $('#sgstrow').hide();
                 $('#cgstrow').hide();
+            }
+
+            if($("#shipchrg").html().trim() == 0 ){
+                $('#shipchrgrow').hide();
+            }
+            else{
+                $('#shipchrgrow').show();
             }
         });
         

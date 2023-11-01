@@ -351,9 +351,9 @@
                                             <select class="form-control" name="paytype" id="paytype" required>
                                                 <option value="" hidden>Select</option>
                                                 {% for i in bank %}
-                                                <option value="{{i.id}}">{{i.bankname}}</option>
+                                                <option value="{{i.bankname}}">{{i.bankname}}</option>
                                                 {% endfor %}
-                                                <option value="Cash">Cash</option>
+                                                <option value="CASH">Cash</option>
                                                 <option value="Cheque">Cheque</option>
                                                 
                                             </select>

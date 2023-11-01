@@ -1,4 +1,4 @@
-recinvoice_view.html
+
 
 {% extends 'app1/base.html' %}
 {% block body %}
@@ -390,87 +390,70 @@ recinvoice_view.html
     
 
     
+<div class="page-content" >
 
-    <div class="page-content" >
+  <div class="card radius-15">
+      <div class="card-body">
+          <div class="card-title">
+              <center><h2 class="mb-0">RECCURING INVOICE VIEW</h2> <h4></h4></center>
+              <hr>
+          </div>
+          <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                  <li class="nav-item mx-1">
+                    <a href="{% url 'editrecinvoice' recinvoice.recinvoiceid %}" role="button" class=" btn btn-outline-info rounded-pill text-grey p-1"> &nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
 
-        <div class="card radius-15">
-            <div class="card-body">
-                <div class="card-title">
-                    <center><h2 class="mb-0">RCCURING INVOICE VIEW</h2> <h4></h4></center>
-                    <hr>
-                </div>
-                <div class="btn-group" style="float: right; ">
-
-                  
-
-
-                   
-                <a href="{% url 'editrecinvoice' recinvoice.recinvoiceid %}" class=" fa fa-pencil" style="padding: 10px; cursor: pointer;"> Edit</a>
-
-                
-                <a   style="padding: 10px; margin-top: -5px; cursor: pointer;" > 
-
-                 <form  action="{% url 'deleterecinvoice' recinvoice.recinvoiceid %}"   > 
-                    <i class="fa fa-trash-o delete"> Delete</i>
-                    <input name="_method" type="hidden" value="DELETE">
-                    
-                    </form> </a>
-                
-                    <div class="dropdown  " style="padding: 10px; cursor: pointer; margin-top: -10px;">
-                        <li  class=" dropdown-toggle fa fa-share-alt "data-toggle="dropdown"> &nbsp;Share
+                  </li>
+                  <li class="nav-item mx-1">
+                    <a  href="{% url 'deleterecinvoice' recinvoice.recinvoiceid %}" class=" btn btn-outline-info rounded-pill text-grey p-1">&nbsp;&nbsp;Delete&nbsp;&nbsp; </a>
+                  </li>
+                  <li class="nav-item active mx-1" >
+                    <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" onclick="printDiv()">&nbsp;&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
                     </li>
+
+                    <li class="nav-item mx-1">
+                      <a class="btn btn-outline-info rounded-pill text-grey p-1" href="{% url 'render_pdfrecinvoice_view' recinvoice.recinvoiceid %}" id="downloadButton" >&nbsp;&nbsp;PDF&nbsp;&nbsp;</a>
+                    </li>
+                    <!-- <li class=""> -->
+                    <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
+                      <li  class="btn btn-outline-info rounded-pill text-grey p-1  dropdown-toggle  "data-toggle="dropdown"> &nbsp;&nbsp;Convert&nbsp;&nbsp;</li>
+                      {% if recinvoice.status == "Draft"  %}
                         <ul class="dropdown-menu" style="background-color: black;">
-                            <!-- <a class="dropdown-item fa fa-facebook" target="_blank" 
-                           > &nbsp;</a>{% post_to_facebook object_or_url "<p style='color: green;'>facebook</p>" %}
-                           
-                            <a class="dropdown-item fa fa-whatsapp" href=""> &nbsp;Whatsapp</a>
-                            <a class="dropdown-item fa fa-envelope-o" href=""> &nbsp;Email</a> -->
-
-                            <li style="margin-left: 50px;"  ></i>{% post_to_facebook object_or_url "Facebook!" %}</li>
-                            <li style="margin-left: 50px;" > {% post_to_whatsapp object_or_url "WhatsApp" %}</li>
-                            <li style="margin-left: 50px;" >{% send_email object.title "New Song: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
-                            
-                           
-                          
+                          <a class="dropdown-item " href="{% url 'recinvoice_status' recinvoice.recinvoiceid  %}"> &nbsp;Approved </a>
                         </ul>
-                        
-                </div>
-                    
-                
-                <a class="fa fa-print" style="padding: 10px; cursor: pointer;"  href="{% url 'render_pdfrecinvoice_view' recinvoice.recinvoiceid %}" id="downloadButton" > PDF</a>
+                      {% endif %}
+                    </div>
+                    <!-- </li> -->
+                    <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                      <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;&nbsp;Share&nbsp;&nbsp;</li>
+                      <ul class="dropdown-menu" style="background-color: black;">
 
-                  <div class="dropdown  " style="padding: 10px; cursor: pointer; margin-top: -14px;">
+                          <li style="margin-left: 50px;"  ></i>{% post_to_facebook object_or_url "Facebook!" %}</li>
+                          <li style="margin-left: 50px;" > {% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                          <li style="margin-left: 50px;" >{% send_email object.title "New Song: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
+                          
+                      </ul>
+                    </div>
 
-                    <li  class=" dropdown-toggle  "data-toggle="dropdown"> &nbsp;Convert
-                </li>
-                {% if recinvoice.status == "Draft"  %}
-                    <ul class="dropdown-menu" style="background-color: black;">
-                        
-                        <a class="dropdown-item " href="{% url 'recinvoice_status' recinvoice.recinvoiceid  %}"> &nbsp;Approved </a>
-                        <!-- <a class="dropdown-item " href=""> &nbsp;Sales</a> -->
-               
-                      
-                        
-                    </ul>
-                    {% endif %}
+                    <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
+                        <ul class="dropdown-menu" style="background-color: black;">
+                            <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
+                            {% if recinvoice.file != "default.jpg" %}
+                            <a class="dropdown-item fas fa-download" style="cursor: pointer;"download  href="{{ recinvoice.file.url }}" >Download file</a>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </ul>
             </div>
-            <div class="dropdown  " style="padding: 10px; cursor: pointer; margin-top: -8px;">
-              <li  class=" dropdown-toggle fa fa-download  "data-toggle="dropdown"> &nbsp;Attach file
-          </li>
-              <ul class="dropdown-menu" style="background-color: black;">
-                  <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
-              {% if recinvoice.file != "default.jpg" %}
-              <a class="dropdown-item fa fa-download" style="cursor: pointer;"download  href="{{ recinvoice.file.url }}" >Download file</a>
-              {% endif %}
-                  
-              </ul>
-      </div> 
-           
-            </div>    
-            </div>
-        </div>
-        
+        </nav>
 
+      </div>
+  </div>
         
         <div  id="whatToPrint">
 
@@ -593,7 +576,7 @@ recinvoice_view.html
                                          <td>{{ j.qty }}</td> 
                                         <td>{{ j.tax }} %</td>
                                         
-                                        <td>{{ recinvoice.discount }}</td>
+                                        <td>{{ j.discount }}</td>
                                      
                                         <td> {{ j.total }}</td>
                                        
@@ -606,31 +589,32 @@ recinvoice_view.html
                                       <tr>
                                         <th colspan="9"   ><span style="float: right;margin-right: 14px;">Sub Total</span></th>
                                         
-                                        <td style="font-weight: bold;"> {{recinvoice.subtotal}}</td>
+                                        <td style="font-weight: bold;" > {{recinvoice.subtotal}}</td>
                                       </tr>
-                                      {% if recinvoice.IGST %}
-                                      <tr>
+                                      {% if igst != 0 %}
+                                      
+                                      <tr id="igstrow">
                                         <th colspan="9"  ><span style="float: right;margin-right: 14px;">IGST</span></th>
                                         
-                                        <td style="font-weight: bold;"> {{recinvoice.IGST}}</td>
+                                        <td style="font-weight: bold;" id="igst"> {{recinvoice.IGST}}</td>
                                       </tr>
                                       {% endif %}
-                                      {% if recinvoice.CGST != '0.00' %}
-                                      <tr>
+                                      {% if cgst != 0 %}
+                                      <tr id="cgstrow">
                                         <th colspan="9"  ><span style="float: right;margin-right: 14px;">CGST</span></th>
                                         
-                                        <td style="font-weight: bold;"> {{recinvoice.CGST}}</td>
+                                        <td style="font-weight: bold;" id="cgst"> {{recinvoice.CGST}}</td>
                                       </tr>
                                       {% endif %}
-                                      {% if recinvoice.SGST %}
-                                      <tr>
+                                      {% if sgst != 0 %}
+                                      <tr id="sgstrow">
                                         <th colspan="9"  ><span style="float: right;margin-right: 14px;">SGST</span></th>
                                         
-                                        <td style="font-weight: bold;"> {{recinvoice.SGST}}</td>
+                                        <td style="font-weight: bold;" id="sgst"> {{recinvoice.SGST}}</td>
                                       </tr>
                                       {% endif %}
                                       
-                                      {% if recinvoice.TCS != '0' %}
+                                      {% if recinvoice.TCS != 0 %}
                                       <tr style="display: none;">
                                         <th colspan="9"  ><span style="float: right;margin-right: 14px;">TCS</span></th>
                                         
@@ -789,6 +773,24 @@ recinvoice_view.html
             <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
             <script>
+
+
+          $(document).ready(function(){
+                console.log($("#igst").text())
+                if($("#igst").text()==0){
+                  console.log($("#igst").text())
+                  $("#igstrow").addClass('d-none');
+                  
+                }
+                else {
+                  console.log($("#sgst").text())
+                  $("#sgstrow").addClass('d-none');
+                  
+              
+                  console.log($("#cgst").text())
+                  $("#cgstrow").addClass('d-none');
+                }
+              });
         
         $('.delete').click(function(event) {
             var form =  $(this).closest("form");
@@ -814,6 +816,18 @@ recinvoice_view.html
             });
         });
         
+
+
+        function printDiv() {
+                var printContents = document.getElementById("whatToPrint").innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+
+                window.print();
+
+                document.body.innerHTML = originalContents;
+            }
             </script> 
 
 

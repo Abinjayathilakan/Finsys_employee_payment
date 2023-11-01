@@ -73,6 +73,27 @@
     .bar .left input {
         height: 5vh;
     }
+    @media print {
+        body {
+            font-size: 12px;
+        }
+
+        .card {
+            border: 1px solid #000; /* Add border to cards for printing */
+            margin-bottom: 20px;
+        }
+
+        table {
+            border: 1px solid #000; /* Add border to table for printing */
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #000; /* Add border to table cells for printing */
+            padding: 8px;
+        }
+    }
     </style>
 
     <div class="page-content">
@@ -81,7 +102,7 @@
                 <div class="card-title">
                     <center>
                         <h6>{{cmp1.cname}}</h6>
-                        <h2 class="mb-0">PURCHASE</h2><br>
+                        <h2 class="mb-0">PURCHASE REPORT</h2><br>
                    
                     <div class="display">
                         <div id="d1" style="display: inline-block;"></div>
@@ -272,55 +293,60 @@
 
 
 <script>
-    
     $(document).ready(function ($) {
-
-$(document).on('click', '.btn_print', function (event) {
-    console.log('print1');
-    event.preventDefault();
-
-
-    const pdfCard = document.getElementById('pdf-card').cloneNode(true);
-    pdfCard.style.color = 'black';
-    pdfCard.style.backgroundColor = 'white';
-
-    // Create a new window for printing
-    const printWindow = window.open('', '');
-
-    const pageTitle = printWindow.document.createElement('h1');
-    pageTitle.textContent = 'PURCHASE'; // Replace 'Page Title' with your desired title text
-    pageTitle.style.textAlign = 'center';
-    pageTitle.style.color = 'black';
-
-    const printStyle = printWindow.document.createElement('style');
-        printStyle.innerHTML = `
-            @media print {
-                th {
-                    padding: 30px;
-                   
+        $(document).on('click', '.btn_print', function (event) {
+            event.preventDefault();
+    
+            // Clone the pdf-card and style it for printing
+            const pdfCardClone = $('#pdf-card').clone();
+            pdfCardClone.css('color', 'black');
+            pdfCardClone.css('backgroundColor', 'white');
+    
+            // Create a new window for printing
+            const printWindow = window.open('', '');
+    
+            // Add styles for printing
+            const printStyle = `
+                @media print {
+                    th, td {
+                        border: 1px solid black;
+                        padding: 8px;
+                        width:100%;
+                    }
                 }
-            }
-        `;
-        printWindow.document.head.appendChild(printStyle);
-    // Append the <h1> element to the new window's body
-    printWindow.document.body.appendChild(pageTitle);
+            `;
+    
+            // Create a style element and set its content
+            const styleElement = document.createElement('style');
+            styleElement.type = 'text/css';
+            styleElement.appendChild(document.createTextNode(printStyle));
+            printWindow.document.head.appendChild(styleElement);
+    
+            // Append the cloned 'pdf-card' div to the new window
+            printWindow.document.body.appendChild(pdfCardClone[0]);
+    
+            // Add company name and date
+            const companyName = '{{cmp1.cname}}';
+            const fromDate = $('#fromdate').val(); 
+            const toDate = $('#todate').val();
 
-    // Append the cloned 'pdf-card' div to the new window
-    printWindow.document.body.appendChild(pdfCard);
-
-    // Ensure the styles are preserved by copying CSS from the original document
-    // 
-
-    // Trigger the print dialog for the new window
-    printWindow.print();
-
-    // Close the new window after printing
-    printWindow.close();
-
-
-});
-
-});
+    
+            const headerDiv = document.createElement('div');
+            headerDiv.style.textAlign = 'center';
+            headerDiv.style.marginBottom = '20px';
+            headerDiv.innerHTML = `<p> ${companyName}</p><h1>PURCHASE REPORT</h1><p> ${fromDate} &nbsp; ${toDate}</p>`;
+    
+            printWindow.document.body.insertBefore(headerDiv, pdfCardClone[0]);
+            
+            // Trigger the print dialog for the new window
+            printWindow.print();
+    
+            // Close the new window after printing
+            printWindow.close();
+        });
+    });
+ 
+    
 $(document).ready(function ($) {        
         $(document).on('click', '.btn_pdf', function (event) {
             console.log('print1');
@@ -329,7 +355,111 @@ $(document).ready(function ($) {
             
             element.style.color = 'white';
             element.style.backgroundColor = '#243e54';
-            
+            var companyName = "{{cmp1.cname}}";
+           var fromDate = document.getElementById('fromdate').value;
+           var toDate = document.getElementById('todate').value;
+
+        element = `
+            <div style="text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 10px; color: black;">
+                ${companyName}
+            </div>
+            <div style="text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 10px; color: black;">
+                PURCHASE REPORT
+            </div>
+            <div style="text-align: center; font-size: 12px; color: black;">
+               ${fromDate} &nbsp; ${toDate}
+            </div>
+
+            <table class="table table-responsive-md mt-4" id="tbl_exporttable_to_xls" style="color:black;border: 1px solid black;">
+                        <thead>
+                            <tr style="text-align: center;color:black;border: 1px solid black;">
+                                <th style="color:black;border: 1px solid black;">DATE</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">BILL NO</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">PARTY NAME</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">TRANSACTION</th>
+                                <th style="white-space: nowrap; color:black;border: 1px solid black;">PAYMENT TYPE</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">TOTAL</th>
+                                <th style="white-space: nowrap;color:black;border: 1px solid black;">BALANCE</th>
+                                
+                               
+    
+                            </tr>
+                        </thead>
+                        <tbody>
+                
+                           
+    
+    
+                           
+    
+    
+    
+                            
+    
+                            
+    
+                            {% for trans in bills %}
+                            <tr class="table-row " data-href="" style="text-align: center;color:black;border: 1px solid black;">
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{ trans.date | date:'Y-m-d'}}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.bill_no}}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{ trans.vendor_name }}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">Bill</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.payment_type}}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{ trans.grand_total }}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{ trans.balance_due }}</td>
+    
+                            </tr>
+                            {% endfor %}
+    
+    
+                            
+    
+    
+    
+                            {% for trans in debitnote %}
+                            <tr class="table-row " data-href="" style="text-align: center;color:black;border: 1px solid black;">
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{ trans.debitdate | date:'Y-m-d' }}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.billno}}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{ trans.vendor }}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">Debit Note</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.payment_type}}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{ trans.grandtotal }}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.balance_amount}}</td>
+                                
+    
+                            </tr>
+                            {% endfor %}
+    
+                           
+                            {% for trans in recurringbills %}
+                            <tr class="table-row " data-href="" style="text-align: center;color:black;border: 1px solid black;">
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{ trans.start_date | date:'Y-m-d' }}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.billno}}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.vendor_name}}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">Recurringbills</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.payment_method}}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.grand_total }}</td>
+                                <td style="white-space: nowrap;color:black;border: 1px solid black;">{{trans.balance}}</td>
+                                
+    
+                            </tr>
+                            {% endfor %} 
+    
+                            
+    
+                            
+    
+    
+    
+                    
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+         
+        `;
+
             var opt =
             {
                 margin: 1,

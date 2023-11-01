@@ -70,12 +70,12 @@
           <div class="row">
             <div class="col-md-3  ">
               <label class="col-form-label">Invoice Date:</label>
-              <input type="date" value="{{ invoice.invoicedate | date:'Y-m-d' }}" class="form-control" style="background-color: #2f516f; color: white;" name="invoicedate" >
+              <input type="date" value="{{ invoice.invoicedate | date:'Y-m-d' }}" class="form-control" style="background-color: #2f516f; color: white;" name="invoicedate" id="invoicedate">
             </div>
             <div class="col-md-3  ">
               <label class="col-form-label">Terms </label>
               <div>
-                <select class="custom-select" name="terms" required style="background-color: #2f516f; color: white;" id="termadd" onclick="showinp('newtrm', this)">
+                <select class="custom-select" name="terms" required style="background-color: #2f516f; color: white;" id="termadd1">
                   <option selected id="trmopt" value="{{ invoice.terms }}">NET{{ invoice.terms }}</option>
                   <option value="0">Due on Receipt</option>
                   <option value="15">NET15</option>
@@ -146,7 +146,7 @@
                 <thead>
                   <tr>
                     <th class="text-center">#</th>
-                    <th class="text-center">PRODUCT / SERVICE</th>
+                    <th class="text-center">PRODUCT/SERVICE</th>
                     <th class="text-center">HSN</th>
                     <th class="text-center">DESCRIPTION</th>
                     <th class="text-center">QTY</th>
@@ -2401,27 +2401,48 @@
     // });
   
 
-  $('#termadd').on('change', function() {
-  
-      
-  select = $('#termadd').val();
-  dudt = $('#duedat').val();
-  $.ajax({
-    type: "GET",
-    url: "{% url 'gettermss' %}",
-    data: {
-      id: select,
-      du:dudt,
-    }
-  }).done(function(response) {
-    var json_data = JSON.parse(response);
-    for (key in json_data) {
-      document.getElementById('duedat').value = json_data[key]['newdate'];
-    }
-  }).fail(function() {
+    $('#termadd1').on('change', function() {
 
-  });
-  });
+        console.log($('#invoicedate').val());
+        select = $('#termadd1').val();
+        console.log(select);
+        $.ajax({
+            type: "GET",
+            url: "{% url 'getterm' %}",
+            data: {
+                id: select,
+                date: $('#invoicedate').val()
+            }
+            }).done(function(response) {
+            var json_data = JSON.parse(response);
+            for (key in json_data) {
+                document.getElementById('duedat').value = json_data[key]['newdate'];
+            }
+            }).fail(function() {
+
+        });
+    });
+    $('#invoicedate').on('change', function() {
+        console.log('yes');
+        console.log($('#invoicedate').val());
+        select = $('#termadd1').val();
+        console.log(select);
+        $.ajax({
+            type: "GET",
+            url: "{% url 'getterm' %}",
+            data: {
+                id: select,
+                date: $('#invoicedate').val()
+            }
+            }).done(function(response) {
+            var json_data = JSON.parse(response);
+            for (key in json_data) {
+                document.getElementById('duedat').value = json_data[key]['newdate'];
+            }
+            }).fail(function() {
+
+        });
+    });
 
    
 

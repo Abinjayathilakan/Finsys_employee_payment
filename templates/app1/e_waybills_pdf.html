@@ -241,8 +241,8 @@
 
                   <td style="font-weight: bold" id="sgst">{{ewbill.sgst}}</td>
                 </tr>
-                {% endif %} {% if ewbill.shipping_charge != 0 %}
-                <tr id="sgstrow">
+                {% endif %} {% if ewbill.shipping_charge != 0.0 %}
+                <tr id="shippingchargerow">
                   <th colspan="5">
                     <span style="float: right; margin-right: 14px"
                       >Shipping_Charge:</span
@@ -253,8 +253,8 @@
                     {{ewbill.shipping_charge}}
                   </td>
                 </tr>
-                {% endif %} {% if ewbill.adjustment != 0 %}
-                <tr id="sgstrow">
+                {% endif %} {% if ewbill.adjustment != 0.0 %}
+                <tr id="adjstrow">
                   <th colspan="5">
                     <span style="float: right; margin-right: 14px"
                       >Adjustment:</span

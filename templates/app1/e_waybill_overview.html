@@ -28,6 +28,10 @@
     .bg-grey {
         background-color: rgba(0, 0, 0, 0.4);
     }
+    body{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+    }
     @media (min-width: 992px) {
         .card-registration-2 .bg-grey {
             border-top-right-radius: 16px;
@@ -373,12 +377,24 @@
             color: black !important; 
         }
     } */
+    .template3table{
+        background-color: #213b52 !important;
+    }
     @media print {
     .page[size="A4"] {
         width: 21cm;
         height: 29.7cm;
+        
     }
-    
+    .template3table{
+        background-color: #213b52 !important;
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+    }
+    body{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+    }
     body * {
         visibility: hidden;
     }
@@ -401,14 +417,6 @@
         page-break-inside: avoid;
     }
 
-    #whatToPrint {
-        color: #000 !important;
-    }
-
-    #whatToPrint .bb {
-        border-color: #000 !important;
-    }
-
     @page {
         size: 100%;
         margin: 0;
@@ -416,29 +424,29 @@
     }
 
    
-    .print-only td {
+    /* .print-only td {
         color: black !important;
-    }
+    } */
 
     
     .print-only .ribbon-open {
         color: black !important;
     }
-    table.table-bordered td {
+    /* table.table-bordered td {
         color: black !important;
-    }
+    } */
 
     /* In your CSS stylesheet */
-.text-black {
+/* .text-black {
     color: #000 !important;
-}
+} */
 
 }
 
     </style>
 
 
-    <div class="page-content" >
+    <div class="page-content" id="page-content">
         <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
@@ -886,11 +894,11 @@
                 </div>
                 <!-- Template section  Print-template -->
                 <div id="templatesToPrintSection" style="display: none;">
-                    <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                    <!-- <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
                         <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
                         <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
                         <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
-                    </div>
+                    </div> -->
 
                     <!-- Template Number-1 -->
 
@@ -964,7 +972,7 @@
                                 </section>
                     
                                 <section class="product-area mt-2">
-                                    <table class="table table-hover table-bordered table-primary">
+                                    <table class="table table-hover table-bordered table-primary" id="template1table">
                                         <thead>
                                             <tr class="table-primary">
                                                 <th class="text-center" style="color:#000">Items</th>
@@ -1061,6 +1069,13 @@
                                                         <td style="color: #000;">:</td>
                                                         <td class="text-center" style="color: #000;">{{ewbill.shipping_charge}}</td>
                                                     </tr>
+                                                    {% if ewbill.adjustment != 0.0 %}
+                                                    <tr >
+                                                        <td style="color: #000;">Adjustment</td>
+                                                        <td style="color: #000;">:</td>
+                                                        <td class="text-center" style="color: #000;">{{ewbill.adjustment}}</td>
+                                                    </tr>
+                                                    {%endif%}
                                                     {% if ewbill.tcs != "0.00" %}
                                                     <tr style="display: none;">
                                                         <td style="color:black">TCS:</td>
@@ -1275,6 +1290,13 @@
                                                         <td style="color: #000;">:</td>
                                                         <td class="text-center" style="color: #000;">{{ewbill.shipping_charge}}</td>
                                                     </tr>
+                                                    {% if ewbill.adjustment != 0.0 %}
+                                                    <tr >
+                                                        <td style="color: #000;">Adjustment</td>
+                                                        <td style="color: #000;">:</td>
+                                                        <td class="text-center" style="color: #000;">{{ewbill.adjustment}}</td>
+                                                    </tr>
+                                                    {%endif%}
                                                     {% if ewbill.tcs != "0.00" %}
                                                     <tr style="display: none;">
                                                         <td style="color:black">TCS:</td>
@@ -1407,9 +1429,9 @@
                                 </section>
                     
                                 <section class="product-area mt-2">
-                                    <table class="table table-hover table-bordered table-dark">
+                                    <table class="table table-hover table-bordered table-dark template3table">
                                         <thead class="table-dark">
-                                            <tr>
+                                            <tr class="template3tablehead">
                                                 <th class="text-center">Items</th>
                                                 <th class="text-center">HSN Code</th>
                                                 <th class="text-center">Quantity</th>
@@ -1504,6 +1526,13 @@
                                                         <td style="color: #000;">:</td>
                                                         <td class="text-center" style="color: #000;">{{ewbill.shipping_charge}}</td>
                                                     </tr>
+                                                    {% if ewbill.adjustment != 0.0 %}
+                                                    <tr >
+                                                        <td style="color: #000;">Adjustment</td>
+                                                        <td style="color: #000;">:</td>
+                                                        <td class="text-center" style="color: #000;">{{ewbill.adjustment}}</td>
+                                                    </tr>
+                                                    {%endif%}
                                                     {% if ewbill.tcs != "0.00" %}
                                                     <tr style="display: none;">
                                                         <td style="color:black">TCS:</td>
@@ -1546,6 +1575,11 @@
                                    
                             </div>
                         </div>
+                    </div>
+                    <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                        <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
+                        <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+                        <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
                     </div>
                 </div>
         </div>
@@ -1596,7 +1630,8 @@
         $('#'+buttonId).addClass('active');
         $("#templatePrintButton").attr("onclick","printSection('"+templateId+"')");
         // $(this).addClass('active');
-
+        // $(window).scrollTop(0); 
+        document.getElementById('page-content').scrollIntoView();
     }
 </script>
 

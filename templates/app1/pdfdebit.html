@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     
     
 </head>
@@ -58,6 +59,7 @@
     {
        margin-bottom: 3px;
     }
+  
 </style>
 
 <body>
@@ -66,7 +68,7 @@
         <div class="row">
             <div class="col-sm-12" style="text-align: right;">
                 <h2>VENDOR CREDIT</h2>
-                <h3>DN - {{ pdebt.debit_no }}</h3>
+                <h3>{{ pdebt.debit_no }}</h3>
                 <h3>Credits remaining</h3>
             </div>
         </div>
@@ -88,12 +90,13 @@
                 <table style="font-size: 14px;">
                     <th>
                         Bill To:<br>
+                        {{pdebt.vendor}}
                         {{ pdebt.address }}
 
                     </th>
                     <th>
                         Credit Date : : {{ pdebt.debitdate |date:'d-m-Y' }}<br>
-                        Ref# : {{ pdebt.debit_no }}
+                       
                     </th>
                 </table>
                 
@@ -158,6 +161,41 @@
                                 <td >Tax Amount</td>
                                 <td valign="middle" align="right" >{{ pdebt.taxamount }}</td>
                             </tr>
+                                   {% if pdebt.igst %}
+                                    <tr class="igst-section">
+                                        <td style="color: #000;">IGST</td>
+                                        <td valign="middle" align="right" >{{ pdebt.igst }}</td>
+                                    </tr>
+                                   {%endif%}
+
+                                   {% if pdebt.cgst %}
+                                    <tr class="cgst-section">
+                                        <td style="color: #000;">CGST</td>
+                                        <td valign="middle" align="right" >{{ pdebt.cgst }}</td>
+                                    </tr>
+                                 {%endif%}
+
+                                 {% if pdebt.sgst %}
+                                    <tr class="sgst-section">
+                                        <td style="color: #000;">SGST</td>
+                                        <td valign="middle" align="right">{{ pdebt.sgst }}</td>
+                                    </tr>
+                                    {%endif%}
+                                 
+                            <tr >
+                                <td style="color: #000;">Shipping Charge</td>
+                                
+                                <td valign="middle" align="right" >{{pdebt.ship_charge}}</td>
+                            </tr>
+                            
+                            {% if pdebt.round_off != 0 %}
+                        <tr>
+                            <td style="color:black">Adjustment </td>
+                            <td valign="middle" align="right" >{{pdebt.round_off}}</td>
+                        </tr>
+                        {% endif %}
+                            
+
                             
                             <tfoot>
                                 <tr>
@@ -181,7 +219,28 @@
     </div>
       
     
+<!--    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var igstRow = document.querySelector('.igst-section');
+        var cgstRow = document.querySelector('.cgst-section');
+        var sgstRow = document.querySelector('.sgst-section');
     
+        if (igstRow && parseFloat("{{ pdebt.igst }}") === 0) {
+          igstRow.style.display = 'none';
+        }
+    
+        if (cgstRow && parseFloat("{{ pdebt.cgst }}") === 0) {
+          cgstRow.style.display = 'none';
+        }
+    
+        if (sgstRow && parseFloat("{{ pdebt.sgst }}") === 0) {
+          sgstRow.style.display = 'none';
+        }
+      });
+    </script> -->
+   
+     
 </body>
 
 </html>

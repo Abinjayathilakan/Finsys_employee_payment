@@ -608,14 +608,11 @@
                                       <tr style="width:100%;">
                                         <th >Sl No.</th>
                                         <th style="border-right: none;">Description of Goods</th>
-                                        <!-- <th >Batch Name</th> -->
                                         <th style="border-left: none;"></th>
                                         <th >Expiry Date</th>
                                         <th >HSN/SAC</th>
-                                        
                                         <th>Qty</th>
                                         <th>Rate</th>
-                                        <!-- <th>per</th> -->
                                         <th>Tax Rate</th>
                                         <th>Discount</th>
                                         <th>Amount</th>
@@ -632,7 +629,6 @@
                                         <td>{{j.hsn}}</td>
                                         <td>{{j.qty}}</td>
                                         <td>{{j.price}}</td>
-                                        <!-- <td></td> -->
                                         <td>{{j.tax}} %</td>
                                         
                                         <td>{{j.discount}}</td>
@@ -677,12 +673,13 @@
                                         
                                         <td style="font-weight: bold;"> {{invoice.taxamount}}</td>
                                       </tr>
-                                      
+                                      {% if ship != 0 %}
                                       <tr >
                                         <th colspan="9"  ><span style="float: right;margin-right: 14px;">Shipping Charge</span></th>
                                         
                                         <td style="font-weight: bold;"> {{invoice.shipping_charge}}</td>
                                       </tr>
+                                      {% endif %}
                                       <tr>
                                         <th colspan="9"  ><span style="float: right;margin-right: 14px;">Grand Total</span></th>
                                         

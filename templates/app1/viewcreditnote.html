@@ -368,9 +368,9 @@
                             <thead>
                                 <tr>
                                     <td>Items</td>
-                                    <td>HSN Code</td>
-                                    <td>Quantity</td>
+                                    <td>HSN</td>
                                     <td>Rate</td>
+                                    <td>Quantity</td>
                                     <td>Tax</td>
                                     <td>Discount</td>
                                     <td>Total</td>
@@ -381,9 +381,9 @@
                                     <tr>
                                         <td class="text-center" style="color:#000">{{ pordr.items }}</td>
                                         <td class="text-center" style="color:#000">{{ pordr.hsn }}</td>
+                                        <td class="text-center" style="color:#000">{{ pordr.price }}</td>
                                         <td class="text-center" style="color:#000">{{ pordr.quantity }}</td>
-                                        <td class="text-center" style="color:#000">{{ pordr.price  }}</td>
-                                        <td class="text-center" style="color:#000">{{ pordr.tax  }}%</td>
+                                        <td class="text-center" style="color:#000">{{ pordr.tax}} %</td>
                                         <td class="text-center" style="color:#000">{{ pordr.discount|default:0}}</td>
                                         <td class="text-center" style="color:#000">{{ pordr.total }}</td>
                                     </tr>
@@ -411,6 +411,10 @@
                                         <td id="sply">
                                             {{pcrd.supply}}
                                         </td>
+
+                                        <td id="shipchrg">
+                                            {{pcrd.shipping_charge}}
+                                        </td>
                                     </tr>
                                     <tr class="igstrow d-none" >
                                         <td style="color:black">IGST</td>
@@ -429,7 +433,7 @@
                                         <td style="color:black">Tax Amount</td>
                                         <td style="color:black">{{pcrd.taxamount}}</td>
                                     </tr>
-                                    <tr>
+                                    <tr class="shiprow d-none">
                                         <td style="color:black">Shpping Charge</td>
                                         <td style="color:black">{{pcrd.shipping_charge}}</td>
                                     </tr>
@@ -688,6 +692,13 @@
                 $(".gstrow").removeClass("d-print-table-row");
                 $(".gstrow").addClass("d-none");
 
+            }
+            if($("#shipchrg").html().trim() == 0){
+                $(".shiprow").addClass("d-none");
+            }
+            else{
+                $(".shiprow").removeClass("d-none");
+                $(".shiprow").addClass("d-print-table-row");
             }
         });
       

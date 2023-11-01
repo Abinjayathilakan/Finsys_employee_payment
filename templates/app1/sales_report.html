@@ -69,43 +69,51 @@
             <hr style="width:95%">
         </div>
     </div>
-</div>
-<div class="row container-fluid">
-    <!-- Left-aligned div -->
-    <div class="col-md-6">
-        <div class="container-fluid m-3 form-inline">
-            <form method='POST'>
-                {% csrf_token %}
-                <input class="form-control" type="date" id="start_date" name='sdate' value="{{ today_date }}">
-                <span class="ml-2 mr-2 mt-2"> TO </span>
-                <input class="form-control" type="date" id="end_date" name='edate' value="{{ today_date }}">
-                <input class=" form-control btn-btn warning" type="submit" value='View'>
-               </form>
-        </div>
-    </div>
-    
-    <script>
-        function filterDataByDate() {
-            const startDate = document.getElementById('start_date').value;
-            const endDate = document.getElementById('end_date').value;
-            
-        }
-    </script>
-    <!-- Right-aligned div -->
-    <!-- Right-aligned div -->
-    <div class="col-md-6 text-right">
-        <i class="fa fa-bar-chart-o ml-5" style="font-size:26px" title="Graph" onclick="toggleGraph()"></i>
-        <a href="#" id="exportToExcel">
-            <i class="fa fa-file-excel-o ml-5" style="font-size:26px" title="Export to Excel"></i>
-        </a>
-        <a style="font-size:26px"  onclick="printSpecificArea()" ><i class="fa fa-print ml-5" style="font-size:26px" title="print"></i></a>
-
-        
-        
-       
-        
+    <div class="row container-fluid">
+        <!-- Left-aligned div -->
+        <div class="col-md-6">
+            <div class="container-fluid m-3 form-inline">
+                <form method='POST'>
+                    {% csrf_token %}
+                    <input class="form-control" type="date" id="start_date" name='sdate' value="{{ today_date }}">
+                    <span class="ml-2 mr-2 mt-2"> TO </span>
+                    <input class="form-control" type="date" id="end_date" name='edate' value="{{ today_date }}">
+                    <input class=" form-control btn-btn warning" type="submit" value='View'>
+                   </form>
             </div>
+        </div>
+        
+        <script>
+            function filterDataByDate() {
+                const startDate = document.getElementById('start_date').value;
+                const endDate = document.getElementById('end_date').value;
+                
+            }
+        </script>
+        <!-- Right-aligned div -->
+        <!-- Right-aligned div -->
+        <div class="col-md-6 mt-2 text-right">
+            <button class="btn btn-secondary btn-outline-white ml-2">
+                <i class="fa fa-bar-chart-o " style="font-size:26px" title="Graph" onclick="toggleGraph()"></i>
+            </button>
+            <button class="btn btn-secondary btn-outline-white ml-2">
+                <a href="#" id="exportToExcel">
+                    <i class="fa fa-file-excel-o" style="font-size:26px" title="Export to Excel"></i>
+                </a>
+            </button>
+            <button  class="btn btn-secondary btn-outline-white ml-2">
+                <a   onclick="printSpecificArea()" ><i class="fa fa-print" style="font-size:26px" title="print"></i></a>
+
+            </button>
+    
+            
+            
+           
+            
+                </div>
+    </div>
 </div>
+
 
 <div class="container-fluid">
     <canvas id="myChart" style="width: 100%; height: 100%; display: none; background-color: aliceblue;"></canvas>
@@ -119,6 +127,7 @@
         <div class="col-md-2">
             <div class="card">
                 <div class="card-body">
+                    <p>Recieved amount</p>
                     <h1>0.00</h1>
                 </div>
             </div>
@@ -126,6 +135,7 @@
         <div class="col-md-2">
              <div class="card">
                 <div class="card-body">
+                    <p>Pending amount</p>
                     <h1>0.00</h1>
                 </div>
             </div>
@@ -133,6 +143,7 @@
         <div class="col-md-2">
              <div class="card">
                 <div class="card-body">
+                    <p>Total amount</p>
                     <h1>0.00</h1>
                 </div>
             </div>
@@ -182,7 +193,7 @@
             }
             </script>
            
-              
+
             
         <div id="whatToPrint" style="width: 100%;">
             <style>
@@ -314,7 +325,36 @@
                                     
                                 });
                             </script>
-                            
+                                       <script>
+                                        // Get the input element and table rows
+                                        const searchInput = document.getElementById('searchInput');
+                                        const tableRows = document.querySelectorAll('#tabletobe tbody tr');
+                                    
+                                        // Add an event listener to the search input
+                                        searchInput.addEventListener('input', function () {
+                                            const searchText = this.value.toLowerCase();
+                                    
+                                            // Loop through each table row and hide/show based on search text
+                                            tableRows.forEach(row => {
+                                                let foundMatch = false;
+                                                const cells = row.querySelectorAll('td'); // Select all <td> elements within the row
+                                    
+                                                cells.forEach(cell => {
+                                                    const cellText = cell.textContent.toLowerCase();
+                                                    if (cellText.includes(searchText)) {
+                                                        foundMatch = true;
+                                                    }
+                                                });
+                                    
+                                                // Show or hide the row based on whether a match was found
+                                                if (foundMatch) {
+                                                    row.style.display = 'table-row';
+                                                } else {
+                                                    row.style.display = 'none';
+                                                }
+                                            });
+                                        });
+                                    </script>
                         </tbody>
                     </table>
                 

@@ -9,6 +9,9 @@
                 <center><h2 class="mt-3">BANKING</h2></center>
                 
                 <hr style="width:95%">
+                <div class="btn-group col-md-2" style="float: right;">
+                    <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
+                </div>
             </div>
         </div>
     </div>
@@ -16,10 +19,9 @@
    
 <div class="card radius-15">
     <div class="card-body">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <div class="col"></div>
-                <div class="col"></div>
+               
                 <div class="col-md-5">
                 <div class="search-bar">
                     <div class="input-group">
@@ -30,30 +32,47 @@
                         <div class="input-group-append">
                             <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
                         </div>
-                       
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-outline-info dropdown-toggle text-grey" data-toggle="dropdown">Sort</button>
+                            <div class="dropdown-menu" style="background-color: black;">
+                                <a class="dropdown-item" href="{% url 'bnnk' %}" style="height: 40px; font-size: 15px; color: white;">All </a>
+
+                                <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable('asc')" style="height: 40px; font-size: 15px; color: white;">Name </a>
+                                <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableBySalary('asc')" style="height: 40px; font-size: 15px; color: white;">Amount </a>
+                            </div>
+                        </div>
                 
                             </div>
                         </div>
                       </div>
-
+                      <div class="col"></div>
+                      <div class="col"></div>
                  
-                  <div class="col">
-                    <div class="dropdown">
-                        <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
-                                data-toggle="dropdown">Filter by
-                        </button>
-                        <div class="dropdown-menu" style="background-color: black;">
-                            <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable('asc')"
-                               style="height: 40px; font-size: 15px; color: white;">Name Ascending</a>
-                            <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable('desc')"
-                               style="height: 40px; font-size: 15px; color: white;">Name Descending</a>
-                        </div>
-                </div>
-            </div>
-            <div class="col">
+                    
+                      <div class="col-auto ml-5">
+
+                            <div class="dropdown">
+                                <button type="button" style="height: 37px;" class=" fa fa-filter btn btn-outline-info text-grey p-2 pt-1 pb-1"
+                                        data-toggle="dropdown"> <a href="">filter by</a>
+                                </button>
+                                    <div class="dropdown-menu" style="background-color: black;">
+                                        <a class="dropdown-item" href="{% url 'bnnk' %}"
+                                            style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
+                                        <a class="dropdown-item" href="{% url 'activebankpage' %}"
+                                            style="height: 40px; font-size: 15px; color: white; text-align: center;" >Active</a>
+                                        <a class="dropdown-item" href="{% url 'inactivebankpage' %}"
+                                            style="height: 40px; font-size: 15px; color: white; text-align: center;">Inactive</a>
+                                       
+                                    </div> 
+                            </div>
+
+                      </div>
+                     
+                      
+            <div class="col-auto">
                 <div class="dropdown">
-                    <button type="button" class="btn btn-outline-info text-grey" data-toggle="modal" data-target="#addBankModal">
-                        Add Bank
+                    <button type="button" class="btn btn-outline-info text-grey" >
+                       <a href="{% url 'create_bank' %}">Add Bank</a>
                     </button>
                 </div>
             </div>
@@ -67,92 +86,29 @@
                     <thead>
                     <tr>
                         <th id="nameList" >BANK NAME</th>
+                        <th>ACCOUNT NUMBER</th>
                         <th>IFSCE CODE</th>
                         <th>BRANCH NAME</th>
                         <th>OPENING BALANCE</th>
+                        <th>STATUS</th>
                         <th>BALANCE</th>
-                        <th>ACTION</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for a in bank %}
                 <tr >
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.bankname }}</td>
+                                <td class='clickable-row' data-href="view_bank/{{ a.id }}"> {{ a.account_number }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}"> {{ a.ifsccode }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.branchname }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.openingbalance }}</td>
+                                <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{ a.bank_status }}</td>
                                 <td class='clickable-row' data-href="view_bank/{{ a.id }}">{{a.balance}}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item edit-item" href="#" data-toggle="modal" data-target="#editModal{{ a.id }}">Edit</a>
-                                            <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
-                                
+                               
                                 
                             </tr>
 
-                            <div class="modal fade" id="editModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content" style="background-color: #213b52;">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editModalLabel">Edit Item</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form id="bankForm" method="post" action="{% url 'edit_bank' a.id %}">
-                                                {% csrf_token %}
-                                               <div class="form-group">
-                                                <div class="col-md-4">
-                                                    <label for="">BANK NAME</label>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="bname" value="{{a.bankname}}" >
-                                                </div>
-                            
-                                                <div class="col-md-4">
-                                                    <label for="">BANK IFSC CODE</label>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="ifsc" value="{{a.ifsccode}}" >
-                                                </div>
-                            
-                                                <div class="col-md-4">
-                                                    <label for="">BRANCH NAME</label>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="branch" value="{{a.branchname}}" >
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="">OPENING BALANCE</label>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="Opening" value="{{a.openingbalance}}" >
-                                                </div>
-                            
-                                                <div class="col-md-4">
-                                                    <label for="">DATE</label>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <input class="form-control" type="date" name="date" value="{{a.date | date:'Y-m-d' }}" >
-                                                </div>
-                                               </div>
-                                               <div class="modal-footer">
-                                                <button type="reset" class="btn btn-secondary" >Reset</button>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <input type="submit" class="btn btn-primary" value="Save">
-                                            </div>
-                                            </form>
-                                        </div>
-                                       
-                                    </div>
-                                </div>
-                            </div>
+  
                             {% for a in bank %}
                             <!-- Your existing table row -->
                         
@@ -189,7 +145,41 @@
     </div>
 </div>
 <!-- Edit Modal -->
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 
+<script type="text/javascript">function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tabletobe');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Bank.' + (type || 'xlsx')));
+    }
+    
+</script>
+<script>
+    function sortTableBySalary(order) {
+        const table = document.getElementById('tabletobe');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+    
+        rows.shift(); // Remove the table header row from sorting
+    
+        rows.sort(function(a, b) {
+            const salaryA = parseFloat(a.querySelector('td:nth-child(5)').textContent);
+            const salaryB = parseFloat(b.querySelector('td:nth-child(5)').textContent);
+    
+            if (order === 'asc') {
+                return salaryA - salaryB;
+            } else if (order === 'desc') {
+                return salaryB - salaryA;
+            }
+        });
+    
+        rows.forEach(function(row) {
+            table.appendChild(row);
+        });
+    }
+    </script>
+    
 
 <script>
     function sortTable(order) {
@@ -223,65 +213,7 @@
 </script>
 
     <!-- Modal HTML -->
-<div  class="modal fade" id="addBankModal" tabindex="-1" role="dialog" aria-labelledby="addBankModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="background-color: #213b52;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addBankModalLabel">Add Bank Modal</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="bankForm" method="post" action="{% url 'crt_bank' %}">
-                    {% csrf_token %}
-                   <div class="form-group">
-                    <div class="col-md-4">
-                        <label for="">BANK NAME</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="bname" >
-                    </div>
 
-                    <div class="col-md-4">
-                        <label for="">BANK IFSC CODE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="ifsc" >
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="">BRANCH NAME</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="branch" >
-                    </div>
-                    <div class="col-md-4">
-                        <label for="">OPENING BALANCE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="Opening" >
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="">DATE</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input class="form-control" type="date" name="date" >
-                    </div>
-                   </div>
-                   <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" >Reset</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary" value="Save">
-                </div>
-                </form>
-                
-            </div>
-            
-        </div>
-    </div>
-</div>
 
 <script>
     jQuery(document).ready(function($) {
@@ -289,33 +221,6 @@
             window.location = $(this).data("href");
         });
     });
-</script>
-<script>
-    // Get the modal
-    var modal = document.getElementById("myModal");
-
-    // Get the button that opens the modal
-    var btn = document.getElementById("myBtn");
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks the button, open the modal
-    btn.onclick = function () {
-        modal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
 </script>
 
 <script>

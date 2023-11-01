@@ -262,7 +262,7 @@
                                 <label for="">Payment Methods</label>
                                 <div class="d-flex">
                                     <select class="custom-select" name="payment_method" id="method">
-                                        <option value="cash" {% if rbill.payment_method == 'cash' %}selected{% endif %}>Cash</option>
+                                        <option value="CASH" {% if rbill.payment_method == 'CASH' %}selected{% endif %}>Cash</option>
                                         <option value="cheque" {% if rbill.payment_method == 'cheque' %}selected{% endif %}>Cheque</option>
                                         {% for b in bank %}
                                             <option value="{{ b.bankname }}" {% if rbill.payment_method == b.bankname %}selected{% endif %}>{{ b.bankname }}</option>
@@ -384,14 +384,13 @@
                                 </div><br>
                                 <div>
                                     <input type="file" class="form-control" name="file">
-                                </div>
-                                <!-- <br>
+                                </div><br>
                                 <div class="row container-fluid p-2 m-0" style="background-color:rgba(0,0,0,.4); border: 1px solid rgba(128, 128, 128, 0.6);">
                                 <div class="col-md-4 mt-2 align-items-center">
                                     <label for="">Paid Amount</label>
                                     <input type="number" class="form-control"   step=0 min=0 id="paid_amount" name="paid_amount" value="{{rbill.paid_amount}}">
                                 </div>
-                                </div> -->
+                                </div>
                                 <div>
                                 </div>
                             </div>
@@ -453,7 +452,7 @@
                                       <div class="row container-fluid p-2 m-0">
                                           <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
                                           <div class="col-sm-1 mt-2">:</div>
-                                          <div class="col-sm-7 mt-2"><input type="number" value="{{rbill.adjustment}}"  step="any" name='adjustment' id="adj" placeholder='0.00' 
+                                          <div class="col-sm-7 mt-2"><input type="number" value="{{rbill.adjustment}}"  step=0 min=0 name='adjustment' id="adj" placeholder='0.00' 
                                               class="form-control"/>
                                           </div>
                                           <div class="col-sm-4 m-0 p-0"></div>
@@ -466,23 +465,6 @@
                                           </div>
                                           <div class="col-sm-4 m-0 p-0"></div>
                                       </div>
-                                      
-                                  <div class="row container-fluid p-2 m-0">
-                                    <div class="col-sm-4 mt-2"><label for="a" class="text-center">Paid Amount</label></div>
-                                    <div class="col-sm-1 mt-2">:</div>
-                                    <div class="col-sm-7 mt-2">
-                                        <input type="number" class="form-control" value={{rbill.paid_amount}} step="any"  id="paid_amount" name="paid_amount">
-                                    </div>
-                                    <div class="col-sm-4 m-0 p-0"></div>
-                                </div>
-                                <div class="row container-fluid p-2 m-0">
-                                    <div class="col-sm-4 mt-2"><label for="a" class="text-center">Balance</label></div>
-                                    <div class="col-sm-1 mt-2">:</div>
-                                    <div class="col-sm-7 mt-2"><input type="number" value={{rbill.balance}} name='balance' id="balance" placeholder='0.00' readonly
-                                        class="form-control"/>
-                                    </div>
-                                    <div class="col-sm-4 m-0 p-0"></div>
-                                </div>
                                   </div>
                                   
                               </div>
@@ -1072,7 +1054,7 @@
                                     <option selected disabled value="">Select GST Type</option>
                                     <option value="Registered Business - Regular">Registered Business - Regular <span><i>(Business that is registered under gst)</i></span></option>
                                     <option value="Registered Business - Composition">Registered Business - Composition (Business that is registered under composition scheme in gst)</option>
-                                    <option value="unregistered Business">Unregistered Business (Business that has not been registered under gst)</option>
+                                    <option value="Unregistered Business">Unregistered Business (Business that has not been registered under gst)</option>
                                     <option value="Overseas">Overseas (Import/Export of supply outside india)</option>
                                     <option value="Consumer">Consumer</option>
                                     <option value="Special Economic Zone (SEZ)">Special Economic Zone (SEZ) (Business that is located in a special economic zone of india or a SEZ developer)</option>
@@ -1922,13 +1904,7 @@ $(document).ready(function() {
                 $("#gst_trt_row").removeClass('d-none');
                 $("#gst_trt_row").addClass('d-flex');
                 $('#email_inp').val(" " + data.email);
-                // $('#gstin_inp').val(" " + data.gstin);
-                if (data.gsttype === "unregistered Business" || data.gsttype === "Consumer" || data.gsttype === "Overseas") {
-                    $("#gstin_row").addClass('d-none');
-                    $("#gstin_row").removeClass('d-flex');
-                } else {
-                    $('#gstin_inp').val(" " + data.gstin);
-                }
+                $('#gstin_inp').val(" " + data.gstin);
                 $('#gst_trt_inp').val(" " + data.gsttype);
             }
            
@@ -2097,13 +2073,7 @@ $(document).on("click", "#customerSave", function(){
                 $("#gst_trt_row1").removeClass('d-none');
                 $("#gst_trt_row1").addClass('d-flex');
                 $('#email_inp1').val(" " + data.email);
-                // $('#gstin_inp1').val(" " + data.gstin);
-                if (data.gsttype === "unregistered Business" || data.gsttype === "Consumer" || data.gsttype === "Overseas") {
-                    $("#gstin_row1").addClass('d-none');
-                    $("#gstin_row1").removeClass('d-flex');
-                } else {
-                    $('#gstin_inp1').val(" " + data.gstin);
-                }
+                $('#gstin_inp1').val(" " + data.gstin);
                 $('#gst_trt_inp1').val(" " + data.gsttype);
             }
             
@@ -2266,7 +2236,7 @@ $(document).ready(function() {
         }
 
         function hidinput1(divId, element) {
-            if (element.value == 'unregistered Business' || element.value == 'Consumer' || element.value == 'Overseas') {
+            if (element.value == 'Unregistered Business' || element.value == 'Consumer' || element.value == 'Overseas') {
                 document.getElementById(divId).style.display = 'none';
             } else {
                 document.getElementById(divId).style.display = 'block';
@@ -2498,31 +2468,6 @@ $(document).ready(function(){
     
  
  );
- $('.item1').each(function(index, dropdown) {
-                    var row = $(dropdown).closest('.items-table-body');
-                    $.ajax({
-                        url: "{% url 'item_dropdown_rbill' %}",
-                        type: "GET",
-                        dataType: "json",
-                        data: row.find('select').serialize(),
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-
-                        success: function(data) {
-                            var dropdown = $('.item1');
-                            dropdown.empty();
-                            dropdown.append(`<option selected>Select Item</option>`);
-                            $.each(data, function(key, value) {
-                            
-                                dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
-                            });
-
-                        },
-                        error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        }
-                    });
-                });
-    
 
             });
             
@@ -2594,7 +2539,7 @@ $(document).ready(function(){
                     console.log(response)
                     document.getElementById("modalItem").reset();
                     reloadItem();
-                    reloadItem2()
+                    // reloadItem2()
                 },
             });        
             });
@@ -2624,30 +2569,30 @@ $(document).ready(function(){
             }
             });
             }
-            function reloadItem2() {
-            $.ajax({
-            url: "{% url 'item_dropdown_rbill' %}",
-            type: "GET",
-            dataType: "json",
-            data: $(this).serialize(),
-            csrfmiddlewaretoken: '{{ csrf_token }}',
+            // function reloadItem2() {
+            // $.ajax({
+            // url: "{% url 'item_dropdown_rbill' %}",
+            // type: "GET",
+            // dataType: "json",
+            // data: $(this).serialize(),
+            // csrfmiddlewaretoken: '{{ csrf_token }}',
 
-            success: function(data) {
-                var dropdown = $('.item1');
-                console.log(data)
-                dropdown.empty();
-                dropdown.append(`<option selected>Select Item</option>`);
-                $.each(data, function(key, value) {
+            // success: function(data) {
+            //     var dropdown = $('#item');
+            //     console.log(data)
+            //     dropdown.empty();
+            //     dropdown.append(`<option selected>Select Item</option>`);
+            //     $.each(data, function(key, value) {
                 
-                    dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
-                });
+            //         dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+            //     });
 
-            },
-            error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            }
-            });
-            }
+            // },
+            // error: function(xhr, status, error) {
+            // console.error(xhr.responseText);
+            // }
+            // });
+            // }
 
    // calculation---------------------------
 
@@ -2683,71 +2628,8 @@ $(document).ready(function(){
                 
 
             });
-            $(document).on('change', '.item1',function(){ 
-                
-                var n = $(this).attr("id").slice(4);
-                console.log('item changed')
-                console.log(n)
-                $.ajax({
-                url: "{% url 'itemdata_rbill' %}",
-                type : 'GET',
-                data:{
-                    id : $(this).val(),
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                
-                success: function(response) {
-                    data = response.hsn
-                    // data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
-                    console.log('HSN:', data);
-                    console.log('Price:', data3);
-                  
-                    
-                    document.getElementById('hsn'+n).value = data;
-                    // document.getElementById('qtyspan'+n).innerHTML = data2;
-                    document.getElementById('unit'+n).value = data3;
-
-                },
-                });
-                
-
-            });
            
-           $(document).on('change', '.item',function(){ 
-                
-                var n = $(this).attr("id").slice(4);
-                console.log('item changed')
-                console.log(n)
-                $.ajax({
-                url: "{% url 'itemdata_rbill' %}",
-                type : 'GET',
-                data:{
-                    id : $(this).val(),
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                
-                success: function(response) {
-                    data = response.hsn
-                    // data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
-                    console.log('HSN:', data);
-                    console.log('Price:', data3);
-                  
-                    
-                    document.getElementById('hsn'+n).value = data;
-                    // document.getElementById('qtyspan'+n).innerHTML = data2;
-                    document.getElementById('unit'+n).value = data3;
-
-                },
-                });
-                
-
-            });
+           
 
             $(document).on('click','.remove_row',function(){
                 var row_id = $(this).attr("id");
@@ -2779,9 +2661,6 @@ $(document).ready(function(){
 
                 clonedRow.find('.item').each(function() {
                     $(this).val(originalRow.find('.item').val());
-                });
-                clonedRow.find('.item1').each(function() {
-                    $(this).val(originalRow.find('.item1').val());
                 });
                 clonedRow.find('.intra_tax').each(function() {
                     $(this).val(originalRow.find('.intra_tax').val());
@@ -2847,14 +2726,11 @@ $(document).ready(function(){
             });
             $('#sub_total').val(total.toFixed(2));
             $('#tax_amount').val(taxamount.toFixed(2));
-            ship = parseFloat($("#ship").val())|| 0;
-            adj = parseFloat($("#adj").val())|| 0;
-            paidAmount = parseFloat($("#paid_amount").val()) || 0;
+            ship = parseFloat($("#ship").val());
             // console.log( ship);
-            gtot = taxamount + total + ship + adj;
+            gtot = taxamount + total + ship;
             $('#grandtotal').val(gtot.toFixed(2));
-            bal=gtot - paidAmount;
-            $('#balance').val(bal.toFixed(2));
+            $('#baldue').val(gtot.toFixed(2));
 
             test()
         }
@@ -2884,9 +2760,7 @@ $(document).ready(function(){
             var tax = $('#tax_amount').val();
             var sh = $("#ship").val();
             $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
-            // $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
-            var paidAmount = parseFloat($("#paid_amount").val()) || 0;
-            $('#balance').val(($('#grandtotal').val() - paidAmount).toFixed(2));
+            $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
         });
 
         // $(document).on("change", "#adj", function(){
@@ -2900,25 +2774,8 @@ $(document).ready(function(){
             var sh = $("#ship").val();
             var ad=$("#adj").val();
             $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
-            // $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
-            var paidAmount = parseFloat($("#paid_amount").val()) || 0;
-            $('#balance').val(($('#grandtotal').val() - paidAmount).toFixed(2));
+            $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
         });
-        
-        $(document).on('keyup', "#paid_amount", function () {
-        var grandtotal = parseFloat($("#grandtotal").val()) || 0;
-        var paidAmount = parseFloat($("#paid_amount").val()) || 0;
-    //    $('#balance').val((grandtotal - paidAmount).toFixed(2));
-    if (paidAmount > grandtotal) {
-      
-        alert("Paid amount cannot be greater than the grand total.")
-        $("#paid_amount").val(grandtotal.toFixed(2)); 
-        $('#balance').val("0.00"); 
-       
-    }else
-    $('#balance').val(($('#grandtotal').val() - paidAmount).toFixed(2));
-
-       });
 
         $(document).on("click",".seltax",function(){
                 
