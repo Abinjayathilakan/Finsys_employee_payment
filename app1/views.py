@@ -35839,8 +35839,8 @@ def createpurchasepymnt(request):
                     status = "Save"
 
             # Generate the reference number based on the current maximum reference in the database
-            max_reference = purchasepayment.objects.aggregate(models.Max('reference'))['reference__max']
-            next_reference = str(int(max_reference) + 1) if max_reference else "1"
+            # max_reference = purchasepayment.objects.aggregate(models.Max('reference'))['reference__max']
+            # next_reference = str(int(max_reference) + 1) if max_reference else "1"
 
             pymnt1 = purchasepayment(
                 vendor=request.POST['vendor'],
@@ -35850,7 +35850,7 @@ def createpurchasepymnt(request):
                 paymentdate=request.POST['paymentdate'],
                 paymentmethod=request.POST['paymentmethod'],
                 # newmethod = paymentmethod.objects.get(id=payment_method),
-                reference=next_reference,  # Use the generated reference number
+                reference=request.POST['reference'],
                 # amtreceived=request.POST['amtreceived'],
                 # paymentamount=request.POST['paymentamount'],
                 amtcredit=request.POST['amtcredit'],
@@ -35984,12 +35984,19 @@ def viewpurchasepymnt(request,id):
         cmp1 = company.objects.get(id=request.session['uid'])
         paymt=purchasepayment.objects.get(pymntid=id)
         paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
-    
-        
-        
-        return render(request,'app1/viewpurchasepymnt.html',{'cmp1': cmp1,'paymt':paymt,'py':paymt1})
-    return redirect('gopurchasepymnt')
+        pymt = paymentmethod.objects.all()
+        # cmt = payment_made_comment.objects.filter(proj=paymt)
+        comments = paymnt_made_comments.objects.filter(cid=cmp1,empid_id=paymt)
+          
+        context = {
+            'cmp1': cmp1,
+            'paymt': paymt,  # Include paymt in the context
+            'py': paymt1,
+            'comments': comments,
+            'pymt' : pymt
+        }
 
+    return render(request, 'app1/viewpurchasepymnt.html', context)
 
 def render_pdfpurpym_view(request,id):
 
@@ -40467,16 +40474,27 @@ def addpayrollemployee(request):
 @login_required(login_url='login')
 def listpayrollemployee(request):  
   cmp1 = company.objects.get(id=request.session["uid"])
-  employee=payrollemployee.objects.filter(cid_id=request.session["uid"])
+  employee=payrollemployee.objects.filter(cid=cmp1)
   return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1})
+
+# @login_required(login_url='regcomp')
+# def inactive_employee(request):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         employee=payrollemployee.objects.filter(cid=cmp1,is_active=False)
+#         context = {'cmp1': cmp1, 'employee':employee}
+#         return render(request,'app1/emp_inactive.html',context)
+            
+#     except:
+#         return redirect('listpayrollemployee')  
 
 
 
 @login_required(login_url='login')
 def payrollemployeeprofile(request,employeeid): 
   cmp1 = company.objects.get(id=request.session["uid"])
-  employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
-  comments = payrollcomments.objects.filter(cid_id=request.session["uid"],empid_id=employeeid)
+  employee = payrollemployee.objects.get(cid=cmp1,employeeid=employeeid)
+  comments = payrollcomments.objects.filter(cid=cmp1,empid_id=employeeid)
   return render(request,'app1/payrollemployeeprofile.html',{'employee': employee,'cmp1': cmp1,'comments': comments})
 
 
@@ -40484,7 +40502,7 @@ def payrollemployeeprofile(request,employeeid):
 @login_required(login_url='login')
 def payrollemployeeedit(request,employeeid): 
   cmp1 = company.objects.get(id=request.session["uid"])
-  employee=payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+  employee=payrollemployee.objects.get(cid=cmp1,employeeid=employeeid)
   return render(request,'app1/payrollemployeeedit.html',{'employee':employee,'cmp1':cmp1})
 
 
@@ -40492,7 +40510,7 @@ def payrollemployeeedit(request,employeeid):
 @login_required(login_url='login')
 def editpayrollemployee(request,employeeid):  
         if request.method == 'POST':
-            employee=payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+            employee=payrollemployee.objects.get(cid=cmp1,employeeid=employeeid)
             employee.title = request.POST['title']
             employee.firstname = request.POST['firstname'] 
             employee.lastname = request.POST['lastname']
@@ -40565,7 +40583,7 @@ def gopayrollsearch(request):
     if request.method == "POST": 
         if  request.POST['search'] != "":
                 cmp1 = company.objects.get(id=request.session["uid"])
-                employee = payrollemployee.objects.filter(cid_id=request.session["uid"],firstname=request.POST['search'])
+                employee = payrollemployee.objects.filter(cid=cmp1,firstname=request.POST['search'])
                 return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1})
        
     else:
@@ -40577,7 +40595,7 @@ def gopayrollsearch(request):
 def gopayrollfilter(request,filters,values):
        cmp1 = company.objects.get(id=request.session["uid"])
        if filters == 'status':
-            employee = payrollemployee.objects.filter(cid_id=request.session["uid"], status = values)
+            employee = payrollemployee.objects.filter(cid=cmp1, status = values)
             return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1})
        elif filters == 'employees':
             employee = payrollemployee.objects.filter(cid_id=request.session["uid"],employees=values)
@@ -40605,7 +40623,7 @@ def active_emp(request,employeeid,status):
 @login_required(login_url='regcomp')
 def deletepayrollemp(request, employeeid):
     try:
-        employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
+        employee = payrollemployee.objects.get(cid=cmp1,employeeid=employeeid)
         employee.delete()
         return redirect('listpayrollemployee')
     except:
@@ -40613,19 +40631,25 @@ def deletepayrollemp(request, employeeid):
 
 
 
+from .models import payrollemployee
+import os  # Import the 'os' module for file handling
+
 @login_required(login_url='regcomp')
 def employee_add_file(request, employeeid):
-    employee = payrollemployee.objects.get(cid_id=request.session["uid"], employeeid=employeeid)
-   
+    cmp1 = company.objects.get(id=request.session["uid"])  # Define cmp1 here
+    
     if request.method == 'POST': 
+        employee = payrollemployee.objects.get(cid=cmp1, employeeid=employeeid)
         if len(request.FILES) != 0:
             if employee.file != "":
                 os.remove(employee.file.path)
             employee.file = request.FILES['file']
-        
-        employee.save()
-    
+            employee.save()  # Move the 'employee.save()' inside the POST block
+
     return redirect('payrollemployeeprofile', employeeid)
+
+
+
 
 
 
@@ -40633,18 +40657,19 @@ def employee_add_file(request, employeeid):
 @login_required(login_url='regcomp')
 def employeecomments(request, employeeid):
     if request.method == 'POST':
-        emp = payrollemployee.objects.get(cid_id=request.session["uid"], employeeid=employeeid) 
-        cmp = company.objects.get(id=request.session["uid"])
-        comments= payrollcomments(empid=emp,cid=cmp,comment=request.POST['comments'])
+        cmp1 = company.objects.get(id=request.session["uid"])  # Define cmp1 here
+        emp = payrollemployee.objects.get(cid=cmp1, employeeid=employeeid) 
+        comments = payrollcomments(empid=emp, cid=cmp1, comment=request.POST['comments'])
         comments.save()
         return redirect('payrollemployeeprofile', employeeid)
+
 
 
 
 @login_required(login_url='regcomp')
 def deleteemployeecomments(request,employeeid, commentid):
     try:
-        comment = payrollcomments.objects.get(cid_id=request.session["uid"],empid = employeeid,commentid=commentid)
+        comment = payrollcomments.objects.get(cid=cmp1,empid = employeeid,commentid=commentid)
         comment.delete()
         return redirect('payrollemployeeprofile', employeeid)
     except:
@@ -48765,11 +48790,14 @@ def convert_to_save(request, id):
 @login_required(login_url='regcomp')
 def add_paymt_made_comment(request, id):
     if request.method == 'POST':
-        emp = purchasepayment.objects.get( pymntid=id) 
+        cmp1 = company.objects.get(id=request.session["uid"]) 
+        emp = purchasepayment.objects.get(cid=cmp1, pymntid=id) 
         cmp = company.objects.get(id=request.session["uid"])
         comments= paymnt_made_comments(empid=emp,cid=cmp,comment=request.POST['comments'])
         comments.save()
         return redirect('viewpurchasepymnt', id)
+    
+
 
 
 @login_required(login_url='regcomp')
@@ -48808,14 +48836,16 @@ def inactive_employee(request):
     
 @login_required(login_url='regcomp')
 def active_emp2(request, employeeid):
-    employee = get_object_or_404(payrollemployee, cid_id=request.session["uid"], employeeid=employeeid)
+    cmp1 = company.objects.get(id=request.session["uid"]) 
+    employee = get_object_or_404(payrollemployee, cid=cmp1, employeeid=employeeid)
     employee.is_active = True
     employee.save()
     return redirect('payrollemployeeprofile', employeeid=employee.employeeid)
 
 @login_required(login_url='regcomp')
 def inactive_emp2(request, employeeid):
-    employee = get_object_or_404(payrollemployee, cid_id=request.session["uid"], employeeid=employeeid)
+    cmp1 = company.objects.get(id=request.session["uid"]) 
+    employee = get_object_or_404(payrollemployee, cid=cmp1, employeeid=employeeid)
     employee.is_active = False
     employee.save()
     return redirect('payrollemployeeprofile', employeeid=employee.employeeid)

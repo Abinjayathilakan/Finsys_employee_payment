@@ -1998,11 +1998,10 @@ class OpeningBalance(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     
     
-    
 class payrollemployee(models.Model):
-    employeeid = models.AutoField(('EMPLOYEEID'), primary_key=True)
+    employeeid = models.AutoField(primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100,null=True)
+    title = models.CharField(max_length=100, null=True)   
     firstname = models.CharField(max_length=100,null=True)
     lastname = models.CharField(max_length=100,null=True)
     alias = models.CharField(max_length=100,null=True)
