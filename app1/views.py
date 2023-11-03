@@ -35794,10 +35794,19 @@ def addpurchasepymnt(request):
         vndr = vendor.objects.filter(cid=cmp1)
         pymt = paymentmethod.objects.all()
         bank = BankAccount.objects.all()
-        acc = accounts1.objects.filter(cid=cmp1,acctype='Cash')
-        acc1 = accounts1.objects.filter(cid=cmp1,acctype='Bank')
-        context = {'cmp1':cmp1,'vndr':vndr,'pymt':pymt,'acc':acc,'acc1':acc1,'bank':bank}
-        return render(request,'app1/addpurchasepymnt.html',context)
+        acc = accounts1.objects.filter(cid=cmp1, acctype='Cash')
+        acc1 = accounts1.objects.filter(cid=cmp1, acctype='Bank')
+
+        ref = purchasepayment.objects.filter(cid=cmp1).last()  # Filter by company
+        if ref:
+            ref_no = int(ref.reference) + 1
+        else:
+            ref_no = 1
+
+        # ...
+
+        context = {'cmp1': cmp1, 'vndr': vndr, 'pymt': pymt, 'acc': acc, 'acc1': acc1, 'bank': bank, 'ref_no': ref_no}
+        return render(request, 'app1/addpurchasepymnt.html', context)
     return redirect('/')
 
 def createpurchasepymnt(request):
@@ -35809,27 +35818,21 @@ def createpurchasepymnt(request):
         cmp1 = company.objects.get(id=request.session['uid'])
         
         if request.method == 'POST':
-            paid_through = request.POST['paid_through']
-            if paid_through == 'cash':
+            paymentmethod = request.POST['paymentmethod']
+
+            cash = None
+            account_number = None
+            cheque_number = None
+            upi_id = None
+
+            if paymentmethod == 'Cash':
                 cash = 'In-Hand Cash'
-                account_number = None
-                cheque_number = None
-                upi_id = None
-            elif paid_through == 'bank':
-                account_number = request.POST['account_number']
-                cash = None
-                cheque_number = None
-                upi_id = None
-            elif paid_through == 'cheque':
-                cheque_number = request.POST['cheque_number']
-                cash = None
-                account_number = None
-                upi_id = None
-            else:
-                upi_id = request.POST['upi_id']
-                cash = None
-                account_number = None
-                cheque_number = None
+            elif paymentmethod == 'Bank Transfer':
+                account_number = request.POST['bank_acc']
+            elif paymentmethod == 'Cheque':
+                cheque_number = request.POST['chq_id']
+            elif paymentmethod == 'UPI':
+                upi_id = request.POST['upiid']
 
             if 'action' in request.POST:
                 action = request.POST['action']
@@ -35848,16 +35851,19 @@ def createpurchasepymnt(request):
                 gst_treatment=request.POST['gsttype'],
                 gst_number=request.POST['gstin'],
                 paymentdate=request.POST['paymentdate'],
-                paymentmethod=request.POST['paymentmethod'],
+                # paymentmethod=request.POST['paymentmethod'],
                 # newmethod = paymentmethod.objects.get(id=payment_method),
                 reference=request.POST['reference'],
                 # amtreceived=request.POST['amtreceived'],
                 # paymentamount=request.POST['paymentamount'],
-                amtcredit=request.POST['amtcredit'],
-                paid_through=request.POST['paid_through'],
+                paymentmethod=paymentmethod,
                 account_number=account_number,
                 cheque_number=cheque_number,
                 upi_id=upi_id,
+                amtcredit=request.POST['amtcredit'],
+                # account_number=account_number,
+                # cheque_number=cheque_number,
+                # upi_id=upi_id,
                 status=status,
                 cid=cmp1
             )
@@ -35892,7 +35898,7 @@ def createpurchasepymnt(request):
             bs4.cid = cmp1
             bs4.acctype = "Current Asset"
             bs4.transactions = "Vendor Payment"
-            bs4.account = pymnt1.paid_through
+            bs4.account = pymnt1.paymentmethod
             bs4.bill_pymnt = pymnt1
             bs4.details1 = pymnt1.pymntid
             bs4.details2 = pymnt1.reference
@@ -35925,16 +35931,16 @@ def createpurchasepymnt(request):
             accont.save()
             # depositeto = request.POST['depto']
             try:
-                if accounts1.objects.get(name=paid_through,cid=cmp1):
-                    print(paid_through)
-                    acconut = accounts1.objects.get(name=paid_through,cid=cmp1)
+                if accounts1.objects.get(name=paymentmethod,cid=cmp1):
+                    print(paymentmethod)
+                    acconut = accounts1.objects.get(name=paymentmethod,cid=cmp1)
                     acconut.balance = acconut.balance + amtcredit
                     acconut.save()
             except:
                 pass
             try:
-                if accounts.objects.get(name=paid_through,cid=cmp1):
-                    acconut = accounts.objects.get(name=paid_through, cid=cmp1)
+                if accounts.objects.get(name=paymentmethod,cid=cmp1):
+                    acconut = accounts.objects.get(name=paymentmethod, cid=cmp1)
                     acconut.balance = acconut.balance + amtcredit
                     acconut.save()
             except:
@@ -35954,7 +35960,7 @@ def createpurchasepymnt(request):
                 for i in pymtbill:
                     if i.billno != "Vendor Opening Balance":
                         if purchasebill.objects.get(bill_no=i.billno) and i.billno != 'undefined':
-                            print(paid_through)
+                            print(paymentmethod)
                             pbl = purchasebill.objects.get(bill_no=i.billno)
                             pbl.amtrecvd = int(pbl.amtrecvd) + int(i.payments)
                             pbl.balance_due = float(i.amountdue) - float(i.payments)
@@ -36077,27 +36083,21 @@ def editpurchasepymnt(request,id):
         
         if request.method == 'POST':
             
-            paid_through = request.POST['paid_through']
-            if paid_through == 'cash':
+            paymentmethod = request.POST['paymentmethod']
+
+            cash = None
+            account_number = None
+            cheque_number = None
+            upi_id = None
+
+            if paymentmethod == 'Cash':
                 cash = 'In-Hand Cash'
-                account_number = None
-                cheque_number = None
-                upi_id = None
-            elif paid_through == 'bank':
-                account_number = request.POST['account_number']
-                cash = None
-                cheque_number = None
-                upi_id = None
-            elif paid_through == 'cheque':
-                cheque_number = request.POST['cheque_number']
-                cash = None
-                account_number = None
-                upi_id = None
-            else:
-                upi_id = request.POST['upi_id']
-                cash = None
-                account_number = None
-                cheque_number = None
+            elif paymentmethod == 'Bank Transfer':
+                account_number = request.POST['bank_acc']
+            elif paymentmethod == 'Cheque':
+                cheque_number = request.POST['chq_id']
+            elif paymentmethod == 'UPI':
+                upi_id = request.POST['upiid']
 
             if 'action' in request.POST:
                 action = request.POST['action']
@@ -36124,10 +36124,10 @@ def editpurchasepymnt(request,id):
             else:
                 paymt.gst_number = None  # Set to None or an empty string depending on your field type
 
-            paymt.paid_through=request.POST['paid_through']
-            paymt.account_number=account_number
-            paymt.cheque_number=cheque_number
-            paymt.upi_id=upi_id
+            paymentmethod=paymentmethod
+            account_number=account_number
+            cheque_number=cheque_number
+            upi_id=upi_id
         
             paymt.status=status         
 
@@ -40353,7 +40353,9 @@ def edit(request, pk):
 def goaddpayrollemployee(request):
     try:
         cmp1 = company.objects.get(id=request.session["uid"])
-        context = {'cmp1': cmp1}
+        loan_d = loan_duration.objects.filter(cid=cmp1)
+       
+        context = {'cmp1': cmp1,'loan_d' : loan_d}
         return render(request, 'app1/addemployee.html', context)
     except:
         return redirect('listpayrollemployee')
@@ -40381,7 +40383,7 @@ def addpayrollemployee(request):
             except:
                 img1 = 'default' 
             salarydetails = request.POST['salarydetails']
-            effectivefrom = request.POST['effectivefrom']
+            effectivefrom = request.POST['loan_duration']
             payhead = request.POST['payhead']
             hours = request.POST['hours']
             rate = request.POST['rate']
@@ -48871,4 +48873,60 @@ def option_dropdown(request):
     option_objects = paymentmethod.objects.all()
     for newmethod in option_objects:
         options[newmethod.id] = newmethod.newmethod
+    return JsonResponse(options)
+
+def get_bankacc_num2(request):
+    try:
+        if 'uid' in request.session:
+            if request.session.has_key('uid'):
+                uid = request.session['uid']
+            else:
+                return redirect('/')
+            cmp1= company.objects.get(id=request.session["uid"])
+            if request.method == 'POST':
+                bank = bankings_G.objects.get(id = request.POST['bankId'],cid = cmp1)
+                return JsonResponse({'status':True, 'accountNumber':bank.account_number})
+            return redirect(addpurchasepymnt)
+    except Exception as e:
+        print(e)
+        return redirect(addpurchasepymnt)
+    
+def credit_term2(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        
+        if request.method == 'POST':
+            cmp1 = company.objects.get(id=request.session['uid'])
+            term_value = request.POST.get('term_value')
+            print
+            term = request.POST.get('term') 
+            t_v = term_value + ' ' + term 
+            if term == 'YEAR':
+                term_value = int(term_value) * 12
+                item = loan_duration(cid=cmp1,term=t_v,term_value=term_value)
+                item.save()
+                print(term)
+                print(term_value)
+            else:
+                item = loan_duration(cid=cmp1,term=t_v,term_value=term_value)
+                item.save()
+            print("TERM DONE")      
+            
+            return redirect('term_dropdown')
+        return redirect('term_dropdown')
+    return redirect('/') 
+
+@login_required(login_url='regcomp')
+def term_dropdown2(request):
+
+    company1 = company.objects.get(id=request.session["uid"])
+
+    options = {}
+    option_objects = loan_duration.objects.filter(cid=request.session["uid"])
+    for option in option_objects:
+        options[option.id] =    [option.term]
+
     return JsonResponse(options)

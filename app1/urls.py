@@ -1331,6 +1331,11 @@ urlpatterns = [
     path('option_dropdown',views.option_dropdown,name='option_dropdown'),
     path('add_option',views.add_option,name='add_option'),
     #End
+    
+    path('get_bank_acc_num2', views.get_bankacc_num2, name='get_bankacc_num2'),
+    path('credit_term2', views.credit_term2, name='credit_term2'),
+    path('term_dropdown2', views.term_dropdown2, name='term_dropdown2'),
+  
 
  
      

@@ -80,23 +80,50 @@
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Method</label>
                             <div class="d-flex">
-                                <select name="paymentmethod" id="paymeth" class="form-control" style="width:87%">
-                                        <option value="{{ paymt.paymentmethod }}">{{ paymt.paymentmethod }}</option>
-                                        <option value="Cash">Cash</option>
-                                        <option value="Cheque">Cheque</option>
-                                        <option value="Credit Card">Credit Card</option>
-                                        {% for p in pymt %}
-                                            <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
-                                        {% endfor %}
-                                    </select>
-                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#pymntmeth" data-toggle="modal" role="button">+</a> -->
+                                <select name="paymentmethod" id="paymeth" class="form-control" style="width: 87%">
+                                    <option value="{{ paymt.paymentmethod }}">{{ paymt.paymentmethod }}</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <!-- <option value="Credit Card">Credit Card</option> -->
+                                    <option value="UPI">UPI ID</option>
+                                    {% for p in pymt %}
+                                        <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
-                    </div>
+                        </div>
+                        
+                        <div class="col-md-4 mt-3">
+                            <div class="d-none pymnt-methd-inp" id="bank-field" style="flex-direction: column;">
+                                <label class="scol-form-label">Account Number</label>
+                                <select id="bankacc_inp" name="bank_acc" class="form-control bg-light text-white narrow-input">
+                                    <option value="{{ paymt.account_number }}">{{ paymt.account_number }}</option>
+                                    {% for v in bank %}
+                                        <option value="{{ v.account_number }}" {% if v.account_number == paymt.account_number %}selected{% endif %}>{{ v.account_number }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="d-none pymnt-methd-inp" id="cheq-field" style="flex-direction: column;">
+                                <label class="scol-form-label">Cheque ID</label>
+                                <input type="text" name="chq_id" id="chequeid_inp" class="form-control" placeholder="Cheque ID">
+                            </div>
+                            <div class="d-none pymnt-methd-inp" id="cc-field" style="flex-direction: column;">
+                                <label class="scol-form-label">Credit Card</label>
+                                <input type="number" name="ccnum" id="ccnum_inp" class="form-control" value="{{ paymt.cheque_number }}">
+                            </div>
+                            <div class="d-none pymnt-methd-inp" id="upi-field" style="flex-direction: column;">
+                                <label class="scol-form-label">UPI ID</label>
+                                <input type="text" name="upiid" id="upi_inp" class="form-control" value="{{ paymt.upi_id }}">
+                            </div>
+                        </div>
+                        
+                        
                     
                     <br><br>
                     
-                    <div class="form-group row">
+                     <!-- <div class="form-group row">
                         <label class="col-lg-2 col-form-label">Paid Through*</label>
                         <div class="col-sm-10 col-md-7 col-9 ml-5">
                             <div class="input-group mb-2">
@@ -132,8 +159,8 @@
                         <div class="col-sm-6 col-md-5 col-6 center-input">
                             <div class="input-group mb-2">
                                 <select id="bankName" name="account_number" class="form-control bg-light text-white narrow-input">
-                                    <!-- Add your bank options here -->
-                                    <option value="{{paymt.account_number}}">{{paymt.account_number}}</option> <!-- A default option to prompt selection -->
+                                
+                                    <option value="{{paymt.account_number}}">{{paymt.account_number}}</option>
                                     {% for v in bank %}
                                     <option value="{{ v.bank_name }}" {% if v.bank_name == paymt.account_number %}selected{% endif %}>{{ v.bank_name }}</option>
                                     {% endfor %}
@@ -159,7 +186,7 @@
                     
                     
 
-                    <br>
+                    <br> -->
 
                       <br><br>
 
@@ -1094,7 +1121,7 @@
             }
         }
         </script>
-        <script>
+        <!-- <script>
             document.getElementById("paymentForm").addEventListener("submit", function (event) {
                 event.preventDefault(); // Prevent the default form submission
                 
@@ -1124,7 +1151,7 @@
                     gstinField.style.display = "none";
                 }
             });
-        </script>
+        </script> -->
         
         <!-- <script>
             function showFieldsForPayment(paymentType) {
@@ -1154,8 +1181,8 @@
                 });
             }
         </script> -->
-        <script>
-            // Get references to the radio buttons and related fields
+        <!-- <script>
+            
             const cashRadio = document.getElementById("cashRadio");
             const bankRadio = document.getElementById("bankRadio");
             const chequeRadio = document.getElementById("chequeRadio");
@@ -1193,11 +1220,45 @@
         
             // Call the function to set the initial field visibility
             updateFieldVisibility();
-        </script>
+        </script> -->
 
 <!-- Include this JavaScript in your HTML template -->
 
 
+<script>
+    $('#paymeth').on('change', function() {
+        var select = $('#paymeth').val();
         
+        // Hide all fields by default
+        $('.pymnt-methd-inp').addClass('d-none');
+        $('.pymnt-methd-inp').removeClass('d-flex');
+
+        if (select === 'Cash') {
+            // Show the Cash field
+            $('#cash-field').removeClass('d-none');
+            $('#cash-field').addClass('d-flex');
+        } else if (select === 'Cheque') {
+            // Show the Cheque field
+            $('#cheq-field').removeClass('d-none');
+            $('#cheq-field').addClass('d-flex');
+        } else if (select === 'Credit Card') {
+            // Show the Credit Card field
+            $('#cc-field').removeClass('d-none');
+            $('#cc-field').addClass('d-flex');
+        } else if (select === 'Bank Transfer') {
+            // Show the Bank Transfer field
+            $('#bank-field').removeClass('d-none');
+            $('#bank-field').addClass('d-flex');
+        } else if (select === 'UPI') {
+            // Show the UPI field
+            $('#upi-field').removeClass('d-none');
+            $('#upi-field').addClass('d-flex');
+        } else {
+            // Handle other cases as needed
+        }
+    });
+</script>
+
+
    
 {% endblock %}

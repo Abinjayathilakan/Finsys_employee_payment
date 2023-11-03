@@ -141,12 +141,12 @@
                         <table class="table table-responsive-md mt-4 table-hover" id="table">
                             <thead>
                                 <tr>
-                                    <th>Payment</th>
+                                    <!-- <th>Payment</th> -->
                                     <th>Vendor</th>
                                     <th>E mail</th>
                                     <!-- <th>Reference</th> -->
                                     <th>Payment Date</th>
-                                    <th>Paid Through</th>
+                                    <th>Payment Method</th>
                                     <th>Bill Amount</th>
                                     <th>Balance Amount</th>
                                     <th>Status</th>
@@ -155,11 +155,11 @@
                             <tbody>
                                 {% for p in py %}
                                 <tr onclick="window.location='viewpurchasepymnt/{{ p.pymntid }}';">
-                                    <td><strong>{{ p.pymntid }}</strong></td>
+                                    <!-- <td><strong>{{ p.pymntid }}</strong></td> -->
                                     <td>{{ p.vendor }}</td>
                                     <td>{{ p.email }}</td>
                                     <td>{{ p.paymentdate |date:'d-m-Y' }}</td>
-                                    <td>{{ p.paid_through }}</td>
+                                    <td>{{ p.paymentmethod }}</td>
                                     
                                     
 

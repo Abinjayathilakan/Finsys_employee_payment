@@ -65,9 +65,9 @@
                             <input type="date" name="paymentdate" id="date" class="form-control" required>
                         </div>
                     
-                        <div class="col-md-4 mt-3">
+                        <div class="col-md-3 mt-3">
                             <label for="">Reference</label>
-                            <input type="text" name="reference" value="{{ reference }}" class="form-control" required>
+                            <input type="text" name="reference" value="{{ref_no}}" class="form-control" required>
                         </div>
 
                         <div class="row mt-4">
@@ -76,8 +76,55 @@
                                        style="display: none;">
                             </div>
                         </div>
-                        
+
                         <div class="col-md-4 mt-3">
+                            <label for="">Payment Method</label>
+                            <div class="d-flex">
+                                <select name="paymentmethod" id="paymeth" onclick="showinp('newmethod', this)"class="form-control">
+                                    <option value="NILL" selected disabled>Choose Payment Method</option>
+
+                                    <option value="Cash">Cash</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <!-- <option value="Credit Card">Credit Card</option> -->
+                                    <option value="UPI">UPI ID</option>
+                                    <!-- {% for i in pymt %}
+                                    <option value="{{i.newmethod}}">{{i.newmethod}}</option>
+                                    {%endfor%} -->
+                                    <!-- <option value="Add New">Add New</option> -->
+                                    <!-- <option id="newmth"></option> -->
+                                </select>
+                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#Add_option" data-toggle="modal" role="button">+</a> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <div class="d-none pymnt-methd-inp" id="bank-field" style="flex-direction: column;">
+                            <label class="scol-form-label">Account Number</label>
+                            <select id="bankacc_inp" name="bank_acc" class="form-control bg-light text-white narrow-input">
+                                <option value="NILL" selected disabled>Choose Account Number</option>
+                                {% for v in bank %}
+                                <option value="{{ v.account_number }}">{{ v.account_number }}</option>
+                                {% endfor %}
+                              </select>
+                            <!-- <input type="text" name="bank_acc" id="bankacc_inp" class="form-control" placeholder="Account #"> -->
+                        </div>
+                        <div class="d-none pymnt-methd-inp" id="cheq-field" style="flex-direction: column;">
+                            <label class="scol-form-label">Cheque ID</label>
+                            <input type="text" name="chq_id" id="chequeid_inp" class="form-control" placeholder="Cheque ID">
+                        </div>
+                        <div class="d-none pymnt-methd-inp" id="cc-field" style="flex-direction: column;">
+                            <label class="scol-form-label">Credit Card</label>
+                            <input type="number" name="ccnum" id="ccnum_inp" class="form-control" placeholder="Card Number">
+                        </div>
+                        <div class="d-none pymnt-methd-inp" id="upi-field" style="flex-direction: column;">
+                            <label class="scol-form-label">UPI ID</label>
+                            <input type="text" name="upiid" id="upi_inp" class="form-control" placeholder="UPI ID">
+                        </div>
+                    </div>
+                        
+                        <!-- <div class="col-md-4 mt-3">
                             <label for="">Payment Method</label>
                             <div class="d-flex">
                                 <select name="paymentmethod" id="paymeth" class="form-control" style="width:87%">
@@ -89,14 +136,15 @@
                                         <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
                                     {% endfor %}
                                 </select>
-                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#Add_option" data-toggle="modal" role="button">+</a> -->
+                                <a class="btn btn-outline-secondary ml-1" data-target="#Add_option" data-toggle="modal" role="button">+</a>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
+                    
                     
                     <br><br>
                     
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label class="col-lg-2 col-form-label">Paid Through*</label>
                         <div class="col-sm-10 col-md-7 col-9 ml-5">
                             <div class="input-group mb-2">
@@ -129,7 +177,7 @@
                         <div class="col-sm-6 col-md-5 col-6 center-input">
                           <div class="input-group mb-2">
                             <select id="bankName" name="account_number" class="form-control bg-light text-white narrow-input">
-                              <!-- Add your bank options here -->
+                           
                               {% for v in bank %}
                               <option value="{{ v.account_number }}">{{ v.account_number }}</option>
                               {% endfor %}
@@ -153,7 +201,7 @@
                       </div>
                     
 
-                    <br>
+                    <br> -->
                     
                     <!-- <div class="col-md-3 mt-3">
                         <label for="">Amount</label>
@@ -174,7 +222,7 @@
                                         <th class="text-center">Bill Number</th>
                                         <th class="text-center">Bill Amount</th>
                                         <th class="text-center">Due Date</th>
-                                        <th class="text-center">Amount Due</th>
+                                        <th class="text-center">Balance Due</th>
                                         <th class="text-center">Payment</th>
 
                                     </tr>
@@ -1334,6 +1382,70 @@
                 }
             });
         }
+        
+    </script>
+
+    <script>
+        $('#paymeth').on('change', function() {
+            var select = $('#paymeth').val();
+            var bnkId = $(this).find(":selected").attr('text');
+            if (bnkId != undefined) {
+                $('.pymnt-methd-inp').addClass('d-none');
+                $('.pymnt-methd-inp').removeClass('d-flex');
+                $.ajax({
+                    url: "{% url 'get_bankacc_num' %}",
+                    type: "POST",
+                    data: {
+                        bankId: bnkId,
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+        
+                    success: function(data) {
+                        if (data.status) {
+                            $('#bank-field').removeClass('d-none');
+                            $('#bank-field').addClass('d-flex');
+                            $('#bankacc_inp').val(data.accountNumber);
+                        } else {
+                            alert('Something went wrong.!');
+                        }
+                    }
+                });
+            } else {
+                if (select === 'Cash') {
+                    // Hide other fields and show only the Cash field
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                } else if (select === 'Cheque') {
+                    // Hide other fields and show only the Cheque field
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                    $('#cheq-field').removeClass('d-none');
+                    $('#cheq-field').addClass('d-flex');
+                } else if (select === 'Credit Card') {
+                    // Hide other fields and show only the Credit Card field
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                    $('#cc-field').removeClass('d-none');
+                    $('#cc-field').addClass('d-flex');
+                } else if (select === 'Bank Transfer') {
+                    // Hide other fields and show only the Bank Transfer field
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                    $('#bank-field').removeClass('d-none');
+                    $('#bank-field').addClass('d-flex');
+                } else if (select === 'UPI') {
+                    // Hide other fields and show only the UPI field
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                    $('#upi-field').removeClass('d-none');
+                    $('#upi-field').addClass('d-flex');
+                } else {
+                    // Handle other cases as needed
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                    $('.pymnt-methd-inp').addClass('d-none');
+                }
+            }
+        });
         
     </script>
     

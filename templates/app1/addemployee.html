@@ -149,17 +149,15 @@
                             <div class="col-3 col-md-4">
                                 <label for="effectivefrom">Effective From</label>
                                 <div class="d-flex">
-                                <select class="custom-select" name="effectivefrom" id="termadd2">
-                                    <option selected id="trmopt2"></option>
-                                    <option value="0">Due on Receipt</option>
-                                    <option value="15">NET 15</option>
-                                    <option value="30">NET 30</option>
-                                    <option value="60">NET 60</option>
-                                    {% for pd in cpd %}
-                                        <option value="{{ pd.newperiod }}">NET {{ pd.newperiod }}</option>
-                                    {% endfor %}
-                                </select>
-                                <a class="btn btn-outline-secondary ml-1" data-target="#crperiod2" data-toggle="modal">+</a>
+                                    <!-- Inside your template (e.g., addemployee.html) -->
+<select class="form-control term" name="loan_duration" id="loan_duration" onchange="calculateExpiryDate()" required>
+    <option value="">Choose duration</option>
+    {% for item in loan_d %}
+        <option value="{{ item.term_value }}">{{ item.term }}</option>
+    {% endfor %}
+</select>
+
+                                <a class="btn btn-outline-secondary ml-1" data-target="#emplyeeterm" data-toggle="modal">+</a>
 
                             </div>
 
@@ -655,34 +653,55 @@
             {% endif %}
         </form>
 
-        <div class="modal fade" id="crperiod2">
-            <div class="modal-dialog">
-                <div class="modal-content" style="background-color: #213b52;">
-                    <div class="modal-header">
-                        <h5 class="m-3">New Credit Period</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card p-3 m-3">
-                            <form action="{% url 'credit_period_rbill3' %}" method="post" autocomplete="off" id="credit">
-                                {% csrf_token %}
-                                <div class="row">
-                                    <div class="col-md-2 mt-2"></div>
-                                    <div class="col-md-5 mt-2">
-                                        <input type="number" name="newperiod" id="period" class="form-control">
+        <!-- modal -->
+<div class="modal fade" id="emplyeeterm">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h3 class="m-3">ADD TERM</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <center>
+                    <form action="" method="post"  autocomplete="off" id="modalItem">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-5 p-2">
+                                        <label  for="">Duration</label>
+                                        <input type="number"  id="duration" name="duration" class="form-control" placeholder="Number">
+    
                                     </div>
-                                    <div class="col-md-2 mt-2">
-                                        <button class="btn btn-outline-info text-grey mb-3" type="submit" data-dismiss="modal" id="savecredit">Save</button>
+                                    
+                                    <div class="col-md-5 p-2">
+                                        <label for="">Term</label>
+                                        <input type="text" id="term" name="term" class="form-control" placeholder="Year / Month" oninput="this.value = this.value.toUpperCase()">
+    
                                     </div>
                                 </div>
-                            </form>  
+                            </div>
+    
+                            
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-outline-info rounded-pill text-grey w-100 mt-3 mb-3"
+                                          <button class="btn btn-outline-info rounded-pill w-100 text-light" data-dismiss="modal" type="submit" id="itemSave">SUBMIT</button>
+                                    </button>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+    
                         </div>
-                    </div>
-                </div>   
+                    </form>
+                </center>
             </div>
-        </div> 
+        </div>
+    </div>
+</div>
 
 </div>
 </div>
@@ -979,5 +998,62 @@
 
 </script>
 
+<!-- JavaScript code for updating the dropdown -->
+<script>
+    $(document).on("click", "#itemSave", function () {
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'credit_term2' %}",
+            data: {
+                term: $("#term").val(),
+                term_value: $("#duration").val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            success: function (response) {
+                // Log the response data to the console for debugging
+                console.log(response);
+
+                // Reset the form
+                document.getElementById("modalItem").reset();
+
+                // Call the function to reload the dropdown
+                reloadItem();
+            },
+            error: function (xhr, status, error) {
+                // Log any AJAX errors to the console for debugging
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    function reloadItem() {
+        $.ajax({
+            url: "{% url 'term_dropdown2' %}",
+            type: "GET",
+            dataType: "json",
+            data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+            success: function (data) {
+                var dropdown = $('#loan_duration'); // Use the correct ID of the dropdown element
+                console.log(data);
+
+                // Clear existing options
+                dropdown.empty();
+
+                // Add the default "Choose Duration" option
+                dropdown.append('<option value="">Choose duration</option>');
+
+                // Add the new options from the data received
+                $.each(data, function (id, value) {
+                    dropdown.append($('<option></option>').attr('value', id).text(value[0]));
+                });
+            },
+            error: function (xhr, status, error) {
+                // Log any AJAX errors to the console for debugging
+                console.error(xhr.responseText);
+            }
+        });
+    }
+</script>
+   
 
 {% endblock %}

@@ -91,9 +91,9 @@
                                 <div class="d-flex">
                                     <select name="pmethod" id="paymeth" onclick="showinp('newmethod', this)"class="form-control">
                                         <option value="NILL" selected disabled>Choose Payment Method</option>
-                                        {% for i in bank %}
+                                        
                                         <option text="{{i.id}}" value="{{i.bankname}}">{{i.bankname}}</option>
-                                        {%endfor%}
+                                        
                                         <option value="Cash">Cash</option>
                                         <option value="Cheque">Cheque</option>
                                         <option value="Credit Card">Credit Card</option>
@@ -388,7 +388,7 @@
                 $('.pymnt-methd-inp').addClass('d-none');
                 $('.pymnt-methd-inp').removeClass('d-flex');
                 $.ajax({
-                    url: "{% url 'get_bankacc_num' %}",
+                    url: "{% url 'get_bankacc_num2' %}",
                     type: "POST",
                     data: {
                         bankId : bnkId,
