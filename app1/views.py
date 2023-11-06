@@ -35821,6 +35821,7 @@ def createpurchasepymnt(request):
             paymentmethod = request.POST['paymentmethod']
 
             cash = None
+            bank_names = None
             account_number = None
             cheque_number = None
             upi_id = None
@@ -35828,7 +35829,8 @@ def createpurchasepymnt(request):
             if paymentmethod == 'Cash':
                 cash = 'In-Hand Cash'
             elif paymentmethod == 'Bank Transfer':
-                account_number = request.POST['bank_acc']
+                bank_names = request.POST['bank_acc']
+                account_number = request.POST.get('account_number')
             elif paymentmethod == 'Cheque':
                 cheque_number = request.POST['chq_id']
             elif paymentmethod == 'UPI':
@@ -35855,15 +35857,14 @@ def createpurchasepymnt(request):
                 # newmethod = paymentmethod.objects.get(id=payment_method),
                 reference=request.POST['reference'],
                 # amtreceived=request.POST['amtreceived'],
-                # paymentamount=request.POST['paymentamount'],
+                paymentamount=request.POST['paymentamount'],
                 paymentmethod=paymentmethod,
+                bank_names=bank_names,
                 account_number=account_number,
                 cheque_number=cheque_number,
                 upi_id=upi_id,
                 amtcredit=request.POST['amtcredit'],
-                # account_number=account_number,
-                # cheque_number=cheque_number,
-                # upi_id=upi_id,
+                
                 status=status,
                 cid=cmp1
             )
@@ -36004,45 +36005,54 @@ def viewpurchasepymnt(request,id):
 
     return render(request, 'app1/viewpurchasepymnt.html', context)
 
-def render_pdfpurpym_view(request,id):
+from django.http import HttpResponse
+from django.template.loader import get_template
+from num2words import num2words
 
-    cmp1 = company.objects.get(id=request.session['uid'])
+def render_pdfpurpym_view(request, id):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        paymt = purchasepayment.objects.get(pymntid=id)
+        paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
+        prl = purchasebill.objects.filter(bill_no=paymt.reference)
 
-    paymt=purchasepayment.objects.get(pymntid=id)
-    paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
-    prl=purchasebill.objects.filter(bill_no=paymt.reference)
-   
+        total = paymt.amtreceived
+        if total is not None:
+            words_total = num2words(total)
+        else:
+            words_total = "N/A"  # Handle the case where total is None
 
-    total = paymt.amtreceived
-    words_total = num2words(total)
-    template_path = 'app1/pdfpayment2.html'
-    context ={
-        'paymt':paymt,
-        'cmp1':cmp1,
-        'paymt1':paymt1,
-        'prl':prl,
+        template_path = 'app1/pdfpayment2.html'
+        context = {
+            'paymt': paymt,
+            'cmp1': cmp1,
+            'paymt1': paymt1,
+            'prl': prl,
+            'words_total': words_total,  # Pass words_total to the template
+        }
 
-    }
-    fname=paymt.pymntid
-   
-    # Create a Django response object, and specify content_type as pdftemp_creditnote
-    response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
-    response['Content-Disposition'] =f'attachment; filename= {fname}.pdf'
-    # find the template and render it.
-    template = get_template(template_path)
-    html = template.render(context)
+        fname = str(paymt.pymntid)
 
-    # create a pdf
-    pisa_status = pisa.CreatePDF(
-       html, dest=response)
-    
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename={fname}.pdf'
+        template = get_template(template_path)
+        html = template.render(context)
 
+        from xhtml2pdf import pisa
 
-    # if error then show some funy view
-    if pisa_status.err:
-       return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    return response
+        pisa_status = pisa.CreatePDF(html, dest=response)
+
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+
+        return response
+    except company.DoesNotExist:
+        return HttpResponse('Company not found', status=404)
+    except purchasepayment.DoesNotExist:
+        return HttpResponse('Purchase payment not found', status=404)
+    except Exception as e:
+        return HttpResponse(f'An error occurred: {str(e)}', status=500)
+
 
 @login_required(login_url='regcomp')
 def goeditpurchasepymnt(request,id):
@@ -36082,10 +36092,10 @@ def editpurchasepymnt(request,id):
         cmp1 = company.objects.get(id=request.session['uid'])
         
         if request.method == 'POST':
-            
             paymentmethod = request.POST['paymentmethod']
 
             cash = None
+            bank_names = None
             account_number = None
             cheque_number = None
             upi_id = None
@@ -36093,27 +36103,34 @@ def editpurchasepymnt(request,id):
             if paymentmethod == 'Cash':
                 cash = 'In-Hand Cash'
             elif paymentmethod == 'Bank Transfer':
-                account_number = request.POST['bank_acc']
+                bank_names = request.POST['bank_acc']
+                account_number = request.POST.get('account_number')
             elif paymentmethod == 'Cheque':
                 cheque_number = request.POST['chq_id']
             elif paymentmethod == 'UPI':
                 upi_id = request.POST['upiid']
 
-            if 'action' in request.POST:
-                action = request.POST['action']
-                if action == 'draft':
-                    status = "Draft"
-                elif action == 'save':
-                    status = "Save"
+            # if 'action' in request.POST:
+            #     action = request.POST['action']
+            #     if action == 'draft':
+            #         status = "Draft"
+            #     elif action == 'save':
+            #         status = "Save"
                     
-            paymt=purchasepayment.objects.get(pymntid=id)
+            # paymt=purchasepayment.objects.get(pymntid=id)
+            paymt = get_object_or_404(purchasepayment, pymntid=id)
             paymt.vendor = request.POST['vendor']
             paymt.reference= request.POST['reference']
-            paymt.paymentdate=request.POST['paymentdate']
+
+            paymt.paymentdate = request.POST['paymentdate']
+
+
             paymt.paymentmethod=request.POST['paymentmethod']
+            
             # paymt.depositeto=request.POST['depto']
             # paymt.amtreceived=request.POST['amtreceived']
-            # paymt.paymentamount=request.POST['paymentamount']
+         
+            paymt.paymentamount = request.POST['paymentamount']
             paymt.amtcredit=request.POST['amtcredit']
             
             
@@ -36124,12 +36141,20 @@ def editpurchasepymnt(request,id):
             else:
                 paymt.gst_number = None  # Set to None or an empty string depending on your field type
 
-            paymentmethod=paymentmethod
-            account_number=account_number
-            cheque_number=cheque_number
-            upi_id=upi_id
+            paymt = purchasepayment.objects.get(pymntid=id)
+            paymt.paymentmethod = paymentmethod
+            paymt.bank_names=bank_names
+            paymt.account_number = account_number
+            paymt.cheque_number = cheque_number
+            paymt.upi_id = upi_id
+            
+      
+            print("paymentdate")
         
-            paymt.status=status         
+            # paymt.status=status  
+
+            
+       
 
             paymt.save()
 
@@ -36199,7 +36224,9 @@ def editpurchasepymnt(request,id):
                         pbl.save()
             except:
                 pass
-            return redirect('gopurchasepymnt')
+            return redirect('viewpurchasepymnt', id=id)
+
+
         return render(request,'app1/gopurchasepymnt.html',{'cmp1': cmp1})
     return redirect('/') 
 
@@ -40384,6 +40411,22 @@ def addpayrollemployee(request):
                 img1 = 'default' 
             salarydetails = request.POST['salarydetails']
             effectivefrom = request.POST['loan_duration']
+            
+            # print(loan_duration)
+            # if loan_duration > 11 :
+            #     ln = int(loan_duration) / 12
+            #     loan_term = str(ln) + 'YEAR'
+            # else:
+            #     ln = loan_duration
+            #     loan_term = str(ln) +'MONTH'
+            # try:
+            #     file = request.FILES['file']
+            # except:
+            #     file = '' 
+            # Note = request.POST['Note']
+            # print(loan_duration)
+            # print(ln)
+            
             payhead = request.POST['payhead']
             hours = request.POST['hours']
             rate = request.POST['rate']
@@ -48891,6 +48934,7 @@ def get_bankacc_num2(request):
         print(e)
         return redirect(addpurchasepymnt)
     
+@login_required(login_url='regcomp')
 def credit_term2(request):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
@@ -48901,23 +48945,25 @@ def credit_term2(request):
         if request.method == 'POST':
             cmp1 = company.objects.get(id=request.session['uid'])
             term_value = request.POST.get('term_value')
-            print
-            term = request.POST.get('term') 
+            term = request.POST.get('term')
             t_v = term_value + ' ' + term 
             if term == 'YEAR':
                 term_value = int(term_value) * 12
-                item = loan_duration(cid=cmp1,term=t_v,term_value=term_value)
+                item = loan_duration(cid=cmp1, term=t_v, term_value=term_value)
                 item.save()
-                print(term)
-                print(term_value)
             else:
-                item = loan_duration(cid=cmp1,term=t_v,term_value=term_value)
+                item = loan_duration(cid=cmp1, term=t_v, term_value=term_value)
                 item.save()
-            print("TERM DONE")      
             
-            return redirect('term_dropdown')
-        return redirect('term_dropdown')
-    return redirect('/') 
+            # Return the newly added item data
+            response_data = {
+                'id': item.id,
+                'term': item.term,
+            }
+            return JsonResponse(response_data)
+    
+    # Return a response even if there's an issue
+    return JsonResponse({'error': 'An error occurred'})
 
 @login_required(login_url='regcomp')
 def term_dropdown2(request):
@@ -48930,3 +48976,50 @@ def term_dropdown2(request):
         options[option.id] =    [option.term]
 
     return JsonResponse(options)
+
+
+from django.http import JsonResponse
+
+def get_account_number(request):
+    if request.method == 'POST':
+        bank_name = request.POST.get('bankName')
+
+        # Query your database to fetch the account number based on the bank name
+        try:
+            bank_account = BankAccount.objects.get(bank_name=bank_name)
+            account_number = bank_account.account_number
+            return JsonResponse({'status': True, 'accountNumber': account_number})
+        except BankAccount.DoesNotExist:
+            return JsonResponse({'status': False, 'accountNumber': ''})
+
+    return JsonResponse({'status': False, 'accountNumber': ''})
+
+
+# @login_required(login_url='regcomp')
+# def credit_period_rbill2(request):
+#     if 'uid' in request.session:
+#         if request.session.has_key('uid'):
+#             uid = request.session['uid']
+#         else:
+#             return redirect('/')
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         if request.method=='POST':
+#             period = request.POST['newperiod']
+#             cpd=creditperiod(newperiod = period,cid=cmp1)
+#             cpd.save()
+#             return HttpResponse({"message": "success"})
+
+# def credit_dropdown_rbill(request):
+#     if 'uid' in request.session:
+#         if request.session.has_key('uid'):
+#             uid = request.session['uid']
+#         else:
+#             return redirect('/')
+#         cmp1= company.objects.get(id=request.session["uid"])
+#         options = {}
+#         option_objects = creditperiod.objects.filter(cid = cmp1)
+#         for option in option_objects:
+           
+#             options[option.id] = option.newperiod
+
+#         return JsonResponse(options)

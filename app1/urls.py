@@ -732,7 +732,10 @@ urlpatterns = [
     re_path(r'^gopurchasepymnt$', views.gopurchasepymnt, name='gopurchasepymnt'),
     re_path(r'^addpurchasepymnt$', views.addpurchasepymnt, name='addpurchasepymnt'),
     re_path(r'^createpurchasepymnt$', views.createpurchasepymnt, name='createpurchasepymnt'),
+    # re_path(r'^viewpurchasepymnt/(?P<id>\d+)$', views.viewpurchasepymnt, name='viewpurchasepymnt'),
     re_path(r'^viewpurchasepymnt/(?P<id>\d+)$', views.viewpurchasepymnt, name='viewpurchasepymnt'),
+    
+
     re_path(r'^viewpurchasepymnt/goeditpurchasepymnt/(?P<id>\d+)$', views.goeditpurchasepymnt, name='goeditpurchasepymnt'),
     re_path(r'^viewpurchasepymnt/goeditpurchasepymnt/editpurchasepymnt/(?P<id>\d+)$', views.editpurchasepymnt, name='editpurchasepymnt'),
     re_path(r'^viewpurchasepymnt/deletepurchasepymnt/(?P<id>\d+)$', views.deletepurchasepymnt, name='deletepurchasepymnt'),
@@ -1335,6 +1338,7 @@ urlpatterns = [
     path('get_bank_acc_num2', views.get_bankacc_num2, name='get_bankacc_num2'),
     path('credit_term2', views.credit_term2, name='credit_term2'),
     path('term_dropdown2', views.term_dropdown2, name='term_dropdown2'),
+    path('get_account_number/', views.get_account_number, name='get_account_number'),
   
 
  

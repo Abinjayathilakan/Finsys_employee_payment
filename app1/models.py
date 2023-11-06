@@ -1517,8 +1517,7 @@ class creditperiod(models.Model):
 class purchasepayment(models.Model):
     pymntid = models.AutoField(('pyid'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
-    reference = models.CharField(max_length=100,null=True)
-    
+    reference = models.CharField(max_length=100,null=True)  
     vendor = models.CharField(max_length=100)
     paymentdate = models.DateField(null=True)
     paymentmethod = models.CharField(max_length=100,null=True)
@@ -1527,7 +1526,7 @@ class purchasepayment(models.Model):
     paymentamount = models.CharField(max_length=100,null=True)
     amtcredit = models.CharField(max_length=100, default='0')
     
-    paid_through = models.CharField(max_length=100,null=True)
+    bank_names = models.CharField(max_length=100,null=True)
     account_number = models.CharField(max_length=100,null=True)
     cheque_number = models.CharField(max_length=100,null=True)
     upi_id = models.CharField(max_length=100,null=True)

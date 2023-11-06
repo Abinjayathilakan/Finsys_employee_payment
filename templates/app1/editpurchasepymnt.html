@@ -86,7 +86,7 @@
                                     <option value="Bank Transfer">Bank Transfer</option>
                                     <option value="Cheque">Cheque</option>
                                     <!-- <option value="Credit Card">Credit Card</option> -->
-                                    <option value="UPI">UPI ID</option>
+                                    <option value="UPI">UPI</option>
                                     {% for p in pymt %}
                                         <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
                                     {% endfor %}
@@ -94,30 +94,40 @@
                             </div>
                         </div>
                         </div>
-                        
+                        <div class="row">
                         <div class="col-md-4 mt-3">
                             <div class="d-none pymnt-methd-inp" id="bank-field" style="flex-direction: column;">
                                 <label class="scol-form-label">Account Number</label>
                                 <select id="bankacc_inp" name="bank_acc" class="form-control bg-light text-white narrow-input">
-                                    <option value="{{ paymt.account_number }}">{{ paymt.account_number }}</option>
+                                    <option value="{{ paymt.bank_names }}">{{ paymt.bank_names }}</option>
                                     {% for v in bank %}
-                                        <option value="{{ v.account_number }}" {% if v.account_number == paymt.account_number %}selected{% endif %}>{{ v.account_number }}</option>
+                                        <option value="{{ v.bank_name }}" {% if v.bank_name == paymt.bank_names %}selected{% endif %}>{{ v.bank_name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="d-none pymnt-methd-inp" id="cheq-field" style="flex-direction: column;">
                                 <label class="scol-form-label">Cheque ID</label>
-                                <input type="text" name="chq_id" id="chequeid_inp" class="form-control" placeholder="Cheque ID">
+                                <input type="text" name="chq_id" id="chequeid_inp" class="form-control" value="{{ paymt.cheque_number }}">
                             </div>
-                            <div class="d-none pymnt-methd-inp" id="cc-field" style="flex-direction: column;">
+                            <!-- <div class="d-none pymnt-methd-inp" id="cc-field" style="flex-direction: column;">
                                 <label class="scol-form-label">Credit Card</label>
                                 <input type="number" name="ccnum" id="ccnum_inp" class="form-control" value="{{ paymt.cheque_number }}">
-                            </div>
+                            </div> -->
+                        
                             <div class="d-none pymnt-methd-inp" id="upi-field" style="flex-direction: column;">
+
                                 <label class="scol-form-label">UPI ID</label>
                                 <input type="text" name="upiid" id="upi_inp" class="form-control" value="{{ paymt.upi_id }}">
                             </div>
                         </div>
+
+                        <div class="col-md-4 mt-3">
+                            <div class="d-none pymnt-methd-inp" id="account-number-field" style="flex-direction: column;">
+                                <label class="scol-form-label">Account Number</label>
+                                <input type="text" name="account_number" id="account_number" class="form-control" value="{{ paymt.account_number }}">
+                            </div>
+                        </div>
+                    </div>
                         
                         
                     
@@ -234,12 +244,16 @@
                             <div class="col-md-5 table-responsive-md">
                                 <table class="table table-bordered table-hover" id="tab_logic_total" style="background-color: rgba(0,0,0,0.4);">
                                     <tbody>
-                                    <!-- <tr>
-                                        <th class="text-center">Amount to Apply</th>
-                                        <td class="text-center"><input type="number" name='paymentamount' id="amtoapply"
-                                            placeholder='0.00' value="{{ paymt.paymentamount }}" class="form-control">
-                                        </td>
-                                    </tr> -->
+                                      
+                                        <tr>
+                                            <th class="text-center">Amount to Apply</th>
+                                            <td class="text-center">
+                                                <input type="number" name="paymentamount" id="amtoapply{{ forloop.counter }}"
+                                                    value="{{ paymt.paymentamount }}" class="form-control">
+                                            </td>
+                                        </tr>
+                                   
+
                                     <tr>
                                         <th class="text-center">Balance amount</th>
                                         <td class="text-center"><input type="number" name='amtcredit' id="amtcredit"
@@ -253,8 +267,8 @@
                         <div class="row mt-4">
                             <div class="col-md-10"></div>
                             <div class="" style="margin-left: 30rem; text-align: center;">
-                                <button type="submit" name="action" value="draft" class="btn btn-outline-info rounded-pill w-10 text-light">Save as Draft</button>&nbsp;
-                                <button type="submit" name="action" value="save" onclick="alert('Are you sure you wants to save the payment?\nNo corrections after submission')" class="btn btn-outline-info rounded-pill w-10 text-light">Save And Send</button>
+                                <!-- <button type="submit" name="action" value="draft" class="btn btn-outline-info rounded-pill w-10 text-light">Save as Draft</button>&nbsp; -->
+                                <button type="submit" name="action" value="save"  class="btn btn-outline-info rounded-pill w-10 text-light">Save Changes</button>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -1099,10 +1113,12 @@
 
     
     <script>
-        function updateAmountFields() {
+        function updateAmountToApply() {
             var totalPayment = 0;
+    
             for (var i = 0; i <= j; i++) {
                 var paymentField = document.getElementById('payment' + i);
+                
                 if (paymentField) {
                     var payment = parseFloat(paymentField.value);
                     if (!isNaN(payment)) {
@@ -1110,17 +1126,24 @@
                     }
                 }
             }
-        
-            // Update "Amount" and "Amount to Apply" fields with the total payment
-            var amountField = document.getElementById('amtrcvd');
+    
+            // Update "Amount to Apply" field with the total payment
             var amountToApplyField = document.getElementById('amtoapply');
-        
-            if (amountField && amountToApplyField) {
-                amountField.value = totalPayment;
+            
+            if (amountToApplyField) {
                 amountToApplyField.value = totalPayment;
             }
         }
-        </script>
+    
+        // Add event listeners to the payment fields to trigger the update
+        for (var i = 0; i <= j; i++) {
+            var paymentField = document.getElementById('payment' + i);
+            if (paymentField) {
+                paymentField.addEventListener('input', updateAmountToApply);
+            }
+        }
+    </script>
+    
         <!-- <script>
             document.getElementById("paymentForm").addEventListener("submit", function (event) {
                 event.preventDefault(); // Prevent the default form submission
@@ -1226,37 +1249,28 @@
 
 
 <script>
-    $('#paymeth').on('change', function() {
-        var select = $('#paymeth').val();
-        
-        // Hide all fields by default
-        $('.pymnt-methd-inp').addClass('d-none');
-        $('.pymnt-methd-inp').removeClass('d-flex');
-
-        if (select === 'Cash') {
-            // Show the Cash field
-            $('#cash-field').removeClass('d-none');
-            $('#cash-field').addClass('d-flex');
-        } else if (select === 'Cheque') {
-            // Show the Cheque field
-            $('#cheq-field').removeClass('d-none');
-            $('#cheq-field').addClass('d-flex');
-        } else if (select === 'Credit Card') {
-            // Show the Credit Card field
-            $('#cc-field').removeClass('d-none');
-            $('#cc-field').addClass('d-flex');
-        } else if (select === 'Bank Transfer') {
-            // Show the Bank Transfer field
-            $('#bank-field').removeClass('d-none');
-            $('#bank-field').addClass('d-flex');
-        } else if (select === 'UPI') {
-            // Show the UPI field
-            $('#upi-field').removeClass('d-none');
-            $('#upi-field').addClass('d-flex');
-        } else {
-            // Handle other cases as needed
+    function showPaymentFields(paymentMethod) {
+        $('.pymnt-methd-inp').addClass('d-none').removeClass('d-flex');
+        if (paymentMethod === 'Bank Transfer') {
+            $('#bank-field').removeClass('d-none').addClass('d-flex');
+            $('#account-number-field').removeClass('d-none').addClass('d-flex');
+        } else if (paymentMethod === 'Cheque') {
+            $('#cheq-field').removeClass('d-none').addClass('d-flex');
+        } else if (paymentMethod === 'Credit Card') {
+            $('#cc-field').removeClass('d-none').addClass('d-flex');
+        } else if (paymentMethod === 'UPI') {
+            $('#upi-field').removeClass('d-none').addClass('d-flex');
         }
+            
+    }
+
+    $('#paymeth').on('change', function() {
+        var selectedPaymentMethod = $(this).val();
+        showPaymentFields(selectedPaymentMethod);
     });
+
+    // Initialize the visibility of fields based on the initial value
+    showPaymentFields($('#paymeth').val());
 </script>
 
 

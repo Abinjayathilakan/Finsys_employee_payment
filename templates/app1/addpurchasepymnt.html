@@ -63,9 +63,10 @@
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Date</label>
                             <input type="date" name="paymentdate" id="date" class="form-control" required>
+                            
                         </div>
                     
-                        <div class="col-md-3 mt-3">
+                        <div class="col-md-4 mt-3">
                             <label for="">Reference</label>
                             <input type="text" name="reference" value="{{ref_no}}" class="form-control" required>
                         </div>
@@ -80,7 +81,7 @@
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Method</label>
                             <div class="d-flex">
-                                <select name="paymentmethod" id="paymeth" onclick="showinp('newmethod', this)"class="form-control">
+                                <select name="paymentmethod" id="paymeth" onclick="showinp('newmethod', this)"class="form-control" required>
                                     <option value="NILL" selected disabled>Choose Payment Method</option>
 
                                     <option value="Cash">Cash</option>
@@ -98,14 +99,14 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="row">
                     <div class="col-md-4 mt-3">
                         <div class="d-none pymnt-methd-inp" id="bank-field" style="flex-direction: column;">
-                            <label class="scol-form-label">Account Number</label>
-                            <select id="bankacc_inp" name="bank_acc" class="form-control bg-light text-white narrow-input">
-                                <option value="NILL" selected disabled>Choose Account Number</option>
+                            <label class="scol-form-label">Bank Name</label>
+                            <select id="bankacc_inp" name="bank_acc" class="form-control bg-light text-white narrow-input" required>
+                                <option value="NILL" selected disabled>Choose Bank Name</option>
                                 {% for v in bank %}
-                                <option value="{{ v.account_number }}">{{ v.account_number }}</option>
+                                <option value="{{ v.bank_name }}">{{ v.bank_name }}</option>
                                 {% endfor %}
                               </select>
                             <!-- <input type="text" name="bank_acc" id="bankacc_inp" class="form-control" placeholder="Account #"> -->
@@ -115,8 +116,8 @@
                             <input type="text" name="chq_id" id="chequeid_inp" class="form-control" placeholder="Cheque ID">
                         </div>
                         <div class="d-none pymnt-methd-inp" id="cc-field" style="flex-direction: column;">
-                            <label class="scol-form-label">Credit Card</label>
-                            <input type="number" name="ccnum" id="ccnum_inp" class="form-control" placeholder="Card Number">
+                            <label class="scol-form-label">Cheque Number</label>
+                            <input type="number" name="ccnum" id="ccnum_inp" class="form-control" placeholder="Cheque Number">
                         </div>
                         <div class="d-none pymnt-methd-inp" id="upi-field" style="flex-direction: column;">
                             <label class="scol-form-label">UPI ID</label>
@@ -124,6 +125,13 @@
                         </div>
                     </div>
                         
+                    <div class="col-md-4 mt-3">
+                        <div class="d-none pymnt-methd-inp" id="account-number-field" style="flex-direction: column;">
+                            <label class="scol-form-label">Account Number</label>
+                            <input type="text" name="account_number" id="account_number" class="form-control" placeholder="Account #">
+                        </div>
+                    </div>
+                </div>
                         <!-- <div class="col-md-4 mt-3">
                             <label for="">Payment Method</label>
                             <div class="d-flex">
@@ -241,12 +249,12 @@
                             <div class="col-md-5 table-responsive-md">
                                 <table class="table table-bordered table-hover" id="tab_logic_total" style="background-color: rgba(0,0,0,0.4);">
                                     <tbody>
-                                    <!-- <tr>
+                                    <tr>
                                         <th class="text-center">Amount to Apply</th>
                                         <td class="text-center">
                                             <input type="number" name="paymentamount" id="amtoapply" placeholder="0.00" class="form-control">
                                         </td>
-                                    </tr> -->
+                                    </tr>
                                     <tr>
                                         <th class="text-center">Balance Amount</th>
                                         <td class="text-center"><input type="number" name='amtcredit' id="amtcredit"
@@ -269,7 +277,7 @@
                             </div> -->
                             <div class="" style="margin-left: 30rem; text-align: center;">
                                 <button type="submit" name="action" value="draft" class="btn btn-outline-info rounded-pill w-10 text-light">Save as Draft</button>&nbsp;
-                                <button type="submit" name="action" value="save" onclick="alert('Are you sure you wants to save the payment?\nNo corrections after submission')" class="btn btn-outline-info rounded-pill w-10 text-light">Save And Send</button>
+                                <button type="submit" name="action" value="save"  class="btn btn-outline-info rounded-pill w-10 text-light">Save And Send</button>
                             </div>
                             
                         </div>
@@ -1199,25 +1207,70 @@
 
         }
     </script>
+
+
     <script>
         function addagain() {
-        var totalAmountDue = parseFloat(document.getElementById('openbal0').value);
-        var totalPayment = 0;
+            var totalAmountDue = parseFloat(document.getElementById('openbal0').value);
+            var totalPayment = 0;
     
-        for (var i = 0; i <= j; i++) {
-            var paymentField = document.getElementById('payment' + i);
-            if (paymentField) {
-                var payment = parseFloat(paymentField.value);
-                if (!isNaN(payment)) {
-                    totalPayment += payment;
+            for (var i = 0; i <= j; i++) {
+                var paymentField = document.getElementById('payment' + i);
+                if (paymentField) {
+                    var payment = parseFloat(paymentField.value);
+                    if (!isNaN(payment)) {
+                        totalPayment += payment;
+                    }
                 }
             }
+    
+            var balanceAmount = totalAmountDue - totalPayment;
+            document.getElementById('amtcredit').value = balanceAmount;
+    
+            // Calculate the total payment amount from all payment fields
+            let totalPaymentForAmountToApply = 0;
+            $('input[name="payment[]"]').each(function() {
+                totalPaymentForAmountToApply += parseFloat($(this).val()) || 0;
+            });
+    
+            // Update the "Amount to Apply" field with the total payment
+            $('#amtoapply').val(totalPaymentForAmountToApply);
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Attach an input event listener to all "Payment" input fields with the name "payment[]"
+        $('input[name="payment[]"]').on('input', function() {
+            updateAmounts();
+        });
+    
+        function updateAmounts() {
+            let totalPayment = 0;
+    
+            // Calculate the total payment amount from all "Payment" input fields
+            $('input[name="payment[]"]').each(function() {
+                totalPayment += parseFloat($(this).val()) || 0;
+            });
+    
+            // Update the "Amount to Apply" field
+            $('#amtoapply').val(totalPayment);
+    
+            // Update the "Balance Amount" field
+            var totalAmountDue = parseFloat(document.getElementById('openbal0').value);
+            var balanceAmount = totalAmountDue - totalPayment;
+            $('#amtcredit').val(balanceAmount);
         }
     
-        var balanceAmount = totalAmountDue - totalPayment;
-        document.getElementById('amtcredit').value = balanceAmount;
-    }
+        // Call the function initially to calculate and display initial values
+        updateAmounts();
     </script>
+    
+    
+    
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
@@ -1387,67 +1440,55 @@
 
     <script>
         $('#paymeth').on('change', function() {
-            var select = $('#paymeth').val();
-            var bnkId = $(this).find(":selected").attr('text');
-            if (bnkId != undefined) {
-                $('.pymnt-methd-inp').addClass('d-none');
-                $('.pymnt-methd-inp').removeClass('d-flex');
-                $.ajax({
-                    url: "{% url 'get_bankacc_num' %}",
-                    type: "POST",
-                    data: {
-                        bankId: bnkId,
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                    },
-        
-                    success: function(data) {
-                        if (data.status) {
-                            $('#bank-field').removeClass('d-none');
-                            $('#bank-field').addClass('d-flex');
-                            $('#bankacc_inp').val(data.accountNumber);
-                        } else {
-                            alert('Something went wrong.!');
-                        }
-                    }
-                });
-            } else {
-                if (select === 'Cash') {
-                    // Hide other fields and show only the Cash field
-                    $('.pymnt-methd-inp').addClass('d-none');
-                    $('.pymnt-methd-inp').removeClass('d-flex');
-                } else if (select === 'Cheque') {
-                    // Hide other fields and show only the Cheque field
-                    $('.pymnt-methd-inp').addClass('d-none');
-                    $('.pymnt-methd-inp').removeClass('d-flex');
-                    $('#cheq-field').removeClass('d-none');
-                    $('#cheq-field').addClass('d-flex');
-                } else if (select === 'Credit Card') {
-                    // Hide other fields and show only the Credit Card field
-                    $('.pymnt-methd-inp').addClass('d-none');
-                    $('.pymnt-methd-inp').removeClass('d-flex');
-                    $('#cc-field').removeClass('d-none');
-                    $('#cc-field').addClass('d-flex');
-                } else if (select === 'Bank Transfer') {
-                    // Hide other fields and show only the Bank Transfer field
-                    $('.pymnt-methd-inp').addClass('d-none');
-                    $('.pymnt-methd-inp').removeClass('d-flex');
-                    $('#bank-field').removeClass('d-none');
-                    $('#bank-field').addClass('d-flex');
-                } else if (select === 'UPI') {
-                    // Hide other fields and show only the UPI field
-                    $('.pymnt-methd-inp').addClass('d-none');
-                    $('.pymnt-methd-inp').removeClass('d-flex');
-                    $('#upi-field').removeClass('d-none');
-                    $('#upi-field').addClass('d-flex');
-                } else {
-                    // Handle other cases as needed
-                    $('.pymnt-methd-inp').removeClass('d-flex');
-                    $('.pymnt-methd-inp').addClass('d-none');
-                }
+            var selectedPaymentMethod = $(this).val();
+            
+            // Hide all payment method fields by default
+            $('.pymnt-methd-inp').addClass('d-none');
+            $('.pymnt-methd-inp').removeClass('d-flex');
+            
+            if (selectedPaymentMethod === 'Bank Transfer') {
+                // Show the bank and account number fields for Bank Transfer
+                $('#bank-field').removeClass('d-none');
+                $('#bank-field').addClass('d-flex');
+                $('#account-number-field').removeClass('d-none');
+                $('#account-number-field').addClass('d-flex');
+            } else if (selectedPaymentMethod === 'UPI') {
+                // Show the UPI fields
+                $('#upi-field').removeClass('d-none');
+                $('#upi-field').addClass('d-flex');
+            } else if (selectedPaymentMethod === 'Cheque') {
+                // Show the UPI fields
+                $('#cc-field').removeClass('d-none');
+                $('#cc-field').addClass('d-flex');
+            } else if (selectedPaymentMethod === 'Cash') {
+                // Show the Cash fields
+                // Add similar conditions for other payment methods
             }
         });
         
+        $('#bankacc_inp').on('change', function() {
+            var selectedBankName = $(this).val();
+            
+            // Make an AJAX request to get the account number for the selected bank
+            $.ajax({
+                url: "{% url 'get_account_number' %}",
+                type: "POST",
+                data: {
+                    bankName: selectedBankName,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function(data) {
+                    if (data.status) {
+                        // Populate the account number field with the received data
+                        $('#account_number').val(data.accountNumber);
+                    } else {
+                        alert('Something went wrong.!');
+                    }
+                }
+            });
+        });
     </script>
+
     
     
 

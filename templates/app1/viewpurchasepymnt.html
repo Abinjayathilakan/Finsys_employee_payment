@@ -657,6 +657,20 @@
                                     
                                     <hr> -->
 
+                                    {% if paymt.bank_names %}
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5  mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Bank Name </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ paymt.bank_names }}</b></label>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    {% endif %}
+
                                     {% if paymt.account_number %}
                                     <div class="row">
                                         <div class="col-md-4 ml-5  mr-5 mt-3">
@@ -965,7 +979,7 @@
                                     </div>
                                     <div class="col-5">
                                         <p style="color:#000">Payment Date &nbsp;&nbsp;&nbsp;&nbsp;: <span> {{ paymt.paymentdate |date:'d-m-Y' }}</span></p>
-                                        <p style="color:#000">Reference Number : <span> {{ paymt.reference }}</span></p>
+                                        <p style="color:#000">Payment Method : <span> {{ paymt.paymentmethod }}</span></p>
                                        
                                     </div>
                                 </div>
@@ -976,11 +990,11 @@
                             <table class="table table-hover table-bordered">
                                 <thead>
                                     <tr style=" font-size:13px; color:#000; padding:5px; font-family: 'Muli', sans-serif;">
-                                        <td width="7%" height="30" align="center"><strong>S.N</strong></td>
-                                        <td width="20%" align="center"><strong>Bill Date</strong></td>
-                                        <td width="20%" align="center"><strong>Bill Number</strong></td>
-                                        <td width="20%" align="center"><strong>Balance Due</strong></td>
-                                        <td width="20%" align="center"><strong>Paid Amount</strong></td>
+                                        <td width="7%" height="30" align="center" style="color:#000" ><strong>S.N</strong></td>
+                                        <td width="20%" align="center" style="color:#000"><strong>Bill Date</strong></td>
+                                        <td width="20%" align="center" style="color:#000"><strong>Bill Number</strong></td>
+                                        <td width="20%" align="center" style="color:#000"><strong>Balance Due</strong></td>
+                                        <td width="20%" align="center" style="color:#000"><strong>Paid Amount</strong></td>
                                         <!-- <td width="13%" align="center"><strong>payments</strong></td> -->
                                         </tr>
                                 </thead>
