@@ -52,17 +52,18 @@
                             <input type="text" name="gsttype" id="gsttype" class="form-control" value="{{ paymt.gst_treatment }}">
                         </div>
 
-                        <div class="col-md-3 mt-2" id="gstinField"  >
+                        <div class="col-md-3 mt-2" id="gstinField" {% if not paymt.gst_number %} style="display: none;" {% endif %}>
                             <label for="">GST Number</label>
                             <input type="text" name="gstin" id="gstin" class="form-control" value="{{ paymt.gst_number }}">
                         </div>
+                        
                     </div>
                     <hr>
 
                     <div class="row">
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Date</label>
-                            <input type="date" name="paymentdate" id="date" class="form-control" value="{{ paymt.paymentdate | date:'Y-m-d' }}" required>
+                            <input type="date" name="dates"  class="form-control" value="{{ paymt.paymentdate | date:'Y-m-d' }}" required>
                         </div>
                     
                         <div class="col-md-4 mt-3">
@@ -106,8 +107,8 @@
                                 </select>
                             </div>
                             <div class="d-none pymnt-methd-inp" id="cheq-field" style="flex-direction: column;">
-                                <label class="scol-form-label">Cheque ID</label>
-                                <input type="text" name="chq_id" id="chequeid_inp" class="form-control" value="{{ paymt.cheque_number }}">
+                                <label class="scol-form-label">Cheque Number</label>
+                                <input type="text" name="ccnum" id="chequeid_inp" class="form-control" value="{{ paymt.cheque_number }}">
                             </div>
                             <!-- <div class="d-none pymnt-methd-inp" id="cc-field" style="flex-direction: column;">
                                 <label class="scol-form-label">Credit Card</label>
@@ -210,7 +211,7 @@
                                         <th class="text-center">Bill Number</th>
                                         <th class="text-center">Bill Amount</th>
                                         <th class="text-center">Bill Due Date</th>
-                                        <th class="text-center">Amount Due</th>
+                                        <th class="text-center">Balance Due</th>
                                         <th class="text-center">Payment</th>
 
                                     </tr>
@@ -248,7 +249,7 @@
                                         <tr>
                                             <th class="text-center">Amount to Apply</th>
                                             <td class="text-center">
-                                                <input type="number" name="paymentamount" id="amtoapply{{ forloop.counter }}"
+                                                <input type="number" name="paymentamounts" id="amtoapply"
                                                     value="{{ paymt.paymentamount }}" class="form-control">
                                             </td>
                                         </tr>
@@ -1060,53 +1061,56 @@
 
 
 
-    <script>
-        $(document).ready(function () {
-            $('#select').on('change', function () {
-                var select = $('#select').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'getvendordata3' %}",
-                    data: {
-                        id: select
-                    },
-                    success: function (response) {
-                        var json_data = JSON.parse(response);
-                        if (json_data.length > 0) {
-                            var vendorData = json_data[0]; // Assuming you are expecting one vendor data
-                            $('#email').val(vendorData.email);
-                            $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
-        
-                            // Show email and GST treatment fields
-                            $('#emailField, #gstTypeField').show();
-        
-                            // Set values for email and GST treatment fields
-                            $('#email').val(vendorData.email);
-                            $('#gsttype').val(vendorData.gsttype);
-        
-                            // Check if GST Number has a value
-                            if (vendorData.gstin) {
-                                // Set the GST Number field to the value and show the field
-                                $('#gstin').val(vendorData.gstin);
-                                $('#gstinField').show();
-                            } else {
-                                // If GST Number is empty, set the field to null or empty and hide it
-                                $('#gstin').val(null); // or $('#gstin').val('');
-                                $('#gstinField').hide();
-                            }
+<script>
+    $(document).ready(function () {
+        $('#select').on('change', function () {
+            var select = $('#select').val();
+            $.ajax({
+                type: "GET",
+                url: "{% url 'getvendordata3' %}",
+                data: {
+                    id: select
+                },
+                success: function (response) {
+                    var json_data = JSON.parse(response);
+                    if (json_data.length > 0) {
+                        var vendorData = json_data[0]; // Assuming you are expecting one vendor data
+    
+                        $('#email').val(vendorData.email);
+                        $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
+    
+                        // Show email and GST treatment fields
+                        $('#emailField, #gstTypeField').show();
+    
+                        // Set values for email and GST treatment fields
+                        $('#email').val(vendorData.email);
+                        $('#gsttype').val(vendorData.gsttype);
+    
+                        // Check if GST Number has a value
+                        if (vendorData.gstin && vendorData.gstin.trim() !== '') {
+                            // Set the GST Number field to the value and show the field
+                            $('#gstin').val(vendorData.gstin);
+                            $('#gstinField').show();
                         } else {
-                            // Handle the case where no data was found for the selected ID.
+                            // If GST Number is empty or contains only whitespace, hide the field
+                            $('#gstin').val('');
+                            $('#gstinField').hide();
                         }
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle the AJAX error.
+                    } else {
+                        // Handle the case where no data was found for the selected ID.
                     }
-                });
+                },
+                error: function (xhr, status, error) {
+                    // Handle the AJAX error.
+                    console.error("AJAX Error:", error);
+                }
             });
         });
-        
-        
+    });
     </script>
+
+    
+    
     
 
     

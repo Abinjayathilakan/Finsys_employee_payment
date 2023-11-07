@@ -507,7 +507,7 @@
                                         class="form-control qty" step="0" min="0"/>
                                     </td>
                                     <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
-                                    <td><input type="number" name='amountdue[]' id="openbal${i+1}" value="${data[i].balance_due}"
+                                    <td><input type="number" name='amountdue[]' id="openbal${i+1}" value="${data[i].balance_amount}"
                                         class="form-control price" step="0.00" min="0"/>
                                     </td>
                                     <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i+1}" placeholder='0.00'
@@ -529,7 +529,7 @@
                                         class="form-control qty" step="0" min="0"/>
                                     </td>
                                     <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
-                                    <td><input type="number" name='amountdue[]' id="openbal${i}" value="${data[i].balance_due}"
+                                    <td><input type="number" name='amountdue[]' id="openbal${i}" value="${data[i].balance_amount}"
                                         class="form-control price" step="0.00" min="0"/>
                                     </td>
                                     <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i}" placeholder='0.00'

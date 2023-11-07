@@ -35832,7 +35832,7 @@ def createpurchasepymnt(request):
                 bank_names = request.POST['bank_acc']
                 account_number = request.POST.get('account_number')
             elif paymentmethod == 'Cheque':
-                cheque_number = request.POST['chq_id']
+                cheque_number = request.POST['ccnum']
             elif paymentmethod == 'UPI':
                 upi_id = request.POST['upiid']
 
@@ -36068,14 +36068,14 @@ def goeditpurchasepymnt(request,id):
         bank = BankAccount.objects.all()
         
 
-        count = purchasepayment1.objects.filter(pymnt=paymt).count()
-        print(count)
+        # count = purchasepayment1.objects.filter(pymnt=paymt).count()
+        # print(count)
        
         context = {
                     'cmp1': cmp1,
                     'paymt':paymt,
                     'paymt1':paymt1, 
-                    'count':count ,
+                    # 'count':count ,
                     'vndr':vndr, 
                     'bank':bank    
                 }
@@ -36106,7 +36106,7 @@ def editpurchasepymnt(request,id):
                 bank_names = request.POST['bank_acc']
                 account_number = request.POST.get('account_number')
             elif paymentmethod == 'Cheque':
-                cheque_number = request.POST['chq_id']
+                cheque_number = request.POST['ccnum']
             elif paymentmethod == 'UPI':
                 upi_id = request.POST['upiid']
 
@@ -36118,19 +36118,24 @@ def editpurchasepymnt(request,id):
             #         status = "Save"
                     
             # paymt=purchasepayment.objects.get(pymntid=id)
-            paymt = get_object_or_404(purchasepayment, pymntid=id)
+            
+            paymt=purchasepayment.objects.get(pymntid=id)
             paymt.vendor = request.POST['vendor']
             paymt.reference= request.POST['reference']
-
-            paymt.paymentdate = request.POST['paymentdate']
+            
+            # date=request.POST['dates']
+            # print(date)
+            # paymt.paymentdate=date
+            
+            print(request.POST)  # To check the entire POST data.
+            paymentdate = request.POST['dates']
+            print("Payment Date:", paymentdate)  # To verify the value of paymentdate.
 
 
             paymt.paymentmethod=request.POST['paymentmethod']
             
-            # paymt.depositeto=request.POST['depto']
-            # paymt.amtreceived=request.POST['amtreceived']
          
-            paymt.paymentamount = request.POST['paymentamount']
+            paymt.paymentamount= request.POST['paymentamounts']
             paymt.amtcredit=request.POST['amtcredit']
             
             
@@ -40381,9 +40386,17 @@ def goaddpayrollemployee(request):
     try:
         cmp1 = company.objects.get(id=request.session["uid"])
         loan_d = loan_duration.objects.filter(cid=cmp1)
-       
-        context = {'cmp1': cmp1,'loan_d' : loan_d}
+
+        context = {'cmp1': cmp1, 'loan_d': loan_d}
+        if not loan_duration.objects.filter(term='1 YEAR', term_value=12).exists():
+            loan_duration.objects.create(term='1 YEAR', term_value=12, cid=cmp1)
+        if not loan_duration.objects.filter(term='6 MONTH', term_value=6).exists():
+            loan_duration.objects.create(term='6 MONTH', term_value=6, cid=cmp1)
+        if not loan_duration.objects.filter(term='3 MONTH', term_value=3).exists():
+            loan_duration.objects.create(term='3 MONTH', term_value=3, cid=cmp1)
+        
         return render(request, 'app1/addemployee.html', context)
+
     except:
         return redirect('listpayrollemployee')
 
@@ -40411,20 +40424,19 @@ def addpayrollemployee(request):
                 img1 = 'default' 
             salarydetails = request.POST['salarydetails']
             effectivefrom = request.POST['loan_duration']
-            
-            # print(loan_duration)
-            # if loan_duration > 11 :
-            #     ln = int(loan_duration) / 12
+            # print(effectivefrom)
+            # if effectivefrom > 11 :
+            #     ln = int(effectivefrom) / 12
             #     loan_term = str(ln) + 'YEAR'
             # else:
-            #     ln = loan_duration
+            #     ln = effectivefrom
             #     loan_term = str(ln) +'MONTH'
             # try:
             #     file = request.FILES['file']
             # except:
             #     file = '' 
             # Note = request.POST['Note']
-            # print(loan_duration)
+            # print(effectivefrom)
             # print(ln)
             
             payhead = request.POST['payhead']
@@ -40520,7 +40532,8 @@ def addpayrollemployee(request):
 def listpayrollemployee(request):  
   cmp1 = company.objects.get(id=request.session["uid"])
   employee=payrollemployee.objects.filter(cid=cmp1)
-  return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1})
+  loan_d = loan_duration.objects.filter(cid=cmp1)
+  return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1, 'loan_d' : loan_d})
 
 # @login_required(login_url='regcomp')
 # def inactive_employee(request):
@@ -49023,3 +49036,5 @@ def get_account_number(request):
 #             options[option.id] = option.newperiod
 
 #         return JsonResponse(options)
+
+

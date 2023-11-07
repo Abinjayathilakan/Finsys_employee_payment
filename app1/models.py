@@ -2064,6 +2064,8 @@ class payrollcomments(models.Model):
     empid = models.ForeignKey(payrollemployee, on_delete=models.CASCADE)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     comment = models.CharField(max_length=250,null=True)
+    
+
 
 class bankings_G(models.Model):
     bankname = models.CharField(max_length=100)
@@ -2374,3 +2376,9 @@ class paymnt_made_comments(models.Model):
     empid = models.ForeignKey(purchasepayment, on_delete=models.CASCADE)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     comment = models.CharField(max_length=250,null=True)
+    
+class salary_duration(models.Model):
+    empid = models.ForeignKey(payrollemployee, on_delete=models.CASCADE)
+    term = models.TextField(max_length=30)
+    term_value = models.IntegerField()
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)

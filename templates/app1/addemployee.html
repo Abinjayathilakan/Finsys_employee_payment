@@ -150,15 +150,13 @@
                                 <label for="effectivefrom">Effective From</label>
                                 <div class="d-flex">
                                     <!-- Inside your template (e.g., addemployee.html) -->
-                                <select class="form-control term" name="loan_duration" id="loan_duration"  required>
-                                    <option value="NILL" selected disabled>Choose duration</option>
-                                    <!-- <option value="10 - 15">10 - 15</option>
-                                    <option value="20 - 30">20 - 30</option>
-                                    <option value="10 - 30">10 - 30</option> -->
-                                    {% for item in loan_d %}
-                                        <option value="{{ item.term_value }}">{{ item.term }}</option>
-                                    {% endfor %}
-                                </select>
+                                    <select class="form-control term" name="loan_duration" id="loan_duration" required>
+                                        <option value="NILL" selected disabled>Choose duration</option>
+                                        {% for item in loan_d %}
+                                            <option value="{{ item.term_value }}">{{ item.term }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    
 
                                 <a class="btn btn-outline-secondary ml-1" data-target="#emplyeeterm" data-toggle="modal">+</a>
 
