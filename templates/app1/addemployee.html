@@ -152,13 +152,16 @@
                                     <!-- Inside your template (e.g., addemployee.html) -->
                                     <select class="form-control term" name="loan_duration" id="loan_duration" required>
                                         <option value="NILL" selected disabled>Choose duration</option>
-                                        {% for item in loan_d %}
+                                        <option value="3">1 to 5 </option>
+                                        <option value="6">5 to 10</option>
+                                        <option value="9">10 to 20 </option>
+                                        <!-- {% for item in loan_d %}
                                             <option value="{{ item.term_value }}">{{ item.term }}</option>
-                                        {% endfor %}
+                                        {% endfor %} -->
                                     </select>
                                     
 
-                                <a class="btn btn-outline-secondary ml-1" data-target="#emplyeeterm" data-toggle="modal">+</a>
+                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#emplyeeterm" data-toggle="modal">+</a> -->
 
                             </div>
 
@@ -913,7 +916,7 @@
     });
 </script>
 
-<script>
+<!-- <script>
     $(document).on("click","#savecredit",function(){
 
         $.ajax({
@@ -997,9 +1000,9 @@
                     });
         });
 
-</script>
+</script> -->
 
-<script>
+<!-- <script>
     $(document).on("click", "#itemSave", function () {
         $.ajax({
             type: 'POST',
@@ -1060,7 +1063,7 @@
             }
         });
     }
-</script>
+</script> -->
 
 
 

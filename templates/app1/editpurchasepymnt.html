@@ -83,13 +83,12 @@
                             <div class="d-flex">
                                 <select name="paymentmethod" id="paymeth" class="form-control" style="width: 87%">
                                     <option value="{{ paymt.paymentmethod }}">{{ paymt.paymentmethod }}</option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Bank Transfer">Bank Transfer</option>
-                                    <option value="Cheque">Cheque</option>
-                                    <!-- <option value="Credit Card">Credit Card</option> -->
-                                    <option value="UPI">UPI</option>
-                                    {% for p in pymt %}
-                                        <option value="{{ p.newmethod }}">{{ p.newmethod }}</option>
+                                    
+                                    <option value="cash">Cash</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="upi">UPI</option>
+                                    {% for v in bank %}
+                                        <option value="{{ v.bank_name }}">{{ v.bank_name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -97,37 +96,28 @@
                         </div>
                         <div class="row">
                         <div class="col-md-4 mt-3">
-                            <div class="d-none pymnt-methd-inp" id="bank-field" style="flex-direction: column;">
-                                <label class="scol-form-label">Account Number</label>
-                                <select id="bankacc_inp" name="bank_acc" class="form-control bg-light text-white narrow-input">
-                                    <option value="{{ paymt.bank_names }}">{{ paymt.bank_names }}</option>
-                                    {% for v in bank %}
-                                        <option value="{{ v.bank_name }}" {% if v.bank_name == paymt.bank_names %}selected{% endif %}>{{ v.bank_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="d-none pymnt-methd-inp" id="cheq-field" style="flex-direction: column;">
-                                <label class="scol-form-label">Cheque Number</label>
-                                <input type="text" name="ccnum" id="chequeid_inp" class="form-control" value="{{ paymt.cheque_number }}">
-                            </div>
-                            <!-- <div class="d-none pymnt-methd-inp" id="cc-field" style="flex-direction: column;">
-                                <label class="scol-form-label">Credit Card</label>
-                                <input type="number" name="ccnum" id="ccnum_inp" class="form-control" value="{{ paymt.cheque_number }}">
-                            </div> -->
-                        
-                            <div class="d-none pymnt-methd-inp" id="upi-field" style="flex-direction: column;">
 
-                                <label class="scol-form-label">UPI ID</label>
-                                <input type="text" name="upiid" id="upi_inp" class="form-control" value="{{ paymt.upi_id }}">
+
+                            <div style="display:none;"  id="chequediv">
+                                <label class="col-form-label" >Cheque ID</label>
+                                <input type="text" class="form-control" name="cheque_id" id="cheque_id" value="{{ paymt.cheque_number }}" placeholder="Enter Cheque ID">
                             </div>
+                            
+                            <div style="display:none;" id="upidiv">
+                                <label class="col-form-label" >UPI ID</label>
+                                <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID" value="{{ paymt.upi_id }}">
+                            </div>
+    
+                            <div style="display:none;" id="bnkdiv">
+                                <label class="col-form-label" >Bank Account</label>
+                                <input type="text" class="form-control" name="bnk_id" id="bnk_id" value="{{ paymt.account_number }}" style="background-color: #43596c;" readonly>
+                            </div>
+
+
                         </div>
 
-                        <div class="col-md-4 mt-3">
-                            <div class="d-none pymnt-methd-inp" id="account-number-field" style="flex-direction: column;">
-                                <label class="scol-form-label">Account Number</label>
-                                <input type="text" name="account_number" id="account_number" class="form-control" value="{{ paymt.account_number }}">
-                            </div>
-                        </div>
+                    
+
                     </div>
                         
                         
@@ -1252,7 +1242,7 @@
 <!-- Include this JavaScript in your HTML template -->
 
 
-<script>
+<!-- <script>
     function showPaymentFields(paymentMethod) {
         $('.pymnt-methd-inp').addClass('d-none').removeClass('d-flex');
         if (paymentMethod === 'Bank Transfer') {
@@ -1275,8 +1265,55 @@
 
     // Initialize the visibility of fields based on the initial value
     showPaymentFields($('#paymeth').val());
-</script>
+</script> -->
 
+<script>
+    $(document).ready(function() {
+        $("#paymeth").change(function() {
+            var selectedPaymentMethod = $(this).val();
+            togglePaymentFields(selectedPaymentMethod);
+        });
+
+        // Initialize the visibility of fields based on the initial value
+        togglePaymentFields($('#paymeth').val());
+    });
+
+    function togglePaymentFields(paymentMethod) {
+        $('.payment-fields').hide();
+
+        if (paymentMethod === 'cash') {
+            $('#chequediv').hide();
+            $('#upidiv').hide();
+            $('#bnkdiv').hide();
+        } else if (paymentMethod === 'cheque') {
+            $('#chequediv').show();
+            $('#upidiv').hide();
+            $('#bnkdiv').hide();
+        } else if (paymentMethod === 'upi') {
+            $('#chequediv').hide();
+            $('#upidiv').show();
+            $('#bnkdiv').hide();
+        } else {
+            // It's a bank, show the bank field
+            $('#chequediv').hide();
+            $('#upidiv').hide();
+            $('#bnkdiv').show();
+
+            $.ajax({
+                type: "GET",
+                url: "{% url 'get_bankdata' %}",
+                data: {
+                    id: paymentMethod,
+                },
+                success: function(response) {
+                    document.getElementById('cheque_id').value = null;
+                    document.getElementById('upi_id').value = null;
+                    document.getElementById("bnk_id").value = response.account_number;
+                }
+            });
+        }
+    }
+</script>
 
    
 {% endblock %}

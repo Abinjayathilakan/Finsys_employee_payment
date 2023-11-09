@@ -137,18 +137,17 @@
                             <div class="col-3 col-md-4">
                                 <label for="effectivefrom">Effective From</label>
                                 <div class="d-flex">
-                                    <select class="custom-select" name="effectivefrom" id="termadd2" style="width: 500px;">
-                                        <option value="" id="trmopt2"></option>
-                                        <option value="0" {% if employee.effectivefrom == "0" %}selected{% endif %}>Due on Receipt</option>
-                                        <option value="15" {% if employee.effectivefrom == "15" %}selected{% endif %}>NET 15</option>
-                                        <option value="30" {% if employee.effectivefrom == "30" %}selected{% endif %}>NET 30</option>
-                                        <option value="60" {% if employee.effectivefrom == "60" %}selected{% endif %}>NET 60</option>
-                                        {% for pd in cpd %}
-                                            <option value="{{ pd.newperiod }}" {% if pd.newperiod == employee.effectivefrom %}selected{% endif %}>NET {{ pd.newperiod }}</option>
+                                    <select class="form-control term" name="loan_duration" id="loan_duration" value="{{employee.effectivefrom}}">
+                                        <option value="{{ employee.effectivefrom }}">{{ employee.effectivefrom }} MONTH</option>
+                                        <option value="3">3 MONTH</option>
+                                        <option value="6">6 MONTH</option>
+                                        <option value="9">9 MONTH</option>
+                                        {% for item in loan_d %}
+                                            <option value="{{ item.term_value }}">{{ item.term }}</option>
                                         {% endfor %}
                                     </select>
                                     
-                                <a class="btn btn-outline-secondary ml-1" data-target="#crperiod2" data-toggle="modal">+</a>
+                                <a class="btn btn-outline-secondary ml-1" data-target="#emplyeeterm" data-toggle="modal">+</a>
 
                                 <div class="text-danger m-2" id="effectivefrom"></div>
                             </div>
@@ -635,34 +634,54 @@
             {% endif %}
         </form>
 
-        <div class="modal fade" id="crperiod2">
-            <div class="modal-dialog">
+        <div class="modal fade" id="emplyeeterm">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content" style="background-color: #213b52;">
                     <div class="modal-header">
-                        <h5 class="m-3">New Credit Period</h5>
+                        <h3 class="m-3">ADD TERM</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="card p-3 m-3">
-                            <form action="{% url 'credit_period_rbill3' %}" method="post" autocomplete="off" id="credit">
+                        <center>
+                            <form action="" method="post"  autocomplete="off" id="modalItem">
                                 {% csrf_token %}
-                                <div class="row">
-                                    <div class="col-md-2 mt-2"></div>
-                                    <div class="col-md-5 mt-2">
-                                        <input type="number" name="newperiod" id="period" class="form-control">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-5 p-2">
+                                                <label  for="">Duration</label>
+                                                <input type="number"  id="duration" name="duration" class="form-control" placeholder="Number">
+            
+                                            </div>
+                                            
+                                            <div class="col-md-5 p-2">
+                                                <label for="">Term</label>
+                                                <input type="text" id="term" name="term" class="form-control" placeholder="Year / Month" oninput="this.value = this.value.toUpperCase()">
+            
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-2 mt-2">
-                                        <button class="btn btn-outline-info text-grey mb-3" type="submit" data-dismiss="modal" id="savecredit">Save</button>
+            
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-outline-info rounded-pill text-grey w-100 mt-3 mb-3"
+                                                  <button class="btn btn-outline-info rounded-pill w-100 text-light" data-dismiss="modal" type="submit" id="itemSave">SUBMIT</button>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-4"></div>
                                     </div>
+            
                                 </div>
-                            </form>  
-                        </div>
+                            </form>
+                        </center>
                     </div>
-                </div>   
+                </div>
             </div>
-        </div> 
+        </div>
 
 
     </div>
@@ -977,5 +996,69 @@
         });
 
 </script>
+
+<script>
+    $(document).on("click", "#itemSave", function () {
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'credit_term2' %}",
+            data: {
+                term: $("#term").val(),
+                term_value: $("#duration").val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            success: function (response) {
+                // Log the response data to the console for debugging
+                console.log(response);
+
+                if (response.id && response.term) {
+                    // Add the new option to the dropdown
+                    var dropdown = $('#loan_duration');
+                    dropdown.append($('<option></option>').attr('value', response.id).text(response.term));
+                }
+
+                // Reset the form
+                document.getElementById("modalItem").reset();
+            },
+            error: function (xhr, status, error) {
+                // Log any AJAX errors to the console for debugging
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    // Call reloadItem immediately after the page loads
+    $(document).ready(function () {
+        console.log('Page loaded');
+        reloadItem();
+    });
+
+    function reloadItem() {
+        $.ajax({
+            url: "{% url 'term_dropdown2' %}",
+            type: "GET",
+            dataType: "json",
+            data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+            success: function (data) {
+                var dropdown = $('#loan_duration'); // Use the correct ID of the dropdown element
+                console.log(data); // Log the received data
+
+            
+
+            
+
+                // Add the new options from the data received
+                $.each(data, function (id, value) {
+                    dropdown.append($('<option></option>').attr('value', id).text(value[0]));
+                });
+            },
+            error: function (xhr, status, error) {
+                // Log any AJAX errors to the console for debugging
+                console.error(xhr.responseText);
+            }
+        });
+    }
+</script>
+
 
 {% endblock %}

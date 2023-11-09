@@ -35821,20 +35821,21 @@ def createpurchasepymnt(request):
             paymentmethod = request.POST['paymentmethod']
 
             cash = None
-            bank_names = None
             account_number = None
             cheque_number = None
             upi_id = None
 
-            if paymentmethod == 'Cash':
+            if paymentmethod == 'cash':
                 cash = 'In-Hand Cash'
-            elif paymentmethod == 'Bank Transfer':
-                bank_names = request.POST['bank_acc']
-                account_number = request.POST.get('account_number')
-            elif paymentmethod == 'Cheque':
-                cheque_number = request.POST['ccnum']
-            elif paymentmethod == 'UPI':
-                upi_id = request.POST['upiid']
+            # elif paymentmethod == 'Bank Transfer':  
+            #     account_number = request.POST.get('bnk_id')
+            elif paymentmethod == 'cheque':
+                cheque_number = request.POST['cheque_id']
+            elif paymentmethod == 'upi':
+                upi_id = request.POST['upi_id']
+            else:
+                account_number = request.POST.get('bnk_id')
+                
 
             if 'action' in request.POST:
                 action = request.POST['action']
@@ -36068,8 +36069,8 @@ def goeditpurchasepymnt(request,id):
         bank = BankAccount.objects.all()
         
 
-        # count = purchasepayment1.objects.filter(pymnt=paymt).count()
-        # print(count)
+        count = purchasepayment1.objects.filter(pymnt=paymt).count()
+        print(count)
        
         context = {
                     'cmp1': cmp1,
@@ -36095,20 +36096,21 @@ def editpurchasepymnt(request,id):
             paymentmethod = request.POST['paymentmethod']
 
             cash = None
-            bank_names = None
+           
             account_number = None
             cheque_number = None
             upi_id = None
 
-            if paymentmethod == 'Cash':
+            if paymentmethod == 'cash':
                 cash = 'In-Hand Cash'
-            elif paymentmethod == 'Bank Transfer':
-                bank_names = request.POST['bank_acc']
-                account_number = request.POST.get('account_number')
-            elif paymentmethod == 'Cheque':
-                cheque_number = request.POST['ccnum']
-            elif paymentmethod == 'UPI':
-                upi_id = request.POST['upiid']
+           
+            elif paymentmethod == 'cheque':
+                cheque_number = request.POST['cheque_id']
+            elif paymentmethod == 'upi':
+                upi_id = request.POST['upi_id']
+            else:
+                account_number = request.POST['bnk_id']
+                
 
             # if 'action' in request.POST:
             #     action = request.POST['action']
@@ -36148,7 +36150,7 @@ def editpurchasepymnt(request,id):
 
             paymt = purchasepayment.objects.get(pymntid=id)
             paymt.paymentmethod = paymentmethod
-            paymt.bank_names=bank_names
+           
             paymt.account_number = account_number
             paymt.cheque_number = cheque_number
             paymt.upi_id = upi_id
@@ -36232,7 +36234,7 @@ def editpurchasepymnt(request,id):
             return redirect('viewpurchasepymnt', id=id)
 
 
-        return render(request,'app1/gopurchasepymnt.html',{'cmp1': cmp1})
+        return render(request,'app1/editpurchasepymnt.html')
     return redirect('/') 
 
 @login_required(login_url='regcomp')
@@ -36243,16 +36245,34 @@ def deletepurchasepymnt(request, id):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
-        paymt=purchasepayment.objects.get(pymntid=id)
+        paymt = purchasepayment.objects.get(pymntid=id)
         py = purchasepayment1.objects.all().filter(pymnt=id)
         stm = vendor_statment.objects.all().filter(paymnt=id)
         bs = balance_sheet.objects.all().filter(bill_pymnt=id)
-        paymt.delete() 
-        py.delete() 
-        stm.delete() 
-        bs.delete() 
+
+        # Retrieve the vendor information before deleting
+        vendor_name = paymt.vendor  # Assuming this is the vendor's name
+
+        # Calculate the total payments made to this vendor before deletion
+        total_payments = sum(py.payments for py in py)
+
+        # Update the vendor's balance by adding back the payments made to them
+        try:
+            vendor = vendor.objects.get(firstname=vendor_name, cid=cmp1)
+            vendor.opblnc_due += total_payments
+            vendor.save()
+        except vendor.DoesNotExist:
+            pass
+
+        # Delete the payment and related records
+        paymt.delete()
+        py.delete()
+        stm.delete()
+        bs.delete()
+
         return redirect('gopurchasepymnt')
     return redirect('gopurchasepymnt')
+
 
 @login_required(login_url='regcomp')
 def payment_method(request):
@@ -40385,15 +40405,15 @@ def edit(request, pk):
 def goaddpayrollemployee(request):
     try:
         cmp1 = company.objects.get(id=request.session["uid"])
-        loan_d = loan_duration.objects.filter(cid=cmp1)
+        # loan_d = loan_duration.objects.filter(cid=cmp1)
 
-        context = {'cmp1': cmp1, 'loan_d': loan_d}
-        if not loan_duration.objects.filter(term='1 YEAR', term_value=12).exists():
-            loan_duration.objects.create(term='1 YEAR', term_value=12, cid=cmp1)
-        if not loan_duration.objects.filter(term='6 MONTH', term_value=6).exists():
-            loan_duration.objects.create(term='6 MONTH', term_value=6, cid=cmp1)
-        if not loan_duration.objects.filter(term='3 MONTH', term_value=3).exists():
-            loan_duration.objects.create(term='3 MONTH', term_value=3, cid=cmp1)
+        context = {'cmp1': cmp1}
+        # if not loan_duration.objects.filter(term='1 YEAR', term_value=12).exists():
+        #     loan_duration.objects.create(term='1 YEAR', term_value=12, cid=cmp1)
+        # if not loan_duration.objects.filter(term='6 MONTH', term_value=6).exists():
+        #     loan_duration.objects.create(term='6 MONTH', term_value=6, cid=cmp1)
+        # if not loan_duration.objects.filter(term='3 MONTH', term_value=3).exists():
+        #     loan_duration.objects.create(term='3 MONTH', term_value=3, cid=cmp1)
         
         return render(request, 'app1/addemployee.html', context)
 
@@ -40532,8 +40552,8 @@ def addpayrollemployee(request):
 def listpayrollemployee(request):  
   cmp1 = company.objects.get(id=request.session["uid"])
   employee=payrollemployee.objects.filter(cid=cmp1)
-  loan_d = loan_duration.objects.filter(cid=cmp1)
-  return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1, 'loan_d' : loan_d})
+
+  return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1})
 
 # @login_required(login_url='regcomp')
 # def inactive_employee(request):
@@ -40559,14 +40579,28 @@ def payrollemployeeprofile(request,employeeid):
 
 @login_required(login_url='login')
 def payrollemployeeedit(request,employeeid): 
-  cmp1 = company.objects.get(id=request.session["uid"])
-  employee=payrollemployee.objects.get(cid=cmp1,employeeid=employeeid)
-  return render(request,'app1/payrollemployeeedit.html',{'employee':employee,'cmp1':cmp1})
+    
+    
+    cmp1 = company.objects.get(id=request.session['uid'])
+    employee=payrollemployee.objects.get(cid=cmp1,employeeid=employeeid)
+    loan_d = loan_duration.objects.filter(cid=cmp1)
+
+        
+    if not loan_duration.objects.filter(term='1 YEAR', term_value=12).exists():
+        loan_duration.objects.create(term='1 YEAR', term_value=12, cid=cmp1)
+    if not loan_duration.objects.filter(term='6 MONTH', term_value=6).exists():
+        loan_duration.objects.create(term='6 MONTH', term_value=6, cid=cmp1)
+    if not loan_duration.objects.filter(term='3 MONTH', term_value=3).exists():
+        loan_duration.objects.create(term='3 MONTH', term_value=3, cid=cmp1)
+        
+    return render(request,'app1/payrollemployeeedit.html',{'employee':employee,'cmp1':cmp1,'loan_d' : loan_d})
 
 
 
 @login_required(login_url='login')
 def editpayrollemployee(request,employeeid):  
+    
+        cmp1 = company.objects.get(id=request.session['uid']) 
         if request.method == 'POST':
             employee=payrollemployee.objects.get(cid=cmp1,employeeid=employeeid)
             employee.title = request.POST['title']
@@ -40588,7 +40622,7 @@ def editpayrollemployee(request,employeeid):
 
                 
             employee.salarydetails = request.POST['salarydetails']
-            employee.effectivefrom = request.POST['effectivefrom']
+            employee.effectivefrom = request.POST['loan_duration']
             employee.payhead = request.POST['payhead']
             employee.hours = request.POST['hours']
             employee.rate = request.POST['rate']
@@ -49038,3 +49072,16 @@ def get_account_number(request):
 #         return JsonResponse(options)
 
 
+from django.http import JsonResponse
+
+def get_bankdata(request):
+    bank_name = request.GET.get('id')
+    
+    try:
+        bank = BankAccount.objects.get(bank_name=bank_name)
+        account_number = bank.account_number
+        data = {'account_number': account_number}
+        return JsonResponse(data)
+    except BankAccount.DoesNotExist:
+        data = {'account_number': ''}
+        return JsonResponse(data)
