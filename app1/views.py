@@ -35860,7 +35860,7 @@ def createpurchasepymnt(request):
                 # amtreceived=request.POST['amtreceived'],
                 paymentamount=request.POST['paymentamount'],
                 paymentmethod=paymentmethod,
-                bank_names=bank_names,
+              
                 account_number=account_number,
                 cheque_number=cheque_number,
                 upi_id=upi_id,
@@ -36054,35 +36054,6 @@ def render_pdfpurpym_view(request, id):
     except Exception as e:
         return HttpResponse(f'An error occurred: {str(e)}', status=500)
 
-
-@login_required(login_url='regcomp')
-def goeditpurchasepymnt(request,id):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
-        paymt=purchasepayment.objects.get(pymntid=id)
-        paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
-        vndr = vendor.objects.filter(cid=cmp1)
-        bank = BankAccount.objects.all()
-        
-
-        count = purchasepayment1.objects.filter(pymnt=paymt).count()
-        print(count)
-       
-        context = {
-                    'cmp1': cmp1,
-                    'paymt':paymt,
-                    'paymt1':paymt1, 
-                    # 'count':count ,
-                    'vndr':vndr, 
-                    'bank':bank    
-                }
-        return render(request,'app1/editpurchasepymnt.html',context)
-    return redirect('/')
-
 def editpurchasepymnt(request,id):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
@@ -36093,6 +36064,7 @@ def editpurchasepymnt(request,id):
         cmp1 = company.objects.get(id=request.session['uid'])
         
         if request.method == 'POST':
+            
             paymentmethod = request.POST['paymentmethod']
 
             cash = None
@@ -36110,7 +36082,6 @@ def editpurchasepymnt(request,id):
                 upi_id = request.POST['upi_id']
             else:
                 account_number = request.POST['bnk_id']
-                
 
             # if 'action' in request.POST:
             #     action = request.POST['action']
@@ -36119,25 +36090,14 @@ def editpurchasepymnt(request,id):
             #     elif action == 'save':
             #         status = "Save"
                     
-            # paymt=purchasepayment.objects.get(pymntid=id)
-            
             paymt=purchasepayment.objects.get(pymntid=id)
             paymt.vendor = request.POST['vendor']
             paymt.reference= request.POST['reference']
-            
-            # date=request.POST['dates']
-            # print(date)
-            # paymt.paymentdate=date
-            
-            print(request.POST)  # To check the entire POST data.
-            paymentdate = request.POST['dates']
-            print("Payment Date:", paymentdate)  # To verify the value of paymentdate.
-
-
+            paymt.paymentdate=request.POST['paymentdate']
             paymt.paymentmethod=request.POST['paymentmethod']
-            
-         
-            paymt.paymentamount= request.POST['paymentamounts']
+            # paymt.depositeto=request.POST['depto']
+            # paymt.amtreceived=request.POST['amtreceived']
+            paymt.paymentamount=request.POST['paymentamount']
             paymt.amtcredit=request.POST['amtcredit']
             
             
@@ -36148,20 +36108,12 @@ def editpurchasepymnt(request,id):
             else:
                 paymt.gst_number = None  # Set to None or an empty string depending on your field type
 
-            paymt = purchasepayment.objects.get(pymntid=id)
-            paymt.paymentmethod = paymentmethod
-           
-            paymt.account_number = account_number
-            paymt.cheque_number = cheque_number
-            paymt.upi_id = upi_id
-            
-      
-            print("paymentdate")
+            # paymt.paid_through=request.POST['paymentmethod']
+            paymt.account_number=account_number
+            paymt.cheque_number=cheque_number
+            paymt.upi_id=upi_id
         
-            # paymt.status=status  
-
-            
-       
+            # paymt.status=status         
 
             paymt.save()
 
@@ -36231,12 +36183,187 @@ def editpurchasepymnt(request,id):
                         pbl.save()
             except:
                 pass
-            return redirect('viewpurchasepymnt', id=id)
-
-
-        return render(request,'app1/editpurchasepymnt.html')
+            return redirect('gopurchasepymnt')
+        return render(request,'app1/gopurchasepymnt.html',{'cmp1': cmp1})
     return redirect('/') 
 
+@login_required(login_url='regcomp')
+def goeditpurchasepymnt(request,id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        paymt=purchasepayment.objects.get(pymntid=id)
+        paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
+        vndr = vendor.objects.filter(cid=cmp1)
+        bank = BankAccount.objects.all()
+        
+
+        count = purchasepayment1.objects.filter(pymnt=paymt).count()
+        print(count)
+       
+        context = {
+                    'cmp1': cmp1,
+                    'paymt':paymt,
+                    'paymt1':paymt1, 
+                    'count':count ,
+                    'vndr':vndr, 
+                    'bank':bank    
+                }
+        return render(request,'app1/editpurchasepymnt.html',context)
+    return redirect('/')
+
+# def editpurchasepymnt(request,id):
+#     if 'uid' in request.session:
+#         if request.session.has_key('uid'):
+#             uid = request.session['uid']
+#         else:
+#             return redirect('/')
+        
+#         cmp1 = company.objects.get(id=request.session['uid'])
+        
+#         if request.method == 'POST':
+#             paymentmethod = request.POST['paymentmethod']
+
+#             cash = None
+           
+#             account_number = None
+#             cheque_number = None
+#             upi_id = None
+
+#             if paymentmethod == 'cash':
+#                 cash = 'In-Hand Cash'
+           
+#             elif paymentmethod == 'cheque':
+#                 cheque_number = request.POST['cheque_id']
+#             elif paymentmethod == 'upi':
+#                 upi_id = request.POST['upi_id']
+#             else:
+#                 account_number = request.POST['bnk_id']
+                
+
+#             # if 'action' in request.POST:
+#             #     action = request.POST['action']
+#             #     if action == 'draft':
+#             #         status = "Draft"
+#             #     elif action == 'save':
+#             #         status = "Save"
+                    
+#             # paymt=purchasepayment.objects.get(pymntid=id)
+            
+#             paymt = purchasepayment.objects.get(pymntid=id)
+#             paymt.vendor = request.POST['vendor']
+#             paymt.reference = request.POST['reference']
+#             paymt.paymentdate = request.POST['dates']  # Update the payment date
+#             paymt.paymentmethod = request.POST['paymentmethod']
+#             paymt.paymentamount = request.POST['paymentamounts']  # Update the payment amount
+#             paymt.amtcredit = request.POST['amtcredit']
+#             paymt.email = request.POST['email']
+#             paymt.gst_treatment = request.POST['gsttype']
+
+#             if 'gstin' in request.POST:
+#                 paymt.gst_number = request.POST['gstin']
+#             else:
+#                 paymt.gst_number = None # Set to None or an empty string depending on your field type
+
+#             paymt = purchasepayment.objects.get(pymntid=id)
+#             paymt.paymentmethod = paymentmethod
+           
+#             paymt.account_number = account_number
+#             paymt.cheque_number = cheque_number
+#             paymt.upi_id = upi_id
+            
+      
+#             print("paymentdate")
+        
+#             # paymt.status=status  
+
+            
+       
+
+#             paymt.save()
+
+#             billdate = request.POST.getlist("billdate[]")
+#             billno = request.POST.getlist("billno[]")
+#             billamount = request.POST.getlist("billamount[]")
+#             duedate = request.POST.getlist("duedate[]")
+#             amountdue = request.POST.getlist("amountdue[]")
+#             payments = request.POST.getlist("payments[]")
+    
+#             pyid = request.POST.getlist("id[]")
+
+#             pymntid = purchasepayment.objects.get(pymntid=paymt.pymntid)
+
+#             if len(billdate) == len(billno) == len(billamount) == len(duedate) == len(amountdue) == len(payments) == len(pyid) and all(billdate) and all(billno) and all(billamount) and all(duedate) and all(amountdue) and all(payments) and all(pyid):
+#                 mapped = zip(billdate, billno, billamount, duedate, amountdue, payments, pyid)
+#                 mapped = list(mapped)
+#                 for ele in mapped:
+#                     created = purchasepayment1.objects.filter(id=ele[6]).update(
+#                         billdate=ele[0], billno=ele[1], billamount=ele[2], duedate=ele[3],
+#                         amountdue=ele[4], payments=ele[5]
+#                     )
+
+
+#             statment2=vendor_statment.objects.get(cid=cmp1,paymnt=paymt)
+#             statment2.vendor = paymt.vendor
+#             statment2.cid = cmp1
+#             statment2.transactions = "Payable"
+#             statment2.paymnt = paymt
+#             statment2.details = paymt.reference
+#             statment2.date = paymt.paymentdate
+#             statment2.payments = paymt.amtcredit
+#             statment2.save()
+
+#             bs3=balance_sheet.objects.get(cid=cmp1,bill_pymnt=paymt,account='Accounts Payable(Creditors)')
+#             bs3.details = paymt.vendor
+#             bs3.cid = cmp1
+#             bs3.acctype = "Accounts Payable(Creditors)"
+#             bs3.transactions = "Vendor Payment"
+#             bs3.account ="Accounts Payable(Creditors)"
+#             bs3.bill_pymnt = paymt
+#             bs3.details1 = paymt.pymntid
+#             bs3.details2 = paymt.reference
+#             bs3.date = paymt.paymentdate
+#             bs3.payments = paymt.amtcredit
+#             bs3.save()
+
+#             bs4=balance_sheet.objects.get(cid=cmp1,bill_pymnt=paymt,acctype='Current Asset')
+#             bs4.details = paymt.vendor
+#             bs4.cid = cmp1
+#             bs4.acctype = "Current Asset"
+#             bs4.transactions = "Vendor Payment"
+#             bs4.account = paymt.depositeto
+#             bs4.bill_pymnt = paymt
+#             bs4.details1 = paymt.pymntid
+#             bs4.details2 = paymt.reference
+#             bs4.date = paymt.paymentdate
+#             bs4.payments = paymt.amtcredit
+#             bs4.save()
+
+#             pymtbill = purchasepayment1.objects.filter(pymnt=paymt)               
+#             try:
+#                 for i in pymtbill:
+#                     if purchasebill.objects.get(bill_no=i.billno) and i.billno != 'undefined':
+#                         pbl = purchasebill.objects.get(bill_no=i.billno)
+#                         pbl.amtrecvd = int(pbl.amtrecvd) + int(i.payments)
+#                         pbl.balance_due = float(i.amountdue) - float(i.payments)
+#                         if pbl.balance_due == 0.0:
+#                             pbl.status = "Paid"
+#                         pbl.save()
+#             except:
+#                 pass
+#             return redirect('viewpurchasepymnt', id=id)
+
+
+#         return render(request,'app1/editpurchasepymnt.html')
+#     return redirect('/') 
+
+
+
+
+from django.db.models import F
 @login_required(login_url='regcomp')
 def deletepurchasepymnt(request, id):
     if 'uid' in request.session:
@@ -36246,32 +36373,36 @@ def deletepurchasepymnt(request, id):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         paymt = purchasepayment.objects.get(pymntid=id)
-        py = purchasepayment1.objects.all().filter(pymnt=id)
-        stm = vendor_statment.objects.all().filter(paymnt=id)
-        bs = balance_sheet.objects.all().filter(bill_pymnt=id)
 
-        # Retrieve the vendor information before deleting
-        vendor_name = paymt.vendor  # Assuming this is the vendor's name
+        # Get the vendor details before deleting
+        vendor_name = paymt.vendor
+        vendor_obj = vendor.objects.get(firstname=vendor_name.split()[0], lastname=vendor_name.split()[1], cid=cmp1)
 
-        # Calculate the total payments made to this vendor before deletion
-        total_payments = sum(py.payments for py in py)
+        # Delete related entries
+        py = purchasepayment1.objects.filter(pymnt=id)
 
-        # Update the vendor's balance by adding back the payments made to them
-        try:
-            vendor = vendor.objects.get(firstname=vendor_name, cid=cmp1)
-            vendor.opblnc_due += total_payments
-            vendor.save()
-        except vendor.DoesNotExist:
-            pass
+        # Track the changes in amountdue for each payment
+        for payment in py:
+            vendor_obj.opblnc_due = str(float(vendor_obj.opblnc_due) + float(payment.amountdue))
 
-        # Delete the payment and related records
+        stm = vendor_statment.objects.filter(paymnt=id)
+        bs = balance_sheet.objects.filter(bill_pymnt=id)
+
         paymt.delete()
         py.delete()
         stm.delete()
         bs.delete()
-
+        # Update the balance due for the vendor to the previous amount due
+        vendor_obj.opblnc_due = str(float(vendor_obj.opblnc_due) - float(paymt.amtcredit))
+        vendor_obj.save()
         return redirect('gopurchasepymnt')
     return redirect('gopurchasepymnt')
+
+
+
+
+
+
 
 
 @login_required(login_url='regcomp')
@@ -49085,3 +49216,4 @@ def get_bankdata(request):
     except BankAccount.DoesNotExist:
         data = {'account_number': ''}
         return JsonResponse(data)
+

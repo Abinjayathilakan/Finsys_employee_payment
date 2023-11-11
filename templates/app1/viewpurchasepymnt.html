@@ -1825,43 +1825,7 @@ footer p {
             }
         });
         
-        $('.delete').click(function(event) {
-            var form =  $(this).closest("form");
-            var name = $(this).data("name");
-            event.preventDefault();
-            swal({
-                title: `Are you sure you want to delete this record?`,
-                text: "If you delete this, it will be gone forever.",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-            .then((willDelete) => {
-                if (willDelete) {
-                    swal("Poof! Your imaginary file has been deleted!", {
-                    icon: "success" ,
-              
-                    });
-                    form.submit();
-        
-                    
-                    
-                    
-                    }
-            });
-        });
-        
 
-        document.getElementById("deleteButton").addEventListener("click", function() {
-            var confirmed = confirm("Are you sure you want to delete this item?");
-            if (confirmed) {
-                // Perform the delete operation here
-                alert("Item deleted!");
-            } else {
-                // User canceled the delete operation
-                alert("Delete operation canceled.");
-            }
-        });
     </script> 
 
 

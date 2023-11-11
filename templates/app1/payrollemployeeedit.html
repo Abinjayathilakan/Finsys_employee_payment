@@ -138,16 +138,16 @@
                                 <label for="effectivefrom">Effective From</label>
                                 <div class="d-flex">
                                     <select class="form-control term" name="loan_duration" id="loan_duration" value="{{employee.effectivefrom}}">
-                                        <option value="{{ employee.effectivefrom }}">{{ employee.effectivefrom }} MONTH</option>
-                                        <option value="3">3 MONTH</option>
-                                        <option value="6">6 MONTH</option>
-                                        <option value="9">9 MONTH</option>
-                                        {% for item in loan_d %}
+                                        <option value="{{ employee.effectivefrom }}">{{ employee.effectivefrom }} </option>
+                                        <option value="1 - 5">1 - 5 </option>
+                                        <option value="5 - 10">5 - 10</option>
+                                        <option value="10 - 20 ">10 - 20 </option>
+                                        <!-- {% for item in loan_d %}
                                             <option value="{{ item.term_value }}">{{ item.term }}</option>
-                                        {% endfor %}
+                                        {% endfor %} -->
                                     </select>
                                     
-                                <a class="btn btn-outline-secondary ml-1" data-target="#emplyeeterm" data-toggle="modal">+</a>
+                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#emplyeeterm" data-toggle="modal">+</a> -->
 
                                 <div class="text-danger m-2" id="effectivefrom"></div>
                             </div>
@@ -997,7 +997,7 @@
 
 </script>
 
-<script>
+<!-- <script>
     $(document).on("click", "#itemSave", function () {
         $.ajax({
             type: 'POST',
@@ -1058,7 +1058,7 @@
             }
         });
     }
-</script>
+</script> -->
 
 
 {% endblock %}

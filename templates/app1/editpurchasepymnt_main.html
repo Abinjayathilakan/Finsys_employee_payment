@@ -63,8 +63,9 @@
                     <div class="row">
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Date</label>
-                            <input type="date" name="paymentdate"  class="form-control" value="{{ paymt.paymentdate | date:'Y-m-d' }}" required>
+                            <input type="date" name="dates" class="form-control" value="{{ paymt.paymentdate | date:'Y-m-d' }}">
                         </div>
+                        
                     
                         <div class="col-md-4 mt-3">
                             <label for="">Reference</label>
@@ -239,7 +240,7 @@
                                         <tr>
                                             <th class="text-center">Amount to Apply</th>
                                             <td class="text-center">
-                                                <input type="number" name="paymentamount" id="amtoapply"
+                                                <input type="number" name="paymentamounts" id="amtoapply"
                                                     value="{{ paymt.paymentamount }}" class="form-control">
                                             </td>
                                         </tr>
@@ -1106,13 +1107,22 @@
     
 
     
-    <script>
+
+
+<!-- ... (your HTML code) -->
+
+<script>
+    window.onload = function () {
+        // Ensure that j is defined
+        var j = {{ paymt1|length }};
+
         function updateAmountToApply() {
+            console.log("Updating Amount to Apply");
             var totalPayment = 0;
-    
-            for (var i = 0; i <= j; i++) {
+
+            for (var i = 0; i < j; i++) {
                 var paymentField = document.getElementById('payment' + i);
-                
+
                 if (paymentField) {
                     var payment = parseFloat(paymentField.value);
                     if (!isNaN(payment)) {
@@ -1120,23 +1130,39 @@
                     }
                 }
             }
-    
+
+            console.log("Total Payment:", totalPayment);
+
             // Update "Amount to Apply" field with the total payment
             var amountToApplyField = document.getElementById('amtoapply');
-            
+
             if (amountToApplyField) {
+                console.log("Amount to Apply Field Found");
                 amountToApplyField.value = totalPayment;
+                console.log("Amount to Apply Updated");
+            } else {
+                console.error("Amount to Apply Field Not Found");
             }
         }
-    
+
+        // Initial calculation on page load
+        updateAmountToApply();
+
         // Add event listeners to the payment fields to trigger the update
-        for (var i = 0; i <= j; i++) {
+        for (var i = 0; i < j; i++) {
             var paymentField = document.getElementById('payment' + i);
             if (paymentField) {
                 paymentField.addEventListener('input', updateAmountToApply);
+                console.log("Event listener attached for payment" + i);
+            } else {
+                console.error("Payment Field Not Found: " + i);
             }
         }
-    </script>
+    };
+</script>
+
+<!-- ... (your HTML code) -->
+
     
         <!-- <script>
             document.getElementById("paymentForm").addEventListener("submit", function (event) {
