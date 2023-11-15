@@ -147,7 +147,7 @@
                                     <!-- <th>Reference</th> -->
                                     <th>Payment Date</th>
                                     <th>Payment Method</th>
-                                    <th>Bill Amount</th>
+                                    <th>Reference</th>
                                     <th>Balance Amount</th>
                                     <th>Status</th>
                                 </tr>
@@ -163,20 +163,14 @@
                                     
                                     
 
+                                    <td>{{ p.reference }}</td>
                                     <!-- <td>
-                                        {% for a1 in a.purchasepayment1_set.all %}
-                                            {{ a1.payments }}
-                                        {% empty %}
-                                            Contact Not Found
-                                        {% endfor %}
-                                    </td> -->
-                                    <td>
                                         {% for a1 in p.purchasepayment1_set.all %}
                                             {{ a1.billamount }}
                                         {% empty %}
                                             Amount Not Found
                                         {% endfor %}
-                                    </td>
+                                    </td> -->
                                     
                                     
                                     <td>{{ p.amtcredit }}</td>

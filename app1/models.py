@@ -2382,3 +2382,12 @@ class salary_duration(models.Model):
     term = models.TextField(max_length=30)
     term_value = models.IntegerField()
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
+    
+
+
+class DeletedPurchasePayments(models.Model):
+    cid = models.ForeignKey(company, on_delete=models.CASCADE)
+    reference_number = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.cid} - {self.reference_number}"

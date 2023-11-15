@@ -36199,7 +36199,6 @@ def goeditpurchasepymnt(request,id):
         paymt1 = purchasepayment1.objects.all().filter(pymnt=id)
         vndr = vendor.objects.filter(cid=cmp1)
         bank = BankAccount.objects.all()
-        
 
         count = purchasepayment1.objects.filter(pymnt=paymt).count()
         print(count)
@@ -40714,17 +40713,17 @@ def payrollemployeeedit(request,employeeid):
     
     cmp1 = company.objects.get(id=request.session['uid'])
     employee=payrollemployee.objects.get(cid=cmp1,employeeid=employeeid)
-    loan_d = loan_duration.objects.filter(cid=cmp1)
+    # loan_d = loan_duration.objects.filter(cid=cmp1)
 
         
-    if not loan_duration.objects.filter(term='1 YEAR', term_value=12).exists():
-        loan_duration.objects.create(term='1 YEAR', term_value=12, cid=cmp1)
-    if not loan_duration.objects.filter(term='6 MONTH', term_value=6).exists():
-        loan_duration.objects.create(term='6 MONTH', term_value=6, cid=cmp1)
-    if not loan_duration.objects.filter(term='3 MONTH', term_value=3).exists():
-        loan_duration.objects.create(term='3 MONTH', term_value=3, cid=cmp1)
+    # if not loan_duration.objects.filter(term='1 YEAR', term_value=12).exists():
+    #     loan_duration.objects.create(term='1 YEAR', term_value=12, cid=cmp1)
+    # if not loan_duration.objects.filter(term='6 MONTH', term_value=6).exists():
+    #     loan_duration.objects.create(term='6 MONTH', term_value=6, cid=cmp1)
+    # if not loan_duration.objects.filter(term='3 MONTH', term_value=3).exists():
+    #     loan_duration.objects.create(term='3 MONTH', term_value=3, cid=cmp1)
         
-    return render(request,'app1/payrollemployeeedit.html',{'employee':employee,'cmp1':cmp1,'loan_d' : loan_d})
+    return render(request,'app1/payrollemployeeedit.html',{'employee':employee,'cmp1':cmp1})
 
 
 

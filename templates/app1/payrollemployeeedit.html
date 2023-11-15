@@ -1060,5 +1060,26 @@
     }
 </script> -->
 
+<script>
+    // Get references to the date of birth and age input fields
+    var dateOfBirthInput = document.getElementById('dateofbirth');
+    var ageInput = document.getElementById('age');
+
+    // Add an event listener to the date of birth input to calculate age
+    dateOfBirthInput.addEventListener('change', function () {
+        var dob = new Date(this.value);
+        var today = new Date();
+        var age = today.getFullYear() - dob.getFullYear();
+
+        // Check if the birthday has occurred this year
+        if (today.getMonth() < dob.getMonth() ||
+            (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        // Update the age input field with the calculated age
+        ageInput.value = age;
+    });
+</script>
 
 {% endblock %}
