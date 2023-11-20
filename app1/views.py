@@ -35723,45 +35723,7 @@ def credit_period4(request):
         return render(request,'app1/addpurchasedebit.html',{'cmp1':cmp1})
     return redirect('/')
 
-def getbilldata(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session["uid"])
-        id = request.POST['select']
-        print (id)
 
-        x = id.split()
-        x.append(" ")
-        a = x[0]
-        b = x[1]
-        if x[2] is not None:
-            b = x[1] + " " + x[2]
-
-        venobject = vendor.objects.values().filter(firstname=a, lastname=b, cid=cmp1)
-        billitm = purchasebill.objects.values().filter(vendor_name=id ,cid =cmp1,status='Billed')
-
-        venopenbl = vendor.objects.get(firstname=a,lastname=b,cid =cmp1)
-
-        if venopenbl.openingbalance != 0.0:
-
-            vend1 = vendor.objects.get(firstname=a,lastname=b,cid =cmp1)
-            date = vend1.date
-            opbs = vend1.openingbalance
-            
-            if opbs=="":
-                opb=None
-            else:
-                opb=opbs
-          
-            obdue = vend1.opblnc_due
-
-        x_data = list(billitm)
-        vd= list(venobject)
-        
-        return JsonResponse({"status":" not","billitm":x_data,"ct":vd,'opb':opb,'obdue':obdue,'date':date})
 
 def gopurchasepymnt(request):
     if 'uid' in request.session:
@@ -35797,15 +35759,14 @@ def addpurchasepymnt(request):
         acc = accounts1.objects.filter(cid=cmp1, acctype='Cash')
         acc1 = accounts1.objects.filter(cid=cmp1, acctype='Bank')
 
-        ref = purchasepayment.objects.filter(cid=cmp1).last()  # Filter by company
-        if ref:
-            ref_no = int(ref.reference) + 1
-        else:
-            ref_no = 1
+        # Get the maximum reference number
+        max_ref_no = purchasepayment.objects.filter(cid=cmp1).aggregate(Max('reference'))['reference__max']
 
-        # ...
+        # Calculate the new reference number
+        ref_no = max_ref_no + 1 if max_ref_no is not None else 1
 
         context = {'cmp1': cmp1, 'vndr': vndr, 'pymt': pymt, 'acc': acc, 'acc1': acc1, 'bank': bank, 'ref_no': ref_no}
+
         return render(request, 'app1/addpurchasepymnt.html', context)
     return redirect('/')
 
@@ -35961,26 +35922,68 @@ def createpurchasepymnt(request):
             try:
                 for i in pymtbill:
                     if i.billno != "Vendor Opening Balance":
-                        if purchasebill.objects.get(bill_no=i.billno) and i.billno != 'undefined':
-                            print(paymentmethod)
-                            pbl = purchasebill.objects.get(bill_no=i.billno)
-                            pbl.amtrecvd = int(pbl.amtrecvd) + int(i.payments)
-                            pbl.balance_due = float(i.amountdue) - float(i.payments)
-                            if pbl.balance_due == 0.0:
+                        if purchasebill.objects.filter(bill_no=i.billno, cid=cmp1).exists() and i.billno != 'undefined':
+                            pbl = purchasebill.objects.get(bill_no=i.billno, cid=cmp1)
+                            print(f"Updating purchasebill {pbl.bill_no} - Before: amtrecvd={pbl.amtrecvd}, balance_amount={pbl.balance_amount}, status={pbl.status}")
+                            pbl.amtrecvd = float(pbl.amtrecvd) + float(i.payments)
+                            pbl.balance_amount = float(i.amountdue) - float(pbl.amtrecvd)  # Fix calculation here
+                            if pbl.balance_amount <= 0.0:
                                 pbl.status = "Paid"
                             pbl.save()
-                    if i.billno == "Vendor Opening Balance":            
-                        if vendor.objects.get(firstname=a,lastname= b , cid=cmp1) and i.billno != 'undefined': 
-                            vndr=vendor.objects.get(firstname=a,lastname= b , cid=cmp1)
-                            vndr.opblnc_due = float(i.amountdue) - float(i.payments)
-                            vndr.save()
-            except:
-                pass
+                            print(f"Updating purchasebill {pbl.bill_no} - After: amtrecvd={pbl.amtrecvd}, balance_amount={pbl.balance_amount}, status={pbl.status}")
+                        
+                    if i.billno == "Vendor Opening Balance":
+                        vendr = vendor.objects.get(firstname=a, lastname=b, cid=cmp1)
+                        vendr.opblnc_due = float(i.amountdue) - float(i.payments)
+                        vendr.save()
+            except Exception as e:
+                print(f"Error updating balances: {e}")
             return redirect('gopurchasepymnt')
         else:
             return redirect('gopurchasepymnt')
     return redirect('/')  
 
+
+
+def getbilldata(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session["uid"])
+        id = request.POST['select']
+        print (id)
+
+        x = id.split()
+        x.append(" ")
+        a = x[0]
+        b = x[1]
+        if x[2] is not None:
+            b = x[1] + " " + x[2]
+
+        venobject = vendor.objects.values().filter(firstname=a, lastname=b, cid=cmp1)
+        billitm = purchasebill.objects.values().filter(vendor_name=id ,cid =cmp1,status='Billed')
+
+        venopenbl = vendor.objects.get(firstname=a,lastname=b,cid =cmp1)
+
+        if venopenbl.openingbalance != 0.0:
+
+            vend1 = vendor.objects.get(firstname=a,lastname=b,cid =cmp1)
+            date = vend1.date
+            opbs = vend1.openingbalance
+            
+            if opbs=="":
+                opb=None
+            else:
+                opb=opbs
+          
+            obdue = vend1.opblnc_due
+
+        x_data = list(billitm)
+        vd= list(venobject)
+        
+        return JsonResponse({"status":" not","billitm":x_data,"ct":vd,'opb':opb,'obdue':obdue,'date':date})
 
 @login_required(login_url='regcomp')
 def viewpurchasepymnt(request,id):
@@ -36183,8 +36186,10 @@ def editpurchasepymnt(request,id):
                         pbl.save()
             except:
                 pass
-            return redirect('gopurchasepymnt')
-        return render(request,'app1/gopurchasepymnt.html',{'cmp1': cmp1})
+            return redirect('viewpurchasepymnt', id=id)
+        return render(request,'app1/editpurchasepymnt.html',{'cmp1': cmp1})
+          
+
     return redirect('/') 
 
 @login_required(login_url='regcomp')

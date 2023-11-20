@@ -1471,7 +1471,7 @@ class purchasebill(models.Model):
     total_discount = models.CharField(max_length=100,null=True)
     ship_charge = models.CharField(max_length=100,null=True)
     paid_amount = models.FloatField(blank=True,null=True)
-    balance_amount = models.FloatField(blank=True,null=True)
+    balance_amount = models.FloatField(blank=True,null=True) # amount due
     payment_type = models.CharField(max_length=100,null=True)
     bill_status = (
         ('Draft','Draft'),
@@ -1515,9 +1515,11 @@ class creditperiod(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
 
 class purchasepayment(models.Model):
-    pymntid = models.AutoField(('pyid'), primary_key=True)
+    # pymntid = models.AutoField(('pyid'), primary_key=True)
+    pymntid = models.AutoField(primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
-    reference = models.CharField(max_length=100,null=True)  
+    # reference = models.CharField(max_length=100,null=True) 
+    reference = models.IntegerField() # reference
     vendor = models.CharField(max_length=100)
     paymentdate = models.DateField(null=True)
     paymentmethod = models.CharField(max_length=100,null=True)
