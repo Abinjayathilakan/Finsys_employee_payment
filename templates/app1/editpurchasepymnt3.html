@@ -18,7 +18,7 @@
         <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
-                    <center><h2 class="mb-0" style="text-transform: uppercase;;">NEW PAYMENT MADE</h2></center>
+                    <center><h2 class="mb-0" style="text-transform: uppercase;;">EDIT PAYMENT MADE</h2></center>
                 </div>
                 <hr/>
             </div>
@@ -33,7 +33,7 @@
                             <label for="">Vendor</label>
                             <div class="d-flex">
                                 <select name="vendor" id="select" class="custom-select">
-                                    <option selected disabled>Select Vendor</option>
+                                    <option value="{{ paymt.vendor }}">{{ paymt.vendor }}</option>
                                     {% for v in vndr %}
                                     <option value="{{ v.firstname }} {{ v.lastname }}">{{ v.firstname }} {{ v.lastname }}</option>
                                     {% endfor %}
@@ -42,35 +42,36 @@
                             </div>   
                         </div>
                        
-                        <div class="col-md-3 mt-2" id="emailField" style="display: none;">
+                        <div class="col-md-3 mt-2" id="emailField" >
                             <label for="">E mail</label>
-                            <input type="text" name="email" id="email" class="form-control">
+                            <input type="text" name="email" id="email" class="form-control" value="{{ paymt.email }}">
                         </div> 
 
-                        <div class="col-md-3 mt-2" id="gstTypeField" style="display: none;">
+                        <div class="col-md-3 mt-2" id="gstTypeField" >
                             <label for="">GST Treatment</label>
-                            <input type="text" name="gsttype" id="gsttype" class="form-control">
+                            <input type="text" name="gsttype" id="gsttype" class="form-control" value="{{ paymt.gst_treatment }}">
                         </div>
 
-                        <div class="col-md-3 mt-2" id="gstinField" style="display: none;">
+                        <div class="col-md-3 mt-2" id="gstinField" {% if not paymt.gst_number %} style="display: none;" {% endif %}>
                             <label for="">GST Number</label>
-                            <input type="text" name="gstin" id="gstin" class="form-control">
+                            <input type="text" name="gstin" id="gstin" class="form-control" value="{{ paymt.gst_number }}">
                         </div>
+                        
                     </div>
                     <hr>
 
                     <div class="row">
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Date</label>
-                            <input type="date" name="paymentdate" id="date" class="form-control" required>
-                            
+                            <input type="date" name="paymentdate"  class="form-control" value="{{ paymt.paymentdate | date:'Y-m-d' }}" required>
                         </div>
                     
+                        <!-- Display the reference field value if it exists -->
+                  
                         <div class="col-md-4 mt-3">
                             <label for="">Reference</label>
-                            <input type="text" name="reference" value="{{ ref_no }}" class="form-control" readonly>
+                            <input type="text" name="reference" value="{{ paymt.reference }}" class="form-control" readonly>
                         </div>
-                        
                     
 
                         
@@ -86,38 +87,37 @@
                         <div class="col-md-4 mt-3">
                             <label for="">Payment Method</label>
                             <div class="d-flex">
-                                <select name="paymentmethod" id="paymeth" onclick="showinp('newmethod', this)" class="form-control" required>
-                                    <!-- <option value="NILL" selected disabled>Choose Payment Method</option> -->
-                                    <option value="" selected hidden>Select Payment Method</option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Cheque">Cheque</option>
-                                    <option value="UPI">UPI</option>
+                                <select name="paymentmethod" id="paymeth" class="form-control" style="width: 87%">
+                                    <option value="{{ paymt.paymentmethod }}">{{ paymt.paymentmethod }}</option>
+                                    
+                                    <option value="cash">Cash</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="upi">UPI</option>
                                     {% for v in bank %}
                                         <option value="{{ v.bank_name }}">{{ v.bank_name }}</option>
                                     {% endfor %}
                                 </select>
-                                <!-- <a class="btn btn-outline-secondary ml-1" data-target="#Add_option" data-toggle="modal" role="button">+</a> -->
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-md-4 mt-3">
-                          
-                       
-                        <div style="display:none;"  id="chequediv">
-                            <label class="col-form-label" >Cheque ID</label>
-                            <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID">
                         </div>
-                        
-                        <div style="display:none;" id="upidiv">
-                            <label class="col-form-label" >UPI ID</label>
-                            <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID">
-                        </div>
+                        <div class="row">
+                        <div class="col-md-4 mt-3">
 
-                        <div style="display:none;" id="bnkdiv">
-                            <label class="col-form-label" >Bank Account</label>
-                            <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
-                        </div>
+
+                            <div style="display:none;"  id="chequediv">
+                                <label class="col-form-label" >Cheque ID</label>
+                                <input type="text" class="form-control" name="cheque_id" id="cheque_id" value="{{ paymt.cheque_number }}" placeholder="Enter Cheque ID">
+                            </div>
+                            
+                            <div style="display:none;" id="upidiv">
+                                <label class="col-form-label" >UPI ID</label>
+                                <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID" value="{{ paymt.upi_id }}">
+                            </div>
+    
+                            <div style="display:none;" id="bnkdiv">
+                                <label class="col-form-label" >Bank Account</label>
+                                <input type="text" class="form-control" name="bnk_id" id="bnk_id" value="{{ paymt.account_number }}" style="background-color: #43596c;" readonly>
+                            </div>
                     </div>
                         
                     
@@ -127,7 +127,7 @@
                     
                     <br><br>
                     
-          
+                   
                     <br><br>
                         <div class="row clearfix">
                             <div class="col-md-12 table-responsive-md">
@@ -159,7 +159,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-center">Amount to Credit</th>
+                                                    <th class="text-center">Balance Amount</th>
                                                     <td class="text-center">
                                                         <input type="number" name='amtcredit' id="amtcredit" placeholder='0.00' class="form-control">
                                                     </td>
@@ -170,18 +170,9 @@
                         </div>
                         <div class="row mt-4">
                             <div class="col-md-10"></div>
-                            <!-- <div class="col-md-2">
-                                
-                                <button type="submit"
-                                        onclick="alert('Are you sure you wants to save the payment?\nNo corrections after submission')"
-                                        class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
-                                    Save
-                                </button>
-
-                            </div> -->
+                  
                             <div class="" style="margin-left: 30rem; text-align: center;">
-                                <button type="submit" name="action" value="draft" class="btn btn-outline-info rounded-pill w-10 text-light">Save as Draft</button>&nbsp;
-                                <button type="submit" name="action" value="save"  class="btn btn-outline-info rounded-pill w-10 text-light">Save And Send</button>
+                                <button type="submit" name="action" value="save"  class="btn btn-outline-info rounded-pill w-10 text-light">Save Changes</button>
                             </div>
                             
                         </div>
@@ -355,79 +346,104 @@
     
     <script>
         $("#select").change(function () {
-            const select = $(this).val();
-            $.ajax({
+            const select = $(this).val();  
+            $.ajax({                      
                 type: "POST",
                 url: "{% url 'getbilldata' %}",
                 data: {
-                    'select': select,
-                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    'select': select,     
+                    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
                 },
-                success: function (response) {
-                    console.log(response);
+                success:function(response){
+                    console.log(response)
+                    data = response.billitm
+                    date = response.date
+                    opb = response.opb 
+                    obdue = response.obdue
+                    xt = response.ct
     
                     // Clear existing rows
                     $('#tab_logic #vendordata').empty();
                     $('#tab_logic #billdata').empty();
     
-                    if (response.opb != null) {
-                        // Display opening balance bill
+                    if (opb != null) {
                         $('#tab_logic #vendordata').append(
                             `<tr id='addr1'>
                                 <td>1</td>
-                                <td><input type="text" name="billdate[]" value="${response.date}" class="form-control"/></td>
-                                <td><input type="text" name='billno[]' value="Vendor Opening Balance" class="form-control"/></td>
-                                <td><input type="text" name='billamount[]' value="${response.opb}" class="form-control qty" step="0" min="0"/></td>
-                                <td><input type="text" name="duedate[]" value="${response.date}" class="form-control"/></td>
-                                <td><input type="number" name='amountdue[]' value="${response.obdue}" class="form-control price" step="0.00" min="0"/></td>
-                                <td><input type="number" id='payment_0' name='payment[]' onchange="addagain()" class="form-control total" value="0" /></td>
+                                <td><input type="text" name="billdate[]" id="" value="${date}" class="form-control"/></td>
+                                <td><input type="text" name='billno[]' id="" value="Vendor Opening Balance" class="form-control"/></td>
+                                <td><input type="text" name='billamount[]' value="${opb}" id=""
+                                    class="form-control qty" step="0" min="0"/>
+                                </td>
+                                <td><input type="text" name="duedate[]" id="" value="${date}" class="form-control"/></td>
+                                <td><input type="number" name='amountdue[]' id="openbal0" value="${obdue}" class="form-control price"
+                                    step="0.00" min="0" />
+                                </td>
+                                <td><input type="number" name='payment[]' id="payment0" onchange="addagain()" class="form-control total" value="0" />
+                                </td>
+                            </tr>`
+                        );
+                    }   
+    
+                    for (i = 0; i < 6; i++) {
+                        $('#tab_logic #billdata').append(
+                            `<tr id='addr1'>
+                                <td>${i+2}</td>
+                                <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
+                                <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
+                                <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
+                                    class="form-control qty" step="0" min="0"/>
+                                </td>
+                                <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
+                                <td><input type="number" name='amountdue[]' id="openbal${i+1}" value="${data[i].balance_amount}"
+                                    class="form-control price" step="0.00" min="0"/>
+                                </td>
+                                <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i+1}" placeholder='0.00'
+                                    class="form-control total" value="0"/>
+                                </td>
                             </tr>`
                         );
                     }
     
-                    // Display regular purchase bills
-                    for (let i = 0; i < response.purchase_bills.length; i++) {
+                    for (i = 0; i < 7; i++) {
                         $('#tab_logic #billdata').append(
-                            `<tr id='addr${i + 2}'>
-                                <td>${i + 2}</td>
-                                <td><input type="text" name="billdate[]" value="${response.purchase_bills[i].date}" class="form-control"/></td>
-                                <td><input type="text" name='billno[]' value="${response.purchase_bills[i].bill_no}" class="form-control"/></td>
-                                <td><input type="text" name='billamount[]' value="${response.purchase_bills[i].grand_total}" class="form-control qty" step="0" min="0"/></td>
-                                <td><input type="text" name="duedate[]" value="${response.purchase_bills[i].deliver_date}" class="form-control"/></td>
-                                <td><input type="number" name='amountdue[]' value="${response.purchase_bills[i].balance_amount}" class="form-control price" step="0.00" min="0"/></td>
-                                <td><input type="number" id='payment_${i + 1}' name='payment[]' onchange="addagain()" value="0" class="form-control total"/></td>
+                            `<tr id='addr1'>
+                                <td>${i+2}</td>
+                                <td><input type="text" name="billdate[]" id="" value="${data[i].date}" class="form-control"/></td>
+                                <td><input type="text" name='billno[]' id="" value="${data[i].bill_no}" class="form-control"/></td>
+                                <td><input type="text" name='billamount[]' value="${data[i].grand_total}" id=""
+                                    class="form-control qty" step="0" min="0"/>
+                                </td>
+                                <td><input type="text" name="duedate[]" id="" value="${data[i].deliver_date}" class="form-control"/></td>
+                                <td><input type="number" name='amountdue[]' id="openbal${i}" value="${data[i].balance_amount}"
+                                    class="form-control price" step="0.00" min="0"/>
+                                </td>
+                                <td><input type="number" name='payment[]' onchange="addagain()" id="payment${i}" placeholder='0.00'
+                                    class="form-control total" value="0"/>
+                                </td>
                             </tr>`
                         );
-                    } 
-                    // Calculate and update amounts
-                    addagain();
-                }
+                    }    
+                }  
             });
-        }); 
+        });
+    
         function addagain() {
             var totalPayment = 0;
-            var totalAmountDue = 0;
         
-            // Calculate total payment
             $('[id^=payment]').each(function () {
                 totalPayment += parseFloat($(this).val()) || 0;
             });
         
-            // Calculate total amount due from vendor data
-            $('#tab_logic #vendordata input[name="amountdue[]"]').each(function () {
-                totalAmountDue += parseFloat($(this).val()) || 0;
-            });
-        
-            // Calculate total amount due from bill data
-            $('#tab_logic #billdata input[name="amountdue[]"]').each(function () {
-                totalAmountDue += parseFloat($(this).val()) || 0;
-            });
-        
+            var totalAmountDue = parseFloat($('#openbal0').val()) || 0;
             var balanceAmount = totalAmountDue - totalPayment;
         
             $('#amtoapply').val(totalPayment.toFixed(2));
             $('#amtcredit').val(balanceAmount.toFixed(2));
         }
+        
+        
+        
         
     </script>
     
@@ -436,7 +452,6 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
     
     
     
@@ -444,48 +459,53 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
 
-<script>
-    $(document).ready(function () {
-        $('#select').on('change', function () {
-            var select = $('#select').val();
-            $.ajax({
-                type: "GET",
-                url: "{% url 'getvendordata3' %}",
-                data: {
-                    id: select
-                },
-                success: function (response) {
-                    var json_data = JSON.parse(response);
-                    if (json_data.length > 0) {
-                        var vendorData = json_data[0]; // Assuming you are expecting one vendor data
-                        $('#email').val(vendorData.email);
-                        $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
-
-                        // Show email and GST treatment fields
-                        $('#emailField, #gstTypeField').show();
-                        $('#gstinField').show(); // Show GST Number field if it has a value
-
-                        // Set values for email and GST treatment fields
-                        $('#email').val(vendorData.email);
-                        $('#gsttype').val(vendorData.gsttype);
-
-                        // Check if GST Number has a value, hide it if empty
-                        if (vendorData.gstin) {
-                            $('#gstin').val(vendorData.gstin);
+    <script>
+        $(document).ready(function () {
+            $('#select').on('change', function () {
+                var select = $('#select').val();
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'getvendordata3' %}",
+                    data: {
+                        id: select
+                    },
+                    success: function (response) {
+                        var json_data = JSON.parse(response);
+                        if (json_data.length > 0) {
+                            var vendorData = json_data[0]; // Assuming you are expecting one vendor data
+        
+                            $('#email').val(vendorData.email);
+                            $('#mailaddr').val(vendorData.street + '\n' + vendorData.city + '\n' + vendorData.state + '\n' + vendorData.pincode + '\n' + vendorData.country);
+        
+                            // Show email and GST treatment fields
+                            $('#emailField, #gstTypeField').show();
+        
+                            // Set values for email and GST treatment fields
+                            $('#email').val(vendorData.email);
+                            $('#gsttype').val(vendorData.gsttype);
+        
+                            // Check if GST Number has a value
+                            if (vendorData.gstin && vendorData.gstin.trim() !== '') {
+                                // Set the GST Number field to the value and show the field
+                                $('#gstin').val(vendorData.gstin);
+                                $('#gstinField').show();
+                            } else {
+                                // If GST Number is empty or contains only whitespace, hide the field
+                                $('#gstin').val('');
+                                $('#gstinField').hide();
+                            }
                         } else {
-                            $('#gstinField').hide();
+                            // Handle the case where no data was found for the selected ID.
                         }
-                    } else {
-                        // Handle the case where no data was found for the selected ID.
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the AJAX error.
+                        console.error("AJAX Error:", error);
                     }
-                },
-                error: function (xhr, status, error) {
-                    // Handle the AJAX error.
-                }
+                });
             });
         });
-    });
-</script>
+        </script>
 
     
 <script>
@@ -517,18 +537,7 @@
     }
 </script>
 
-<!-- <script>
-    $(document).ready(function() {
-        $('#amre').on('input', function() {
-            var balance = parseFloat($('#amountdue').val());
-            var amount = parseFloat($(this).val());
-            var difference = amountdue - amre;
-            
-            // Update the difference input field with the calculated value
-            $('#amtcredit').val(amtcredit);
-        });
-    });
-</script> -->
+
 
 <script>
     function updateAmountFields() {
@@ -554,154 +563,54 @@
     }
     </script>
 
-    <!-- <script>
-        $(document).on("click", "#CreateOption", function (event) {
-            event.preventDefault(); // Prevent the default form submission behavior
-        
-            $.ajax({
-                type: "POST",
-                url: "{% url 'add_option' %}",
-                data: {
-                    newmethod: $("input[name='newmethod']").val(),
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
-                success: function (response) {
-                    $("#Add_option").modal("hide"); // Close the modal
-                    reloadVendor(); // Refresh the dropdown
-                },
-                error: function (xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
-        });
-        
-    
-        function reloadVendor() {
-            $.ajax({
-                url: "{% url 'option_dropdown' %}",
-                type: "GET",
-                dataType: "json",
-                data: {
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
-                success: function (data) {
-                    var dropdown = $('#paymeth');
-                    dropdown.empty();
-        
-                    // Add the default options
-                    dropdown.append($('<option>').attr('value', 'Bank Transfer').text('Bank Transfer'));
-                    dropdown.append($('<option>').attr('value', 'Cash').text('Cash'));
-                    dropdown.append($('<option>').attr('value', 'Cheque').text('Cheque'));
-                    dropdown.append($('<option>').attr('value', 'Credit Card').text('Credit Card'));
-        
-                    // Add the new options from the server
-                    $.each(data, function (id, name) {
-                        dropdown.append($("<option>").attr("value", id).text(name));
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
-        }
-        
-    </script>
 
-    <script>
-        $('#paymeth').on('change', function() {
-            var selectedPaymentMethod = $(this).val();
-    
-            // Hide all payment method fields by default
-            $('.pymnt-methd-inp').addClass('d-none');
-            $('.pymnt-methd-inp').removeClass('d-flex');
-    
-            if (selectedPaymentMethod === 'Bank Transfer') {
-                // Show the bank and account number fields for Bank Transfer
-                $('#bankacc-field').removeClass('d-none');
-                $('#bankacc-field').addClass('d-flex');
-    
-                // Simulate change event on bankacc_inp to trigger account number update
-                $('#bankacc_inp').change();
-            } else if (selectedPaymentMethod === 'UPI') {
-                // Show the UPI fields
-                $('#upi-field').removeClass('d-none');
-                $('#upi-field').addClass('d-flex');
-            } else if (selectedPaymentMethod === 'Cheque') {
-                // Show the UPI fields
-                $('#cc-field').removeClass('d-none');
-                $('#cc-field').addClass('d-flex');
-            } else if (selectedPaymentMethod === 'Cash') {
-                // Show the Cash fields
-                // Add similar conditions for other payment methods
-            }
-        });
-    
-        $('#bankacc_inp').on('change', function() {
-            var selectedBankName = $(this).val();
-    
-            // Make an AJAX request to get the account number for the selected bank
-            $.ajax({
-                url: "{% url 'get_account_number' %}",
-                type: "POST",
-                data: {
-                    bankName: selectedBankName,
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                },
-                success: function(data) {
-                    if (data.status) {
-                        // Populate the account number field with the received data
-                        $('#account_number').val(data.accountNumber);
-                    } else {
-                        alert('Something went wrong.!');
-                    }
-                }
-            });
-        });
-    </script> -->
 
     <script>
         $(document).ready(function() {
-          $("#paymeth").change(function() {
-            var x=$('#paymeth').val();
-            if(x==='Cash'){
-              $('#chequediv').hide()
-              $('#bnkdiv').hide()
-              $('#upidiv').hide()
-              document.getElementById('cheque_id').value=null
-              document.getElementById('upi_id').value=null
-            }else if(x==='Cheque'){
-              $('#chequediv').show()
-              $('#bnkdiv').hide()
-              $('#upidiv').hide()
-              document.getElementById('upi_id').value=null
-            }else if(x==='UPI'){
-              $('#upidiv').show()
-              $('#bnkdiv').hide()
-              $('#chequediv').hide()
-              document.getElementById('cheque_id').value=null
-            }else{
-              $('#bnkdiv').show()
-              $('#chequediv').hide()
-              $('#upidiv').hide()
-              document.getElementById('cheque_id').value=null
-              document.getElementById('upi_id').value=null
+            $("#paymeth").change(function() {
+                var selectedPaymentMethod = $(this).val();
+                togglePaymentFields(selectedPaymentMethod);
+            });
     
-$.ajax({
-    type: "GET",
-    url: "{% url 'get_bankdata' %}",
-    data: {
-        id: x,
-    },
-    success: function (response) {
-        document.getElementById('cheque_id').value = null
-        document.getElementById('upi_id').value = null
-        document.getElementById("bnk_id").value = response.account_number;
-    }
-});
-
-            }
-          });
+            // Initialize the visibility of fields based on the initial value
+            togglePaymentFields($('#paymeth').val());
         });
+    
+        function togglePaymentFields(paymentMethod) {
+            $('.payment-fields').hide();
+    
+            if (paymentMethod === 'cash') {
+                $('#chequediv').hide();
+                $('#upidiv').hide();
+                $('#bnkdiv').hide();
+            } else if (paymentMethod === 'cheque') {
+                $('#chequediv').show();
+                $('#upidiv').hide();
+                $('#bnkdiv').hide();
+            } else if (paymentMethod === 'upi') {
+                $('#chequediv').hide();
+                $('#upidiv').show();
+                $('#bnkdiv').hide();
+            } else {
+                // It's a bank, show the bank field
+                $('#chequediv').hide();
+                $('#upidiv').hide();
+                $('#bnkdiv').show();
+    
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'get_bankdata' %}",
+                    data: {
+                        id: paymentMethod,
+                    },
+                    success: function(response) {
+                        document.getElementById('cheque_id').value = null;
+                        document.getElementById('upi_id').value = null;
+                        document.getElementById("bnk_id").value = response.account_number;
+                    }
+                });
+            }
+        }
     </script>
 
     

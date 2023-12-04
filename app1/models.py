@@ -1360,10 +1360,11 @@ class vendor(models.Model):
     gsttype = models.CharField(max_length=100, null=True)
     gstin = models.CharField(max_length=100, default='')
     panno = models.CharField(max_length=100, null=True)
+    creditlimit = models.CharField(max_length=100, null=True)
     sourceofsupply = models.CharField(max_length=100, null=True)
     currency = models.CharField(max_length=100, null=True)
     openingbalance = models.CharField(max_length=100, null=True)
-    opblnc_due = models.CharField(max_length=100, null=True)
+    opblnc_due = models.CharField(max_length=100, null=True) #amount due
     date = models.DateField(null=True,blank= True)
     paymentterms = models.CharField(max_length=100, null=True)
     street = models.CharField(max_length=100,null=True)
@@ -1379,7 +1380,6 @@ class vendor(models.Model):
     opening_balance_type = models.CharField(max_length=10,null=True,blank=True)
     attachment = models.ImageField(upload_to="vendor-files/", null=True)
     is_active =models.BooleanField(default=True)
-
 
 
 class purchaseorder(models.Model):
@@ -1515,28 +1515,27 @@ class creditperiod(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
 
 class purchasepayment(models.Model):
-    # pymntid = models.AutoField(('pyid'), primary_key=True)
     pymntid = models.AutoField(primary_key=True)
-    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
-    # reference = models.CharField(max_length=100,null=True) 
-    reference = models.IntegerField() # reference
+    cid = models.ForeignKey(company, on_delete=models.CASCADE, null=True)
+    reference = models.IntegerField()  # Reference
     vendor = models.CharField(max_length=100)
     paymentdate = models.DateField(null=True)
-    paymentmethod = models.CharField(max_length=100,null=True)
+    paymentmethod = models.CharField(max_length=100, null=True)
     depositeto = models.CharField(max_length=100)
-    amtreceived = models.CharField(max_length=100,null=True)
-    paymentamount = models.CharField(max_length=100,null=True)
+    amtreceived = models.CharField(max_length=100, null=True)
+    paymentamount = models.CharField(max_length=100, null=True)
     amtcredit = models.CharField(max_length=100, default='0')
-    
-    bank_names = models.CharField(max_length=100,null=True)
-    account_number = models.CharField(max_length=100,null=True)
-    cheque_number = models.CharField(max_length=100,null=True)
-    upi_id = models.CharField(max_length=100,null=True)
-    cash = models.CharField(max_length=100,null=True)
-    email = models.CharField(max_length=100,null=True)
-    gst_treatment = models.CharField(max_length=100,null=True)
-    gst_number = models.CharField(max_length=100,null=True)
-    status = models.CharField(max_length=100,default="Draft")
+
+    bank_names = models.CharField(max_length=100, null=True)
+    account_number = models.CharField(max_length=100, null=True)
+    cheque_number = models.CharField(max_length=100, null=True)
+    upi_id = models.CharField(max_length=100, null=True)
+    cash = models.CharField(max_length=100, null=True)
+    email = models.CharField(max_length=100, null=True)
+    gst_treatment = models.CharField(max_length=100, null=True)
+    gst_number = models.CharField(max_length=100, null=True)
+    status = models.CharField(max_length=100, default="Draft")
+
 
 class purchasepayment1(models.Model):
     pymnt = models.ForeignKey(purchasepayment, on_delete=models.CASCADE,null=True)
@@ -1547,7 +1546,15 @@ class purchasepayment1(models.Model):
     duedate = models.CharField(max_length=100,null=True)
     amountdue = models.CharField(max_length=100,null=True)
     payments = models.CharField(max_length=100,null=True)
+    payment_id = models.IntegerField(null=True)
+    payment_type = models.CharField(max_length=100,null=True)
     
+# models.py
+from django.db import models
+
+class LastReferenceNumber(models.Model):
+    last_reference = models.IntegerField(default=0)
+
 class paymentmethod(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     newmethod = models.CharField(max_length=100,null=True) 

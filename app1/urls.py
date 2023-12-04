@@ -1340,6 +1340,7 @@ urlpatterns = [
     path('term_dropdown2', views.term_dropdown2, name='term_dropdown2'),
     path('get_account_number/', views.get_account_number, name='get_account_number'),
     path('get_bankdata', views.get_bankdata, name='get_bankdata'),
+
   
     # path('deletepurchasepymnt/<int:id>/', deletepurchasepymnt, name='deletepurchasepymnt'),
     # path('get_previous_balance_due/', get_previous_balance_due, name='get_previous_balance_due'),
