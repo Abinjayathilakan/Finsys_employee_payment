@@ -52,6 +52,32 @@
                                     <input class="form-control" type="date" name="adjdate">
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="col-form-label">Payment Type</label>
+                                    <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;" required>
+                                        <option value="{{rbill.payment_method}}" selected hidden>{{rbill.payment_method}}</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="cheque">Cheque</option>
+                                        <option value="upi">UPI</option>
+                                        {% for i in bank %}
+                                          <option value="{{i.bankname}}">{{i.bankname}}</option>
+                                        {% endfor %}
+                                      </select>
+                                </div>
+                                <div class="col-md-3" style="display:none;"  id="chequediv">
+                                    <label class="col-form-label" >Cheque No</label>
+                                    <input type="text" class="form-control" name="cheque_id" value="{{rbill.cheque_no}}" id="cheque_id" placeholder="Enter Cheque No">
+                                </div>
+                                <div class="col-md-3"  style="display:none;" id="upidiv">
+                                    <label class="col-form-label" >UPI ID</label>
+                                    <input type="text" class="form-control" name="upi_id" value="{{rbill.upi_no}}" id="upi_id" placeholder="Enter UPI ID">
+                                </div>
+                                <div class="col-md-3"  style="display:none;" id="bnkdiv">
+                                    <label class="col-form-label" >Bank Account</label>
+                                    <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+                                </div>
+                            </div>
                             <div class="row mb-5">
                                 <div class="col-md-8 mt-3"></div>
                                 <div class="col-md-2 mt-3">
@@ -70,6 +96,55 @@
             </div>
         </div>
     </div>
+
+    
+
+<script>
+    $(document).ready(function() {
+      $("#pay_method").change(function() {
+        var x=$('#pay_method').val();
+        if(x==='cash'){
+          $('#chequediv').hide()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+        }else if(x==='cheque'){
+          $('#chequediv').show()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('upi_id').value=null
+        }else if(x==='upi'){
+          $('#upidiv').show()
+          $('#bnkdiv').hide()
+          $('#chequediv').hide()
+          document.getElementById('cheque_id').value=null
+        }else{
+          $('#bnkdiv').show()
+          $('#chequediv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+
+          $.ajax({
+              type: "GET",
+              url: "{% url 'bankdata' %}",
+              data: {
+                  id: x,
+              },
+              success: function (response) {
+                  data = response.bank
+                  document.getElementById('cheque_id').value=null
+                  document.getElementById('upi_id').value=null
+                  document.getElementById("bnk_id").value = data
+              }
+          });
+        }
+      });
+    });
+</script>
+
+
 
     <script>
         // Function to update the "amount" field

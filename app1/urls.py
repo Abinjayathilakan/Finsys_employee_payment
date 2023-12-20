@@ -526,35 +526,9 @@ urlpatterns = [
     path('update_opening_balance/<int:id>',views.update_opening_balance,name='update_opening_balance'),
 
     path('gstr11',views.gstr11,name='gstr11'),
-
-
-    
-    
-
-    
-
-
-   
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
     
 
     # path('pdf',views.pdf,name='pdf'),
-
-
-
-
 
     # Rahanas ----------
 
@@ -732,10 +706,7 @@ urlpatterns = [
     re_path(r'^gopurchasepymnt$', views.gopurchasepymnt, name='gopurchasepymnt'),
     re_path(r'^addpurchasepymnt$', views.addpurchasepymnt, name='addpurchasepymnt'),
     re_path(r'^createpurchasepymnt$', views.createpurchasepymnt, name='createpurchasepymnt'),
-    # re_path(r'^viewpurchasepymnt/(?P<id>\d+)$', views.viewpurchasepymnt, name='viewpurchasepymnt'),
     re_path(r'^viewpurchasepymnt/(?P<id>\d+)$', views.viewpurchasepymnt, name='viewpurchasepymnt'),
-    
-
     re_path(r'^viewpurchasepymnt/goeditpurchasepymnt/(?P<id>\d+)$', views.goeditpurchasepymnt, name='goeditpurchasepymnt'),
     re_path(r'^viewpurchasepymnt/goeditpurchasepymnt/editpurchasepymnt/(?P<id>\d+)$', views.editpurchasepymnt, name='editpurchasepymnt'),
     re_path(r'^viewpurchasepymnt/deletepurchasepymnt/(?P<id>\d+)$', views.deletepurchasepymnt, name='deletepurchasepymnt'),
@@ -1334,17 +1305,68 @@ urlpatterns = [
     path('option_dropdown',views.option_dropdown,name='option_dropdown'),
     path('add_option',views.add_option,name='add_option'),
     #End
+
+    path('create_credit_save/',views.create_credit_save,name='create_credit_save'),
+    path('credit_note_filter_draft',views.credit_note_filter_draft,name='credit_note_filter_draft'),
+    path('credit_note_filter_save',views.credit_note_filter_save,name='credit_note_filter_save'),
+    path('credit_change_status/<int:pk>',views.credit_change_status,name='credit_change_status'),
+    path('attach_credit_note_file/<int:pk>',views.attach_credit_note_file,name='attach_credit_note_file'),
+    path('creditnotereport',views.creditnotereport,name='creditnotereport'),
+    path('get_account_no',views.get_account_no,name='get_account_no'),
+    path('itemdata_qty',views.itemdata_qty,name='itemdata_qty'),
+    path('itemdata_tax1',views.itemdata_tax1,name='itemdata_tax1'),
     
+    path('itemdetails',views.itemdetails,name='itemdetails'),
+    
+    path('custdata',views.custdata,name='custdata'),
+    
+    #.....mirna ....urls..
+
+    path('vendor/<int:id>/add_comment/',views.add_comment, name='add_comment'),
+    path('comment/<int:comment_id>/delete/',views.delete_comment, name='delete_comment'),
+    path('add_porder_comment/<int:id>/',views.add_porder_comment, name='add_porder_comment'),
+    path('delete_porder_comment/<int:comment_id>/',views.delete_porder_comment, name='delete_porder_comment'),
+    path('add_bill_comment/<int:bill_id>/',views.add_bill_comment, name='add_bill_comment'),
+    path('delete_bill_comment/<int:comment_id>/', views.delete_bill_comment, name='delete_bill_comment'),
+    path('porderbill_draft/',views.porderbill_draft,name='porderbill_draft'),
+    path('porderbill_save/',views.porderbill_save,name='porderbill_save'),
+    path('update_bill_status/<int:bill_id>/', views.update_bill_status, name='update_bill_status'),
+    path('update_purchase_status/<int:porder_id>/', views.update_purchase_status, name='update_purchase_status'),
+    # path('get_vendor_balance/', views.get_vendor_balance, name='get_vendor_balance'),
+    #End
+ 
     path('get_bank_acc_num2', views.get_bankacc_num2, name='get_bankacc_num2'),
     path('credit_term2', views.credit_term2, name='credit_term2'),
     path('term_dropdown2', views.term_dropdown2, name='term_dropdown2'),
-    path('get_account_number/', views.get_account_number, name='get_account_number'),
+    path('get_account_number/', views.get_account_number, name='get_account_number'), 
+     
+    path('deletecreditnote/<int:pk>',views.deletecreditnote,name='deletecreditnote'),
+    path('itemdata_qty_edit',views.itemdata_qty_edit,name='itemdata_qty_edit'), 
+    
+    path('save-account/', views.save_account, name='save_account'),
+    path('account_dropdown/', views.account_dropdown, name='account_dropdown'),
+    
+    path('convert_to_recbill/<int:pk>',views.convert_to_recbill,name='convert_to_recbill'),
+    path('rbillconvert_to_draft/<int:id>',views.rbillconvert_to_draft,name='rbillconvert_to_draft'),
+    
     path('get_bankdata', views.get_bankdata, name='get_bankdata'),
-
-  
-    # path('deletepurchasepymnt/<int:id>/', deletepurchasepymnt, name='deletepurchasepymnt'),
-    # path('get_previous_balance_due/', get_previous_balance_due, name='get_previous_balance_due'),
+    
+    path('check_user_loan',views.check_user_loan,name='check_user_loan'),
+    
+    path('payment_draf_to_save/<int:id>',views.paymentDraftToSave, name='paymentDraftToSave'), 
+    
+    # Harikrishnan-urls------------------------------------
+    
+    path('purchase_order_details',views.purchase_order_details,name='purchase_order_details'),
+    path('purchase_orderby_vendor',views.purchase_orderby_vendor,name='purchase_orderby_vendor'),
+    path('recurring_bill_report',views.recurring_bill_report,name='recurring_bill_report'),
+    #End
+    
+    path('recurringBillDetailsToEmail',views.recurringBillDetailsToEmail,name="recurringBillDetailsToEmail"),
+    path('purchaseOrderByVendorToEmail',views.purchaseOrderByVendorToEmail,name="purchaseOrderByVendorToEmail"),
+    path('purchaseOrderDetailsToEmail',views.purchaseOrderDetailsToEmail,name="purchaseOrderDetailsToEmail"),
+    
+    path('debit_add_file/<int:id>/', views.debit_add_file, name='debit_add_file'),
+    path('shareGstrToEmail',views.shareGstrToEmail, name='shareGstrToEmail'),
  
-     
-     
 ]

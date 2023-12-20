@@ -911,34 +911,22 @@ footer p {
                             </section>
                 
                             <section class="product-area mt-4">
-                                <table class=" table table-hover table-bordered " id="table1">
-                                    <thead >
+                                <table class="table table-hover table-bordered text-center" id="table1">
+                                    <thead>
                                         <tr>
-                                            <td width="7%" height="30" align="center" style="color:#000" ><strong>S.N</strong></td>
-                                        <td width="20%" align="center" style="color:#000"><strong>Bill Date</strong></td>
-                                        <td width="20%" align="center" style="color:#000"><strong>Particular</strong></td>
-                                        <!-- <td width="20%" align="center" style="color:#000"><strong>Balance Due</strong></td> -->
-                                        <td width="20%" align="center" style="color:#000"><strong>Paid Amount</strong></td>
-                                        <!-- <td width="13%" align="center"><strong>payments</strong></td> -->
-                                        </tr>
+                                            <td class="text-center" style="color:#000"><strong>Particular</strong></td>
+                                            <td style="color:#000"><strong>Paid Amount</strong></td>
                                         </tr>
                                     </thead>
                                     <tbody>
-        
-                                        {% for p in py %}
                                         <tr>
-                                            <td class="text-center" style="color:#000"> {{ forloop.counter }}</td>
-                                            <td class="text-center" style="color:#000">{{ p.billdate }}</td>
-                                            <td class="text-center" style="color:#000" width="30%">{{ paymt.paymentmethod }}</td>
-                                            <!-- <td class="text-center" style="color:#000">{{ p.amountdue }}</td> -->
-                                            <td class="text-center" style="color:#000">{{ p.payments }}</td>
-                                            <!-- <td class="text-center" style="color:#000">{{ rbill.discount }}</td>
-                                            <td class="text-center" style="color:#000">{{ rbill.total }}</td> -->
+                                            <td class="text-center" style="color:#000">Paid</td>
+                                            <td class="text-center" style="color:#000">{{ paymt.paymentamount }}</td>
                                         </tr>
-                                    {% endfor %}
                                     </tbody>
                                 </table><br><br>
                             </section>
+                            
                 
                             <!-- <section class="balance-info">
                                 <div class="row">
@@ -1094,32 +1082,7 @@ footer p {
                                   </div>
                               </section>
                   
-                              <section class="product-area mt-2">
-                                  <table class="table table-hover table-bordered  template2table" id="table2">
-                                      <thead >
-                                          <tr class="template3tablehead">
-                                            <td width="7%" height="30" align="center" style="color:#000" ><strong>S.N</strong></td>
-                                            <td width="20%" align="center" style="color:#000"><strong>Bill Date</strong></td>
-                                            <td width="20%" align="center" style="color:#000"><strong>Particular</strong></td>
-                                            <!-- <td width="20%" align="center" style="color:#000"><strong>Balance Due</strong></td> -->
-                                            <td width="20%" align="center" style="color:#000"><strong>Paid Amount</strong></td>
-                                          </tr>
-                                      </thead>
-                                      <tbody  style="background-color: #999999;">
-                                        {% for p in py %}
-                                              <tr>
-                                                <td class="text-center" style="color:#000"> {{ forloop.counter }}</td>
-                                                <td class="text-center" style="color:#000">{{ p.billdate }}</td>
-                                                <td class="text-center" style="color:#000" width="30%">{{ paymt.paymentmethod }}</td>
-                                                <!-- <td class="text-center" style="color:#000">{{ p.amountdue }}</td> -->
-                                                <td class="text-center" style="color:#000">{{ p.payments }}</td>
-                                                <!-- <td class="text-center" style="color:#000">{{ rbill.discount }}</td>
-                                                <td class="text-center" style="color:#000">{{ rbill.total }}</td> -->
-                                              </tr>
-                                          {% endfor %} 
-                                      </tbody>
-                                  </table>
-                              </section>
+
                   
                               <!-- <section class="balance-info">
                                   <div class="row mt-3">
@@ -1364,9 +1327,9 @@ footer p {
                 </div>
             </div>
             <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
-                <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
-                <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
-                <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
+                <!-- <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button> -->
+                <!-- <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+                <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button> -->
             </div>
         </div>
 

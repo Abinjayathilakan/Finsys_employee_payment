@@ -743,7 +743,7 @@
             color: #fff;
   }
 </style>
-<form action="challancreate" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+<form action="challancreate" method="post" class="needs-validation" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="page-content">
     <!--breadcrumb-->
@@ -751,7 +751,7 @@
       <div class="card-body">.
         <div class="card-title">
           <center>
-            <h3 class="mb-0" id="invnumb">NEW DELIVERY CHELLAN</h3>
+            <h3 class="mb-0" id="invnumb">NEW DELIVERY CHALLAN</h3>
           </center>
         </div>
         <hr />
@@ -773,12 +773,12 @@
             <h5 class="text-info">{{ cmp1.cemail }}</h5>
           </div> -->
           <div class="row">
-            <div class="col-md-5 mt-3 mr-4 ml-4">
+            <div class="col-md-5 mt-3 mr-4">
                 
               <label class="col-form-label">Select Customer</label>
               <div class="d-flex">
-                <select name="customername" id="customer" class="form-control" style="background-color: #2f516f; color: white;">
-                  <option value="NIL">Select Customer</option>
+                <select required name="customername" id="customer" class="form-control" style="background-color: #2f516f; color: white;">
+                  <option value="">Select Customer</option>
                   {% for cust in customers %}
                     {% if cust.cid_id == cmp1.cid %}
                         <option text="{{ cust.customerid }}" value="{{ cust.firstname }} {{ cust.lastname }}">{{ cust.firstname }} {{ cust.lastname }}</option>
@@ -803,11 +803,11 @@
             </div>
             
         
-                <div class="col-md-5 ml-4 mt-3">
+                <div class="col-md-5 mt-3">
                   <label class="text-gray-light">Bill To:</label>
-                  <textarea class="form-control" name="bname" id="bname" rows="7" type="text" style="background-color: #2f516f; color: white;"></textarea>
+                  <textarea class="form-control" name="bname" id="bname" rows="5" type="text" style="background-color: #2f516f; color: white;"></textarea>
 
-                  <!-- <div class="col-md-5 ml-4 mt-3 mr-4"> -->
+                  <!-- <div class="col-md-5 mt-3 mr-4"> -->
                     <label class="col-form-label mt-4";>Place of supply</label>
                     <select type="text" class="form-control " id="plosu" name="placosupply" style="background-color: #2f516f; color: white;" onclick="state()" onclick='calc()'>
                       <option value="{{ customers.state }}" selected> {{ customers.state }}</option>
@@ -860,23 +860,25 @@
         </div>
         <hr>
         <div class="row">
-            <div class="col-md-5 ml-4 mt-2 mr-4">
+            <div class="col-md-4 mt-2">
+                <label class="col-form-label">Reference No.</label>
+                <input type="text"  id="reference_num" class="form-control" name="ref" readonly value="{{referno}}" style="background-color: #2f516f; color: white;">
+            </div>
+            <div class="col-md-4 mt-2">
                 <label class="col-form-label">Challan number</label>
                 <input type="text"  id="challan_num" class="form-control" name="chal_no" value="DL-" style="background-color: #2f516f; color: white;" onselect="calc()">
                 <span id="challan_warning" class="text-danger"></span>
-              </div>
-              <div class="col-md-5 ml-4 mt-2">
+            </div>
+            <div class="col-md-4 mt-2">
                 <label class="col-form-label">Challan Date:</label>
-                <div>
-                  <input type="date" value="{{ tod }}" class="form-control" name="challandate" style="background-color: #2f516f; color: white;">
-                </div>
-              </div>
+                <input type="date" value="{{ tod }}" class="form-control" name="challandate" style="background-color: #2f516f; color: white;">
+            </div>
         </div>
 
             
         <div class="row">
   
-            <div class="col-md-5 ml-4 mt-3 mr-4">
+            <div class="col-md-4 mt-3">
               <label class="col-form-label">Challan Type </label>
               <div>
                 <select class="custom-select" name="terms" required style="background-color: #2f516f; color: white;" id="termadd" onclick="showinp('newtrm', this)">
@@ -888,7 +890,7 @@
                 </select>
               </div>
             </div>
-            <div class="col-md-5 ml-4 mt-3">
+            <div class="col-md-5 mt-3">
                 <!-- <label class="col-form-label">Refrence number</label> -->
                 <!-- <input type="text"  id="ref" class="form-control" name="ref" value="{{ref}}" readonly style="background-color: #2f516f; color: white;" onselect="calc()"> -->
               </div>
@@ -898,7 +900,7 @@
 
           
           <!-- <div class="row">
-            <div class="col-md-5 ml-4 mt-3 mr-4">
+            <div class="col-md-5 mt-3 mr-4">
               <label class="col-form-label">Place of supply</label>
               <select type="text" class="form-control " id="plosu" name="placosupply" style="background-color: #2f516f; color: white;" onclick="state()" onclick='calc()'>
                 <option value="{{ customers.state }}" selected> {{ customers.state }}</option>
@@ -1568,7 +1570,7 @@ function test(taxamount) {
                             <div class="text-danger m-2" id="warnpan"></div>
                         </div>
 
-                        <div class="col-md-4 mt-3" >
+                        <!-- <div class="col-md-4 mt-3" >
                           <div>
                               <label for="validationCustom05">OPENING BALANCE</label>
                               <input type="text" id="openbalance" class="form-control" value=""  name="openbalance"
@@ -1577,7 +1579,26 @@ function test(taxamount) {
                                      >
                               <div class="text-danger m-2" ></div>
                           </div>
-                      </div>
+                      </div> -->
+                      <div class="col-md-4 mt-3" >
+                        <label for="validationCustom05">Opening Balance</label>
+                        <div class="d-flex">
+                            <select name="bal" id="bal" class="form-select text-white pl-1" style="background-color: #243e54; width: 25%; border-radius: 5px;">
+                                <option value="credit">Credit</option>
+                                <option value="debit">Debit</option>
+                            </select>
+                            <input type="text" class="form-control" name="openbalance" id="openbalance"
+                                style="background-color: #43596c;color: white;">
+                            <div class="text-danger m-2" ></div>
+                        </div>
+                       </div>
+
+                        <div class="col-md-4 mt-3" >
+                            <label for="validationCustom05">Credit Limit</label>
+                            <input type="text" class="form-control" name="crd_lmt"
+                                style="background-color: #43596c;color: white;" id="crd_lmt">
+                            <div class="text-danger m-2" ></div>
+                        </div>
 
                         <!-- <div class="col-md-4 mt-3" id="hai1">
                             <div >
@@ -1746,7 +1767,7 @@ function test(taxamount) {
                             <div class="row">
                                 <div class="col-md-12 d-flex">
                                     <h5>Shipping Address</h5>
-                                    <input class="ml-4 mt-2 ml-2" type="checkbox" onclick="poppins()" id="okay"
+                                    <input class="mt-2 ml-2" type="checkbox" onclick="poppins()" id="okay"
                                            name="okay">
                                     <label class="ml-2 mt-1 ml-2" for="okay">Same As Billing Address</label>
                                 </div>
@@ -2367,53 +2388,138 @@ function test(taxamount) {
                     
                     
             }
+
+            $(document).on('change', '#openbalance',function () {
+                openbal = $("#openbalance").val()
+                if($('#bal').val()=='credit'){
+                    if(openbal.slice(0,1) != '-'){
+                        if(parseFloat(openbal) != 0){
+                            document.getElementById("openbalance").value = "-"+openbal
+                        }else{
+                            document.getElementById("openbalance").value = openbal
+                        }
+                    }else{
+                        if(parseFloat(openbal) != 0){
+                            document.getElementById("openbalance").value = openbal
+                        }else{
+                            document.getElementById("openbalance").value = -1 * parseFloat(openbal)
+                        }
+                    }
+                }else{
+                    document.getElementById("openbalance").value = openbal
+                }
+            });
+
+            $(document).on('change', '#bal',function () {
+                openbal = $("#openbalance").val()
+                if(openbal != ""){
+                    if($('#bal').val()=='credit'){
+                        openbal = $("#openbalance").val()
+                        if (parseFloat(openbal) != 0){
+                            document.getElementById("openbalance").value = "-"+openbal
+                        }else{
+                            document.getElementById("openbalance").value = openbal
+                        }
+                    }else{
+                        openbal = $("#openbalance").val()
+                        document.getElementById("openbalance").value = -1*(parseFloat(openbal))
+                    }
+                }
+            });
           </script>
           <script>
                 // savecustomer ajax
+                // $(document).on("click", "#customerSave", function(){
+                
+                //     $.ajax({
+            
+                //         type : 'POST',
+                //         url:"{% url 'createcustomer_rbill' %}",
+
+                //         data:{
+                //             csrfmiddlewaretoken: '{{ csrf_token }}',
+                //             title : $('#title').val(),
+                //             firstname : $('#firstname').val(),
+                //             lastname : $('#lastname').val(),
+                //             company : $("#company").val(),
+                //             location : $("#location").val(),
+                //             openbalance : $("#openbalance").val(),
+                //             crd_lmt : $('#crd_lmt').val(),
+                //             email : $("#email1").val(),
+                //             website :$("#website").val(),
+                //             mobile :$("#mobile").val(),
+                //             street : $("#street").val(),
+                //             city : $("#city").val(),
+                //             state : $("#state").val(),
+                //             country : $("#country").val(),
+                //             pincode : $("#pinco").val(),
+                //             shipstreet : $("#shipstreet").val(),
+                //             shipcity : $("#shipcity").val(),
+                //             shipstate : $("#shipstate").val(),
+                //             shipcountry : $("#shipcountry").val(),
+                //             shippincode : $("#shippinco").val(),
+                //             gsttype :$("#gsttype").val(),
+                //             gstin :$("#gstin").val(),
+                //             panno :$("#panno").val(),
+
+                        
+                            
+                            
+                //         },
+                        
+                //         success: function(response) {
+                //             console.log("success")
+                //             document.getElementById("modalCustomer").reset();
+                //             reloadCustomer();
+                //         },
+                //     });        
+                // });
+
                 $(document).on("click", "#customerSave", function(){
                 
-                $.ajax({
-        
-                    type : 'POST',
-                    url:"{% url 'createcustomer_rbill' %}",
+                    $.ajax({
+            
+                        type : 'POST',
+                        url:"{% url 'customers' %}",
 
-                    data:{
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                        title : $('#title').val(),
-                        firstname : $('#firstname').val(),
-                        lastname : $('#lastname').val(),
-                        company : $("#company").val(),
-                        location : $("#location").val(),
-                        openbalance : $("#openbalance").val(),
-                        email : $("#email1").val(),
-                        website :$("#website").val(),
-                        mobile :$("#mobile").val(),
-                        street : $("#street").val(),
-                        city : $("#city").val(),
-                        state : $("#state").val(),
-                        country : $("#country").val(),
-                        pincode : $("#pinco").val(),
-                        shipstreet : $("#shipstreet").val(),
-                        shipcity : $("#shipcity").val(),
-                        shipstate : $("#shipstate").val(),
-                        shipcountry : $("#shipcountry").val(),
-                        shippincode : $("#shippinco").val(),
-                        gsttype :$("#gsttype").val(),
-                        gstin :$("#gstin").val(),
-                        panno :$("#panno").val(),
+                        data:{
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            title : $('#title').val(),
+                            firstname : $('#firstname').val(),
+                            lastname : $('#lastname').val(),
+                            company : $("#company").val(),
+                            location : $("#location").val(),
+                            openbalance : $("#openbalance").val(),
+                            crd_lmt : $('#crd_lmt').val(),
+                            email : $("#email1").val(),
+                            website :$("#website").val(),
+                            mobile :$("#mobile").val(),
+                            street : $("#street").val(),
+                            city : $("#city").val(),
+                            state : $("#state").val(),
+                            country : $("#country").val(),
+                            pincode : $("#pinco").val(),
+                            shipstreet : $("#shipstreet").val(),
+                            shipcity : $("#shipcity").val(),
+                            shipstate : $("#shipstate").val(),
+                            shipcountry : $("#shipcountry").val(),
+                            shippincode : $("#shippinco").val(),
+                            gsttype :$("#gsttype").val(),
+                            gstin :$("#gstin").val(),
+                            panno :$("#panno").val(),
 
-                    
                         
+                            
+                            
+                        },
                         
-                    },
-                    
-                    success: function(response) {
-                        console.log("success")
-                        document.getElementById("modalCustomer").reset();
-                        reloadCustomer();
-                    },
-                });        
-            });
+                        success: function(response) {
+                            console.log("success")
+                            document.getElementById("modalCustomer").reset();
+                            reloadCustomer();
+                        },
+                    });        
+                });
 
 
             function reloadCustomer() {

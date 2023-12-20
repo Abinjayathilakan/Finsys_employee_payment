@@ -1,7 +1,7 @@
 {% extends 'app1/base.html' %}
 {% block body %}
     {% load static %}
-
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <style>
         .hide{
 			display: none;
@@ -724,7 +724,8 @@
         <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
-                    <center><h3 class="mb-0">PURCHASE</h3></center>
+                    <!-- <center><h3 class="mb-0">PURCHASE</h3></center> -->
+                    <center><h3 class="mb-0">NEW BILL</h3></center>
                 </div>
                 <hr/>
             </div>
@@ -745,7 +746,7 @@
                                 <label for="validationCustom01">Select Vendor</label>
                                 <input type="text" value="{{ pordr.vendor_name }}" name="vendor_name" class="form-control">
                             </div>
-                            <input type="text" id="email" name="email" value="{{ pordr.vendor_mail }}" class="form-control" style="display:none;">
+                            <!-- <input type="text" id="email" name="email" value="{{ pordr.vendor_mail }}" class="form-control" style="display:none;"> -->
                         </div>
                         <div class="row">
                             <div class="col-md-4 mt-3">
@@ -755,19 +756,26 @@
                                     rows="5">{{ pordr.billing_address }}</textarea>
                                 </div>
                             </div>
+                            <div class="col-md-4 mt-3">
+                                <label for="">Email</label> 
+                                <input type="text" id="email1" name="email"  value="{{ pordr.vendor_mail }}" placeholder='Email' class="form-control ml-1"><br>
+                                <label for="">GST Treatment</label> 
+                                <input type="text" id="gstTreatment" value="{{ pordr.vendor_gsttype }}" name="gsttype" placeholder='GST Treatment' class="form-control ml-1">
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <!-- <label for="">Balance</label> 
+                                <input type="text" id="balance1" name="Balance" placeholder='Balance' class="form-control ml-1"><br> -->
+                            <div id="disabled">
+                                <label for="">GSTIN</label> 
+                                <input type="text" id="gstin1" name="gstin" value="{{ pordr.vendor_gstin }}" placeholder='29APPCK7465F1Z1' class="form-control ml-1">
+                            </div>
+                        </div>
                         </div>
                         <hr>
                         <br><br>
                         <div class="row">
                             <div class="col-md-3 mt-2"><h5>Purchase Order Details</h5></div>
                             <div class="col-md-3 mt-2"></div>
-                            <div class="col-md-3 mt-2">
-                                <label>Purchase Order Number</label>
-                                <div class="d-flex">
-                                    <input name="puchaseorder_no" value="{{ pordr.puchaseorder_no }}" type="number" class="form-control" placeholder="1000" readonly>
-                                    <a class="form-control" data-target="#porderno" data-toggle="modal" style="width: 60px; cursor: pointer;"><center><i class="fa fa-gear"></i></center></i></a>
-                                </div>    
-                            </div>
                         </div>
                         <hr>
                         <div class="row">
@@ -868,18 +876,41 @@
                                 <input type="text" class="form-control" value="{{ pordr.reference }}" name="reference" placeholder="">   
                             </div>
                         </div>
-                        <hr>
                         <div class="row">
-                            <div class="col-md-3 mt-2"><h5>Deliver to Details</h5></div>
-                            <div class="col-md-3 mt-2">
-                                <input type="text" name="contact_name" id="select1" value="{{ pordr.contact_name }}" class="form-control">
+                            <div class="col-md-3 mt-3">
+                                <label>Purchase Order Number</label>
+                                <div class="d-flex">
+                                    <input name="puchaseorder_no" value="{{ pordr.puchaseorder_no }}" type="number" class="form-control" placeholder="1000" readonly>
+                                    <a class="form-control" data-target="#porderno" data-toggle="modal" style="width: 60px; cursor: pointer;"><center><i class="fa fa-gear"></i></center></i></a>                                </div>
                             </div>
                         </div>
+                        <hr>
+                            <div class="col-md-3 mt-2"><h5>Deliver to Details</h5></div><hr>
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <div class="d-flex">
+                                <input type="text" name="contact_name" id="select1" value="{{ pordr.contact_name }}" class="form-control">
+                                </div>
+                            </div>
+                        </div><br>
                         <div class="row">
                             <div class="col-md-4 mt-2">
                                 <div class="form-row">
+                                    <label for="">Details</label>
                                     <textarea class="form-control" id="deliverto" value="" name="deliverto"
                                     rows="5">{{ pordr.deliverto }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <div class="form-row">
+                                    <label for="">GST Treatment</label>
+                                    <input type="text" id="gstTreatment1" name="cgsttype" value="{{ pordr.customer_gsttype }}" placeholder='GST Treatment' class="form-control ml-1">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2" id="disabled2">
+                                <div class="form-row">
+                                    <label for="">GSTIN</label>
+                                    <input type="text" id="gstin2" name="cgstin" value="{{ pordr.customer_gstin }}" placeholder='29APPCK7465F1Z1' class="form-control ml-1">
                                 </div>
                             </div>
                         </div><hr>
@@ -1032,10 +1063,9 @@
                                 
                                 <div class="row mt-5 mb-3">
                                     <div class="col-md-6">
-                                        <label for="">Payment Type</label>
+                                        <label for="paytype">Payment Type</label>
                                         <div class="d-flex">
                                             <select class="form-control" name="paytype" id="paytype" required>
-                                                
                                                 {% if bank %}
                                                 <option value="{{bank.id}}" hidden>{{bank.bankname}}</option>
                                                 {% else %}
@@ -1045,13 +1075,33 @@
                                                 {% for i in banks %}
                                                 <option value="{{i.id}}">{{i.bankname}}</option>
                                                 {% endfor %}
-                                                
                                                 <option value="Cash">Cash</option>
                                                 <option value="Cheque">Cheque</option>
-                                                
+                                                <option value="UPI">UPI</option>
                                             </select>
-                                            
-                                        </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Add this section to your HTML form -->
+                                <div class="row mt-3 mb-3" id="accountNumberField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="accountNumber">Account Number</label>
+                                        <input type="text" class="form-control" name="accountNumber" id="accountNumber" value="{{ pordr.account_number }}">
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3 mb-3" id="chequeNumberField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="chequeNumber">Cheque Number</label>
+                                        <input type="text" class="form-control" name="chequeNumber" id="chequeNumber" value="{{ pordr.cheque_number }}">
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3 mb-3" id="upiField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="upiNumber">UPI Number</label>
+                                        <input type="text" class="form-control" name="upiNumber" id="upiNumber" value="{{ pordr.upi_number }}">
                                     </div>
                                 </div>
                                
@@ -1229,7 +1279,35 @@
             </div>
         </div>
     </div>
-      
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function showPaymentTypeField(paymentType) {
+                document.getElementById('chequeNumberField').style.display = 'none';
+                document.getElementById('upiField').style.display = 'none';
+                document.getElementById('accountNumberField').style.display = 'none';
+    
+                if (paymentType === 'Cheque') {
+                    document.getElementById('chequeNumberField').style.display = 'block';
+                } else if (paymentType === 'UPI') {
+                    document.getElementById('upiField').style.display = 'block';
+                } else if (paymentType === 'Cash') {
+                } else {
+                    document.getElementById('accountNumberField').style.display = 'block';
+                }
+            }
+    
+            var initialPaymentType = "{{ pordr.payment_type }}";
+    
+            showPaymentTypeField(initialPaymentType);
+    
+            document.getElementById('paytype').addEventListener('change', function () {
+                var selectedOption = this.options[this.selectedIndex];
+                var selectedValue = selectedOption.value;
+    
+                showPaymentTypeField(selectedValue);
+            });
+        });
+    </script>     
     <!-- <script>
         var item_row_counter = 1
 
@@ -1312,6 +1390,43 @@
             }).trigger('change');
         });
     </script>
+
+<script>
+      $(document).ready(function() {
+    var gstinElement = $('#gstin1');
+    var disabledElement = $('#disabled');
+
+    function toggleGSTINVisibility() {
+        var gstinValue = gstinElement.val();
+
+        if (gstinValue && gstinValue.trim() !== '') {
+            gstinElement.show();
+            disabledElement.show();
+        } else {
+            gstinElement.hide();
+            disabledElement.hide();
+        }
+    }
+    toggleGSTINVisibility();
+});
+      $(document).ready(function() {
+    var gstinElement = $('#gstin2');
+    var disabledElement = $('#disabled2');
+
+    function toggleGSTINVisibility() {
+        var gstinValue = gstinElement.val();
+
+        if (gstinValue && gstinValue.trim() !== '') {
+            gstinElement.show();
+            disabledElement.show();
+        } else {
+            gstinElement.hide();
+            disabledElement.hide();
+        }
+    }
+    toggleGSTINVisibility();
+});
+</script>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script>

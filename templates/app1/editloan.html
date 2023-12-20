@@ -79,9 +79,9 @@
                         <input type="date" class="form-control" value="{{loan.LoanDate}}" id="loandate" name="loandate" required ><br>
                     </div>
                     <div class="col-md-5 ml-4">
-                        <label class="col-form-label">Loan Amound</label>
-                        <input type="text" class="form-control" id="Loan_Amound" name="Loan_Amound"
-                            placeholder="Loan Amound" value="{{ loan.LoanAmount }}"><br>
+                        <label class="col-form-label">Loan Amount</label>
+                        <input type="text" class="form-control" id="Loan_Amound" name="Loan_Amound" onchange="calculateExpiryDate_by_loan()"
+                            placeholder="Loan Amound" value="{{ loan_trans.amount }}"><br>
                     </div>
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Expery Date</label>
@@ -105,6 +105,32 @@
                         </div>
                     </div>
                 </div>  
+                <div class="row">
+                    <div class="col-md-3 ml-4">
+                        <label class="col-form-label">Payment Type</label>
+                        <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;" required>
+                            <option value="{{loan.payment_method}}" selected hidden>{{loan.payment_method}}</option>
+                            <option value="cash">Cash</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="upi">UPI</option>
+                            {% for i in bank %}
+                              <option value="{{i.bankname}}">{{i.bankname}}</option>
+                            {% endfor %}
+                          </select>
+                    </div>
+                    <div class="col-md-3" style="display:none;"  id="chequediv">
+                        <label class="col-form-label" >Cheque No</label>
+                        <input type="text" class="form-control" name="cheque_id" value="{{loan.cheque_no}}" id="cheque_id" placeholder="Enter Cheque No">
+                    </div>
+                    <div class="col-md-3"  style="display:none;" id="upidiv">
+                        <label class="col-form-label" >UPI ID</label>
+                        <input type="text" class="form-control" name="upi_id" value="{{loan.upi_no}}" id="upi_id" placeholder="Enter UPI ID">
+                    </div>
+                    <div class="col-md-3"  style="display:none;" id="bnkdiv">
+                        <label class="col-form-label" >Bank Account</label>
+                        <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+                    </div>
+                </div>
                 <div class="row m-4 ml-5 pt-4">   
                     <!-- <div class="col-md-4 m-4 ml-5 pt-4"> -->
                         <label><b>Monthly Cutting :</b></label>&nbsp;&nbsp;
@@ -1154,7 +1180,6 @@
             document.getElementById('cuttingPercentage').style.display = 'block';
         }
         else{
-
             document.getElementById('Cutingamount').style.display = 'block';
             document.getElementById('cuttingPercentage').style.display = 'none';
         }
@@ -1173,15 +1198,19 @@
     //     }
     // });
     function show4(str) {
-  
         document.getElementById('Cutingamount').style.display = 'none';
         document.getElementById('cuttingPercentage').style.display = 'block';
+        clearValues(); // Clear values when switching to Percentage
     }
+
     function show3(sign) {
         document.getElementById('Cutingamount').style.display = 'block';
         document.getElementById('cuttingPercentage').style.display = 'none';
-        
-
+        clearValues(); // Clear values when switching to Amount
+    }
+    function clearValues() {
+        document.getElementById("cu").value = 0;
+        document.getElementById("cp").value = 0;
     }
     
     function convert(){
@@ -1447,5 +1476,111 @@
         }
     }
 </script>
+
+
+    
+<script>
+    $(document).ready(function() {
+      // Function to handle the initial display based on the existing value
+      var initialMethod = $('#pay_method').val();
+      if (initialMethod === 'cheque') {
+        $('#chequediv').show();
+      } else if (initialMethod === 'upi') {
+        $('#upidiv').show();
+      } else if (initialMethod !== 'cash') {
+        $('#bnkdiv').show();
+        // Assuming you want to make an AJAX call only when the initial value is a bank
+        $.ajax({
+          type: "GET",
+          url: "{% url 'bankdata' %}",
+          data: {
+            id: initialMethod,
+          },
+          success: function(response) {
+            data = response.bank;
+            document.getElementById('cheque_id').value = null;
+            document.getElementById('upi_id').value = null;
+            document.getElementById("bnk_id").value = data;
+          }
+        });
+      }
+    
+      // Function to handle changes in the select dropdown
+      $("#pay_method").change(function() {
+        var x = $('#pay_method').val();
+        if (x === 'cheque') {
+          $('#chequediv').show();
+          $('#upidiv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('upi_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        } else if (x === 'upi') {
+          $('#upidiv').show();
+          $('#chequediv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        } else if (x !== 'cash') {
+          $('#bnkdiv').show();
+          $('#chequediv').hide();
+          $('#upidiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('upi_id').value = null;
+          // Assuming you want to make an AJAX call only when the value is a bank
+          $.ajax({
+            type: "GET",
+            url: "{% url 'bankdata' %}",
+            data: {
+              id: x,
+            },
+            success: function(response) {
+              data = response.bank;
+              document.getElementById("bnk_id").value = data;
+            }
+          });
+        } else {
+          $('#chequediv').hide();
+          $('#upidiv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('upi_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        }
+      });
+    });
+    
+    </script>
+
+    <!-- Add these script tags in the head or at the end of the body -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to calculate and update the expiry date
+        function calculateExpiryDate_by_loan() {
+            // Get the selected loan date and loan duration
+            var loanDate = new Date($('#loandate').val());
+            var loanDuration = parseInt($('#loan_duration').val());
+
+            // Check if the loan date is valid and the loan duration is a number
+            if (!isNaN(loanDate.getTime()) && !isNaN(loanDuration)) {
+                // Calculate the expiry date based on the loan date and duration
+                var expiryDate = new Date(loanDate.getTime());
+                expiryDate.setMonth(expiryDate.getMonth() + loanDuration);
+
+                // Update the expiry date field with the calculated date
+                $('#experydat').val(expiryDate.toISOString().slice(0, 10));
+            }
+        }
+
+        // Attach the calculateExpiryDate function to the loan date and loan duration change events
+        $('#loandate, #loan_duration').change(calculateExpiryDate_by_loan);
+
+        // Call calculateExpiryDate initially to set the initial expiry date
+        calculateExpiryDate_by_loan();
+    });
+</script>
+
+    
+    
 
 {% endblock %}

@@ -1,7 +1,32 @@
 {% extends 'app1/base.html' %}
+{% load social_share %}
+    {% load static %}
     {% block body %}
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
 
     <style>
+        
+        .equal-length-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%; /* Make the container fill the height of the column */
+            margin-left: 2vh;
+            margin-right: 2vh;
+        }
+
+        .equal-length-item {
+            flex: 1;
+            text-align: center;
+        }
+         .modal{
+      z-index: 9999;
+      overflow: scroll;
+    }
         #div1{
             width: 33.33%;
             float: left;
@@ -112,6 +137,16 @@
             position: absolute;
             padding-left: 10px;
             /* margin-left: -50px; */
+        }
+        .template2 .top-left .graphic-path::before {
+            background-color: #bbbbbb;
+        }
+        .template2 .top-left .graphic-path::after {
+            background: #616263b3;
+        }
+        .template2 .top-left .graphic-path p {
+            background-color: #616263;
+            color: white;
         }
         .store-user {
             padding-bottom: 25px;
@@ -227,6 +262,16 @@
         body * {
             visibility: hidden;
         }
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
 
         header {
             display: none;
@@ -273,32 +318,90 @@
 
     
 
-    <div class="page-content" >
-        <div class="card radius-15">
+<div class="page-content" >
+    <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
                     <center><h2 class="mb-0">CREDIT NOTE</h2></center>
+                    
                     <hr>
+                    
                     <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
+                        <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="showDetails()" >Overview</a>
+                    <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="showTemplates()">Templates</a>
+                    <a style="padding: 10px; cursor: pointer; font-size: large;" id="toggleTemplate4" onclick="showSlip(),toggleTemplate('whatToPrint4','toggleTemplate4')"  >Order Slip</a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
                         <div class="collapse navbar-collapse" id="navbarScroll">
                             <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                                 <li class="nav-item active" >
-                                <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" onclick="window.print()">&nbsp;&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
+                                <a class="nav-link text-light  btn btn-outline-info  text-grey p-1" role="button" id="templatePrintButton"  onclick="printSection('whatToPrint')" >&nbsp;&nbsp;Print&nbsp;&nbsp;</a>
                                 </li>
-                                <li class="nav-item mx-1">
-                                    <a class="nav-link text-light btn btn-outline-info rounded-pill text-grey p-1" role="button" href="{% url 'render_pdf_credit' pcrd.screditid %}">
+                                <li class="nav-item mx-1"> 
+                                    <a class="nav-link text-light btn btn-outline-info  text-grey p-1" role="button" href="{% url 'render_pdf_credit' pcrd.screditid %}">
                                         &nbsp;&nbsp;PDF&nbsp;&nbsp;
                                     </a>
                                 </li>
-                                <li class="nav-item mx-1">
-                                    <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey  p-1" role="button" href="{% url 'editcreditnote' pcrd.screditid %}">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
+                                {% if pcrd.status == 'Draft' %}
+                                <li class="nav-item">
+                                    <a class="nav-link text-light btn btn-outline-info  " role="button" href="{% url 'credit_change_status' pcrd.screditid %}" title="save this draft" style="height: 2.2rem;">
+                                        <span style="position: relative;top: -4px;">&nbsp;&nbsp;Convert&nbsp;&nbsp;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                <li class="nav-item dropdown mx-1">
+                                    <a class="nav-link dropdown-toggle text-light btn btn-outline-info " href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 2.2rem;">
+                                        <span style="position: relative;top: -4px;">Share</span>
+                                    </a>
+                                   
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+      
+    
+                                        <li style="margin-left: 50px;" >{% post_to_whatsapp object_or_url "WhatsApp" %} </li>
+                                        <li style="margin-left: 50px;" >{% send_email object.title "New: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
+                                        
+                                    </ul>
                                 </li>
                                 <li class="nav-item mx-1">
-                                    <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" href="{% url 'deletecredit' pcrd.screditid %}">&nbsp;&nbsp;Delete&nbsp;&nbsp;</a>
+                                    <a class="nav-link text-light  btn btn-outline-info  text-grey  p-1" role="button" href="{% url 'editcreditnote' pcrd.screditid %}">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
                                 </li>
+                               
+                                <li class="nav-item mx-1">
+                                    <a class="nav-link text-light  btn btn-outline-info  text-grey p-1" role="button" href="{% url 'deletecreditnote' pcrd.screditid %}">&nbsp;&nbsp;Delete&nbsp;&nbsp;</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-light btn btn-outline-info " href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 2.2rem;width: 4rem;">
+                                        <span style="position: relative;top: -4px;">File</span>
+                                    </a>
+                                   
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+      
+    
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#file"><i class="fa fa-paperclip">&nbsp;Attach File</i></a>
+                                        {% if pcrd.file != "default.png" %}
+                                            <a class="dropdown-item" download  href="{{ pcrd.file.url }}"><i class="fa fa-download">&nbsp;Download File</i></a>
+                                        {% endif %}
+                                        
+                                    </ul>
+                                </li>
+                                <!-- <li class="nav-item dropdown mx-1">
+                                    <a class="nav-link dropdown-toggle text-light btn btn-outline-info " href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 2.2rem;width: 4rem;">
+                                        <span style="position: relative;top: -4px;">Slip</span>
+                                    </a>
+                                   
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+      
+    
+                                        <a class="dropdown-item" onclick="show_slip()">View</a>
+                                        <a id="slip" class="dropdown-item" >Print</a>                                        
+                                    </ul>
+                                </li> -->
+                                
                             </ul>
                         </div>
                     </nav>
@@ -306,366 +409,1464 @@
             </div>
         </div>
 
-        <!-- #-------------------------------------------------------------------------------------- -->
+        <div class="card">
+          <div class="card-body">
+            <div id="details" >
+                <div class="row g-0" >
+                   
+                    <div class="col-lg-8 col-md-8 col-sm-8">
+                        <div class="p-5">
+                            
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Company Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
 
-        <div id="whatToPrint" class="print-only">
-            <div class="my-5 page" size="A4" >
-                <div class="p-5" id="panel1">
-                    <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
-                        
-                    <section class="top-content bb d-flex justify-content-between">
-                        <div class="logo">
-                            <!-- <img src="logo.png" alt="" class="img-fluid"> -->
-                        </div>
-                        <div class="top-left">
-                            <div class="graphic-path">
-                                <p>Credit Note  </p>
-                            </div>
-                            <div class="position-relative">
-                                <p> CN - <span>{{ pcrd.credit_no }}</span></p>
-                            </div>
-                            <div class="position-relative">
-                                <p> </p>
-                            </div>
-                        </div>
-                    </section>
-        
-                    <section class="store-user mt-5">
-                        <div class="col-12">
-                            <div class="row bb pb-3">
-                                <div class="col-7">
-                                    <p>FROM,</p>
-                                    <h5>{{cmp1.cname }}</h5>
-                                    <p class="address "> {{cmp1.caddress}}<br>
-                                        {{cmp1.city}},
-                                        {{cmp1.state}}<br>
-                                        {{cmp1.pincode}}<br>
-                                        {{cmp1.email}}<br>
-                                    </p>  
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Company</h6>
                                 </div>
-                                <div class="col-5">
-                                    <p>INVOICE TO,</p>
-                                    <h5>{{cust.title}} {{cust.firstname}} {{cust.lastname}}</h5>
-                                    <p class="address col-6" style="margin-left: -14px;" > {{ pcrd.address}} </p>   
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ cmp1.cname}}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ cmp1.cemail }}</p>
                                 </div>
                             </div>
-                            <div class="row extra-info pt-3">
-                                <div class="col-7">
-                                    <p>Credit Date : {{ pcrd.creditdate|date:'d-m-Y' }} </p>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Mobile</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ cmp1.phone }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Address</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ cmp1.caddress }}</p>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Credit Note Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Crdit No</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{ pcrd.credit_no }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Date</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pcrd.creditdate}}</p>
+                                </div>
+                                
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Reference No</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{ pcrd.reference_number}}</p>
+                                </div>
+                                {% if pcrd.billno == '3 0' %}
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0"></h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0"></p>
+                                </div>
+                                {% else %}
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Invoice</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{billno1}}</p>
+                                </div>
+                                {% endif %}
+                                
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Payment Method</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pcrd.payment_method}}</p>
+                                </div>
+                                {% if pcrd.payment_method == 'Cheque' %}
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Cheque No</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pcrd.cheque_no}}</p>
+                                </div>
+                                {% elif pcrd.payment_method == 'UPI' %}
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">UPI Id</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pcrd.upi_id}}</p>
+                                </div>
+                                
+                                {% elif pcrd.payment_method == 'Cash' %}
+                                <div class="col-md-3 mt-3 vl">
                                     
-                                    <p class="address col-6" style="margin-left: -14px;">  </p>   
                                 </div>
-                                <div class="col-5">
-                                 
-                                    <p>Ref# : <span>{{ pcrd.billno }}</span></p>
+                                <div class="col-md-3 mt-3">
+                                    
                                 </div>
-                            </div>
-                        </div>
-                    </section>
-        
-                    <section class="product-area mt-4">
-                        <table class="table table-hover table-bordered">
-                            <thead>
-                                <tr>
-                                    <td>Items</td>
-                                    <td>HSN</td>
-                                    <td>Rate</td>
-                                    <td>Quantity</td>
-                                    <td>Tax</td>
-                                    <td>Discount</td>
-                                    <td>Total</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for pordr in pdeb %}
-                                    <tr>
-                                        <td class="text-center" style="color:#000">{{ pordr.items }}</td>
-                                        <td class="text-center" style="color:#000">{{ pordr.hsn }}</td>
-                                        <td class="text-center" style="color:#000">{{ pordr.price }}</td>
-                                        <td class="text-center" style="color:#000">{{ pordr.quantity }}</td>
-                                        <td class="text-center" style="color:#000">{{ pordr.tax}} %</td>
-                                        <td class="text-center" style="color:#000">{{ pordr.discount|default:0}}</td>
-                                        <td class="text-center" style="color:#000">{{ pordr.total }}</td>
-                                    </tr>
-                                {% endfor %} 
-                            </tbody>
-                        </table>
-                    </section>
-        
-                    <section class="balance-info">
-                        <div class="row">
-                            <div class="col-8">
-                                <p class="m-0 font-weight-bold" style="color:black"> Note: &nbsp; &nbsp; {{pcrd.description}}</p>
-                                <!-- <p style="color:black" class="p-2">{{pcrd.description}}</p> -->
-                            </div>
-                            <div class="col-4">
-                                <table class="table border-0 table-hover">
-                                    <tr >
-                                        <td style="color:black">Sub Total :</td>
-                                        <td style="color:black">{{pcrd.subtotal}}</td>
-                                    </tr>
-                                    <tr class="d-none" >
-                                        <td id="cmp">
-                                            {{cmp1.state}}
-                                        </td>
-                                        <td id="sply">
-                                            {{pcrd.supply}}
-                                        </td>
+                                {% elif pcrd.payment_method == 'no_option' %}
+                                <div class="col-md-3 mt-3 vl">
+                                    
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    
+                                </div>
+                                {% else %}
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">A/C No</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pcrd.acc_no}}</p>
+                                </div>
+                                {% endif %}
 
-                                        <td id="shipchrg">
-                                            {{pcrd.shipping_charge}}
-                                        </td>
-                                    </tr>
-                                    <tr class="igstrow d-none" >
-                                        <td style="color:black">IGST</td>
-                                        <td style="color:black" id="igst">{{pcrd.taxamount}}</td>
-                                    </tr>
-                                    <tr class="gstrow d-none">
-                                        <td style="color:black">CGST</td>
-                                        <td style="color:black" id="cgst"></td>
-                                    </tr>
-                                    <tr class="gstrow d-none">
-                                        <td style="color:black">SGST</td>
-                                        <td style="color:black" id="sgst"></td>
-                                    </tr>
+
+                            </div>
+                            
+                            <hr>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Name</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{cust.title}} {{cust.firstname}} {{cust.lastname}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pcrd.email}}</p>
+                                </div>
                                
-                                    <tr>
-                                        <td style="color:black">Tax Amount</td>
-                                        <td style="color:black">{{pcrd.taxamount}}</td>
-                                    </tr>
-                                    <tr class="shiprow d-none">
-                                        <td style="color:black">Shpping Charge</td>
-                                        <td style="color:black">{{pcrd.shipping_charge}}</td>
-                                    </tr>
-                                    <tfoot>
-                                        <tr>
-                                            <td style="color:black">Grand Total:</td>
-                                            <td style="color:black ;">{{pcrd.grandtotal}}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div> 
-                        </div><br><br><br>
-                        <div class="row " style="text-align: right;">
-                            <div class="col-sm-12 "><label style="color: #000;"><b>Authorized Signature</b></label></div>
-                            <div class="col-sm-4 m-0 p-0"></div>
-                            <div class="col-sm-4 m-0 p-0"></div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{cmp1.email}}</p>
+                                </div></div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3 ">
+                                    <h6 class="mb-0">GST Treatment</h6>
+                                </div>
+                                <div class="col-md-4 mt-3 ">
+                                    <p class="mb-0">{{cust.gsttype}}</p>
+                                </div>
+                                {% if cust.gstin %}
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">GST Number</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{cust.gstin}}</p>
+                                </div>
+                                {% endif %}
+                                <div class="col-md-3 mt-5">
+                                    <h6 class="mb-0">PAN Number</h6>
+                                </div>
+                                <div class="col-md-2 mt-5">
+                                    <p class="mb-0">{{cust.panno}}</p>
+                                </div>
+                                <div class="col-md-1 mt-5"></div>
+                                <div class="col-md-3 mt-5">
+                                    <h6 class="mb-0">Place Of Supply</h6>
+                                </div>
+                                <div class="col-md-2 mt-5">
+                                    <p class="mb-0">{{pcrd.supply}}</p>
+                                </div>
+                                <div class="col-md-3 mt-5">
+                                    <p class="mb-0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                </div>
+                                <div class="col-md-2 mt-5">
+                                    <p class="mb-0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                </div>
+
+                                    
+                            </div>
+
+                            <hr class="my-4">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Note</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{pcrd.description }}</p>
+                                </div>
+                                <div class="col-md-6 mt-4"></div>
+                            </div>
+                       
+                       
                         </div>
-                    </section>
-                    <img src="cart.jpg" class="img-fluid cart-bg" alt="">   
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-        <!-- ----------------------------------------------------------------------------------------------- -->
-
-        
-
-        <!-- <div class="py-5">
-            <div class="container" id="panel">
-                <div class="row hidden-md-up">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-7" id="content">
-                        <div class="card" size="A4">
-                            <div class="card-block">
-                                <div class="card-body">
-                                    <div class="pcs-template-body" style="background-color:white;">
-                                        <table class="tabletop hr" style="width:100%;table-layout: fixed;">
-                                        <tbody>
-                                            <tr>
-                                                <td style="vertical-align: top; width:50%;">
-                                                <div></div>
-                                                    <span>
-                                                        <img src="/media/images/default.png" width="30px"></span><br>
-                                                    <span><b>{{ cmp1.cname }}</b></span><br>
-                                                    <span><b>{{cmp1.caddress}}</b></span><br>
-                                                    <span><b>{{cmp1.city}}</b></span><br>
-                                                    <span><b>{{cmp1.state}}</b></span><br>
-                                                </td>
-                                                <td style="vertical-align: top; text-align:right;width:50%;">
-                                                    <span style="text-transform:Uppercase;font-size:14px;"><b>CREDIT NOTE</b></span><br>
-                                                    <span><b>CN - {{ pcrd.credit_no }}</b></span><br>
-                                                    <span><b>Credits remaining </b></span><br>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                
-                                    <table style="width:100%;table-layout:fixed;color:black;font-size:14px;">
-                                        <tbody>
-                                            <tr>
-                                                <td style="width:50%;vertical-align:bottom;">
-                                                    <div style="clear:both;width:50%;margin-top: 20px;">
-                                                    <label style="font-size: 9px;" class="pcs-label" id="tmp_shipping_address_label">Invoice To</label>
-                                                    <br>
-                                                    <span><strong><span class="pcs-customer-name" id="zb-pdf-customer-detail">{{ pcrd.address }}</span></strong>
-                                                    </div>
-                                                </td>
-                                                <td align="right" style="vertical-align:bottom;width: 50%;">
-                                                    <table style="float:right;table-layout: fixed;word-wrap: break-word;width: 100%;" border="0" cellspacing="0" cellpadding="0">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td style="text-align:right;padding:5px 10px 5px 0px;font-size:14pt;">
-                                                                    <span class="pcs-label">Credit Date :  {{ pcrd.creditdate }}</span>
-                                                                </td>
-                                                                <td style="text-align:right;">
-                                                                    <span id="tmp_entity_date">{{ pcrd.address }}</span>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td style="text-align:right;padding:5px 10px 5px 0px;font-size: 14pt;">
-                                                                    <span class="pcs-label">Ref# :</span>
-                                                                </td>
-                                                                <td style="text-align:right;">
-                                                                    <span id="tmp_ref_number">{{ pcrd.credit_no }}</span>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                
-                                    <table style="width:100%;margin-top:20px;table-layout:fixed;color:black;font-size:14px;" class="pcs-itemtable" border="0" cellspacing="0" cellpadding="0">
-                                        <thead>
-                                            <tr style="background-color:black;color:white;">
-                                                <td style="width: 5%;text-align: center;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
-                                                    #
-                                                </td>
-                                                <td style="width:28% ;text-align: left;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
-                                                    Item &amp;
-                                                </td>
-                                                <td style="width:28% ;text-align: left;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
-                                                    HSN &amp;
-                                                </td>
-                                                <td style="width: 16%;text-align: right;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
-                                                    Quantity
-                                                </td>
-                                                <td style="width: 16%;text-align: right;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
-                                                    Price
-                                                </td>
-                                                <td style="width: 16%;text-align: right;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
-                                                    Discount
-                                                </td>
-                                                <td style="width: 17%;text-align: right;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
-                                                    Total
-                                                </td>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="itemBody">
-                                            {% for p in pdeb %}
-                                                <tr class="breakrow-inside breakrow-after">
-                                                    <td valign="top" style="text-align: center;word-wrap: break-word;">{{ forloop.counter }}</td>
-                                                    <td valign="top">
-                                                        <div><span style="word-wrap: break-word;" id="tmp_item_name">{{ p.items }}</span><br></div>
-                                                    </td>
-                                                    <td valign="top">
-                                                        <div><span style="word-wrap: break-word;" id="tmp_item_name">{{ p.hsn }}</span><br></div>
-                                                    </td>
-                                                    <td valign="top" style="text-align:right;word-wrap: break-word;" >
-                                                        <span id="tmp_item_qty">{{ p.quantity }}</span>
-                                                    </td>
-                                                    <td valign="top" style="text-align:right;word-wrap: break-word;" >
-                                                        <span>{{ p.price }}</span>
-                                                    </td>
-                                                    <td valign="top" style="text-align:right;word-wrap: break-word;" >
-                                                        <span>{{ p.discount|default:0 }}</span>
-                                                    </td>
-                                                    <td valign="top" style="text-align:right;word-wrap: break-word;" >
-                                                        <span>{{ p.total }}</span>
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                    <div style="width: 100%;margin-top: 1px;color:black;font-size:14px;">
-                                        <div style="width: 40%;padding: 3px 10px 3px 3px;font-size: 14px;float: left;">
-                                            <div style="white-space: pre-wrap;"></div>
-                                        </div>
-                                        <div style="width: 60%;float:right;">
-                                        <table  cellspacing="0" border="0" width="100%">
-                                            <tbody>
-                                                <tr>
-                                                    <td align="right" style="padding: 5px 10px 5px 0;"></td>
-                                                    <td valign="middle" align="right" ></td>
-                                                </tr>
-                                                <tr>
-                                                    <td align="right" style="padding: 5px 10px 5px 0;">Sub Total</td>
-                                                    <td valign="middle" align="right" >{{ pcrd.subtotal }}</td>
-                                                </tr>
-                                                <tr class="igstrow d-none" >
-                                                    <td align="right" style="padding: 5px 10px 5px 0;">IGST</td>
-                                                    <td valign="middle" align="right" >{{ pcrd.taxamount }}</td>
-                                                </tr>
-                                                <tr class="gstrow d-none">
-                                                    <td align="right" style="padding: 5px 10px 5px 0;">SGST</td>
-                                                    <td valign="middle" align="right" id="sgst1"> </td>
-                                                </tr>
-                                                <tr class="gstrow d-none" >
-                                                    <td align="right" style="padding: 5px 10px 5px 0;">CGST</td>
-                                                    <td valign="middle" align="right" id="cgst1"> </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td align="right" style="padding: 5px 10px 5px 0;">Tax Amount</td>
-                                                    <td valign="middle" align="right" >{{ pcrd.taxamount }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td align="right" style="padding: 5px 10px 5px 0;">Shipping Charge</td>
-                                                    <td valign="middle" align="right" >{{ pcrd.shipping_charge }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td align="right" style="padding: 5px 10px 5px 0;">Grand Total</td>
-                                                    <td valign="middle" align="right" >{{ pcrd.grandtotal }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>   
-                                    <div style="clear: both;"></div>
-                                </div>
-                                
-                                <div style="width: 100%;margin-top: 10px;color:black;font-size:14px;">
-                                    <table cellspacing="0" border="0" width="100%">
-                                        <tbody>
-                                            <tr>
-                                                <td class="total-in-words-label text-align-right">Total In Words:</td>
-                                                <td class="total-in-words-value text-align-left"><i><b>Indian Rupee Six Hundred Sixty-Two and Seventy-Five Paise Only</b></i></td> 
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div style="clear: both;"></div>
-                                </div>
-                                
-                                <div style="clear:both;margin-top:30px;width:100%;font-size:14px;color:black;">
-                                    <label class="pcs-label">Terms &amp; Conditions</label><br>
-                                    <p style="margin-top:7px;white-space: pre-wrap;word-wrap: break-word;" class="pcs-terms">Your company's Terms and Conditions will be displayed here. You can add it in the DeliveryChallan Preferences page under Settings.</p>
-                                </div>
-                                <div style="margin-top:30px;font-size:14px;color:black;">
-                                    <label style="display: table-cell;padding-right: 5px;" class="pcs-label">Authorized Signature</label>
-                                    <div style="display: table-cell;">
-                                        <div style="display: inline-block;width: 200px;border-bottom: 1px solid #000;"></div>
-                                        <div></div>
-                                    </div>
-                                </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);">
+                        <div class="p-5">
+                            <h3 class="fw-bold mb-3 mt-2 pt-1">CREDIT NOTE</h3>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Credit Note Status</h5>
+                                <h6>{{ pcrd.status }}</h6>
+                            </div>
+                            <hr class="my-4" style="background-color: #fff;">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Sub Total</h5>
+                                <h6>{{ pcrd.subtotal }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Tax Amount</h5>
+                                <h6>{{pcrd.taxamount }}</h6>
+                            </div>
+                            
+                            {% if pcrd.igst != 0|floatformat:2 %}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">IGST</h5>
+                                <h6>{{ pcrd.igst }}</h6>
+                            </div>
+                            {%endif%}
+                            {% if pcrd.cgst != 0|floatformat:2 %}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">CGST</h5>
+                                <h6>{{ pcrd.cgst }}</h6>
+                            </div>
+                            {%endif%}
+                            {% if pcrd.sgst != 0|floatformat:2 %}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">SGST</h5>
+                                <h6>{{ pcrd.sgst }}</h6>
+                            </div>
+                            {%endif%}
+                            {% if  pcrd.shipping_charge != 0|floatformat:0 %}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Shipping Charge</h5>
+                                <h6>{{ pcrd.shipping_charge}}</h6>
+                            </div>
+                            {% endif %}
+                            {% if  pcrd.adjustment != 0|floatformat:0 %}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Adjustment</h5>
+                                <h6>{{ pcrd.adjustment}}</h6>
+                            </div>
+                            {% endif %}
+                            
+                            <hr class="my-4" style="background-color: #fff;">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Grand Total</h5>
+                                <h6>{{ pcrd.grandtotal }}</h6>
                             </div>
                         </div>
                     </div>
-                </div>
+                  </div>
+                  
+ <!-- ............................................                  -->
+
+            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                <div class="col-md-12 mt-3">
+                <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Product Details</h5>
+
+                {% for pordr in pdeb %}
+                    <div class="row mb-4 d-flex justify-content-between align-items-center">
+                        
+                        <div class="col-md-2 mt-3">
+                            <h6 class="mb-0">Product</h6>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <p class="mb-0 text-right">{{pordr.items}}</p>
+                        </div>
+
+                        <div class="col-md-2 mt-3 vl">
+                            <h6 class="mb-0">HSN</h6>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <p class="mb-0 text-right">{{pordr.hsn}}</p>
+                        </div>
+                            <div class="col-2"></div>
+                            <div class="col-2"></div>
+
+                        
+                    </div>
+                    <div class="row mb-4 d-flex justify-content-between align-items-center">
+                        <div class="col-md-2 mt-3">
+                            <h6 class="mb-0">Rate</h6>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <p class="mb-0 text-right">{{ pordr.price }}</p>
+                        </div>
+                        <div class="col-md-2 mt-3 vl">
+                            <h6 class="mb-0">Quantity</h6>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <p class="mb-0 text-right">{{pordr.quantity}}</p>
+                        </div>
+                        <div class="col-2"></div>
+                            <div class="col-2"></div>
+
+                    </div>
+                    <div class="row mb-4 d-flex justify-content-start align-items-center">
+                        <div class="col-md-2 mt-3"> 
+                            <h6 class="mb-0">Tax</h6>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <p class="mb-0 text-right">{{pordr.tax}}%</p>
+                        </div>
+                        <div class="col-md-2 mt-3 vl"> 
+                            <h6 class="mb-0">Discount</h6>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <p class="mb-0 text-right">{{pordr.discount}}</p>
+                        </div>
+                        
+                    </div>
+                    <div class="row mb-4 d-flex justify-content-between align-items-center">
+                        <div class="col-md-2 mt-3">
+                            <h6 class="mb-0"></h6>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <p class="mb-0 text-right"></p>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <h6 class="mb-0 ">Total</h6>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <p class="mb-0 text-right">{{pordr.total}}</p>
+                        </div>
+                        <div class="col-2"></div>
+                            <div class="col-2"></div>
+
+                    </div>
+                    <hr class="my-4" style="width: 50%;">
+                {% endfor %}
             </div>
-        </div>    
-    </div> -->
-            
-        <!-- </div>
-        <div class="col-md-2"></div>
+            </div>
+</div>
+                 <!-- ...................................   slip .......................... -->
+
+
+  
+  <div id="whatToPrint4"  style="background-color: #243e54; border-radius: 2vh;display:none;">
+     <div class="p-5"  >
+        <div class="my-5 page" size="A4">
+            <div class="row" style="margin-top: 20%;" id="printslip">
+
+                <div class="col-md-3"></div>
+                <div class="col-md-6 ml-3">
+                    <div class="card bg-white"  style="border: 1px dotted black;">
+
+                        <div class="mt-2" style="text-align: center;">
+                            <div class="text-center" style="font-size: 3vh; color: black;">
+                                <b>{{cmp1.cname}} </b>
+                            </div>
+                            <span style="font-size: x-small; color: black;">{{ cmp1.caddress }} <br>
+                                {{cmp1.city}},
+                                {{cmp1.state}}
+                                {{cmp1.pincode}} <br>
+                                {{ cmp1.phone }} <br>{{ cmp1.cemail }} 
+                            </span>
+                        </div>
+                        <div class="ml-4 mt-2" style="color: black;">
+                            <center>
+                                <table>
+                                    <tr>
+                                        <td>Credit No:</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>{{pcrd.credit_no}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Customer Name:</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>{{cust.firstname}} {{cust.lastname}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Credit Date :</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>{{pcrd.creditdate | date:'d-m-Y'}}</td>
+                                    </tr>
+                                </table>
+                            </center>
+                            <!-- <div class="row">
+                                <div class="col-md-6 text-left">Credit No:</div>
+                                <div class="col-md-5 text-right">{{pcrd.credit_no}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 text-left">Customer Name:</div>
+                                <div class="col-md-5 text-right">{{cust.firstname}} {{cust.lastname}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 text-left">Credit Date :</div>
+                                <div class="col-md-5 text-right">{{pcrd.creditdate | date:'d-m-Y'}}</div>
+                            </div> -->
+                            
+                        </div>
+                        <div><br>
+                            <!-- <div class="equal-length-container" style="color: black; font-weight: bold;">
+                                <div class="equal-length-item" style=" text-align: center;">
+                                    Product
+                                    <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
+                                </div>
+                                <div class="equal-length-item ml-2"  style=" text-align:center;">
+                                    HSN
+                                    <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;">
+                                </div>
+                                <div class="equal-length-item"  style=" text-align: center; ">
+                                    Qty
+                                    <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                </div>
+                                <div class="equal-length-item"  style=" text-align: center; ">
+                                    Price
+                                    <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                </div>
+                                <div class="equal-length-item"  style=" text-align: center; ">
+                                    Tax
+                                    <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                </div>
+                                <div class="equal-length-item"  style=" text-align: center; ">
+                                    Discount
+                                    <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                </div>
+                                <div class="equal-length-item" style=" text-align: center; ">
+                                    Total
+                                    <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                </div>
+                            </div> -->
+                            <center>
+                            <table>
+                                <thead style="background-color:transparent ;">
+                                    <tr>
+                                        <th style="color: #000;">Product &nbsp; <hr></th>
+                                        <th style="color: #000;">HSN &nbsp; <hr></th>
+                                        <th style="color: #000;">Qty &nbsp; <hr></th>
+                                        <th style="color: #000;">Price &nbsp; <hr></th>
+                                        <th style="color: #000;">Tax &nbsp;<hr></th>
+                                        <th style="color: #000;">Discont &nbsp; <hr></th>
+                                        <th style="color: #000;">Total &nbsp;<hr></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pordr in pdeb %} 
+                                    <tr>
+                                      <td style="color: #000;">{{pordr.items}} </td>
+                                      <td style="color: #000;">{{pordr.hsn}}</td>
+                                      <td style="color: #000;text-align: center;">{{pordr.quantity}}</td>
+                                      <td style="color: #000;text-align: center;">{{pordr.price}}</td>
+                                      <td style="color: #000;text-align: center;">{{pordr.tax}}</td>
+                                      <td style="color: #000;text-align: center;">{{pordr.discount}}</td>
+                                      <td style="color: #000;text-align: center;">{{pordr.total}}</td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </center>
+                        </div>
+                        <!-- <div>
+                            {% for pordr in pdeb %}
+                            <div class="equal-length-container" style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
+                                <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">
+                                    {{pordr.items}}
+                                </div>
+                                <div class="equal-length-item" style="text-align: right;">
+                                    {{pordr.hsn}}
+                                </div>
+                                <div class="equal-length-item" style="text-align: center; ">
+                                    {{pordr.quantity}}
+                                </div>
+                                <div class="equal-length-item" style="text-align: center; ">
+                                    {{pordr.price}}
+                                </div>
+                                <div class="equal-length-item" style="text-align: center; ">
+                                    {{pordr.tax}}
+                                </div>
+                                <div class="equal-length-item" style="text-align: center; ">
+                                    {{pordr.discount}}
+                                </div>
+                                <div class="equal-length-item" style="text-align: center; ">
+                                    {{pordr.total}}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div> -->
+
+                        <div><br>
+                            <center>
+                            <table>
+                                <tr style=" color: black;">
+                                    
+                                    <td> Subtotal</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>{{ pcrd.subtotal }}</td>
+                                </tr>
+                                {% if pcrd.igst != 0|floatformat:2 %}
+                                <tr style=" color: black;">
+                                    
+                                    <td> IGST</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>{{ pcrd.igst }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if pcrd.cgst != 0|floatformat:2 %}
+                                <tr style=" color: black;">
+                                    
+                                    <td> CGST</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>{{ pcrd.cgst }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if pcrd.sgst != 0|floatformat:2 %}
+                                <tr style=" color: black;">
+                                    
+                                    <td> SGST</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>{{ pcrd.sgst }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if pcrd.shipping_charge != '0' %}
+                                <tr style=" color: black;">
+                                    
+                                    <td> shipping_charge</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>{{ pcrd.shipping_charge }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if pcrd.adjustment != '0' %}
+                                <tr style=" color: black;">
+                                    
+                                    <td> Adjustment</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>{{ pcrd.adjustment }}</td>
+                                </tr>
+                                
+                                {% endif %}
+                                
+                                
+                                
+                                <tr style=" color: black;">
+                                    
+                                    <td> <b>Total</b></td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td><b>{{ pcrd.grandtotal }}</b></td>
+                                </tr>
+                                
+
+                            </table>
+                            </center>
+                            </div>
+                            
+                            <!-- <div class="row ml-1">
+                                <div class="col-md-5 text-left" style=" color: black;">
+                                    Subtotal
+                                </div>
+                                <div class="col-md-6 text-right ml-2" style="color: black;">
+                                    {{ pcrd.subtotal }}
+                                </div>
+                            </div>
+                            {% if pcrd.igst != '0' %}
+                            <div class="row ml-1">
+                                <div class="col-md-5 text-left " style=" color: black;">
+                                    IGST
+                                </div>
+                                <div class="col-md-6 text-right ml-2" style="color: black;">
+                                    {{ pcrd.igst }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if pcrd.cgst != '0' %}
+                            <div class="row ml-1">
+                                <div class="col-md-5 text-left" style=" color: black;">
+                                    CGST
+                                </div>
+                                <div class="col-md-6 text-right ml-2" style="color: black;">
+                                    {{ pcrd.cgst }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if pcrd.sgst != '0' %}
+                            <div class="row ml-1">
+                                <div class="col-md-5 text-left" style=" color: black;">
+                                    SGST
+                                </div>
+                                <div class="col-md-6 text-right ml-2" style="color: black;">
+                                    {{ pcrd.sgst }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if pcrd.shipping_charge != '0' %}
+                            <div class="row ml-1">
+                                <div class="col-md-5 text-left" style=" color: black;">
+                                    Shipping Charge
+                                </div>
+                                <div class="col-md-6 text-right ml-2" style="color: black;">
+                                    {{ pcrd.shipping_charge }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if pcrd.adjustment != '0' %}
+                            <div class="row ml-1">
+                                <div class="col-md-5 text-left" style=" color: black;">
+                                    Adjustment
+                                </div>
+                                <div class="col-md-6 text-right ml-2" style="color: black;">
+                                    {{ pcrd.adjustment }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
+                        </div>
+
+                        <div class="mb-2">
+                            <div class="row">
+                                <div class="col-md-5 text-left ml-2" style=" font-size: large; color: black; font-weight: bold;">
+                                    Total
+                                </div>
+                                <div class="col-md-6 text-right ml-2" style="font-size: large; color: black; font-weight: bold;">
+                                    {{ pcrd.grandtotal }}
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
         </div>
     </div>
-    </div> -->
+</div>
+
+
+               
+
+
+                <div id="templatesToPrintSection" style="display: none;">
+
+                   
+
+
+
+                    <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                        <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
+                        <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+                        <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
+                    </div>
+                    <!-- #---------------------------------------- Template 1---------------------------------------------- -->
+           
+                    <div id="whatToPrint"  style="display: block;" class="print-only printTemplates template1">
+                       <div class="my-5 page" size="A4" >
+                           <div class="p-5" id="panel1">
+                               <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+           
+                                   
+                               <section class="top-content bb d-flex justify-content-between">
+                                   <!-- <div class="logo"> -->
+                                       <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                                   <!-- </div> -->
+                                   <div  style="background-color: #22b8d1;padding-left: 4%;padding-right: 1%;padding-top: .7%;padding-bottom: -2%;width: 15%;height: 2.2rem;color: white;" >
+                                       {{pcrd.status}}
+                                   </div>
+                                   <div class="top-left">
+                                       <div class="graphic-path">
+                                           <p>Credit Note  </p>
+                                       </div>
+                                       <div class="position-relative">
+                                           <p><span>{{ pcrd.credit_no }}</span></p>
+                                       </div>
+                                       <div class="position-relative">
+                                           <p> </p>
+                                       </div>
+                                   </div>
+                               </section>
+                   
+                               <section class="store-user mt-5">
+                                   <div class="col-12">
+                                       <div class="row bb pb-3">
+                                           <div class="col-7">
+                                               <p>FROM,</p>
+                                               <h5 style="color: black;font-weight: bold;">{{cmp1.cname }}</h5>
+                                               <p class="address "> {{cmp1.caddress}}<br>
+                                                   {{cmp1.city}},
+                                                   {{cmp1.state}}<br>
+                                                   {{cmp1.pincode}}<br>
+                                                   {{cmp1.email}}<br>
+                                               </p>  
+                                           </div>
+                                           <div class="col-5">
+                                               <p>INVOICE TO,</p>
+                                               <h5 style="color: black;font-weight: bold;">{{cust.title}} {{cust.firstname}} {{cust.lastname}}</h5>
+                                               <p class="address col-6" style="margin-left: -14px;" > {{ pcrd.address}} </p>   
+                                           </div>
+                                       </div>
+                                       <div class="row extra-info pt-3">
+                                           <div class="col-7">
+                                               <p>Credit Date : {{ pcrd.creditdate|date:'d-m-Y' }} </p>
+                                               
+                                               <p class="address col-6" style="margin-left: -14px;">  </p>   
+                                           </div>
+                                           <div class="col-5">
+                                            
+                                               <p>Ref# : <span>{{ pcrd.reference_number }}</span></p>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </section>
+                   
+                               <section class="product-area mt-4">
+                                   <table class="table table-hover table-bordered">
+                                       <thead>
+                                           <tr>
+                                               <td style="color:#000;font-weight: bold;">Items</td>
+                                               <td style="color:#000;font-weight: bold;">HSN</td>
+                                               <td style="color:#000;font-weight: bold;">Rate</td>
+                                               <td style="color:#000;font-weight: bold;">Quantity</td>
+                                               <td style="color:#000;font-weight: bold;">Tax</td>
+                                               <td style="color:#000;font-weight: bold;">Discount</td>
+                                               <td style="color:#000;font-weight: bold;">Total</td>
+                                           </tr>
+                                       </thead>
+                                       <tbody>
+                                           {% for pordr in pdeb %}
+                                               <tr>
+                                                   <td class="text-center" style="color:#000">{{ pordr.items }}</td>
+                                                   <td class="text-center" style="color:#000">{{ pordr.hsn }}</td>
+                                                   <td class="text-center" style="color:#000">{{ pordr.price }}</td>
+                                                   <td class="text-center" style="color:#000">{{ pordr.quantity }}</td>
+                                                   <td class="text-center" style="color:#000">{{ pordr.tax}} %</td>
+                                                   <td class="text-center" style="color:#000">{{ pordr.discount|default:0}}</td>
+                                                   <td class="text-center" style="color:#000">{{ pordr.total }}</td>
+                                               </tr>
+                                           {% endfor %} 
+                                       </tbody>
+                                   </table>
+                               </section>
+                   
+                               <section class="balance-info">
+                                   <div class="row">
+                                       <div class="col-8">
+                                           <p class="m-0 font-weight-bold" style="color:black"> Note: &nbsp; &nbsp; {{pcrd.description}}</p>
+                                           <!-- <p style="color:black" class="p-2">{{pcrd.description}}</p> -->
+                                       </div>
+                                       <div class="col-4">
+                                           <table class="table border-0 table-hover">
+                                               <tr >
+                                                   <td style="color:black">Sub Total :</td>
+                                                   <td style="color:black">{{pcrd.subtotal}}</td>
+                                               </tr>
+                                               <tr class="d-none" >
+                                                   <td id="cmp">
+                                                       {{cmp1.state}}
+                                                   </td>
+                                                   <td id="sply">
+                                                       {{pcrd.supply}}
+                                                   </td>
+           
+                                                   <td id="shipchrg">
+                                                       {{pcrd.shipping_charge}}
+                                                   </td>
+                                               </tr>
+                                               <tr class="igstrow d-none" >
+                                                   <td style="color:black">IGST</td>
+                                                   <td style="color:black" id="igst">{{pcrd.taxamount}}</td>
+                                               </tr>
+                                               <tr class="gstrow d-none">
+                                                   <td style="color:black">CGST</td>
+                                                   <td style="color:black" id="cgst"></td>
+                                               </tr>
+                                               <tr class="gstrow d-none">
+                                                   <td style="color:black">SGST</td>
+                                                   <td style="color:black" id="sgst"></td>
+                                               </tr>
+                                          
+                                               <tr>
+                                                   <td style="color:black">Tax Amount</td>
+                                                   <td style="color:black">{{pcrd.taxamount}}</td>
+                                               </tr>
+                                               <tr class="shiprow d-none">
+                                                   <td style="color:black">Shpping Charge</td>
+                                                   <td style="color:black">{{pcrd.shipping_charge}}</td>
+                                               </tr>
+                                               {% if pcrd.adjustment != '0' %}
+                                               <tr class="shiprow d-none">
+                                                <td style="color:black">Adjustment</td>
+                                                <td style="color:black">{{pcrd.adjustment}}</td>
+                                              </tr>
+                                              {% endif %}
+                                               <tfoot>
+                                                   <tr>
+                                                       <td style="color:black">Grand Total:</td>
+                                                       <td style="color:black ;">{{pcrd.grandtotal}}</td>
+                                                   </tr>
+                                               </tfoot>
+                                           </table>
+                                       </div> 
+                                   </div><br><br><br>
+                                   <div class="row " style="text-align: right;">
+                                       <div class="col-sm-12 "><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                       <div class="col-sm-4 m-0 p-0"></div>
+                                       <div class="col-sm-4 m-0 p-0"></div>
+                                   </div>
+                               </section>
+                               <img src="cart.jpg" class="img-fluid cart-bg" alt="">   
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           
+               <!-- ....................................... Template 2.......................................... -->
+               
+               <div id="whatToPrint2"  style="display: none;" class="print-only printTemplates template2">
+                   <div class="my-5 page" size="A4" >
+                       <div class="p-5" id="panel1">
+                           <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                               
+                               
+                           <section class="top-content bb d-flex justify-content-between">
+                               <!-- <div class="logo"> -->
+                                   <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                               <!-- </div> -->
+                               <div id="ember2512" style="background-color: #515152be;padding-left: 4%;padding-right: 1%;padding-top: .7%;padding-bottom: -2%;width: 15%;height: 2.2rem;color: white;" >
+                                   {{pcrd.status}}
+                               </div>
+                               <div class="top-left">
+                                   <div class="graphic-path">
+                                       <p>Credit Note  </p>
+                                   </div>
+                                   <div class="position-relative">
+                                       <p> <span>{{ pcrd.credit_no }}</span></p>
+                                   </div>
+                                   <div class="position-relative">
+                                       <p> </p>
+                                   </div>
+                               </div>
+                           </section>
+               
+                           <section class="store-user mt-5">
+                               <div class="col-12">
+                                   <div class="row bb pb-3">
+                                       <div class="col-7">
+                                           <p style="color: #080707;">FROM,</p>
+                                           <h5 style="color: rgb(8, 8, 8);font-weight: bold;">{{cmp1.cname }}</h5>
+                                           <p class="address " style="color: #0e0b0b;"> {{cmp1.caddress}}<br>
+                                               {{cmp1.city}},
+                                               {{cmp1.state}}<br>
+                                               {{cmp1.pincode}}<br>
+                                               {{cmp1.email}}<br>
+                                           </p>  
+                                       </div>
+                                       <div class="col-5">
+                                           <p style="color: #0a0808;">INVOICE TO,</p>
+                                           <h5 style="color: rgb(8, 8, 8);font-weight: bold;">{{cust.title}} {{cust.firstname}} {{cust.lastname}}</h5>
+                                           <p class="address col-6" style="color: rgb(8, 8, 8);margin-left: -14px;" > {{ pcrd.address}} </p>   
+                                       </div>
+                                   </div>
+                                   <div class="row extra-info pt-3">
+                                       <div class="col-7">
+                                           <p style="color: rgb(8, 8, 8);">Credit Date : {{ pcrd.creditdate|date:'d-m-Y' }} </p>
+                                           
+                                           <p class="address col-6" style="margin-left: -14px;">  </p>   
+                                       </div>
+                                       <div class="col-5">
+                                        
+                                           <p style="color: rgb(8, 8, 8);">Ref# : <span>{{ pcrd.reference_number }}</span></p>
+                                       </div>
+                                   </div>
+                               </div>
+                           </section>
+               
+                           <section class="product-area mt-4">
+                               <table class="table table-hover table-bordered">
+                                   <thead style="background-color: #312b2b;">
+                                       <tr>
+                                           <td>Items</td>
+                                           <td>HSN</td>
+                                           <td>Rate</td>
+                                           <td>Quantity</td>
+                                           <td>Tax</td>
+                                           <td>Discount</td>
+                                           <td>Total</td>
+                                       </tr>
+                                   </thead>
+                                   <tbody>
+                                       {% for pordr in pdeb %}
+                                           <tr>
+                                               <td class="text-center" style="color:#000">{{ pordr.items }}</td>
+                                               <td class="text-center" style="color:#000">{{ pordr.hsn }}</td>
+                                               <td class="text-center" style="color:#000">{{ pordr.price }}</td>
+                                               <td class="text-center" style="color:#000">{{ pordr.quantity }}</td>
+                                               <td class="text-center" style="color:#000">{{ pordr.tax}} %</td>
+                                               <td class="text-center" style="color:#000">{{ pordr.discount|default:0}}</td>
+                                               <td class="text-center" style="color:#000">{{ pordr.total }}</td>
+                                           </tr>
+                                       {% endfor %} 
+                                   </tbody>
+                               </table>
+                           </section>
+               
+                           <section class="balance-info">
+                               <div class="row">
+                                   <div class="col-8">
+                                       <p class="m-0 font-weight-bold" style="color:black"> Note: &nbsp; &nbsp; {{pcrd.description}}</p>
+                                       <!-- <p style="color:black" class="p-2">{{pcrd.description}}</p> -->
+                                   </div>
+                                   <div class="col-4">
+                                       <table class="table border-0 table-hover">
+                                           <tr >
+                                               <td style="color:black">Sub Total :</td>
+                                               <td style="color:black">{{pcrd.subtotal}}</td>
+                                           </tr>
+                                           <tr class="d-none" >
+                                               <td id="cmp">
+                                                   {{cmp1.state}}
+                                               </td>
+                                               <td id="sply">
+                                                   {{pcrd.supply}}
+                                               </td>
+           
+                                               <td id="shipchrg">
+                                                   {{pcrd.shipping_charge}}
+                                               </td>
+                                           </tr>
+                                           <tr class="igstrow d-none" >
+                                               <td style="color:black">IGST</td>
+                                               <td style="color:black" id="igst">{{pcrd.taxamount}}</td>
+                                           </tr>
+                                           <tr class="gstrow d-none">
+                                               <td style="color:black">CGST</td>
+                                               <td style="color:black" id="cgst">{{pcrd.cgst}}</td>
+                                           </tr>
+                                           <tr class="gstrow d-none">
+                                               <td style="color:black">SGST</td>
+                                               <td style="color:black" id="sgst">{{pcrd.sgst}}</td>
+                                           </tr>
+                                      
+                                           <tr>
+                                               <td style="color:black">Tax Amount</td>
+                                               <td style="color:black">{{pcrd.taxamount}}</td>
+                                           </tr>
+                                           <tr class="shiprow d-none">
+                                               <td style="color:black">Shpping Charge</td>
+                                               <td style="color:black">{{pcrd.shipping_charge}}</td>
+                                           </tr>
+                                           {% if pcrd.adjustment != '0' %}
+                                           <tr class="shiprow d-none">
+                                            <td style="color:black">Adjustment</td>
+                                            <td style="color:black">{{pcrd.adjustment}}</td>
+                                        </tr>
+                                        {% endif %}
+                                           <tfoot>
+                                               <tr>
+                                                   <td style="color:black">Grand Total:</td>
+                                                   <td style="color:black ;">{{pcrd.grandtotal}}</td>
+                                               </tr>
+                                           </tfoot>
+                                       </table>
+                                   </div> 
+                               </div><br><br><br>
+                               <div class="row " style="text-align: right;">
+                                   <div class="col-sm-12 "><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                   <div class="col-sm-4 m-0 p-0"></div>
+                                   <div class="col-sm-4 m-0 p-0"></div>
+                               </div>
+                           </section>
+                           <img src="cart.jpg" class="img-fluid cart-bg" alt="">   
+                       </div>
+                   </div>
+               </div>
+           </div>
+           <!-- ................................................ Template 3............................................... -->
+           
+           <div id="whatToPrint3"  style="display: none;" class="print-only printTemplates template3">
+               <div class="my-5 page" size="A4" >
+                   <div class="p-5" id="panel1">
+                       <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                           
+                           
+                       <section  style="background-color: #292828;margin-left: -6.8%;margin-right: -6.8%;margin-top: -6.9%;">
+                           <div id="ember2512" style="background-color: #515152be;padding-left: 4%;padding-right: 1%;padding-top: .7%;padding-bottom: -2%;width: 15%;height: 2.2rem;color: white;position: absolute;margin-top: 4%;margin-left: 2%;" >
+                               {{pcrd.status}}
+                           </div>
+                           <h4 style="color: white;text-align: center;margin-top: 4%;position: absolute;margin-left: 35%;">CREDIT NOTE</h4>
+           
+                           
+                           <div class="top-left">
+                               
+                               <div style="color: white;margin-left: 80%;margin-top: -4%;padding-top: 1%;padding-bottom: 6%;">
+                                   <p style="color: white">Credit Note No: </p><br>
+                                   <p style="color: white"><span>{{ pcrd.credit_no }}</span></p>
+                               </div>
+                               <div class="position-relative">
+                                   <p> </p>
+                               </div>
+                           </div>
+                       </section>
+                       <!-- <div class="row px-5 py-4" style="background-color: #433f42;">
+                           <div class="col-md-4 d-flex justify-content-end">
+                               <div class="text-white">
+                                   <p>Credit Note No: </p><br>
+                                   <p> CN - <span>{{ pcrd.credit_no }}</span></p>
+                               </div>
+                               
+                           </div>
+                       </div> -->
+           
+                       <section class="store-user mt-5">
+                           <div class="col-12">
+                               <div class="row bb pb-3">
+                                   <div class="col-7">
+                                       <p>FROM</p>
+                                       <h5 style="color: rgb(8, 8, 8);font-weight: bold;">{{cmp1.cname }}</h5>
+                                       <p class="address " style="color: rgb(8, 8, 8);"> {{cmp1.caddress}}<br>
+                                           {{cmp1.city}},
+                                           {{cmp1.state}}<br>
+                                           {{cmp1.pincode}}<br>
+                                           {{cmp1.email}}<br>
+                                       </p>  
+                                   </div>
+                                   <div class="col-5">
+                                       <p>INVOICE TO,</p>
+                                       <h5 style="color: rgb(8, 8, 8);font-weight: bold;">{{cust.title}} {{cust.firstname}} {{cust.lastname}}</h5>
+                                       <p class="address col-6" style="margin-left: -14px;color: rgb(8, 8, 8);" > {{ pcrd.address}} </p>   
+                                   </div>
+                               </div>
+                               <div class="row extra-info pt-3">
+                                   <div class="col-7">
+                                       <p style="color: rgb(8, 8, 8);">Credit Date : {{ pcrd.creditdate|date:'d-m-Y' }} </p>
+                                       
+                                       <p class="address col-6" style="margin-left: -14px;">  </p>   
+                                   </div>
+                                   <div class="col-5">
+                                    
+                                       <p style="color: rgb(8, 8, 8);">Ref# : <span>{{ pcrd.reference_number }}</span></p>
+                                   </div>
+                               </div>
+                           </div>
+                       </section>
+           
+                       <section class="product-area mt-4">
+                           <table class="table table-hover table-bordered">
+                               <thead style="background-color: #312b2b;">
+                                   <tr>
+                                       <td>Items</td>
+                                       <td>HSN</td>
+                                       <td>Rate</td>
+                                       <td>Quantity</td>
+                                       <td>Tax</td>
+                                       <td>Discount</td>
+                                       <td>Total</td>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                   {% for pordr in pdeb %}
+                                       <tr>
+                                           <td class="text-center" style="color:#000">{{ pordr.items }}</td>
+                                           <td class="text-center" style="color:#000">{{ pordr.hsn }}</td>
+                                           <td class="text-center" style="color:#000">{{ pordr.price }}</td>
+                                           <td class="text-center" style="color:#000">{{ pordr.quantity }}</td>
+                                           <td class="text-center" style="color:#000">{{ pordr.tax}} %</td>
+                                           <td class="text-center" style="color:#000">{{ pordr.discount|default:0}}</td>
+                                           <td class="text-center" style="color:#000">{{ pordr.total }}</td>
+                                       </tr>
+                                   {% endfor %} 
+                               </tbody>
+                           </table>
+                       </section>
+           
+                       <section class="balance-info">
+                           <div class="row">
+                               <div class="col-8">
+                                   <p class="m-0 font-weight-bold" style="color:black"> Note: &nbsp; &nbsp; {{pcrd.description}}</p>
+                                   <!-- <p style="color:black" class="p-2">{{pcrd.description}}</p> -->
+                               </div>
+                               <div class="col-4">
+                                   <table class="table border-0 table-hover">
+                                       <tr >
+                                           <td style="color:black">Sub Total :</td>
+                                           <td style="color:black">{{pcrd.subtotal}}</td>
+                                       </tr>
+                                       <tr class="d-none" >
+                                           <td id="cmp">
+                                               {{cmp1.state}}
+                                           </td>
+                                           <td id="sply">
+                                               {{pcrd.supply}}
+                                           </td>
+           
+                                           <td id="shipchrg">
+                                               {{pcrd.shipping_charge}}
+                                           </td>
+                                       </tr>
+                                       <tr class="igstrow d-none" >
+                                           <td style="color:black">IGST</td>
+                                           <td style="color:black" id="igst">{{pcrd.taxamount}}</td>
+                                       </tr>
+                                       <tr class="gstrow d-none">
+                                           <td style="color:black">CGST</td>
+                                           <td style="color:black" id="cgst">{{pcrd.cgst}}</td>
+                                       </tr>
+                                       <tr class="gstrow d-none">
+                                           <td style="color:black">SGST</td>
+                                           <td style="color:black" id="sgst">{{pcrd.sgst}}</td>
+                                       </tr>
+                                  
+                                       <tr>
+                                           <td style="color:black">Tax Amount</td>
+                                           <td style="color:black">{{pcrd.taxamount}}</td>
+                                       </tr>
+                                       <tr class="shiprow d-none">
+                                           <td style="color:black">Shpping Charge</td>
+                                           <td style="color:black">{{pcrd.shipping_charge}}</td>
+                                       </tr>
+                                       {% if pcrd.adjustment != '0' %}
+                                       <tr class="shiprow d-none">
+                                        <td style="color:black">Adjustment</td>
+                                        <td style="color:black">{{pcrd.adjustment}}</td>
+                                    </tr>
+                                       {% endif %}
+                                       <tfoot>
+                                           <tr>
+                                               <td style="color:black">Grand Total:</td>
+                                               <td style="color:black ;">{{pcrd.grandtotal}}</td>
+                                           </tr>
+                                       </tfoot>
+                                   </table>
+                               </div> 
+                           </div><br><br><br>
+                           <div class="row " style="text-align: right;">
+                               <div class="col-sm-12 "><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                               <div class="col-sm-4 m-0 p-0"></div>
+                               <div class="col-sm-4 m-0 p-0"></div>
+                           </div>
+                       </section>
+                       <img src="cart.jpg" class="img-fluid cart-bg" alt="">   
+                   </div>
+               </div>
+           </div>
+        </div>
+           
+           
+    </div>
+
+
+    
+    
+    <div class="modal fade" id="file" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #213b52;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{% url 'attach_credit_note_file' pcrd.screditid %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="modal-body">
+                        <input type="file" class="form-control" name="file">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-info">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="print_slip"  style="display: none;" >
+        <div class="p-3 mt-3">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <div id="outer" style="width: 100%;border-radius: 15px;">
+                        <div class="row">
+                            <div class="col-sm-4 col-md-4 col-lg-4"></div>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <div id="whatToPrint4" class="p-1 pb-5 " style="width: 100%;background-color: beige;">
+    
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-12 col-md-12">
+                                          <h6  style="text-align: center;color: rgb(27, 27, 27);">CREDIT NOTE</h6>
+                                        </div>
+                                    </div>
+    
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-12 col-md-12">
+                                            <h6 class="mt-1" style="text-align: center;color: rgb(27, 27, 27);">{{ cmp1.cname }}</h6>
+                                        </div>
+                                    </div>
+    
+                                    <div class="row">
+                                        <div class="col-sm-12 col-lg-12 col-md-12">                            
+                                           <p  style="text-align: center;color: rgb(27, 27, 27);"> {{ cmp1.caddress }} , {{ cmp1.city }} ,{{ cmp1.state }}  </p>                           
+                                        </div>
+                                    </div>
+    
+                                  <div class="row">
+                                    <div class="col-sm-12 col-lg-12 col-md-12">
+                                        <p class="text-dark" style="font-size: small;"><span class="text-black" style="font-size:medium;">invoice to :</span> <br>
+                                        
+                                          {{ cust.firstname }} {{ cust.lastname }} <br>{{ pcrd.address }} <br><span class="text-black " style="font-size: medium;">Credit date:</span> <br> {{pcrd.creditdate|date:'d-m-Y' }} </p>
+                                         <p class="text-dark" style="font-size: small;margin-left: 70%;margin-top: -20%;"><span class="text-black" style="font-size: medium;">Credit no:</span><br>{{pcrd.credit_no}}</p>
+        
+        
+        
+                                    </div>
+                                   
+                                   </div>
+                                  
+                                  <div class="row ">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <table class="table-bordered mb-3" style="margin-top: 8%;">
+                                            <thead >
+                                                <tr>
+                                                    <th style="color: black;font-size: smaller;">#</th>
+                                                    <th style="width: 30rem;color: black;font-size: smaller;">Items</th>
+                                                    <th style="width: 30rem;color: black;font-size: smaller;">Hsn</th>
+                                                    <th class="text-right;" style="color: black;font-size: smaller;">Qty</th>
+                                                    <th class="text-right;" style="width:10rem;color: black;font-size: smaller;">Rate</th>
+                                                    <th class="text-right;" style="color: black;font-size: smaller;">Discount</th>
+                                                    <th class="text-right;" style="color: black;font-size: smaller;">Tax</th>
+                                                    <th class="text-right;" style="color: black;font-size: smaller;">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                    {% for pordr in pdeb %}
+                                       <tr>
+                                        <td style="color: black;font-size: smaller;">{{ forloop.counter }}</td>
+                                        <td style="color: black;font-size: smaller;">{{ pordr.items }}</td>
+                                        <td style="color: black;font-size: smaller;">{{ pordr.hsn }}</td>
+                                        <td class="text-right" style="color: black;font-size: smaller;">{{ pordr.quantity }}</td>
+                                        <td class="text-right" style="color: black;font-size: smaller;">{{ pordr.price }}</td>
+                                        <td class="text-right" style="color: black;font-size: smaller;">{{ pordr.discount|default:0 }}</td>
+                                        <td class="text-right" style="color: black;font-size: smaller;">{{ pordr.tax }}</td>
+                                        <td class="text-right" style="color: black;font-size: smaller;">{{ pordr.total }}</td>
+                                       </tr>
+                                    {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-sm-12 col-lg-12 col-md-12">
+                                        <table style="margin-left: 60%;">
+                                            <tr>
+                                                <td class=" text-dark" style="font-size: smaller;">Sub-Total:</td>                                       
+                                                <td class="text-right text-dark" style="text-align: end;font-size: smaller;"> {{pcrd.subtotal}}</td>
+                                            </tr>
+                                            {% if pcrd.cgst != 0 %}
+                                            <tr>
+                                                <td class="text-right text-dark" tyle="font-size: smaller;">CGST:</td>
+                                                <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{pcrd.cgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                               
+                                            {% if pcrd.sgst != 0 %}
+                                            <tr>
+                                                <td class="text-right text-dark" style="font-size: smaller;">SGST:</td>
+                                                <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{pcrd.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if pcrd.igst != 0 %}
+                                            <tr>
+                                                <td class="text-right text-dark" style="font-size: smaller;">IGST:</td>
+                                                <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{pcrd.igst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if pcrd.shipping_charge != 0 %}
+                                            <tr>
+                                                <td class="text-right text-dark" style="font-size: smaller;">Shipping Charge:</td>
+                                                <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{ pcrd.shipping_charge}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if pcrd.adjustment != 0 %}
+                                            <tr>
+                                                <td class="text-right text-dark" style="font-size: smaller;">Adjustment:</td>
+                                                <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{pcrd.adjustment}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                    
+                                                <td class="text-right text-dark" style="font-weight: bold;">Total:</td>
+                                                
+                                                <td class="text-right text-dark " style="font-weight: bold;text-align: end;font-weight: bold;">{{ pcrd.grandtotal}}</td>
+                                            </tr>
+                    
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-md-4 col-lg-4"></div>
+                        </div>
+        
+                    </div>
+        
+                </div>
+            </div>
+        </div>
+        
+        </div>
+  </div>
+
+
+ 
+</div>
+
+
+
+
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
-    <script src="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-alpha.6.min.js"></script>
+    <!-- <script src="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-alpha.6.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+   
+
+<script>
+
+    function printSelectedArea() 
+    {
+      var selectedArea = document.getElementById("print_slip");
+      var printWindow = window.open('','PrintWindow');
+      printWindow.document.write('<html><head><title>Print Selected Area</title></head><body>' + selectedArea.innerHTML+ '</body></html>');
+      printWindow.print();
+      printWindow.close(); 
+    }
+   
+   $(function() {
+       $("#slip").click(printSelectedArea); 
+   });
+   
+</script>
+
+    <script>
+        function showTemplates() {
+            document.getElementById('templatesToPrintSection').style.display = 'block';
+            // document.getElementById('whatToPrint').style.display = 'block';
+
+            document.getElementById('details').style.display = 'none';
+            // document.getElementById("print_slip").style.display='none';
+            document.getElementById('whatToPrint4').style.display='none';
+            toggleTemplate('whatToPrint','toggleTemplate1');
+
+
+    }
+    function showDetails() {
+        document.getElementById('templatesToPrintSection').style.display = 'none';
+        document.getElementById('details').style.display = 'block';
+        // document.getElementById("print_slip").style.display='none';
+        document.getElementById('whatToPrint4').style.display='none';
+
+
+
+    }
+    function showSlip(){
+                // document.getElementById('print_slip').style.display='none';
+                document.getElementById('templatesToPrintSection').style.display='none';
+                document.getElementById('whatToPrint4').style.display='block';
+                document.getElementById('details').style.display='none';
+            }
+    
+    // function show_slip()
+    // {
+    //     document.getElementById("print_slip").style.display='block';
+    //     document.getElementById('templatesToPrintSection').style.display = 'none';
+    //     document.getElementById('details').style.display = 'none';
+    //     document.getElementById('whatToPrint4').style.display='none';
+    // }
+</script>
+
+<script>
+    function printfun(){
+
+        print4 = document.getElementById('slipdiv');
+        if (print4.style.display !== 'none'){
+                var printContents=document.getElementById("slipdiv").innerHTML; 
+        }
+        else{
+            var printContents = document.getElementById("whatToPrint3").innerHTML;
+        }
+
+
+
+        var $printerDiv = $('<div class="printContainer"></div>'); // create the div that will contain the stuff to be printed
+        $printerDiv.html(printContents); // add the content to be printed
+        $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+        window.print(); // call print
+        $printerDiv.remove(); // remove the div
+        $('body').removeClass("printingContent");
+    }
+
+
+   
+</script>
+   
+
+<script>
+     
+    function toggleTemplate(templateId,buttonId)
+    {
+       
+            
+            $('.printTemplates').css('display','none');
+            $('#'+templateId).css('display','block');
+            $('.templateToggleButtons').removeClass('active');
+            $('#'+buttonId).addClass('active');
+            
+            
+            $("#templatePrintButton").attr("onclick","printSection('"+templateId+"')");
+            
+            document.getElementById('page-content').scrollIntoView();
+       
+       
+
+    }
+</script>
 
 
     <script>
@@ -741,7 +1942,21 @@
       
     </script>
 
+<script>
+    function printSection(sectionId) {
+        var printContents = document.getElementById(sectionId).innerHTML;
+        printContents.innerHTML='';
 
+
+        var originalContents = document.body.innerHTML;
+    
+        document.body.innerHTML = printContents;
+    
+        window.print();
+    
+        document.body.innerHTML = originalContents;
+    }
+    </script>
 
 
 {% endblock %}

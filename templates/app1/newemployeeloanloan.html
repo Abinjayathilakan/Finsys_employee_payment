@@ -46,7 +46,7 @@
                     <div class="col-md-5 ml-4">
                         <label class="col-form-label">Employee</label>
                         <div class="d-flex">
-                            <select name="employee" id="empl_id" class="form-control" style="width: 95%;" required>
+                            <select  name="employee" id="empl_id" class="form-control" style="width: 95%;" required>
                                 <option value="NIL" >Select Employee</option>
                                 {% for cust in employee %}
                                 {% if cust.cid_id == cmp1.cid %}
@@ -116,8 +116,33 @@
                                     data-toggle="modal">+</a>
                         </div>
                     </div>
-
-                   
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-3 ml-4">
+                        <label class="col-form-label">Payment Type</label>
+                        <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;" required>
+                            <option value="" selected hidden>Choose Payment</option>
+                            <option value="cash">Cash</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="upi">UPI</option>
+                            {% for i in bank %}
+                              <option value="{{i.bankname}}">{{i.bankname}}</option>
+                            {% endfor %}
+                          </select>
+                    </div>
+                    <div class="col-md-3" style="display:none;"  id="chequediv">
+                        <label class="col-form-label" >Cheque No</label>
+                        <input type="text" class="form-control" name="cheque_id" value="{{rbill.cheque_no}}" id="cheque_id" placeholder="Enter Cheque No">
+                    </div>
+                    <div class="col-md-3"  style="display:none;" id="upidiv">
+                        <label class="col-form-label" >UPI ID</label>
+                        <input type="text" class="form-control" name="upi_id" value="{{rbill.upi_no}}" id="upi_id" placeholder="Enter UPI ID">
+                    </div>
+                    <div class="col-md-3"  style="display:none;" id="bnkdiv">
+                        <label class="col-form-label" >Bank Account</label>
+                        <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+                    </div>
                 </div>
                 <div class="row m-4 ml-5 pt-4">   
                     <!-- <div class="col-md-4 m-4 ml-5 pt-4"> -->
@@ -915,6 +940,58 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
 
+
+
+
+<script>
+    $(document).ready(function() {
+      $("#pay_method").change(function() {
+        var x=$('#pay_method').val();
+        if(x==='cash'){
+          $('#chequediv').hide()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+        }else if(x==='cheque'){
+          $('#chequediv').show()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('upi_id').value=null
+        }else if(x==='upi'){
+          $('#upidiv').show()
+          $('#bnkdiv').hide()
+          $('#chequediv').hide()
+          document.getElementById('cheque_id').value=null
+        }else{
+          $('#bnkdiv').show()
+          $('#chequediv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+
+          $.ajax({
+              type: "GET",
+              url: "{% url 'bankdata' %}",
+              data: {
+                  id: x,
+              },
+              success: function (response) {
+                  data = response.bank
+                  document.getElementById('cheque_id').value=null
+                  document.getElementById('upi_id').value=null
+                  document.getElementById("bnk_id").value = data
+              }
+          });
+        }
+      });
+    });
+</script>
+
+
+
+
+
 <script>
    $(document).on("click","#itemSave",function(){
 
@@ -940,7 +1017,7 @@
             });
 
 
-            function reloadItem() {
+function reloadItem() {
     $.ajax({
         url: "{% url 'term_dropdown' %}",
         type: "GET",
@@ -1080,36 +1157,7 @@ $(document).ready(function () {
      calculateExpiryDate();
 });
 </script>
-<script>
 
-
-    $(document).ready(function () {
-        $('#empl_id').on('change', function() {
-            console.log($('#empl_id').val())
-            $.ajax({
-                type : 'POST',
-                
-                url: "{% url 'listemployee_loan' %}",
-                data: {
-                    id: $('#empl_id').val(),
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                },
-                
-                success: function(data){
-                    console.log(data.email);
-                    document.getElementById('email').value = data.email;
-                    console.log(data.employeeno);
-                    document.getElementById('eid').value = data.employeeno;
-                    console.log(data.joindate);
-                    document.getElementById('joindate').value = data.joindate;
-                    console.log(data.amount);
-                    document.getElementById('Salary').value = data.amount;
-                }
-            });
-        });
-    });
-
-</script>
 
 
 
@@ -2033,5 +2081,82 @@ $(document).ready(function () {
         }
     }
 </script>
+
+<script>
+$(document).ready(function () {
+    var loanAlreadyTaken = false; // Set to false initially
+
+    $("#empl_id").change(function () {
+        var emp = $(this).val();
+        console.log('emp')
+        console.log(emp)
+
+        $.ajax({
+            url: 'check_user_loan',
+            data: {
+                'emp': emp
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.is_tak) {
+                    // Loan already taken
+                    alert("Loan already taken by the employee.");
+                    loanAlreadyTaken = true;
+                    clearEmployeeDetails(); // Clear employee details
+                } else {
+                    // Loan not taken
+                    loanAlreadyTaken = false;
+                    fetchEmployeeDetails();
+                }
+            }
+        });
+    });
+
+    $('#empl_id').on('change', function () {
+        if (loanAlreadyTaken) {
+            // If loan already taken, fetch employee details
+            fetchEmployeeDetails();
+        }
+    });
+
+    function fetchEmployeeDetails() {
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'listemployee_loan' %}",
+            data: {
+                id: $('#empl_id').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            success: function (data) {
+                // Update the form fields with employee details
+                updateFormFields(data);
+            }
+        });
+    }
+
+    function updateFormFields(data) {
+        console.log(data.email);
+        document.getElementById('email').value = data.email;
+        console.log(data.employeeno);
+        document.getElementById('eid').value = data.employeeno;
+        console.log(data.joindate);
+        document.getElementById('joindate').value = data.joindate;
+        console.log(data.amount);
+        document.getElementById('Salary').value = data.amount;
+    }
+
+    function clearEmployeeDetails() {
+        // Clear employee details from the form fields
+        updateFormFields({
+            email: '',
+            employeeno: '',
+            joindate: '',
+            amount: ''
+        });
+    }
+});
+
+</script>
+
 
 {% endblock %}

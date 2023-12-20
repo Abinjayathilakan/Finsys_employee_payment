@@ -159,7 +159,7 @@
                             {% for trans in debitnote %}
                             <tr class="table-row " data-href="" style="text-align: center;">
                                 <td>{{ trans.debitdate | date:'Y-m-d' }}</td>
-                                <td>DN - {{trans.debit_no}}</td>
+                                <td>{{trans.debit_no}}</td>
                                 <td>{{ trans.vendor }}</td>
                                 <td>{{ trans.email }}</td>
                                 <td>{{ trans.taxamount }}</td>

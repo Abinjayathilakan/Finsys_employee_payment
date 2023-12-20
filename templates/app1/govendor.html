@@ -33,9 +33,31 @@
                             <div class="d-flex">
                                 <input type="text" id="search" class="form-control" placeholder="Search.." autocomplete="off" style="border-color: #213b52;">
                                 <center><i class="fa fa-search form-control" style="width: 60px;border-color: #213b52;"></i></center>
-                            </div>
+                            </div>  
                         </div>
-                        <div class="col-md-4"></div>
+                        
+                        <div class="col-md-4">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-info dropdown-toggle" type="button" id="sortByDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+                                    Sort By
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="sortByDropdown">
+                                    <a class="dropdown-item" href="?sort_by=all">All</a>
+                                    <a class="dropdown-item" href="?sort_by=name">Name</a>
+                                    <a class="dropdown-item" href="?sort_by=company">Company Name</a>
+                                    <a class="dropdown-item" href="?sort_by=gst">GST Type</a>
+                                    <!-- <div class="dropdown-menu" aria-labelledby="gstTypeDropdown">
+                                        <a class="dropdown-item" href="?sort_by=gsttype-regular">Registered Business - Regular</a>
+                                        <a class="dropdown-item" href="?sort_by=gsttype-composition">Registered Business - Composition</a>
+                                        <a class="dropdown-item" href="?sort_by=gsttype-unregistered">Unregistered Business</a>
+                                        <a class="dropdown-item" href="?sort_by=gsttype-overseas">Overseas</a>
+                                        <a class="dropdown-item" href="?sort_by=gsttype-sez">Special Economic Zone (SEZ)</a>
+                                    </div> -->
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
                         <div class="col-md-3"></div>
                         <div class="btn-group col-md-2">
                             <a class="btn btn-outline-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"

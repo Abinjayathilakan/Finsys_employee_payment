@@ -1,235 +1,236 @@
-recinvoices.html
-
-
-
 {% extends 'app1/base.html' %}
 {% block body %}
-    {% load static %}
+{% load static %}
+    {% if user.is_authenticated %}
 
-
-<style>
-    .search {
-  width: 100%;
-  position: relative;
-  display: flex;
-}
-
-.searchTerm {
-  width: 100%;
-  border: 3px solid #7690da;
-  border-right: none;
-  padding: 5px;
-  height: 36px;
-  border-radius: 5px 0 0 5px;
-  outline: none;
-  color: #9DBFAF;
   
-}
+      <style>
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
-.searchTerm:focus{
-  color:#7690da;
-}
+        body{
+        background: #f2f2f2;
+        font-family: 'Open Sans', sans-serif;
+        }
 
-.searchButton {
-  width: 40px;
-  height: 36px;
-  border: 1px solid #7690da;
-  background:#7690da;
-  text-align: center;
-  color: #fff;
-  border-radius: 0 5px 5px 0;
-  cursor: pointer;
-  font-size: 20px;
-}
+        .search {
+        width: 100%;
+        position: relative;
+        display: flex;
+        }
 
-</style>
+        .searchTerm {
+        width: 100%;
+        border: 3px solid #7690da;
+        border-right: none;
+        padding: 5px;
+        height: 36px;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+        color: #9DBFAF;
+        
+        }
 
-    <div class="page-content">
-        <div class="card radius-15">
-            <div class="card-body">
-                <div class="card-title">
-                    <center><h2 class="mb-0">RECURRING INVOICES</h2></center>
-                    <hr>
+        .searchTerm:focus{
+        color:#7690da;
+        }
+
+        .searchButton {
+        width: 40px;
+        height: 36px;
+        border: 1px solid #7690da;
+        background:#7690da;
+        text-align: center;
+        color: #fff;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-size: 20px;
+        }
+
+        .table-row{
+                cursor:pointer;
+        }
+        /* .table-row:hover{
+            background-color: rgb(217, 232, 51);
+        } */
+
+        /*Resize the wrap to see the search bar change!*/
+        .wrap{
+        width: 40%;
+        /* position: absolute;
+        top: 50%;
+        left: 50%; */
+        /* transform: translate(-50%, -50%); */
+        }
+
+        tbody{
+            cursor: pointer;
+        }
+      </style>
+        <div class="page-content">
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="card-title">
+                        <center><h2 class="mb-0">RECURRING INVOICE</h2></center>
+                        <hr>
+                        <div class="btn-group col-md-2" style="float: right;">
+                            <a class="btn btn-outline-info text-grey" onclick="ExportToExcel()">Export To Excel</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card radius-15">
-            <div class="card-body">
-                
-
-
-                <div class="row">
-
-                        
-                        
-                        
-                    <div class="col-md-4">
-                        <div class="wrap" style="width: 60%; margin-top: 8px;">
-                            <form action="gorecinvoices3" method="POST">{% csrf_token %}
-                            <div class="d-flex">
-                                <input type="text" id="search" class="form-control" name="search" placeholder="Search.." autocomplete="off">
-                                <button type="submit" class="searchButton">
-                                    <i class="fa fa-search"></i>
-                                 </button>
-                            </div>    
-                       
-                            <div class="col-md-4"></div>
-                            <div class="col-md-3"></div>
-                            <div class="col-md-1"></div>        
-                          
-                         </div>
-                         
-                    </div>
-                </form>
-                    <div class="col-md-3">
-                      
-                       
-
-                          
-
-
-                     
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
+                                style="margin-top: 8px; background-color: #2f516f;color: white;">
                         </div>
-                        <div class="col-md-2" style="width: 40%; margin-top: 8px;">
-
+                        <div class="col-md-2" style="width: 40%; margin-top: 9px;">
                             <div class="dropdown">
-                                <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
-                                        data-toggle="dropdown">filter by
+                                <button type="button" class="btn btn-outline-info   text-grey fas fa-sort dropdown-toggle"
+                                        data-toggle="dropdown"> Sort by
+                                </button>
+                                <div class="dropdown-menu " style="background-color: black;">
+                                    <a class="dropdown-item" href="{% url 'gorecinvoices' %}"
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
+                                <!-- <a class="dropdown-item  " href="{% url 'sales_num_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number <icon class=" fas fa-arrow-up"></icon></a> -->
+
+                                <a class="dropdown-item " onclick="sortTableName(1)"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Reccuring Invoice No  </a>
+                                <!-- <a class="dropdown-item " href="{% url 'sales_date_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
+
+                                <a class="dropdown-item  " onclick="sortTableName(2)"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >
+                                        Customer  </a>
+                                <!-- <a class="dropdown-item  " href="{% url 'sales_cust_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fas fa-arrow-up"></icon></a> -->
+                                        
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+
+                        <div class="col-md-1" style="width: 40%; margin-top: 8px;">
+
+                            <div class="dropdown ml-4">
+                                <button type="button" class="btn btn-outline-info fas fa-filter dropdown-toggle text-grey"
+                                        data-toggle="dropdown"> filter by
                                 </button>
                                 <div class="dropdown-menu" style="background-color: black;">
                                     <a class="dropdown-item" href="{% url 'gorecinvoices' %}"
-                                       style="height: 40px; font-size: 15px; color: #ffffff; text-align: center;" >All</a>
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
                                     <a class="dropdown-item" href="{% url 'gorecinvoices1' %}"
-                                       style="height: 40px; font-size: 15px; color: white; text-align: center;" >Draft</a>
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >Draft</a>
                                     <a class="dropdown-item" href="{% url 'gorecinvoices2' %}"
-                                       style="height: 40px; font-size: 15px; color: white; text-align: center;">Approved</a>
-                                    <!-- <a class="dropdown-item" href="{% url 'sale_filter3' %}"
-                                       style="height: 40px; font-size: 15px; color: white; text-align: center;">Invoice</a> -->
-                                    
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;">Approved</a>
                                 </div> 
-                           </div>
+                            </div>
                         </div>
-                        
-                        
-
-                        
-                   
-
-                    <div class="col-md-3" >
-                        <a href="{% url 'addrecinvoices' %}" >
-                            <button id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="margin-top: 8px;">&nbsp; Add Reccuring Invoice
-                                </button>
-                        </a>
+                        <div class="col-md-3 " style="float: right;" >
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="{% url 'addrecinvoices' %}" >
+                                <button id="myBtn" class="btn btn-outline-info text-grey ml-5" style="margin-top: 8px;"> <i class="fa fa-plus"></i>&nbsp; Add Reccuring Invoice</button>
+                            </a>
+                        </div>
                     </div>
 
+                    <div class="container-fluid">
+                        <table class="table table-responsive-md mt-4 table-hover" id="table">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;text-transform: uppercase;">Date</th>
+                                    <th style="text-align: center;text-transform: uppercase;">Recurring Invoice No</th>
+                                    <th style="text-align: center;text-transform: uppercase;">Customer Name</th>
+                                    <th style="text-align: center;text-transform: uppercase;">Customer Email</th>
+                                    <th style="text-align: center;text-transform: uppercase;">Amount</th> 
+                                    <th style="text-align: center;text-transform: uppercase;">Status</th>
+                                    <th style="text-align: center;text-transform: uppercase;">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for recinvoices in recinvs %}
+                                    {% if recinvoices.cid_id == cmp1.cid %}
+                                        <tr  class="table-row  text-center"  >
+                                            <td class="clickable-row" style="text-align: center;" data-href="recinvoice_view/{{ recinvoices.recinvoiceid }}">{{ recinvoices.startdate | date:'d-m-Y' }}</td>
+                                            <td class="clickable-row" style="text-align: center;" data-href="recinvoice_view/{{ recinvoices.recinvoiceid }}">{{ recinvoices.recinvoiceno }}</td>
+                                            <td class="clickable-row" style="text-align: center;" data-href="recinvoice_view/{{ recinvoices.recinvoiceid }}">{{ recinvoices.cust }}</td>
+                                            <td class="clickable-row" style="text-align: center;" data-href="recinvoice_view/{{ recinvoices.recinvoiceid }}">{{ recinvoices.email }}</td>
+                                            <td class="clickable-row" style="text-align: center;" data-href="recinvoice_view/{{ recinvoices.recinvoiceid }}">{{ recinvoices.grandtotal }}</td>
+                                            <td class="clickable-row" style="text-align: center;" data-href="recinvoice_view/{{ recinvoices.recinvoiceid }}">{{ recinvoices.status }}</td>
+                                            <td class="clickable-row" style="text-align: center;" data-href="recinvoice_view/{{ recinvoices.recinvoiceid }}">{{ recinvoices.baldue }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <table class="table table-responsive-md mt-3 table-hover">
-                    <thead>
-                    <tr>
-                        
-                        
-                        <th style="text-align: center;">RECURRING INVOICE DATE</th>
-                        
-                        <th style="text-align: center;">CUSTOMER</th>
-                        <th style="text-align: center;">STATUS</th>
-                        <th style="text-align: center;">DUE DATE</th>
-                        <th style="text-align: center;">GRAND TOTAL</th>
-                        
-                        
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for recinvoices in recinvs %}
-                        {% if recinvoices.cid_id == cmp1.cid %}
-
-                            <tr tr class="table-row " class="table-row " data-href="{% url 'recinvoice_view' recinvoices.recinvoiceid %}">
-                               
-                                <th style="text-align: center;">{{ recinvoices.startdate }}</th>
-                          
-                                <td style="text-align: center;">{{ recinvoices.customername }}</td>
-                                <td style="text-align: center;">{{ recinvoices.status }}</td>
-                                <td style="text-align: center;">{{ recinvoices.enddate }}</td>
-                                <td style="text-align: center;">{{ recinvoices.grandtotal }}</td>
-                                
-                                
-
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                    </tbody>
-
-
-                </table>
             </div>
-
-            <script>
-                // Get the modal
-                var modal = document.getElementById("myModal");
-
-                // Get the button that opens the modal
-                var btn = document.getElementById("myBtn");
-
-                // Get the <span> element that closes the modal
-                var span = document.getElementsByClassName("close")[0];
-
-                // When the user clicks the button, open the modal
-                btn.onclick = function () {
-                    modal.style.display = "block";
-                }
-
-                // When the user clicks on <span> (x), close the modal
-                span.onclick = function () {
-                    modal.style.display = "none";
-                }
-
-                // When the user clicks anywhere outside of the modal, close it
-                window.onclick = function (event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
-                }
-            </script>
         </div>
-    </div>
+        <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 
     <script>
-        $(document).ready(function($) {
-            $(".table-row").dblclick(function() {
-                window.document.location = $(this).data("href");
+
+        $(document).ready(function() {
+            var $rows = $('.table tbody tr');
+            $('#search').keyup(function() {
+                var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+                $rows.show().filter(function() {
+                    console.log($rows.show())
+
+                    var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                    console.log(text)
+                    return !~text.indexOf(val);
+                }).hide();
+            });
+        });
+
+        function ExportToExcel() {
+            const table = document.querySelector('#table');
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            XLSX.writeFile(wb, 'RecurringInvoice.xlsx');
+        }
+    </script>
+
+        
+    <script>
+        jQuery(document).ready(function($) {
+            $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
             });
         });
     </script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-
-
-  
-  
- 
- 
-
-
-
-<script>
-    var $rows = $('#table tr');
-    $('#search').keyup(function() {
-        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-        
-        $rows.show().filter(function() {
-            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-            return !~text.indexOf(val);
-        }).hide();
-    });
-</script>
-
-
+    <script>
+        function sortTableName(no) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("table");
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < rows.length - 1; i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[no];
+                    y = rows[i + 1].getElementsByTagName("td")[no];
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+    </script>
+    {% endif %}
 {% endblock %}
-
-
-
-
-
-
 
 
 

@@ -38,46 +38,114 @@
                     
                     {% if user.is_authenticated %} -->
 
-                        <div class="row">
-                            <div class="col-md-4 mt-2">
-                                <label for="validationCustom01">Select Vendor</label>
-                                <div class="d-flex">
-                                    <select name="vendor_name" id="vendor" class="custom-select">
-                                        <option>Select Vendor</option>
-                                        
-                                        {% for vd in vndr %}
-                                        <option value="{{vd.vendorid}} {{ vd.firstname }} {{ vd.lastname }}" {% if vd.firstname == v.firstname and vd.lastname == v.lastname %}selected{% endif %}>{{ vd.title }} {{ vd.firstname }} {{ vd.lastname }}</option>
-                                        {% endfor %}
-                                    </select>
-                                        <a>
-                                        <button type="button" class="btn btn-outline-secondary ml-1" 
-                                        data-target="#newvendor" data-toggle="modal">+</button>
-                                    </a>
-                                    <div class="valid-feedback">Looks good!</div> 
+                        
+                    <div class="row">
+                        <div class="col-md-4 mt-2">
+                            <label for="validationCustom01">Select Vendor</label>
+                            <div class="d-flex">
+                                <select name="vendor_name" id="vendor_det" class="custom-select">
+                                    <option>Select Vendor</option>
+                                    
+                                    {% for vd in vndr %}
+                                    <option value="{{vd.vendorid}} {{ vd.firstname }} {{ vd.lastname }}" {% if vd.firstname == v.firstname and vd.lastname == v.lastname %}selected{% endif %}>{{ vd.title }} {{ vd.firstname }} {{ vd.lastname }}</option>
+                                    {% endfor %}
+                                </select>
+                                <a>
+                                    <button type="button" class="btn btn-outline-secondary ml-1" 
+                                    data-target="#newvendor" data-toggle="modal">+</button>
+                                </a>
+                                <div class="valid-feedback">Looks good!</div> 
+                            </div>
+                            <div class="d-none mt-4" id="gst_trt_row">
+                                <div class="  mt-3">
+                                  <label for="gst_trt_inp">GST Treatment</label>
+                                  <input type="text" class="form-control" id="gst_trt_inp" name="gst_trt_inp">
                                 </div>
-                            </div>
+                              </div>
+                              
+                              
                         </div>
-                       
-                        <div class="row d-none" id="email_row">
-                            <div class="col-md-3 mt-2">
-                              <label for="email_inp">Vendor Email</label>
-                              <input type="text" class="form-control" id="email_inp" name="email_inp">
+                       <div class="col-md-4 ">
+                            
+                            <div class="d-none" id="email_row">
+                               <div class="col-form-label">
+                                <label for="email_inp">Vendor Email</label>
+                                  <input type="text" class="form-control" id="email_inp" name="email_inp">
+                              </div>
+                             
+                        </div> 
+                        
+                        <br>
+                        <div  id="gstin_row" style="display: none;" class="" >
+                            <div class="col-form-label">
+                                <label class="col-form-label">GSTIN</label> 
+                                <input type="text" class="form-control" id="gstno" name="gstno" >
+                           </div>
+                          
+                     </div> 
+                            
+                            
+                           
+                        
+                        
+                          </div>
+                          <div class="col-md-4 ">
+                            <div class=" "  id="addres_row" style="display: none;">
+                                  <label class="col-form-label ">Address</label>
+                                <textarea class="form-control mt-4" rows="6"  id="addres" name="billingaddress_vendor" style="background-color: #43596c;"  readonly></textarea>
+        
+                               
                             </div>
                           </div>
-                    
-                          <div class="row d-none" id="gst_trt_row">
-                            <div class="col-md-3  mt-2">
-                              <label for="gst_trt_inp">GST Treatment</label>
-                              <input type="text" class="form-control" id="gst_trt_inp" name="gst_trt_inp">
-                            </div>
-                          </div>
-                    
-                          <div class="row d-none" id="gstin_row">
-                            <div class="col-md-3  mt-2">
-                            <label for="gstin_inp">GST Number</label>
-                             <input type="text" class="form-control"  id="gstin_inp" name="gstin_inp">
-                            </div>
-                          </div>
+                         
+                        
+                       </div> 
+                       <div class="row">
+                        <div class="col-md-3 mt-3">
+                            <label for="Place of Supply" >Place of SupplyL</label>
+                            <select name="sourceof_supply" id="plosur" class="form-control">
+                                <option value="Andaman and Nicobar Islands" {% if rbill.source_supply == "Andaman and Nicobar Islands" %} selected {% endif %}>Andaman and Nicobar Islands</option>
+                                <option value="Andhra Pradesh" {% if rbill.source_supply == "Andhra Pradesh" %} selected {% endif %}>Andhra Pradesh</option>
+                                <option value="Arunachal Pradesh" {% if rbill.source_supply == "Arunachal Pradesh" %} selected {% endif %}>Arunachal Pradesh</option>
+                                <option value="Assam" {% if rbill.source_supply == "Assam" %} selected {% endif %}>Assam</option>
+                                <option value="Bihar" {% if rbill.source_supply == "Bihar" %} selected {% endif %}>Bihar</option>
+                                <option value="Chandigarh" {% if rbill.source_supply == "Chandigarh" %} selected {% endif %}>Chandigarh</option>
+                                <option value="Chhattisgarh" {% if rbill.source_supply == "Chhattisgarh" %} selected {% endif %}>Chhattisgarh</option>
+                                <option value="Dadra and Nagar Haveli" {% if rbill.source_supply == "Dadra and Nagar Haveli" %} selected {% endif %}>Dadra and Nagar Haveli</option>
+                                <option value="Daman and Diu" {% if rbill.source_supply == "Daman and Diu" %} selected {% endif %}>Daman and Diu</option>
+                                <option value="Delhi" {% if rbill.source_supply == "Delhi" %} selected {% endif %}>Delhi</option>
+                                <option value="Goa" {% if rbill.source_supply == "Goa" %} selected {% endif %}>Goa</option>
+                                <option value="Gujarat" {% if rbill.source_supply == "Gujarat" %} selected {% endif %}>Gujarat</option>
+                                <option value="Haryana" {% if rbill.source_supply == "Haryana" %} selected {% endif %}>Haryana</option>
+                                <option value="Himachal Pradesh" {% if rbill.source_supply == "Himachal Pradesh" %} selected {% endif %}>Himachal Pradesh</option>
+                                <option value="Jammu and Kashmir" {% if rbill.source_supply == "Jammu and Kashmir" %} selected {% endif %}>Jammu and Kashmir</option>
+                                <option value="Jharkhand" {% if rbill.source_supply == "Jharkhand" %} selected {% endif %}>Jharkhand</option>
+                                <option value="Karnataka" {% if rbill.source_supply == "Karnataka" %} selected {% endif %}>Karnataka</option>
+                                <option value="Kerala" {% if rbill.source_supply == "Kerala" %} selected {% endif %}>Kerala</option>
+                                <option value="Ladakh" {% if rbill.source_supply == "Ladakh" %} selected {% endif %}>Ladakh</option>
+                                <option value="Lakshadweep" {% if rbill.source_supply == "Lakshadweep" %} selected {% endif %}>Lakshadweep</option>
+                                <option value="Madhya Pradesh" {% if rbill.source_supply == "Madhya Pradesh" %} selected {% endif %}>Madhya Pradesh</option>
+                                <option value="Maharashtra" {% if rbill.source_supply == "Maharashtra" %} selected {% endif %}>Maharashtra</option>
+                                <option value="Manipur" {% if rbill.source_supply == "Manipur" %} selected {% endif %}>Manipur</option>
+                                <option value="Meghalaya" {% if rbill.source_supply == "Meghalaya" %} selected {% endif %}>Meghalaya</option>
+                                <option value="Mizoram" {% if rbill.source_supply == "Mizoram" %} selected {% endif %}>Mizoram</option>
+                                <option value="Nagaland" {% if rbill.source_supply == "Nagaland" %} selected {% endif %}>Nagaland</option>
+                                <option value="Odisha" {% if rbill.source_supply == "Odisha" %} selected {% endif %}>Odisha</option>
+                                <option value="Puducherry" {% if rbill.source_supply == "Puducherry" %} selected {% endif %}>Puducherry</option>
+                                <option value="Punjab" {% if rbill.source_supply == "Punjab" %} selected {% endif %}>Punjab</option>
+                                <option value="Rajasthan" {% if rbill.source_supply == "Rajasthan" %} selected {% endif %}>Rajasthan</option>
+                                <option value="Sikkim" {% if rbill.source_supply == "Sikkim" %} selected {% endif %}>Sikkim</option>
+                                <option value="Tamil Nadu" {% if rbill.source_supply == "Tamil Nadu" %} selected {% endif %}>Tamil Nadu</option>
+                                <option value="Telangana" {% if rbill.source_supply == "Telangana" %} selected {% endif %}>Telangana</option>
+                                <option value="Tripura" {% if rbill.source_supply == "Tripura" %} selected {% endif %}>Tripura</option>
+                                <option value="Uttar Pradesh" {% if rbill.source_supply == "Uttar Pradesh" %} selected {% endif %}>Uttar Pradesh</option>
+                                <option value="Uttarakhand" {% if rbill.source_supply == "Uttarakhand" %} selected {% endif %}>Uttarakhand</option>
+                                <option value="West Bengal" {% if rbill.source_supply == "West Bengal" %} selected {% endif %}>West Bengal</option>
+                                <option value="Other Territory" {% if rbill.source_supply == "Other Territory" %} selected {% endif %}>Other Territory</option>
+                            </select>
+                        </div>
+                        
+                       </div>
                           <hr>
                           <br><br>
                           <div class="row">
@@ -92,76 +160,33 @@
                               </div> -->
                           </div>
                           <hr>
+
                           <div class="row">
+
+      
                             <div class="col-md-3 mt-2">
-                                <label for="">Source of Supply</label>
-                                <select name="sourceof_supply" id="plosur" class="form-control">
-                                    <option value="Andaman and Nicobar Islands" {% if rbill.source_supply == "Andaman and Nicobar Islands" %} selected {% endif %}>Andaman and Nicobar Islands</option>
-                                    <option value="Andhra Pradesh" {% if rbill.source_supply == "Andhra Pradesh" %} selected {% endif %}>Andhra Pradesh</option>
-                                    <option value="Arunachal Pradesh" {% if rbill.source_supply == "Arunachal Pradesh" %} selected {% endif %}>Arunachal Pradesh</option>
-                                    <option value="Assam" {% if rbill.source_supply == "Assam" %} selected {% endif %}>Assam</option>
-                                    <option value="Bihar" {% if rbill.source_supply == "Bihar" %} selected {% endif %}>Bihar</option>
-                                    <option value="Chandigarh" {% if rbill.source_supply == "Chandigarh" %} selected {% endif %}>Chandigarh</option>
-                                    <option value="Chhattisgarh" {% if rbill.source_supply == "Chhattisgarh" %} selected {% endif %}>Chhattisgarh</option>
-                                    <option value="Dadra and Nagar Haveli" {% if rbill.source_supply == "Dadra and Nagar Haveli" %} selected {% endif %}>Dadra and Nagar Haveli</option>
-                                    <option value="Daman and Diu" {% if rbill.source_supply == "Daman and Diu" %} selected {% endif %}>Daman and Diu</option>
-                                    <option value="Delhi" {% if rbill.source_supply == "Delhi" %} selected {% endif %}>Delhi</option>
-                                    <option value="Goa" {% if rbill.source_supply == "Goa" %} selected {% endif %}>Goa</option>
-                                    <option value="Gujarat" {% if rbill.source_supply == "Gujarat" %} selected {% endif %}>Gujarat</option>
-                                    <option value="Haryana" {% if rbill.source_supply == "Haryana" %} selected {% endif %}>Haryana</option>
-                                    <option value="Himachal Pradesh" {% if rbill.source_supply == "Himachal Pradesh" %} selected {% endif %}>Himachal Pradesh</option>
-                                    <option value="Jammu and Kashmir" {% if rbill.source_supply == "Jammu and Kashmir" %} selected {% endif %}>Jammu and Kashmir</option>
-                                    <option value="Jharkhand" {% if rbill.source_supply == "Jharkhand" %} selected {% endif %}>Jharkhand</option>
-                                    <option value="Karnataka" {% if rbill.source_supply == "Karnataka" %} selected {% endif %}>Karnataka</option>
-                                    <option value="Kerala" {% if rbill.source_supply == "Kerala" %} selected {% endif %}>Kerala</option>
-                                    <option value="Ladakh" {% if rbill.source_supply == "Ladakh" %} selected {% endif %}>Ladakh</option>
-                                    <option value="Lakshadweep" {% if rbill.source_supply == "Lakshadweep" %} selected {% endif %}>Lakshadweep</option>
-                                    <option value="Madhya Pradesh" {% if rbill.source_supply == "Madhya Pradesh" %} selected {% endif %}>Madhya Pradesh</option>
-                                    <option value="Maharashtra" {% if rbill.source_supply == "Maharashtra" %} selected {% endif %}>Maharashtra</option>
-                                    <option value="Manipur" {% if rbill.source_supply == "Manipur" %} selected {% endif %}>Manipur</option>
-                                    <option value="Meghalaya" {% if rbill.source_supply == "Meghalaya" %} selected {% endif %}>Meghalaya</option>
-                                    <option value="Mizoram" {% if rbill.source_supply == "Mizoram" %} selected {% endif %}>Mizoram</option>
-                                    <option value="Nagaland" {% if rbill.source_supply == "Nagaland" %} selected {% endif %}>Nagaland</option>
-                                    <option value="Odisha" {% if rbill.source_supply == "Odisha" %} selected {% endif %}>Odisha</option>
-                                    <option value="Puducherry" {% if rbill.source_supply == "Puducherry" %} selected {% endif %}>Puducherry</option>
-                                    <option value="Punjab" {% if rbill.source_supply == "Punjab" %} selected {% endif %}>Punjab</option>
-                                    <option value="Rajasthan" {% if rbill.source_supply == "Rajasthan" %} selected {% endif %}>Rajasthan</option>
-                                    <option value="Sikkim" {% if rbill.source_supply == "Sikkim" %} selected {% endif %}>Sikkim</option>
-                                    <option value="Tamil Nadu" {% if rbill.source_supply == "Tamil Nadu" %} selected {% endif %}>Tamil Nadu</option>
-                                    <option value="Telangana" {% if rbill.source_supply == "Telangana" %} selected {% endif %}>Telangana</option>
-                                    <option value="Tripura" {% if rbill.source_supply == "Tripura" %} selected {% endif %}>Tripura</option>
-                                    <option value="Uttar Pradesh" {% if rbill.source_supply == "Uttar Pradesh" %} selected {% endif %}>Uttar Pradesh</option>
-                                    <option value="Uttarakhand" {% if rbill.source_supply == "Uttarakhand" %} selected {% endif %}>Uttarakhand</option>
-                                    <option value="West Bengal" {% if rbill.source_supply == "West Bengal" %} selected {% endif %}>West Bengal</option>
-                                    <option value="Other Territory" {% if rbill.source_supply == "Other Territory" %} selected {% endif %}>Other Territory</option>
-                                </select>
+                                <label for="">Recurring Bill No.</label><span class="text-danger mt-1 ml-3" id="dangerdiv" style="display: none;"><span class="text-white"> (</span>This Id Should be Continous <span class="text-white">)</span></span>
+                                <input type="text" class="form-control" id="bill_code_number" name="bill_code_number" value="{{rbill.billno}}" placeholder="{{ord_no}}" required>
+                              </div>
+                              <div class="col-md-3 mt-2">
+                                <label for="">Reference Number </label>
+                                <input type="number" class="form-control" id="" name="Reference" value="{{rbill.refference}}" readonly>
                             </div>
                             
-      
-                              <div class="col-md-3 mt-2">
-                                  <label for="">Bill No.</label>
-                                  <input type="text" class="form-control" id="" name="billno" placeholder="1000" value="{{rbill.billno}}">
-                              </div>
                               <div class="col-md-3 mt-2">
                                   <label for="">Profile Name </label>
                                   <input type="text" class="form-control" id="" name="profile_name" placeholder="" value="{{rbill.profile_name}}">   
                               </div>
                               <div class="col-md-3 mt-2">
+                                <label for="">Purchase Order </label>
+                                <input type="text" class="form-control" id="" name="profile_name" placeholder="" value="{{rbill.purchase_order}}">   
+                            </div>
+                              <div class="col-md-3 mt-2">
                                 
                                 <label for="">Repeat Every</label>
                                 <div class="d-flex">
                                     <select class="form-control" name="repeat_every" id="repeat">
-                                        <option value="1 Week" {% if rbill.repeat_every == "1 Week" %} selected {% endif %}>1 Week</option>
-                                        <option value="2 Weeks" {% if rbill.repeat_every == "2 Weeks" %} selected {% endif %}>2 Weeks</option>
-                                        <option value="1 Month" {% if rbill.repeat_every == "1 Month" %} selected {% endif %}>1 Month</option>
-                                        <option value="2 Months" {% if rbill.repeat_every == "2 Months" %} selected {% endif %}>2 Months</option>
-                                        <option value="3 Months" {% if rbill.repeat_every == "3 Months" %} selected {% endif %}>3 Months</option>
-                                        <option value="6 Months" {% if rbill.repeat_every == "6 Months" %} selected {% endif %}>6 Months</option>
-                                        <option value="1 Year" {% if rbill.repeat_every == "1 Year" %} selected {% endif %}>1 Year</option>
-                                        <option value="2 Years" {% if rbill.repeat_every == "2 Years" %} selected {% endif %}>2 Years</option>
-                                        <option value="3 Years" {% if rbill.repeat_every == "3 Years" %} selected {% endif %}>3 Years</option>
-                                        <option value="6 Years" {% if rbill.repeat_every == "6 Years" %} selected {% endif %}>6 Years</option>
-                                        
+                               
                                         {% for r in re %}
                                             <option value="{{ r.repeat }}" {% if rbill.repeat_every == r.repeat %} selected {% endif %}>{{ r.repeat }}</option>
                                         {% endfor %}
@@ -181,9 +206,12 @@
                              
                           </div>
                           <hr>
-                          <div class="row">
-                            <div class="col-md-4 mt-2">
-                                <label for="validationCustom01">Select Customer</label>
+                          
+                          <div class="row mt-3">
+                            <div class="col-md-4">
+            
+        
+                                <label class="col-form-label mt-2">Customer</label>
                                 <div class="d-flex">
                                     <select name="customer_name" id="customer" class="custom-select">
                                         <option selected >Select Customer</option>
@@ -191,36 +219,84 @@
                                         <option value="{{ct.customerid}} {{ ct.firstname }} {{ ct.lastname }}" {% if ct.firstname == c.firstname and ct.lastname == c.lastname %}selected{% endif %}>{{ ct.title }} {{ ct.firstname }} {{ ct.lastname }}</option>
                                         {% endfor %}
                                     </select>
-                                    <a>
-                                        <button type="button" class="btn btn-outline-secondary ml-1" 
-                                        data-target="#newcustomer" data-toggle="modal">+</button>
-                                    </a>
-                                    <div class="valid-feedback">Looks good!</div> 
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="row d-none" id="email_row1">
-                            <div class="col-md-3 mt-2">
-                              <label for="email_inp">Customer Email</label>
-                              <input type="text" class="form-control" id="email_inp1" name="email_inp">
-                            </div>
-                          </div>
-                    
-                          <div class="row d-none" id="gst_trt_row1">
-                            <div class="col-md-3  mt-2">
-                              <label for="gst_trt_inp">GST Treatment</label>
-                              <input type="text" class="form-control" id="gst_trt_inp1" name="gst_trt_inp">
-                            </div>
-                          </div>
-                    
-                          <div class="row d-none" id="gstin_row1">
-                            <div class="col-md-3  mt-2">
-                            <label for="gstin_inp">GST Number</label>
-                             <input type="text" class="form-control"  id="gstin_inp1" name="gstin_inp">
-                            </div>
-                          </div>
+                                    <a class="btn btn-outline-secondary ml-1" role="button" data-target="#newcustomer" data-toggle="modal">+</a>
+                                </div><br>
+        
 
+                                <label class="col-form-label mt-2">GST Type</label>
+                                <input type="text" class="form-control" id="gsttype" name="gsttype" style="background-color: #43596c;" >
+        
+        
+                            </div>
+        
+                            <div class="col-md-4">
+                                <label class="col-form-label mt-2">Email</label>
+                                <input type="text" class="form-control" id="cust_email" name="cemail" placeholder="Email" style="background-color: #43596c;"  ><br>
+                                <div id="gstnodiv" style="display: none;" class="mt-2">
+                                    <label class="col-form-label">GSTIN</label>
+                                    <input type="text" class="form-control" id="gstn" name="gstin_inp" style="background-color: #43596c;" >
+                                </div>
+                               
+                            </div>
+                                              
+                            <div class="col-md-4" id="cust_add_row" style="display: none;">
+                                <label class="">Billing Address</label>
+                                <textarea class="form-control" rows="6" id="bname" name="billingaddress" style="background-color: #43596c;"  ></textarea>
+        
+                               
+                            </div>
+                    <div class="col-md-4">
+                        
+                        <label class="col-form-label mt-2">Place of supply</label>
+                        <select type="text" class="form-control" id="plosu" name="placosupply" style="background-color: #43596c; color: white;" >
+                          <!-- <option value="{{ cmp1.state }}" selected> {{ cmp1.state }}</option> -->
+                          <option value="{{rbill.place_supply}}" selected > {{rbill.place_supply}}</option>
+
+                          <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                          <option value="Andhra Predhesh">Andhra Predhesh</option>
+                          <option value="Arunachal Predesh">Arunachal Predesh</option>
+                          <option value="Assam">Assam</option>
+                          <option value="Bihar">Bihar</option>
+                          <option value="Chandigarh">Chandigarh</option>
+                          <option value="Chhattisgarh">Chhattisgarh</option>
+                          <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                          <option value="Damn anad Diu">Damn anad Diu</option>
+                          <option value="Delhi">Delhi</option>
+                          <option value="Goa">Goa</option>
+                          <option value="Gujarat">Gujarat</option>
+                          <option value="Haryana">Haryana</option>
+                          <option value="Himachal Predesh">Himachal Predesh</option>
+                          <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                          <option value="Jharkhand">Jharkhand</option>
+                          <option value="Karnataka">Karnataka</option>
+                          <option value="Kerala">Kerala</option>
+                          <option value="Ladakh">Ladakh</option>
+                          <option value="Lakshadweep">Lakshadweep</option>
+                          <option value="Madhya Predesh">Madhya Predesh</option>
+                          <option value="Maharashtra">Maharashtra</option>
+                          <option value="Manipur">Manipur</option>
+                          <option value="Meghalaya">Meghalaya</option>
+                          <option value="Mizoram">Mizoram</option>
+                          <option value="Nagaland">Nagaland</option>
+                          <option value="Odisha">Odisha</option>
+                          <option value="Puducherry">Puducherry</option>
+                          <option value="Punjab">Punjab</option>
+                          <option value="Rajasthan">Rajasthan</option>
+                          <option value="Sikkim">Sikkim</option>
+                          <option value="Tamil Nadu">Tamil Nadu</option>
+                          <option value="Telangana">Telangana</option>
+                          <option value="Tripura">Tripura</option>
+                          <option value="Uttar Predesh">Uttar Predesh</option>
+                          <option value="Uttarakhand">Uttarakhand</option>
+                          <option value="West Bengal">West Bengal</option>
+                          <option value="Other Territory">Other Territory</option>
+                        </select>
+                       
+                    </div>
+                    <!-- <div class="col-md-3"></div>
+                    <div class="col-md-3"></div> -->
+                </div>
+                       
                           <hr>
                           <div class="row">
                             <div class="col-md-3 mt-2">
@@ -233,11 +309,7 @@
                                 <label>End Date</label>
                                 <input type="text" id="duedat" class="form-control" name="end_date" value="{{ rbill.end_date}}">
                             </div>
-                            <div class="col-md-3 mt-5">
-                                <input type="checkbox" id="never-expire-checkbox" onchange="toggleDateInput()" {% if rbill.end_date is None %}checked="checked"{% endif %}/>
-                                <label for="never-expire-checkbox"  name="neverExp" >Never Expires</label>
-                            </div>
-
+                           
                         </div>
                         <div class="row">
                             <div class="col-md-3 mt-2">
@@ -258,19 +330,29 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-3 mt-2">
-                                <label for="">Payment Methods</label>
-                                <div class="d-flex">
-                                    <select class="custom-select" name="payment_method" id="method">
-                                        <option value="CASH" {% if rbill.payment_method == 'CASH' %}selected{% endif %}>Cash</option>
-                                        <option value="cheque" {% if rbill.payment_method == 'cheque' %}selected{% endif %}>Cheque</option>
-                                        {% for b in bank %}
-                                            <option value="{{ b.bankname }}" {% if rbill.payment_method == b.bankname %}selected{% endif %}>{{ b.bankname }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    
-                                  
-                                </div> 
+                            <div class="col-md-3">
+                                <label class="col-form-label">Payment Type</label>
+                                <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;">
+                                    <option value="{{rbill.payment_method}}" selected hidden>{{rbill.payment_method}}</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="upi">UPI</option>
+                                    {% for i in bank %}
+                                      <option value="{{i.bankname}}">{{i.bankname}}</option>
+                                    {% endfor %}
+                                  </select>
+                            </div>
+                            <div class="col-md-3" style="display:none;"  id="chequediv">
+                                <label class="col-form-label" >Cheque No</label>
+                                <input type="text" class="form-control" name="cheque_id" value="{{rbill.cheque_no}}" id="cheque_id" placeholder="Enter Cheque No">
+                            </div>
+                            <div class="col-md-3"  style="display:none;" id="upidiv">
+                                <label class="col-form-label" >UPI ID</label>
+                                <input type="text" class="form-control" name="upi_id" value="{{rbill.upi_no}}" id="upi_id" placeholder="Enter UPI ID">
+                            </div>
+                            <div class="col-md-3"  style="display:none;" id="bnkdiv">
+                                <label class="col-form-label" >Bank Account</label>
+                                <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
                             </div>
                         </div>
                         <hr>
@@ -328,11 +410,11 @@
                                       </td>
                                       <td><input type="number" name='price[]' value="{{ j.price}}" id="unit{{ forloop.counter }}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #2f516f; color: white;" /></td>
                                       
-                                      <td>
+                                      <td style="width: 13%;">
                                         <input hidden value="{{cmp1.state}}" id="cmpstate">
                                         <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-none">
                                         <select name='tax1[]' id="tax1{{ forloop.counter }}" class="form-control tax intra_tax d-none">
-                                          <option selected value="{{j.tax}}">{{j.tax}}% GST ({{j.tax}}%)</option>
+                                            <option selected value="{{j.tax}}">{{j.tax}}% GST ({{j.tax}}%)</option>
                                             <option value=28 >28.0% GST(28%)</option>
                                             <option value=18 >18.0% GST(18%)</option>
                                             <option value=12  >12.0% GST(12%)</option>
@@ -341,13 +423,15 @@
                                               <option value=0  >0.0% GST(0%)</option>
                                         </select>
                                         <select name='tax2[]' id="tax2{{ forloop.counter }}" class="form-control tax inter_tax d-none">
-                                          <option selected value="{{j.tax}}">{{j.tax}}% IGST ({{j.tax}}%)</option>
+                                            <option selected value="{{j.tax}}">{{j.tax}}% IGST ({{j.tax}}%)</option>
                                             <option value=28 >28.0% IGST(28%)</option>
                                             <option value=18 >18.0% IGST(18%)</option>
                                             <option value=12  >12.0% IGST(12%)</option>
                                               <option value=5  >05.0% IGST(05%)</option>
                                             <option value=3  >03.0% IGST(03%)</option>
                                               <option value=0  >0.0% IGST(0%)</option>
+
+                                        
                                         </select>
                                                          
                                       </td>
@@ -385,12 +469,7 @@
                                 <div>
                                     <input type="file" class="form-control" name="file">
                                 </div><br>
-                                <div class="row container-fluid p-2 m-0" style="background-color:rgba(0,0,0,.4); border: 1px solid rgba(128, 128, 128, 0.6);">
-                                <div class="col-md-4 mt-2 align-items-center">
-                                    <label for="">Paid Amount</label>
-                                    <input type="number" class="form-control"   step=0 min=0 id="paid_amount" name="paid_amount" value="{{rbill.paid_amount}}">
-                                </div>
-                                </div>
+                                
                                 <div>
                                 </div>
                             </div>
@@ -452,7 +531,7 @@
                                       <div class="row container-fluid p-2 m-0">
                                           <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
                                           <div class="col-sm-1 mt-2">:</div>
-                                          <div class="col-sm-7 mt-2"><input type="number" value="{{rbill.adjustment}}"  step=0 min=0 name='adjustment' id="adj" placeholder='0.00' 
+                                          <div class="col-sm-7 mt-2"><input type="number" value="{{rbill.adjustment}}" step="any" name='adjustment' id="adj" placeholder='0' 
                                               class="form-control"/>
                                           </div>
                                           <div class="col-sm-4 m-0 p-0"></div>
@@ -465,6 +544,33 @@
                                           </div>
                                           <div class="col-sm-4 m-0 p-0"></div>
                                       </div>
+                                      <div class="row container-fluid  p-2 m-0">
+                                        
+                                        <div class="col-sm-4 mt-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="invalidCheck">
+                                                <label>Paid</label>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 mt-2"></div>
+                                        <div class="col-sm-7 mt-2">
+                                            <input type="number" class="form-control" value="{{rbill.paid_amount}}" id="paid_amount"   name="paid_amount"
+                                            class="form-control">
+                                            <p id="error-message" class="mt-1" style="color: red;"></p>
+                                        </div>
+                                        <div class="col-sm-4 m-0 p-0"></div>
+                                    </div>
+                                    <div class="row container-fluid  p-2 m-0" >
+                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">Balance Due</label></div>
+                                        <div class="col-sm-1 mt-2"></div>
+                                        <div class="col-sm-7 mt-2">
+                                            <input type="number" name="bal_due" value="{{rbill.balance}}" id="bal_due" placeholder="0" 
+                                            class="form-control" readonly >
+                                            
+                                        </div>
+                                        <div class="col-sm-4 m-0 p-0"></div>
+                                    </div>
                                   </div>
                                   
                               </div>
@@ -609,44 +715,44 @@
                            <label for="">Place of Supply</label>
                             <select class="form-control" id="ssupply" name="sourceofsupply">
                                 <option value="Nill"></option>
-                                <option value="[AN] Andaman and Nicobar Islads">[AN] Andaman and Nicobar Islads</option>
-                                <option value="[AD] Andhra Predhesh">[AD] Andhra Predhesh</option>
-                                <option value="[AR] Arunachal Predesh">[AR] Arunachal Predesh</option>
-                                <option value="[AS] Assam">[AS] Assam</option>
-                                <option value="[BR] Bihar">[BR] Bihar</option>
-                                <option value="[CH] Chandigarh">[CH] Chandigarh</option>
-                                <option value="[CG] Chhattisgarh">[CG] Chhattisgarh</option>
-                                <option value="[DNH] Dadra and Nagar Haveli">[DNH] Dadra and Nagar Haveli</option>
-                                <option value="[DD] Damn anad Diu">[DD] Damn anad Diu</option>
-                                <option value="[DL] Delhi">[DL] Delhi</option>
-                                <option value="[GA] Goa">[GA] Goa</option>
-                                <option value="[GJ] Gujarat">[GJ] Gujarat</option>
-                                <option value="[HR] Haryana">[HR] Haryana</option>
+                                <option value="Andaman and Nicobar Islads">[AN] Andaman and Nicobar Islads</option>
+                                <option value="Andhra Predhesh">[AD] Andhra Predhesh</option>
+                                <option value="Arunachal Predesh">[AR] Arunachal Predesh</option>
+                                <option value="Assam">[AS] Assam</option>
+                                <option value="Bihar">[BR] Bihar</option>
+                                <option value="Chandigarh">[CH] Chandigarh</option>
+                                <option value="Chhattisgarh">[CG] Chhattisgarh</option>
+                                <option value="Dadra and Nagar Haveli">[DNH] Dadra and Nagar Haveli</option>
+                                <option value="Damn anad Diu">[DD] Damn anad Diu</option>
+                                <option value="Delhi">[DL] Delhi</option>
+                                <option value="Goa">[GA] Goa</option>
+                                <option value="Gujarat">[GJ] Gujarat</option>
+                                <option value="Haryana">[HR] Haryana</option>
                                 <option value="[HP] Himachal Predesh">[HP] Himachal Predesh</option>
-                                <option value="[JK] Jammu and Kashmir">[JK] Jammu and Kashmir</option>
-                                <option value="[JH] Jharkhand">[JH] Jharkhand</option>
-                                <option value="[KA] Karnataka">[KA] Karnataka</option>
-                                <option value="[KL] Kerala">[KL] Kerala</option>
-                                <option value="[LA] Ladakh">[LA] Ladakh</option>
-                                <option value="[LD] Lakshadweep">[LD] Lakshadweep</option>
-                                <option value="[MP] Madhya Predesh">[MP] Madhya Predesh</option>
-                                <option value="[MH] Maharashtra">[MH] Maharashtra</option>
-                                <option value="[MN] Manipur">[MN] Manipur</option>
-                                <option value="[ML] Meghalaya">[ML] Meghalaya</option>
-                                <option value="[MZ] Mizoram">[MZ] Mizoram</option>
-                                <option value="[NL] Nagaland">[NL] Nagaland</option>
-                                <option value="[OD] Odisha">[OD] Odisha</option>
-                                <option value="[PY] Puducherry">[PY] Puducherry</option>
-                                <option value="[PB] Punjab">[PB] Punjab</option>
-                                <option value="[RJ] Rajasthan">[RJ] Rajasthan</option>
-                                <option value="[SK] Sikkim">[SK] Sikkim</option>
-                                <option value="[TN] Tamil Nadu">[TN] Tamil Nadu</option>
-                                <option value="[TS] Telangana">[TS] Telangana</option>
-                                <option value="[TR] Tripura">[TR] Tripura</option>
-                                <option value="[UP] Uttar Predesh">[UP] Uttar Predesh</option>
-                                <option value="[UK] Uttarakhand">[UK] Uttarakhand</option>
-                                <option value="[WB] West Bengal">[WB] West Bengal</option>
-                                <option value="[OT] Other Territory">[OT] Other Territory</option>
+                                <option value="Jammu and Kashmir">[JK] Jammu and Kashmir</option>
+                                <option value="Jharkhand">[JH] Jharkhand</option>
+                                <option value="Karnataka">[KA] Karnataka</option>
+                                <option value="Kerala">[KL] Kerala</option>
+                                <option value="Ladakh">[LA] Ladakh</option>
+                                <option value="Lakshadweep">[LD] Lakshadweep</option>
+                                <option value="Madhya Predesh">[MP] Madhya Predesh</option>
+                                <option value="Maharashtra">[MH] Maharashtra</option>
+                                <option value="Manipur">[MN] Manipur</option>
+                                <option value="Meghalaya">[ML] Meghalaya</option>
+                                <option value="Mizoram">[MZ] Mizoram</option>
+                                <option value="Nagaland">[NL] Nagaland</option>
+                                <option value="Odisha">[OD] Odisha</option>
+                                <option value="Puducherry">[PY] Puducherry</option>
+                                <option value="Punjab">[PB] Punjab</option>
+                                <option value="Rajasthan">[RJ] Rajasthan</option>
+                                <option value="Sikkim">[SK] Sikkim</option>
+                                <option value="Tamil Nadu">[TN] Tamil Nadu</option>
+                                <option value="Telangana">[TS] Telangana</option>
+                                <option value="Tripura">[TR] Tripura</option>
+                                <option value="Uttar Predesh">[UP] Uttar Predesh</option>
+                                <option value="Uttarakhand">[UK] Uttarakhand</option>
+                                <option value="West Bengal">[WB] West Bengal</option>
+                                <option value="Other Territory">[OT] Other Territory</option>
                             </select>
                         </div>
                         
@@ -1041,7 +1147,54 @@
                                     style="background-color: #2f516f;color: white;">
                             <div class="valid-feedback">Looks good!</div>
                         </div>
-                        <div class="col-md-4 mt-3"></div>
+                        <div class="col-md-4 mt-3">
+                            <div class="form-row">
+                                <label for="shipstate">State</label>
+                                <select type="text" class="form-control" id="placeof_supply" name="shipstate">
+                                    <option id="shipst" selected>Choose</option>
+                                    <option value="None Of This">None Of This</option>
+                                    <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads
+                                    </option>
+                                    <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                    <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chandigarh">Chandigarh</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                    <option value="Damn anad Diu">Damn anad Diu</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Predesh">Himachal Predesh</option>
+                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Ladakh">Ladakh</option>
+                                    <option value="Lakshadweep">Lakshadweep</option>
+                                    <option value="Madhya Predesh">Madhya Predesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Puducherry">Puducherry</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttar Predesh">Uttar Predesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                    <option value="Other Territory">Other Territory</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 mt-3">
@@ -1480,32 +1633,62 @@
                                                         </div>
                                                        
                                                     </div>
-                                                    
-                                    <div class="row">
-                                        <div class="col-md-3 mt-3">
-                                            <label for="validationCustom05" name style="color: white;">Tax Reference
-                                                </label>
-                                         
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-check mt-1">
-                                               
-                                                    <input class="form-check-input" name="taxref" type="checkbox" id="inclusive"
-                                                         value="taxable" checked >Taxable
-                                                    <label style="color: white;">
-                                                        </label>
-                                              
-                                            </div>
-                                        </div>
-                                        <div class="form-check mt-1">
-                                            <input class="form-check-input" name="taxref" type="checkbox"
-                                                   value="non taxable" 
-                                                   id="check">
-                                            <label style="color: white;">Non Taxable</label>
+                                                    <div class="row">
+                                                        <div class="col-md-3 mt-3">
+                                                            <label for="validationCustom05" name style="color: white;">Tax Reference
+                                                                </label>
+                                                         
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-check mt-1">
+                                                               
+                                                                    <input class="form-check-input" name="taxref" type="checkbox" id="inclusive" 
+                                                                         value="taxable"  onchange="ShowHideDivi(inclusive)" >taxable
+                                                                    <label style="color: white;" for="inclusive">
+                                                                        </label>
+                                                              
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-check mt-1">
+                                                            <input class="form-check-input" name="taxref" type="checkbox"
+                                                                   value="non taxable" 
+                                                                   id="check">
+                                                            <label style="color: white;">non taxable</label>
+                                                        </div>
+                                                    </div>
+                                </div>
+                                </div>
+                                    <div class="row"  id="intrastateFiled" style="display: none;">
+                                        <div class="col-md-6 mt-3">
+                                            <label for="validationCustom05"
+                                                   style="color: white;">Intra State Tax Rate</label>
+                                                   <select name="intra_st" class="form-control" 
+                                                   style="background-color: #2a4964; color: white;"
+                                                   id="validationCustom05" >
+                                                  
+                                                   <option value=0>GST 0 (0%)</option>
+                                                   <option value=5>GST 5 (5%)</option>
+                                                   <option value=12>GST 12 (12%)</option>
+                                                   <option value=18>GST 18 (18%)</option>
+                                                   <option value=28>GST 28 (28%)</option>
+                                                   
+                                        </select>
+                                        <br>
+                                            <label for="validationCustom05"
+                                                   style="color: white;">Inter State Tax Rate</label>
+                                            <select name="inter_st" class="form-control" 
+                                                      style="background-color: #2a4964; color: white;"
+                                                      id="validationCustom05" >
+                                                     
+                                                      <option value=0>IGST 0 (0%)</option>
+                                                   <option value=5>IGST 5 (5%)</option>
+                                                   <option value=12>IGST 12 (12%)</option>
+                                                   <option value=18>IGST 18 (18%)</option>
+                                                   <option value=28>IGST 28 (28%)</option>
+                                                   
+                                        </select>
                                         </div>
                                     </div>
-                                </div>
-                                </div>
                                     <div class="row">
                                         <div class="col-md-6 mt-3">
                                             <label for="validationCustom01"
@@ -1592,39 +1775,7 @@
                                     
                                     <div class="row">
                                         <div class="col-md-12 mx-0">
-                                            <div class="row">
-                                                <div class="col-md-6 mt-3">
-                                                    <label for="validationCustom01"
-                                                           style="color: white;">Intra State Tax Rate</label>
-                                                           <select name="intra_st" class="form-control" 
-                                                           style="background-color: #2a4964; color: white;"
-                                                           id="intra_st" >
-                                                           <option >Choose...</option>
-                                                           <option value=0>GST 0 (0%)</option>
-                                                           <option value=5>GST 5 (5%)</option>
-                                                           <option value=12>GST 12 (12%)</option>
-                                                           <option value=18>GST 18 (18%)</option>
-                                                           <option value=28>GST 28 (28%)</option>
-                                                           <option value=0>Out of Scope(0%)</option>
-                                                </select>
-                                                </div>
-                                            
-                                                <div class="col-md-6 mt-3">
-                                                    <label for="inter_st"
-                                                           style="color: white;">Inter State Tax Rate</label>
-                                                    <select name="inter_st" class="form-control" 
-                                                              style="background-color: #2a4964; color: white;"
-                                                              id="inter_st" >
-                                                              <option >Choose...</option>
-                                                              <option value=0>IGST 0 (0%)</option>
-                                                           <option value=5>IGST 5 (5%)</option>
-                                                           <option value=12>IGST 12 (12%)</option>
-                                                           <option value=18>IGST 18 (18%)</option>
-                                                           <option value=28>IGST 28 (28%)</option>
-                                                           <option value=0>Out of Scope(0%)</option>
-                                                </select>
-                                                </div>
-                                            </div><br>
+                                           <br>
                                             <div class="row" >
                                                
                                                
@@ -1645,7 +1796,7 @@
                                                 <div class="col-md-6 mt-3">
                                                     <label for="validationCustom01"
                                                            style="color: white;">Inventory Account</label>
-                                                           <select name="invacc" class="form-control" id="invacc"
+                                                           <select name="invacc" class="form-control" 
                                                               style="background-color: #2a4964; color: white;"
                                                               >
                                                            <option selected disabled value="" >Choose...</option>
@@ -1653,14 +1804,24 @@
                                                        
                                                 </select>
                                                 </div>
-                                                <div class="col-md-6 mt-3">
+                                                <div class="col-md-3 mt-3">
                                                     <label for="validationCustom01"
                                                            style="color: white;">Stock on hand</label>
-                                                           <input type="number" name="stock" class="form-control" id="stock"
-                                                           style="width:540px;background-color: #2a4964; color: white;"
+                                                           <input type="number" name="stock" class="form-control"
+                                                           style="background-color: #2a4964; color: white;"
                                                            value="0"
                                                            >
                                                 </div>
+                                                <!-- reshna added -->
+                                                <div class="col-md-3 mt-3">
+                                                    <label for="validationCustom01"
+                                                           style="color: white;">Stock Rate per Unit</label>
+                                                           <input type="number" name="stock_rate" id="stock_rate" class="form-control"
+                                                           style="background-color: #2a4964; color: white;"
+                                                           value="0"
+                                                           >
+                                                </div>
+                                                <!-- end -->
                                             </div>
                                            
   
@@ -1712,7 +1873,7 @@
                         </div>
                     </div>
                 </form>
-              </div>
+                  </div>
           </div>
       </div>
   </div> 
@@ -1760,7 +1921,164 @@
   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+   <script>
+    // Get the paid_amount input and the checkbox
+    const paidAmountInpu = document.getElementById('paid_amount');
+    const checkbox = document.getElementById('invalidCheck');
+
+    // Function to check the checkbox if paid_amount is not equal to zero
+    function checkCheckbox() {
+        const paidAmount = parseFloat(paidAmountInpu.value);
+        if (paidAmount !== 0) {
+            checkbox.checked = true;
+        } else {
+            checkbox.checked = false;
+            
+        }
+    }
+
+    // Call the function initially to check based on the initial value
+    checkCheckbox();
+
+    // Listen for changes in the paid_amount input
+    paidAmountInpu.addEventListener('input', checkCheckbox);
+
+   </script>
+    
+    <script type="text/javascript">
+        $(document).on('change','#bill_code_number', function() {
+            ord = '{{rbill.billno}}'
+            sale_ord = "{{sale_list}}"
+            ord_value = $('#bill_code_number').val();
+            if(sale_ord === '' ){
+                document.getElementById('dangerdiv').style.display = 'none';
+    
+            }
+            else{
+                if(ord_value != ord){
+                    alert('The Next Number is '+ ord)
+                    document.getElementById('bill_code_number').value = ord;
+                }else{
+                    document.getElementById('dangerdiv').style.display = 'none';
+                }
+            }
+            var sale_list = "{{sale_list}}";
+            salelist = sale_list.split(",");
+            for(let i=0; i<salelist.length; i++){
+                if (ord_value == salelist[i]){
+                    alert('Sale Order Number already in use.')
+                    document.getElementById('dangerdiv').style.display = 'none';
+                    document.getElementById('bill_code_number').value = ''
+                }
+            }
+        })
+    </script>
+
+<script>
+    // Get references to the elements
+    const grandTotalElement = document.getElementById('grandtotal');
+    const paidCheckbo = document.getElementById('invalidCheck');
+    const paidAmountElement = document.getElementById('paid_amount');
+    const balanceDueElement = document.getElementById('bal_due');
+
+    // Function to calculate the balance due
+    function calculateBalance() {
+        const grandTotal = parseFloat(grandTotalElement.value) || 0;
+        const paidAmount = parseFloat(paidAmountElement.value) ;
+        const isPaid = paidCheckbox.checked;
+
+        if (isPaid) {
+            const balanceDue = grandTotal - paidAmount;
+            balanceDueElement.value = balanceDue.toFixed(2); // Update the balance due
+            paidAmountElement.value = paidAmount.toFixed()
+        } else {
+            // If not paid, balance due should be the same as the grand total
+            balanceDueElement.value = grandTotal.toFixed(2);
+            paidAmountElement.value = paidAmount.toFixed()
+        }
+    }
+
+    // Event listeners to trigger calculation when values change
+    grandTotalElement.addEventListener('input', calculateBalance);
+    paidCheckbo.addEventListener('change', calculateBalance);
+    paidAmountElement.addEventListener('input', calculateBalance);
+
+    // Initial calculation when the page loads
+    calculateBalance();
+</script>
+
+
+
+  <script>
+    // Get references to the relevant HTML elements
+const grandTotalInput = document.getElementById("grandtotal");
+const paidCheckbox = document.getElementById("invalidCheck");
+const paidAmountInput = document.getElementById("paid_amount");
+const balanceDueInput = document.getElementById("bal_due");
+
+// Add an event listener to the checkbox
+paidCheckbox.addEventListener("change", function () {
+    // Check if the checkbox is checked
+    if (paidCheckbox.checked) {
+        // Enable the paid amount input field
+        paidAmountInput.removeAttribute("readonly");
+    } else {
+        // Disable the paid amount input field
+        paidAmountInput.setAttribute("readonly", true);
+    }
+
+    // Calculate the balance due and update the input field
+    calculateBalanceDue();
+});
+
+// Add an event listener to the paid amount input
+paidAmountInput.addEventListener("input", function () {
+    // Check the box if the paid amount is not zero
+    paidCheckbox.checked = parseFloat(paidAmountInput.value) !== 0;
+
+    // Calculate the balance due and update the input field
+    calculateBalanceDue();
+});
+
+// Add an event listener to the grand total input
+
+// Function to calculate and update the balance due
+function calculateBalanceDue() {
+    // Parse the values of grand total and paid amount as numbers
+    const grandTotal = parseFloat(grandTotalInput.value) ;
+    const paidAmount = parseFloat(paidAmountInput.value) ;
+
+    // Calculate the balance due
+    const balanceDue = grandTotal - paidAmount;
+
+    // Update the balance due input field
+    balanceDueInput.value = balanceDue;
+    
+    // Check if the paid amount exceeds the grand total and show an alert if it does
+    if (paidAmount > grandTotal) {
+        alert("Paid amount cannot exceed the grand total.");
+    
+        paidCheckbox.checked = true; // Check the checkbox
+        paidAmountInput.value = '{{rbill.paid_amount}}';
+        
+    }
+}
+
+// Initialize the input state based on the checkbox
+if (!paidCheckbox.checked) {
+    paidAmountInput.setAttribute("readonly", true);
+}
+
+// Initial call to set the balance due on page load
+calculateBalanceDue();
+
+  </script>
+
+
     <script>
+        
     // var enteredVName = "";
     $(document).on("click","#vendorSave",function(){
     // var firstNameValue = $("#fname").val();
@@ -1848,7 +2166,7 @@ function reloadVendor() {
         csrfmiddlewaretoken: '{{ csrf_token }}',
 
         success: function(data) {
-            var dropdown = $('#vendor');
+            var dropdown = $('#vendor_det');
             dropdown.empty();
             dropdown.append(`<option selected>Select Vendor</option>`);
             $.each(data, function(key, value) {
@@ -1878,7 +2196,7 @@ function reloadVendor() {
 
 }
 $(document).ready(function() {
-    $('#vendor').change(function() {
+    $('#vendor_det').change(function() {
         // var selectedValue = $("#vendor").val();
         // // var values = selectedValue.split(' '); // Split by space
         // var vendorid = values[0];
@@ -1891,7 +2209,7 @@ $(document).ready(function() {
             data: { 
                 // id: vendorid,  // Pass the vendorid to the server
                 // csrfmiddlewaretoken: '{{ csrf_token }}' 
-                id: $('#vendor').val(),
+                id: $('#vendor_det').val(),
                 csrfmiddlewaretoken: '{{ csrf_token }}',
             },
             type : 'POST',
@@ -1899,18 +2217,36 @@ $(document).ready(function() {
                 // Update your UI with the data
                 $("#email_row").removeClass('d-none');
                 $("#email_row").addClass('d-flex');
-                $("#gstin_row").removeClass('d-none');
-                $("#gstin_row").addClass('d-flex');
                 $("#gst_trt_row").removeClass('d-none');
                 $("#gst_trt_row").addClass('d-flex');
+
                 $('#email_inp').val(" " + data.email);
-                $('#gstin_inp').val(" " + data.gstin);
                 $('#gst_trt_inp').val(" " + data.gsttype);
+                
+                document.getElementById('plosur').value = data.sourceofsupply;
+                console.log(data.sourceofsupply)
+                
+                var addres_row = document.getElementById('addres_row');
+                var address_input = document.getElementById('addres');
+                
+                // Check if any part of the address has a value
+                if(data.street || data.city || data.state || data.country || data.pincode) {
+                    addres_row.style.display = 'block'; // Show address field
+                    // Construct the address string
+                    address_input.value = (data.street ? data.street + '\n' : '') +
+                                          (data.city ? data.city + '\n' : '') +
+                                          (data.state ? data.state + '\n' : '') +
+                                          (data.country ? data.country + '\n' : '') +
+                                          (data.pincode ? data.pincode : '');
+                } else {
+                    addres_row.style.display = 'none'; // Hide address field
+                    address_input.value = ''; // Clear address
+                }
             }
            
         });
     });
-    $('#vendor').trigger('change');
+    $('#vendor_det').trigger('change');
 });
 </script>
     <script>
@@ -2015,6 +2351,8 @@ $(document).on("click", "#customerSave", function(){
                     gsttype :$("#gsttype").val(),
                     gstin :$("#gstin1").val(),
                     panno :$("#panno1").val(),
+                    placeof_supply :$("#placeof_supply").val(),
+
 
                   
                     
@@ -2065,16 +2403,55 @@ $(document).on("click", "#customerSave", function(){
             },
             type : 'POST',
             success: function(data) {
-              
-                $("#email_row1").removeClass('d-none');
-                $("#email_row1").addClass('d-flex');
-                $("#gstin_row1").removeClass('d-none');
-                $("#gstin_row1").addClass('d-flex');
-                $("#gst_trt_row1").removeClass('d-none');
-                $("#gst_trt_row1").addClass('d-flex');
-                $('#email_inp1').val(" " + data.email);
-                $('#gstin_inp1').val(" " + data.gstin);
-                $('#gst_trt_inp1').val(" " + data.gsttype);
+                            // console.log(data.email);
+                            console.log(data.gstno)
+                            document.getElementById('cust_email').value = data.email;
+                            document.getElementById('gsttype').value = data.gsttype;
+                            document.getElementById('plosu').value = data.placesupply;
+                            console.log(data.placesupply)
+                            if(data.gstno){
+                                document.getElementById('gstnodiv').style.display = 'block';
+                                document.getElementById('gstn').value = data.gstno;
+                            }else{
+                                document.getElementById('gstnodiv').style.display = 'none';
+                                document.getElementById('gstn').value = '';
+                            }
+
+                            if(data.gstno){
+                                document.getElementById('gstnodiv').style.display = 'block';
+                                document.getElementById('gstn').value = data.gstno;
+                            }else{
+                                document.getElementById('gstnodiv').style.display = 'none';
+                                document.getElementById('gstn').value = '';
+                            }
+                            var compstate = document.getElementById("plosur").value;
+                            if (data.placesupply == compstate ) {
+                                document.getElementById('cgst1').style.display = 'flex';
+                                document.getElementById('sgst1').style.display = 'flex';
+                                document.getElementById('igst1').style.display = 'none'; 
+
+                            } else {
+                                document.getElementById('cgst1').style.display = 'none';
+                                document.getElementById('sgst1').style.display = 'none';
+                                document.getElementById('igst1').style.display = 'flex';
+
+                            }
+                            var cust_addres_row = document.getElementById('cust_add_row');
+                            var cust_address_input = document.getElementById('bname');
+                            
+                            // Check if any part of the address has a value
+                            if(data.street || data.city || data.state || data.country || data.pincode) {
+                                cust_addres_row.style.display = 'block'; // Show address field
+                                // Construct the address string
+                                cust_address_input.value = (data.street ? data.street + '\n' : '') +
+                                                    (data.city ? data.city + '\n' : '') +
+                                                    (data.state ? data.state + '\n' : '') +
+                                                    (data.country ? data.country + '\n' : '') +
+                                                    (data.pincode ? data.pincode : '');
+                            } else {
+                                cust_addres_row.style.display = 'none'; // Hide address field
+                                cust_address_input.value = ''; // Clear address
+                            }
             }
             
         });
@@ -2185,6 +2562,80 @@ $(document).ready(function() {
             }
         }
     </script>
+
+    
+<script>
+$(document).ready(function() {
+  // Function to handle the initial display based on the existing value
+  var initialMethod = $('#pay_method').val();
+  if (initialMethod === 'cheque') {
+    $('#chequediv').show();
+  } else if (initialMethod === 'upi') {
+    $('#upidiv').show();
+  } else if (initialMethod !== 'cash') {
+    $('#bnkdiv').show();
+    // Assuming you want to make an AJAX call only when the initial value is a bank
+    $.ajax({
+      type: "GET",
+      url: "{% url 'bankdata' %}",
+      data: {
+        id: initialMethod,
+      },
+      success: function(response) {
+        data = response.bank;
+        document.getElementById('cheque_id').value = null;
+        document.getElementById('upi_id').value = null;
+        document.getElementById("bnk_id").value = data;
+      }
+    });
+  }
+
+  // Function to handle changes in the select dropdown
+  $("#pay_method").change(function() {
+    var x = $('#pay_method').val();
+    if (x === 'cheque') {
+      $('#chequediv').show();
+      $('#upidiv').hide();
+      $('#bnkdiv').hide();
+      document.getElementById('upi_id').value = null;
+      document.getElementById('bnk_id').value = null;
+    } else if (x === 'upi') {
+      $('#upidiv').show();
+      $('#chequediv').hide();
+      $('#bnkdiv').hide();
+      document.getElementById('cheque_id').value = null;
+      document.getElementById('bnk_id').value = null;
+    } else if (x !== 'cash') {
+      $('#bnkdiv').show();
+      $('#chequediv').hide();
+      $('#upidiv').hide();
+      document.getElementById('cheque_id').value = null;
+      document.getElementById('upi_id').value = null;
+      // Assuming you want to make an AJAX call only when the value is a bank
+      $.ajax({
+        type: "GET",
+        url: "{% url 'bankdata' %}",
+        data: {
+          id: x,
+        },
+        success: function(response) {
+          data = response.bank;
+          document.getElementById("bnk_id").value = data;
+        }
+      });
+    } else {
+      $('#chequediv').hide();
+      $('#upidiv').hide();
+      $('#bnkdiv').hide();
+      document.getElementById('cheque_id').value = null;
+      document.getElementById('upi_id').value = null;
+      document.getElementById('bnk_id').value = null;
+    }
+  });
+});
+
+</script>
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
@@ -2329,7 +2780,7 @@ $(document).ready(function() {
 $(document).ready(function () {
   
   var bc = document.getElementById("plosur").value;
-  var compstate = document.getElementById("cmpstate").value;
+  var compstate = document.getElementById("plosu").value;
   if (bc == compstate ) {
       document.getElementById('cgst1').style.display = 'flex';
       document.getElementById('sgst1').style.display = 'flex';
@@ -2474,12 +2925,7 @@ $(document).ready(function(){
         });
            
         
-            function ShowHideDiv(track) {
-                var inventorytrack = document.getElementById("inventorytrack");
-    
-                inventorytrack.style.display = track.checked ? "flex" : "none";
-    
-            }
+          
             $(document).on('click','.remove_row',function(){
                 var row_id = $(this).attr("id");
                 $('#addr0'+row_id+'').remove();
@@ -2529,6 +2975,7 @@ $(document).ready(function(){
                 inter_st : $("#inter_st").val(),
                 invacc : $("#invacc").val(),
                 stock : $("#stock").val(),
+                stock_rate : $("#stock_rate").val(),
                 // itmdate : $("#date3").val(),
                 status : status1,
                 csrfmiddlewaretoken: '{{ csrf_token }}',
@@ -2733,12 +3180,13 @@ $(document).ready(function(){
             $('#baldue').val(gtot.toFixed(2));
 
             test()
+            calculateBalanceDue();
         }
 
         function test(){
                      
             var bc = $("#plosur").val();
-            var compstate = $("#cmpstate").val();
+            var compstate = $("#plosu").val();
             d=0
             if (bc == compstate  ) {
                 gst = taxamount/2
@@ -2747,7 +3195,7 @@ $(document).ready(function(){
                 $('#igst').val(parseFloat(d.toFixed(2)));
             }
                 
-            if (bc != "{{ cmp1.state }}"  ) {
+            if (bc != compstate  ) {
                 $('#igst').val(taxamount.toFixed(2));
                 $('#cgst').val(d.toFixed(2));
                 $('#sgst').val(d.toFixed(2));
@@ -2761,6 +3209,7 @@ $(document).ready(function(){
             var sh = $("#ship").val();
             $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
             $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+            calculateBalanceDue();
         });
 
         // $(document).on("change", "#adj", function(){
@@ -2775,6 +3224,7 @@ $(document).ready(function(){
             var ad=$("#adj").val();
             $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
             $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)+parseFloat(ad)).toFixed(2));
+            calculateBalanceDue();
         });
 
         $(document).on("click",".seltax",function(){
@@ -2783,9 +3233,9 @@ $(document).ready(function(){
                 $(".seltax").addClass('d-none');
 
                 console.log($("#plosur").val());
-                console.log($("#cmpstate").val());
+                console.log($("#plosu").val());
 
-                if($("#plosur").val() == $("#cmpstate").val()){
+                if($("#plosur").val() == $("#plosu").val()){
                     console.log("yes");
                     $(".inter_tax").removeClass('d-flex');
                     $(".inter_tax").addClass('d-none');
@@ -2804,32 +3254,64 @@ $(document).ready(function(){
                 }
 
             });
-            $(document).on('change','#plosur',function()   {
-                $(".seltax").removeClass('d-none');
-                $(".seltax").addClass('d-flex');
-                $(".intra_tax").removeClass('d-flex');
-                $(".intra_tax").addClass('d-none');
-                $(".inter_tax").removeClass('d-flex');
-                $(".inter_tax").addClass('d-none');
-                var bc = document.getElementById("plosur").value;
-                var compstate = document.getElementById("cmpstate").value;
-                if (bc == compstate ) {
-                    document.getElementById('cgst1').style.display = 'flex';
-                    document.getElementById('sgst1').style.display = 'flex';
-                    document.getElementById('igst1').style.display = 'none'; 
+            $(document).on('change', '#plosur', function () {
+    $(".seltax").removeClass('d-none');
+    $(".seltax").addClass('d-flex');
+    $(".intra_tax").removeClass('d-flex');
+    $(".intra_tax").addClass('d-none');
+    $(".inter_tax").removeClass('d-flex');
+    $(".inter_tax").addClass('d-none');
+    var bc = document.getElementById("plosur").value;
+    var compstate = document.getElementById("plosu").value;
+    if (bc == compstate) {
+        document.getElementById('cgst1').style.display = 'flex';
+        document.getElementById('sgst1').style.display = 'flex';
+        document.getElementById('igst1').style.display = 'none';
+    } else {
+        document.getElementById('cgst1').style.display = 'none';
+        document.getElementById('sgst1').style.display = 'none';
+        document.getElementById('igst1').style.display = 'flex'; // Updated this line
+    }
+});
 
-                } else {
-                    document.getElementById('cgst1').style.display = 'none';
-                    document.getElementById('sgst1').style.display = 'none';
-                    document.getElementById('igst1').style.display = 'flex';
+$(document).on('change', '#plosu', function () {
+    $(".seltax").removeClass('d-none');
+    $(".seltax").addClass('d-flex');
+    $(".intra_tax").removeClass('d-flex');
+    $(".intra_tax").addClass('d-none');
+    $(".inter_tax").removeClass('d-flex');
+    $(".inter_tax").addClass('d-none');
+    var bc = document.getElementById("plosur").value;
+    var compstate = document.getElementById("plosu").value;
+    if (bc == compstate) {
+        document.getElementById('cgst1').style.display = 'flex';
+        document.getElementById('sgst1').style.display = 'flex';
+        document.getElementById('igst1').style.display = 'none';
+    } else {
+        document.getElementById('cgst1').style.display = 'none';
+        document.getElementById('sgst1').style.display = 'none';
+        document.getElementById('igst1').style.display = 'flex'; // Updated this line
+    }
+});
 
-                }
-                    
-            });
 
     </script>
 
    
+<script type="text/javascript">
+    function ShowHideDivi(inclusive) {
+        var inter = document.getElementById("intrastateFiled");
+
+        inter.style.display = inclusive.checked ? "block" : "none";
+
+    }
+    function ShowHideDiv(track) {
+                var inventorytrack = document.getElementById("inventorytrack");
+    
+                inventorytrack.style.display = track.checked ? "flex" : "none";
+    
+            }
+</script>
 
    
     

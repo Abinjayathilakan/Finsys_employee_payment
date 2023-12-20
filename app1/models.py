@@ -43,6 +43,7 @@ class company(models.Model):
     gst_type= models.CharField(max_length=100, null=True,blank=True)
     pan_number=models.CharField(max_length=100, null=True,blank=True)
     cash=models.IntegerField(default=0)
+    prfile = models.IntegerField(default=0)
 
 class customer(models.Model):
     customerid = models.AutoField(('CUSTID'), primary_key=True)
@@ -52,6 +53,7 @@ class customer(models.Model):
     lastname = models.CharField(max_length=100)
     company = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
+    placesupply = models.CharField(max_length=100,null=True,blank=True)
     gsttype = models.CharField(max_length=100, null=True)
     gstin = models.CharField(max_length=100, default='')
     panno = models.CharField(max_length=100, null=True)
@@ -70,10 +72,13 @@ class customer(models.Model):
     shipcountry = models.CharField(max_length=100, null=True)
     opening_balance = models.FloatField(null=True)
     opening_balance_due = models.FloatField(null=True)
+    credit_limit = models.FloatField(null=True)
     date = models.DateField(null=True)
     opnbalance_status = models.CharField(max_length=100,default='Default')
-    credit_limit = models.FloatField(null=True)
-    customer_status = (('Active','Active'), ('Inactive','Inactive'))
+    customer_status = (
+        ('Active','Active'),
+        ('Inactive','Inactive'),
+    )
     status =models.CharField(max_length=150,choices=customer_status,default='Active')
     receivables  = models.FloatField(null=True)
     file = models.FileField(upload_to='Customer',default="default.jpg")
@@ -291,7 +296,7 @@ class invoice(models.Model):
     invoiceno = models.CharField(max_length=100)
     terms = models.CharField(max_length=100, default='')
     invoicedate = models.DateField()
-    duedate = models.CharField(max_length=100)
+    duedate = models.DateField()
     bname = models.CharField(max_length=255, default='')
     placosupply = models.CharField(max_length=100, default='')
 
@@ -335,6 +340,13 @@ class invoice(models.Model):
     grandtotal = models.FloatField(default=0, null=True)
     invoice_orderno = models.CharField(max_length=255, default='', null=True)
 
+    pay_method = models.CharField(max_length=255, default='', null=True)
+    cheque_no = models.CharField(max_length=255, default='', null=True)
+    upi_no = models.CharField(max_length=255, default='', null=True)
+    bank_no = models.CharField(max_length=255, default='', null=True)
+
+    paidoff=models.CharField(null=True,blank=True,max_length=255)
+    balance=models.CharField(null=True,blank=True,max_length=255)
     
     invoice_status = (
         ('Draft','Draft'),
@@ -353,10 +365,9 @@ class invoice(models.Model):
     SGST = models.CharField(max_length=100,default=0, null=True)
     # TCS = models.CharField(max_length=100,default=0, null=True)
     taxamount = models.CharField(max_length=100,default=0, null=True)
+    adjust = models.CharField(max_length=100,default=0, null=True)
     shipping_charge = models.CharField(max_length=100,default=0, null=True)
-
-
-    gsttype = models.CharField(max_length=100,null=True)
+    tot_inv_no = models.IntegerField(default=0, null=True)
 
 class invoice_item(models.Model):
     invoice = models.ForeignKey(invoice,on_delete=models.CASCADE)
@@ -1170,6 +1181,10 @@ class payment(models.Model):
     balance= models.FloatField(default='0')
     
     #added -shemeem
+    bankacc = models.CharField(max_length=100, null=True, blank = True)
+    cheq_id = models.CharField(max_length=100, null=True, blank = True)
+    creditcard = models.CharField(max_length=100, null=True, blank = True)
+    upi = models.CharField(max_length=100, null=True, blank = True)
     py_status = (
         ('Draft','Draft'),
         ('Saved','Saved')
@@ -1185,6 +1200,8 @@ class paymentitems(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     # inv = models.ForeignKey(invoice, on_delete=models.CASCADE,null=True)
     invdate = models.CharField(max_length=100, default='')
+    invtype = models.CharField(max_length=100, null=True, blank = True) #added shemeem
+    invid = models.BigIntegerField(null=True, blank = True) #added shemeem
     invno = models.CharField(max_length=100, default='')
     duedate = models.CharField(max_length=100, default='')
     invamount = models.CharField(max_length=100, default='')
@@ -1232,6 +1249,7 @@ class itemtable(models.Model):
     amount = models.IntegerField(default='0',blank=True,null=True)
     stock_rate= models.FloatField(default='0.0',blank=True,null=True)#reshna added
     status = models.CharField(max_length=100,null=True)
+    min_stock=models.CharField(max_length=100,null=True,default='0')
 
 class unittable(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
@@ -1364,7 +1382,7 @@ class vendor(models.Model):
     sourceofsupply = models.CharField(max_length=100, null=True)
     currency = models.CharField(max_length=100, null=True)
     openingbalance = models.CharField(max_length=100, null=True)
-    opblnc_due = models.CharField(max_length=100, null=True) #amount due
+    opblnc_due = models.CharField(max_length=100, null=True)
     date = models.DateField(null=True,blank= True)
     paymentterms = models.CharField(max_length=100, null=True)
     street = models.CharField(max_length=100,null=True)
@@ -1382,12 +1400,16 @@ class vendor(models.Model):
     is_active =models.BooleanField(default=True)
 
 
+
 class purchaseorder(models.Model):
     porderid = models.AutoField(('pid'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     vendor_name = models.CharField(max_length=100,null=True)
     vendor_mail=models.CharField(max_length=100,null=True)
     billing_address = models.TextField(null=True)
+    vendor_balance = models.CharField(max_length=100, null=True)
+    vendor_gsttype = models.CharField(max_length=100, null=True)
+    vendor_gstin = models.CharField(max_length=100, default='')
     puchaseorder_no = models.IntegerField(default=1000)
     sourceofsupply = models.CharField(max_length=100, null=True)
     destiofsupply = models.CharField(max_length=100, null=True)
@@ -1395,6 +1417,8 @@ class purchaseorder(models.Model):
     reference = models.CharField(max_length=100, null=True)
     contact_name = models.CharField(max_length=255, null=True)
     deliverto = models.TextField(null=True)
+    customer_gsttype = models.CharField(max_length=100, null=True)
+    customer_gstin = models.CharField(max_length=100, default='')
     date = models.DateField(null=True)
     deliver_date = models.DateField(null=True)
     credit_period = models.CharField(max_length=100, null=True)
@@ -1417,10 +1441,15 @@ class purchaseorder(models.Model):
     paid_amount = models.FloatField(blank=True,null=True)
     balance_amount = models.FloatField(blank=True,null=True)
     payment_type = models.CharField(max_length=100,null=True)
+    cheque_number = models.CharField(max_length=100, null=True, blank=True)
+    upi_number = models.CharField(max_length=100, null=True, blank=True)
+    account_number = models.CharField(max_length=100, null=True, blank=True) 
+    is_from_purchase_order = models.BooleanField(default=False)
 
     porder_status = (
         ('Draft','Draft'),
         ('Approved','Approved'),
+        ('Save','Save'),
         ('Billed','Billed'),
     )
     
@@ -1443,11 +1472,16 @@ class purchasebill(models.Model):
     vendor_name = models.CharField(max_length=100,null=True)
     vendor_mail=models.CharField(max_length=100,null=True)
     billing_address = models.TextField(null=True)
+    vendor_balance = models.CharField(max_length=100, null=True)
+    vendor_gsttype = models.CharField(max_length=100, null=True)
+    vendor_gstin = models.CharField(max_length=100, default='')
+    customer_gsttype = models.CharField(max_length=100, null=True)
+    customer_gstin = models.CharField(max_length=100, default='')
     bill_no = models.IntegerField(default=1000)
     sourceofsupply = models.CharField(max_length=100, null=True)
     destiofsupply = models.CharField(max_length=100, null=True)
     branch = models.CharField(max_length=100, null=True)
-    reference = models.CharField(max_length=100, null=True)
+    reference = models.IntegerField(default=0)
     contact_name = models.CharField(max_length=255, null=True)
     deliverto = models.TextField(null=True)
     date = models.DateField(null=True)
@@ -1471,13 +1505,20 @@ class purchasebill(models.Model):
     total_discount = models.CharField(max_length=100,null=True)
     ship_charge = models.CharField(max_length=100,null=True)
     paid_amount = models.FloatField(blank=True,null=True)
-    balance_amount = models.FloatField(blank=True,null=True) # amount due
+    balance_amount = models.FloatField(blank=True,null=True)
     payment_type = models.CharField(max_length=100,null=True)
+    purchase_order = models.ForeignKey('purchaseorder', on_delete=models.CASCADE, null=True, blank=True)
+    cheque_number = models.CharField(max_length=100, null=True, blank=True)
+    upi_number = models.CharField(max_length=100, null=True, blank=True)
+    account_number = models.CharField(max_length=100, null=True, blank=True) 
+    purchase_order_number = models.CharField(max_length=100, null=True, blank=True)
+    is_from_purchase_order = models.BooleanField(default=False)
     bill_status = (
         ('Draft','Draft'),
         ('Billed','Billed'),
+        ('Save','Save'),
     )
-    status =models.CharField(max_length=150,choices=bill_status,default='Billed')
+    status =models.CharField(max_length=150,choices=bill_status,default='Draft')
 
 class purchasebill_item(models.Model):
     bill = models.ForeignKey(purchasebill, on_delete=models.CASCADE,null=True)
@@ -1515,27 +1556,26 @@ class creditperiod(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
 
 class purchasepayment(models.Model):
-    pymntid = models.AutoField(primary_key=True)
-    cid = models.ForeignKey(company, on_delete=models.CASCADE, null=True)
-    reference = models.IntegerField()  # Reference
+    pymntid = models.AutoField(('pyid'), primary_key=True)
+    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
+    reference = models.CharField(max_length=100,null=True)  
     vendor = models.CharField(max_length=100)
     paymentdate = models.DateField(null=True)
-    paymentmethod = models.CharField(max_length=100, null=True)
+    paymentmethod = models.CharField(max_length=100,null=True)
     depositeto = models.CharField(max_length=100)
-    amtreceived = models.CharField(max_length=100, null=True)
-    paymentamount = models.CharField(max_length=100, null=True)
+    amtreceived = models.CharField(max_length=100,null=True)
+    paymentamount = models.CharField(max_length=100,null=True)
     amtcredit = models.CharField(max_length=100, default='0')
-
-    bank_names = models.CharField(max_length=100, null=True)
-    account_number = models.CharField(max_length=100, null=True)
-    cheque_number = models.CharField(max_length=100, null=True)
-    upi_id = models.CharField(max_length=100, null=True)
-    cash = models.CharField(max_length=100, null=True)
-    email = models.CharField(max_length=100, null=True)
-    gst_treatment = models.CharField(max_length=100, null=True)
-    gst_number = models.CharField(max_length=100, null=True)
-    status = models.CharField(max_length=100, default="Draft")
-
+    bank_names = models.CharField(max_length=100,null=True)
+    paid_through = models.CharField(max_length=100,null=True)
+    account_number = models.CharField(max_length=100,null=True)
+    cheque_number = models.CharField(max_length=100,null=True)
+    upi_id = models.CharField(max_length=100,null=True)
+    cash = models.CharField(max_length=100,null=True)
+    email = models.CharField(max_length=100,null=True)
+    gst_treatment = models.CharField(max_length=100,null=True)
+    gst_number = models.CharField(max_length=100,null=True)
+    status = models.CharField(max_length=100,default="Draft")
 
 class purchasepayment1(models.Model):
     pymnt = models.ForeignKey(purchasepayment, on_delete=models.CASCADE,null=True)
@@ -1545,16 +1585,10 @@ class purchasepayment1(models.Model):
     billamount = models.CharField(max_length=100,null=True)
     duedate = models.CharField(max_length=100,null=True)
     amountdue = models.CharField(max_length=100,null=True)
-    payments = models.CharField(max_length=100,null=True)
+    payments = models.CharField(max_length=100,null=True) # Payment field
     payment_id = models.IntegerField(null=True)
     payment_type = models.CharField(max_length=100,null=True)
     
-# models.py
-from django.db import models
-
-class LastReferenceNumber(models.Model):
-    last_reference = models.IntegerField(default=0)
-
 class paymentmethod(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     newmethod = models.CharField(max_length=100,null=True) 
@@ -1587,10 +1621,14 @@ class purchasedebit(models.Model):
     paid_amount = models.FloatField(blank=True,null=True)
     balance_amount = models.FloatField(blank=True,null=True)
     payment_type = models.CharField(max_length=100,null=True)
+    
+    file = models.FileField(upload_to='sales',default="default.jpg")
     debit_status = (
         ('Draft','Draft'),
         ('Save','Save'),
     )
+    gstnumber=models.CharField(max_length=150 ,default='NULL')
+    gsttype=models.CharField(max_length=150 ,default='NULL')
     status =models.CharField(max_length=150,choices=debit_status ,default='Draft')
 
 class purchasedebit1(models.Model):
@@ -1705,18 +1743,31 @@ class banking_payment(models.Model):
 class salescreditnote(models.Model):
     screditid = models.AutoField(('pdid'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
-    credit_no = models.IntegerField(default=1000)
+    credit_no = models.TextField(max_length=100,null=True,blank=True)
     customer = models.CharField(max_length=100,null=True)
     address = models.TextField(null=True)
     creditdate = models.DateField(null=True)
+    reference_number=models.TextField(max_length=100,null=True,blank=True)
     email = models.CharField(max_length=100,null=True)
     supply = models.CharField(max_length=150,null=True)
     billno = models.CharField(max_length=100,null=True)
     subtotal = models.CharField(max_length=100,null=True)
+    cgst=models.TextField(max_length=100,null=True,blank=True)
+    sgst=models.TextField(max_length=100,null=True,blank=True)
+    igst=models.TextField(max_length=100,null=True,blank=True)
     shipping_charge = models.CharField(max_length=100,null=True,blank=True)
+    adjustment = models.CharField(max_length=100,null=True,blank=True)
     taxamount = models.CharField(max_length=100,null=True)
     grandtotal = models.CharField(max_length=100,null=True)
     description = models.CharField(max_length=255,null=True)
+    status=models.CharField(max_length=100,null=True,blank=True)
+    file=models.FileField(upload_to='crdit_note/',default="default.png",null=True,blank=True)
+    balance=models.TextField(max_length=100,null=True,blank=True)
+    payment_method=models.TextField(max_length=100,null=True,blank=True)
+    cheque_no=models.TextField(max_length=100,null=True,blank=True)
+    acc_no=models.TextField(max_length=100,null=True,blank=True)
+    upi_id=models.TextField(max_length=100,null=True,blank=True)
+    bank_id=models.TextField(max_length=100,null=True,blank=True)
 
 class salescreditnote1(models.Model):
     scredit = models.ForeignKey(salescreditnote, on_delete=models.CASCADE,null=True)
@@ -1727,6 +1778,9 @@ class salescreditnote1(models.Model):
     tax = models.CharField(max_length=100,null=True)
     discount = models.CharField(max_length=100,null=True)
     total = models.CharField(max_length=100,null=True)
+    billno=models.CharField(max_length=100,null=True)
+    rem_qty=models.CharField(max_length=100,null=True)
+    stock=models.CharField(max_length=100,null=True)
 
 
 
@@ -1748,6 +1802,7 @@ class RetainerInvoices(models.Model):
     reference_number = models.IntegerField(null=True)
     place_of_supply = models.CharField(max_length=100,null=True)
     total_amount = models.FloatField(max_length=100,null=True)
+    balance = models.FloatField(null = True, blank = True) #added shemeem - for payment received module work
     customer_notes = models.CharField(max_length=100,null=True)
     terms_conditions = models.CharField(max_length=100,null=True)
     comments = models.CharField(max_length=100,null=True)
@@ -2006,10 +2061,11 @@ class OpeningBalance(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     
     
+    
 class payrollemployee(models.Model):
-    employeeid = models.AutoField(primary_key=True)
+    employeeid = models.AutoField(('EMPLOYEEID'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100, null=True)   
+    title = models.CharField(max_length=100,null=True)
     firstname = models.CharField(max_length=100,null=True)
     lastname = models.CharField(max_length=100,null=True)
     alias = models.CharField(max_length=100,null=True)
@@ -2073,8 +2129,6 @@ class payrollcomments(models.Model):
     empid = models.ForeignKey(payrollemployee, on_delete=models.CASCADE)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     comment = models.CharField(max_length=250,null=True)
-    
-
 
 class bankings_G(models.Model):
     bankname = models.CharField(max_length=100)
@@ -2102,6 +2156,7 @@ class bank_transactions(models.Model):
     cash_cash=models.IntegerField(blank=True,null=True)
     cash_description=models.TextField(max_length=100)
     cash_date=models.DateField(blank=True,null=True)
+    balance=models.IntegerField(blank=True,null=True,default=0)
     banking=models.ForeignKey(bankings_G, on_delete=models.CASCADE ,null=True,blank=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     
@@ -2113,18 +2168,19 @@ class recinvoice(models.Model):
     profilename = models.CharField(max_length=100)
     recinvoiceno = models.CharField(max_length=100)
     terms = models.CharField(max_length=100, default='')
-    startdate = models.DateField( default='')
-    enddate = models.CharField(max_length=100, default='')
+    startdate = models.DateField(null=True,blank=True)
+    enddate = models.DateField(null=True,blank=True)
     bname = models.CharField(max_length=255, default='')
     placosupply = models.CharField(max_length=100, default='')
     ordernumber=models.IntegerField(default=0, null=True)
     repeate_every=models.CharField(max_length=100, default=0)
     amtrecvd = models.IntegerField(default=0, null=True)
-    taxamount = models.IntegerField(default=0, null=True)
+    taxamount = models.FloatField(default=0, null=True)
     baldue = models.FloatField()
     email = models.CharField(max_length=100, default='')
+    tot_inv_no = models.IntegerField(default=0, null=True)
     discount = models.IntegerField(default=0, null=True)
-    subtotal = models.IntegerField(default=0, null=True)
+    subtotal = models.FloatField(default=0, null=True)
     grandtotal = models.FloatField(default=0, null=True)
     recinvoice_orderno = models.CharField(max_length=255, default='', null=True)
     recinvoice_status = (
@@ -2140,12 +2196,21 @@ class recinvoice(models.Model):
     SGST = models.CharField(max_length=100,default=0, null=True)
     TCS = models.CharField(max_length=100,default=0, null=True)
     gsttype = models.CharField(max_length=100,null=True)
+    pay_method = models.CharField(max_length=255, default='', null=True)
+    cheque_no = models.CharField(max_length=255, default='', null=True)
+    upi_no = models.CharField(max_length=255, default='', null=True)
+    bank_no = models.CharField(max_length=255, default='', null=True)
+    paidoff=models.CharField(null=True,blank=True,max_length=255)
+    balance=models.CharField(null=True,blank=True,max_length=255)
+    shipping_charge = models.FloatField(default=0, null=True)
+    adjust = models.FloatField(default=0, null=True)
+    entity_type = models.CharField(null=True,blank=True,max_length=255)
     
     
 class recinvoice_item(models.Model):
     recinvoice = models.ForeignKey(recinvoice,on_delete=models.CASCADE)
     cid = models.ForeignKey(company,on_delete=models.CASCADE)
-    product = models.CharField(max_length=100)
+    product = models.CharField(max_length=100,null=True)
     items = models.CharField(max_length=100,null=True)
     hsn = models.CharField(max_length=100)
     qty = models.IntegerField(default=0, null=True)
@@ -2170,6 +2235,9 @@ class EmployeeLoan(models.Model):
     status = models.CharField(max_length=20,null=True)
     action= models.IntegerField(blank=True,null=True)
     balance_loan = models.IntegerField(blank=True,null=True)
+    cheque_no=models.CharField(null=True,blank=True,max_length=255)
+    upi_no=models.CharField(null=True,blank=True,max_length=255)
+    payment_method=models.CharField(null=True,blank=True,max_length=255)
       
 ########################recurring bill-reshna-start#############
 
@@ -2178,12 +2246,17 @@ class recurring_bill(models.Model):
     rbillid = models.AutoField(('rid'), primary_key=True)
     # bill_no = models.IntegerField(default=1000)
     billno =  models.CharField(max_length=100,null=True,blank=True)
-    profile_name = models.CharField(max_length=100,null=True,blank=True)
+    refference = models.IntegerField(default=1)
+    profile_name =models.CharField(max_length=100,null=True,blank=True,default=0)
+    purchase_order = models.CharField(max_length=100,null=True,blank=True,default=0)
     source_supply = models.CharField(max_length=100,null=True,blank=True)
+    place_supply = models.CharField(max_length=100,null=True,blank=True)
     vendor_name = models.CharField(max_length=100,null=True,blank=True)###vendor table
     customer_name = models.CharField(max_length=100,null=True,blank=True)###customer table
     repeat_every = models.CharField(max_length=100,null=True,blank=True)#####newtab
     payment_method= models.CharField(max_length=100,null=True,blank=True)###use banktable
+    cheque_no=models.CharField(null=True,blank=True,max_length=255)
+    upi_no=models.CharField(null=True,blank=True,max_length=255)
     start_date=models.DateField(null=True,blank=True)##use this as date
     end_date=models.CharField(max_length=100,null=True,blank=True)
     payment_terms = models.CharField(max_length=100,null=True,blank=True)###newtab
@@ -2199,10 +2272,10 @@ class recurring_bill(models.Model):
     paid_amount= models.FloatField(default=0,max_length=100,null=True)
     balance = models.FloatField(max_length=100,null=True)
     file = models.FileField(upload_to='purchase/rbill',default="default.png")
-
+    vendor_mail = models.CharField(max_length=100,null=True,blank=True)
     bill_status = (
         ('Draft','Draft'),
-        ('Billed','Billed'),
+        ('Save','Save'),
     )
     status =models.CharField(max_length=150,choices=bill_status,default='Draft')
     
@@ -2317,13 +2390,13 @@ class loan_account(models.Model):
     account_number=models.TextField(max_length=100)
     lenderbank=models.TextField(max_length=100)
     recieced_bank=models.TextField(max_length=100)
-    intrest=models.TextField(max_length=100)
+    intrest=models.TextField(max_length=100,null=True,blank=True)
     term=models.TextField(max_length=100)
     loan_amount=models.TextField(max_length=100)
-    processing=models.TextField(max_length=100)
-    paid=models.TextField(max_length=100)
+    processing=models.TextField(max_length=100,null=True,blank=True)
+    paid=models.TextField(max_length=100,null=True,blank=True)
     status=models.TextField(max_length=100)
-    desc=models.TextField(max_length=100)
+    desc=models.TextField(max_length=100,null=True,blank=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     balance=models.IntegerField(default=0)    
     date=models.DateField(blank=True,null=True)
@@ -2339,7 +2412,7 @@ class loan_transaction(models.Model):
     loan_amount=models.IntegerField(default=0,blank=True,null=True)
     loan_desc=models.TextField(blank=True,null=True)
     loan_date=models.DateField(blank=True,null=True)
-    loan_intrest=models.TextField(max_length=100,default=0)
+    loan_intrest=models.TextField(max_length=100,default=0,blank=True,null=True)
     balance=models.IntegerField(default=0)   
     type=models.TextField(max_length=100)
     total = models.IntegerField(default=0)
@@ -2378,6 +2451,9 @@ class employee_loan_tran(models.Model):
     total_amount = models.IntegerField()
     payment_type = models.CharField(max_length=100)
     balance_loan = models.IntegerField(blank=True,null=True)
+    cheque_no=models.CharField(null=True,blank=True,max_length=255)
+    upi_no=models.CharField(null=True,blank=True,max_length=255)
+    payment_method=models.CharField(null=True,blank=True,max_length=255)
     
     
 class paymnt_made_comments(models.Model):
@@ -2386,17 +2462,48 @@ class paymnt_made_comments(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE)
     comment = models.CharField(max_length=250,null=True)
     
-class salary_duration(models.Model):
-    empid = models.ForeignKey(payrollemployee, on_delete=models.CASCADE)
-    term = models.TextField(max_length=30)
-    term_value = models.IntegerField()
-    cid = models.ForeignKey(company, on_delete=models.CASCADE)
     
-
-
-class DeletedPurchasePayments(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE)
-    reference_number = models.CharField(max_length=100)
+class VendorComment(models.Model):
+    vendor = models.ForeignKey(vendor, on_delete=models.CASCADE, related_name='comments')
+    comment_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.cid} - {self.reference_number}"
+        return f'Comment on {self.created_at}'
+        
+class PurchaseOrderComment(models.Model):
+    order = models.ForeignKey(purchaseorder, on_delete=models.CASCADE, related_name='order_comments')
+    comment_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment on {self.created_at}'
+        
+class PurchaseBillComment(models.Model):
+    bill = models.ForeignKey('PurchaseBill', on_delete=models.CASCADE, related_name='bill_comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment on {self.bill.billid} by {self.user.username}'
+        
+class ConvertBill(models.Model):
+    purchase_order = models.ForeignKey('purchaseorder', on_delete=models.CASCADE)
+    purchase_bill = models.ForeignKey('purchasebill', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.purchase_order} - {self.purchase_bill}'
+        
+class deletedcreditnotes(models.Model):
+    cid = models.ForeignKey(company,on_delete=models.CASCADE,null=True)
+    reference_number = models.CharField(max_length=50)
+
+
+class DeletedPaymentReceived(models.Model):
+    cid = models.ForeignKey(company,on_delete=models.CASCADE,null=True)
+    referno = models.CharField(max_length=50)
+
+class DeletedChallan(models.Model):
+    cid = models.ForeignKey(company,on_delete=models.CASCADE,null=True)
+    ref = models.CharField(max_length=50)

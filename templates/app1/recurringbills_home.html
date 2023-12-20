@@ -44,9 +44,8 @@
                                 </button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="{% url 'recurringbill_home' %}">All</a>
-                                    <a class="dropdown-item" href="{% url 'recur_custasc' %}">CUSTOMER NAME</a>
-                                    <a class="dropdown-item" href="{% url 'recur_profasc' %}">PROFILE NAME</a>
-                                    <a class="dropdown-item" href="{% url 'recur_billasc' %}">BILL NO</a>
+                                    <a class="dropdown-item" href="{% url 'recur_custasc' %}">VENDOR NAME</a>
+                                    <a class="dropdown-item" href="{% url 'recur_billasc' %}">RECURRING BILL</a>
                                 </div>
                             </div>
                         </div>
@@ -58,37 +57,37 @@
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="{%url 'recurringbill_home'%}">All</a>
                                 <a class="dropdown-item" href="{%url 'draft_rbill'%}">Draft</a>
-                                <a class="dropdown-item" href="{%url 'billed_rbill'%}">Billed</a>
+                                <a class="dropdown-item" href="{%url 'billed_rbill'%}">Save</a>
                             </div>
                             <a href="{%url 'addrecurringbill'%}" class="btn btn-outline-info fa fa-plus" role="button"> &nbsp;New</a>
                         </div>
                     </div>
 
                     <div class="container-fluid">
-                        <table class="table table-responsive-md mt-4">
+                        <table class="table table-responsive-md mt-4" id="table">
                             <thead>
                             <tr>
                                 <th>Date</th>
                                 <th>Bill Number</th>
-                                <th>Profile Name</th>
                                 <th>Vendor Name</th>
-                                <th>Customer Name</th>
-                                <th>Status</th>
+                                <th>Vendor Mail</th>
                                 <th>Amount</th>
+                                <th>Status</th>
+                               
                                 <th>Balance</th>
                             </tr>
                             </thead>
-                            <tbody  id="table">
+                            <tbody  >
                             {% for r in rbill %}
                             <!-- <tr> -->
                                 <tr onclick="window.location='view_rbill/{{ r.rbillid }}';">
                                     <th>{{ r.start_date | date:'d-m-Y' }}</th>
                                     <td>{{ r.billno }}</a></td>
-                                    <td>{{ r.profile_name }}</td>
                                     <td>{{ r.vendor_name }}</td>
-                                    <td>{{ r.customer_name }}</td>
-                                    <td>{{ r.status }}</td>
+                                    <td>{{r.vendor_mail}}</td>
                                     <td>{{ r.grand_total}}</td>
+                                    <td>{{ r.status }}</td>
+                                    
                                     <td>{{ r.balance }}</td>
                                 </tr> 
                             {% endfor %}
@@ -101,7 +100,7 @@
 
       
         <script>
-            var $rows = $('#table tr');
+            var $rows = $('#table tbody tr');
             $('#search').keyup(function() {
                 var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
                 

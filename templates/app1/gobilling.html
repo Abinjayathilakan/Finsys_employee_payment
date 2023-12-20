@@ -38,17 +38,30 @@
                                 <center><i class="fa fa-search form-control" style="width: 60px;border-color: #213b52;"></i></center>
                             </div>    
                         </div>
-                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-info dropdown-toggle" type="button" id="sortByDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+                                    Sort By
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="sortByDropdown">
+                                    <a class="dropdown-item" href="?sort_by=all">All</a>
+                                    <a class="dropdown-item" href="?sort_by=number">Number</a>
+                                    <a class="dropdown-item" href="?sort_by=name">Name</a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-3"></div>
                         <div class="btn-group col-md-2">
-                            <!-- <a class="btn btn-outline-info text-white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            <a class="btn btn-outline-info text-white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                                 role="button">Filter By
                             </a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="{% url 'gobilling' %}">All</a>
-                                
-                            </div> -->
-                            <a href="{% url 'addbilling' %}" class="btn btn-outline-info fa fa-plus text-white w-50" role="button"> &nbsp;New</a>
+                                <a class="dropdown-item" href="{% url 'porderbill_draft' %}">Draft</a>
+                                <a class="dropdown-item" href="{% url 'porderbill_save' %}">Save</a>
+                               
+                            </div>
+                            <a href="{% url 'addbilling' %}" class="btn btn-outline-info fa fa-plus text-white" role="button">&nbsp;New</a>
                         </div>
                     </div>
 
@@ -60,9 +73,10 @@
                                 <th>Bill Number</th>
                                 <th>Vendor Name</th>
                                 <th>Mail Id</th>
-                                <th>Expected Delivery Date</th>
+                                <!-- <th>Expected Delivery Date</th> -->
                                 <th>Total Amount</th>
                                 <th>Balance Due</th>
+                                <th>Status</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -72,14 +86,14 @@
                                     <td>{{ p.bill_no }}</a></td>
                                     <th>{{ p.vendor_name }}</th>
                                     <td>{{ p.vendor_mail }}</td>
-                                    <td>{{ p.deliver_date| date:'d-m-Y' }}</td>
+                                    <!-- <td>{{ p.deliver_date| date:'d-m-Y' }}</td> -->
                                     <td>{{ p.grand_total }}</td>
                                     {% if p.balance_amount > 0 %}
                                     <td>{{ p.balance_amount }}</td>
                                     {% else %}
                                     <td>0.0</td>
                                     {% endif %}
-
+                                    <td class="text-white" style="font-family: monospace;font-weight: bold;">{{ p.status }}</td>
                                 </tr> 
                             {% endfor %}
                             </tbody>

@@ -75,6 +75,7 @@
     /* Set all text color to black */
     body {
         color: black !important;
+        
     }
     /* Hide "Overview" and "Transactions" text */
     .page-content a {
@@ -85,6 +86,7 @@
     }
     .blinking-text{
         visibility: visible !important;
+       
     }
  
 } 
@@ -205,7 +207,7 @@
                                     <div class="row" style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-10 mt-3">
                                             <label for="validationCustom01" style="color: white;" >Type  </label>
-                                            <p style="margin-left:150px;" >:</p>
+                                            <p style="margin-left:187px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;" 
                                             readonly>{{ a.item_type }}</p>
                                         </div>
@@ -213,7 +215,7 @@
                                     <div class="row" style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-10 mt-3">
                                             <label for="validationCustom03" style="color: white;">Unit</label>
-                                            <p style="margin-left:155px;" >:</p>
+                                            <p style="margin-left:191px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
                                             readonly>{{ a.unit }}</p>
                                         </div>
@@ -221,7 +223,7 @@
                                     <div class="row"  style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-10 mt-3">
                                             <label for="validationCustom05" style="color: white;">HSN Code</label>
-                                            <p style="margin-left:112px;" >:</p>
+                                            <p style="margin-left:148px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
                                             readonly>{{ a.hsn }}</p>
                                         </div>
@@ -229,7 +231,7 @@
                                     <div class="row" style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-10 mt-3">
                                             <label for="validationCustom05" name style="color: white;">Tax Reference</label>
-                                            <p style="margin-left:90px;" >:</p>
+                                            <p style="margin-left:125px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
                                             readonly>{{ a.tax_reference }}</p>                   
                                         </div>
@@ -237,7 +239,7 @@
                                     <div class="row" style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-10 mt-3">
                                             <label for="validationCustom01" style="color: white;text-align:left;">Intra State Tax Rate</label>
-                                            <p style="margin-left:55px;" >:</p>
+                                            <p style="margin-left:93px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
                                             readonly>{{ a.intra_st }} % GST</p>                 
                                         </div>
@@ -245,7 +247,7 @@
                                     <div class="row" style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-10 mt-3">
                                             <label for="validationCustom01" style="color: white;">Inter State Tax Rate</label>
-                                            <p style="margin-left:56px;" >:</p>
+                                            <p style="margin-left:93px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
                                             readonly>{{ a.inter_st }} %  IGST</p>                 
                                         </div>
@@ -253,7 +255,7 @@
                                     <div class="row" style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-12 mt-3">
                                             <label for="validationCustom01" style="color: white;">Inventory Account</label>
-                                            <p style="margin-left:70px;" >:</p>
+                                            <p style="margin-left:106px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
                                             readonly>{{ a.inventry }}</p>            
                                         </div>
@@ -261,7 +263,7 @@
                                     <div class="row"  style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-10 mt-3">   
                                             <label for="validationCustom01" style="color: white;">Stock On Hand</label>
-                                            <p style="margin-left:85px;" >:</p>
+                                            <p style="margin-left:122px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
                                             readonly>{{ a.stock }}</p>       
                                         </div>
@@ -270,9 +272,17 @@
                                     <div class="row"  style="margin-left:100px;">
                                         <div style="display:flex;" class="col-md-10 mt-3">   
                                             <label for="validationCustom01" style="color: white;">Stock Rate per Unit</label>
-                                            <p style="margin-left:60px;" >:</p>
+                                            <p style="margin-left:96px;" >:</p>
                                             <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
                                             readonly>{{ a.stock_rate }}</p>       
+                                        </div>
+                                    </div>
+                                    <div class="row"  style="margin-left:100px;">
+                                        <div style="display:flex;" class="col-md-10 mt-3">   
+                                            <label for="validationCustom01" style="color: white;">Minimum Stock to maintain</label>
+                                            <p style="margin-left:50px;" >:</p>
+                                            <p style="color: white;font-size:15px;margin-left:30px;text-transform:Uppercase;"   
+                                            readonly>{{ a.min_stock }}</p>       
                                         </div>
                                     </div>
                                     <!-- end -->
@@ -397,7 +407,7 @@
                                             
                                             <label for="" style="font-size: large ; font-weight: bold; white-space:nowrap;color: white;" class="table">
                                            
-                                            Purchace Price:  {{a.purchase_cost}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            Purchase Price:  {{a.purchase_cost}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -418,11 +428,27 @@
                         
                                         </label>
                                        
-                                       </div></div><br><br>
+                                       </div>
+                                    </div>
+
+                                    <div class="row " style="margin-top: -1rem;" >
+                                        <div class="col-md-2">
+                                            
+                                            <label for="" style="font-size: large ; font-weight: bold; white-space:nowrap;color: white;" class="table">
+                                           
+                                                Minimum Stock to Maintain:  {{a.min_stock}}
+                                               
+                                        </label>
+                                       
+                                       </div>
+                                    </div>
+                                    
+                                    <br><br>
                                     <div class="table-responsive">
                                         <table class="table">
                                             <thead >
                                             <tr  >
+                                                <th style="text-align: center;"> Sl No.</th>
                                                 <th style="text-align: center;">Type</th>
                                                 <th style="text-align: center; "> Name</th>
                                                 <th style="text-align: center;">Date</th>
@@ -430,15 +456,42 @@
                                                 
                                                 <th style="text-align: center;">Quantity</th>
                                                 <th style="text-align: center;">Price</th>
-                                                <th style="text-align: center;">Total</th>
+                                                <th style="text-align: center;">Status</th>
                                                 <!-- <th style="text-align: center;">Status</th> -->
                                                 
                                             </tr>
                                             </thead>
                                             <tbody>
+
+                                                {% for i in item %}
+                                                {% if i.name == a.name %}
+                                                 {% if i.stock != None and i.stock != 0 %}
+                             
+                                                <tr tr class="clickable-row " data-href=""  >
+                                                 <td style="text-align: center;"></td>
+                                                    <td style="text-align: center;">Opening Stock</td>
+                                                    <td style="text-align: center;"> -  </td>
+                                                    <td style="text-align: center;">{{ i.itmdate | date:'d-m-Y'  }}</td>
+                                                <!-- <td style="text-align: center;">{{ sale.bill.bill_no }}</td> -->
+                                               
+                                                <td style="text-align: center;"> {{ i.stock  }} </td>
+                                                <td style="text-align: center;"> - </td>
+                                                <!-- <td style="text-align: center;">{{ sale.amount }}</td> -->
+                                                <td style="text-align: center;">{{i.status}} </td>
+                                              
+                                               
+                                            </tr>
+                                                 {% endif %}
+                                                {% endif %}
+                                                {% endfor %}
+
+
+
+
                                                 {% for sale in sitems %}
                                                 {% if sale.product == a.name %}
                                                     <tr tr class="clickable-row " data-href="{% url 'sales_order_view' sale.id %}" >
+                                                        <td style="text-align: center;"></td>
                                                         <td style="text-align: center;"> sales Order</td>
                                                         <td style="text-align: center;"> {{ sale.salesorder.salename }}</td>
                                                         <td style="text-align: center;">{{ sale.salesorder.saledate | date:'d-m-Y' }}</td>
@@ -446,8 +499,8 @@
                                                         
                                                         <td style="text-align: center;">{{ sale.qty }}</td>
                                                         <td style="text-align: center;"> {{ sale.price }}</td>
-                                                        <td style="text-align: center;">{{ sale.total }}</td>
-                                                        <!-- <td style="text-align: center;"> {{ sale.salesorder.status }}</td> -->
+                                                        <!-- <td style="text-align: center;">{{ sale.total }}</td> -->
+                                                        <td style="text-align: center;"> {{ sale.salesorder.status }}</td> 
                                                        
                                                     </tr>
                                               {% endif %}
@@ -464,8 +517,13 @@
                                             
                                             {% for sale in pitems %}
                                             {% if sale.items == a.name %}
+
+
+
+                                            
                                                
                                                     <tr tr class="clickable-row " data-href="{% url 'viewpurchaseorder' sale.porder.porderid %}" >
+                                                        <td style="text-align: center;"></td>
                                                         <td style="text-align: center;"> Purchase Order</td>
                                                         <td style="text-align: center;"> {{ sale.porder.vendor_name }}</td>
                                                         <td style="text-align: center;">{{ sale.porder.date | date:'d-m-Y' }}</td>
@@ -478,6 +536,7 @@
                                                       
                                                    
                                                 </tr>
+                                            
                                           {% endif %}
                                         {% endfor %}
                                         
@@ -490,8 +549,13 @@
                                              
                                             {% for sale in eitems %}
                                             {% if sale.item == a.name %}
+
+                                         
+
+                                           
                                                
                                                     <tr tr class="clickable-row " data-href="{% url 'estimate_view' sale.estimate.estimateid %}" >
+                                                        <td style="text-align: center;"></td>
                                                         <td style="text-align: center;"> Estimate</td>
                                                         <td style="text-align: center;"> {{ sale.estimate.customer }}</td>
                                                         <td style="text-align: center;">{{ sale.estimate.estimatedate | date:'d-m-Y' }}</td>
@@ -499,11 +563,14 @@
                                                     
                                                     <td style="text-align: center;">{{ sale.quantity }}</td>
                                                     <td style="text-align: center;"> {{ sale.rate }}</td>
-                                                    <td style="text-align: center;">{{ sale.total }}</td>
+                                                    <td style="text-align: center;">{{ sale.estimate.status }}</td>
                                                     <!-- <td style="text-align: center;"> {{ sale.estimate.status }}</td> -->
                                                     
                                                    
                                                 </tr>
+
+                                                
+                                            
                                           {% endif %}
                                         {% endfor %}
                             
@@ -518,6 +585,7 @@
                                             {% if sale.product == a.name %}
                                         
                                                     <tr tr class="clickable-row " data-href="{% url 'invoice_view' sale.invoice.invoiceid %}" >
+                                                        <td style="text-align: center;"></td>
                                                         <td style="text-align: center;"> Invoices</td>
                                                         <td style="text-align: center;"> {{ sale.invoice.customername }}</td>
                                                         <td style="text-align: center;">{{ sale.invoice.invoicedate| date:'d-m-Y' }}</td>
@@ -531,27 +599,140 @@
                                                 </tr>
                                           {% endif %}
                                         {% endfor %}
-                                     
-                        
-                        
-                        <!------------------------------------BILL------------------------------------------------------------------>
+
+
+                          <!------------------------------------BILL------------------------------------------------------------------>
                         
                         
                         
                                             
-                                            {% for sale in bitems %}
-                                            {% if sale.items == a.name %}
+                          {% for sale in bitems %}
+                          {% if sale.items == a.name %}
+                             
+                                  <tr tr class="clickable-row " data-href="{% url 'viewbill' sale.bill.billid %}"  >
+                                    <td style="text-align: center;"></td>
+                                      <td style="text-align: center;"> Bills</td>
+                                      <td style="text-align: center;"> {{ sale.bill.vendor_name }}</td>
+                                      <td style="text-align: center;">{{ sale.bill.date | date:'d-m-Y' }}</td>
+                                  <!-- <td style="text-align: center;">{{ sale.bill.bill_no }}</td> -->
+                                 
+                                  <td style="text-align: center;">{{ sale.quantity }}</td>
+                                  <td style="text-align: center;"> {{ sale.rate }}</td>
+                                  <td style="text-align: center;">{{ sale.amount }}</td>
+                                  <!-- <td style="text-align: center;"> {{ sale.bill.status }}</td> -->
+                                
+                                 
+                              </tr>
+                        {% endif %}
+                      {% endfor %}
+
+                       <!------------------------------------  recurring invoices ------------------------------------------------------------------>
+                        
+                        
+                        
+                                            
+                       {% for sale in recinvoiceitem %}
+                       {% if sale.product == a.name %}
+
+                       
+
+                            
+
+                          
+                               <tr tr class="clickable-row " data-href=""  >
+                                <td style="text-align: center;"></td>
+                                   <td style="text-align: center;">Recurring Invoices</td>
+                                   <td style="text-align: center;"> {{ sale.recinvoice.customername }} </td>
+                                   <td style="text-align: center;">{{ sale.recinvoice.startdate | date:'d-m-Y' }}</td>
+                               <!-- <td style="text-align: center;">{{ sale.bill.bill_no }}</td> -->
+                              
+                               <td style="text-align: center;">{{ sale.qty }}</td>
+                               <td style="text-align: center;"> {{ sale.price }}</td>
+                               <!-- <td style="text-align: center;">{{ sale.amount }}</td> -->
+                               <td style="text-align: center;"> {{ sale.recinvoice.status }}</td>
+                             
+                              
+                           </tr>
+                           
+                     {% endif %}
+                   {% endfor %}
+                   <!------------------------------------  recurring bills ------------------------------------------------------------------>
+                        
+                        
+                        
+                                            
+                   {% for sale in rbillitems %}
+                   {% if sale.item == a.name %}
+
+                 
+                      
+                           <tr tr class="clickable-row " data-href=""  >
+                            <td style="text-align: center;"></td>
+                               <td style="text-align: center;">Recurring Bills</td>
+                               <td style="text-align: center;"> {{ sale.bill.vendor_name }} </td>
+                               <td style="text-align: center;">{{ sale.bill.start_date | date:'d-m-Y' }}</td>
+                           <!-- <td style="text-align: center;">{{ sale.bill.bill_no }}</td> -->
+                          
+                           <td style="text-align: center;">{{ sale.qty }}</td>
+                           <td style="text-align: center;"> {{ sale.price }}</td>
+                           <!-- <td style="text-align: center;">{{ sale.amount }}</td> -->
+                           <td style="text-align: center;"> {{ sale.bill.status }}</td>
+                         
+                          
+                       </tr>
+                    
+                 {% endif %}
+               {% endfor %}
+
+                <!------------------------------------  E-Way bills ------------------------------------------------------------------>
+                        
+                        
+                        
+                                            
+                {% for sale in e_waybillitem %}
+                {% if sale.item == a.name %}
+                   
+                        <tr tr class="clickable-row " data-href=""  >
+                            <td style="text-align: center;"></td>
+                            <td style="text-align: center;">E-Way Bills</td>
+                            <td style="text-align: center;"> {{ sale.bill.customer_name }} </td>
+                            <td style="text-align: center;">{{ sale.bill.bill_date | date:'d-m-Y' }}</td>
+                        <!-- <td style="text-align: center;">{{ sale.bill.bill_no }}</td> -->
+                       
+                        <td style="text-align: center;">{{ sale.qty }}</td>
+                        <td style="text-align: center;"> {{ sale.price }}</td>
+                        <!-- <td style="text-align: center;">{{ sale.amount }}</td> -->
+                        <td style="text-align: center;"> {{ sale.bill.status }}</td>
+                      
+                       
+                    </tr>
+              {% endif %}
+            {% endfor %}
+
+
+
+                                     
+                        
+                        
+                        <!------------------------------------  delivery challan ------------------------------------------------------------------>
+                        
+                        
+                        
+                                            
+                                            {% for sale in dchallanitem %}
+                                            {% if sale.product == a.name %}
                                                
-                                                    <tr tr class="clickable-row " data-href="{% url 'viewbill' sale.bill.billid %}"  >
-                                                        <td style="text-align: center;"> Bills</td>
-                                                        <td style="text-align: center;"> {{ sale.bill.vendor_name }}</td>
-                                                        <td style="text-align: center;">{{ sale.bill.date | date:'d-m-Y' }}</td>
+                                                    <tr tr class="clickable-row " data-href=""  >
+                                                        <td style="text-align: center;"></td>
+                                                        <td style="text-align: center;"> Delivery Challan</td>
+                                                        <td style="text-align: center;"> {{ sale.dl.customer.firstname }} {{ sale.dl.customer.lastname }}</td>
+                                                        <td style="text-align: center;">{{ sale.dl.challan_date | date:'d-m-Y' }}</td>
                                                     <!-- <td style="text-align: center;">{{ sale.bill.bill_no }}</td> -->
                                                    
                                                     <td style="text-align: center;">{{ sale.quantity }}</td>
                                                     <td style="text-align: center;"> {{ sale.rate }}</td>
-                                                    <td style="text-align: center;">{{ sale.amount }}</td>
-                                                    <!-- <td style="text-align: center;"> {{ sale.bill.status }}</td> -->
+                                                    <!-- <td style="text-align: center;">{{ sale.amount }}</td> -->
+                                                    <td style="text-align: center;"> {{ sale.dl.status }}</td>
                                                   
                                                    
                                                 </tr>
@@ -559,31 +740,32 @@
                                         {% endfor %}
                         <!------------------------------------payment Recived------------------------------------------------------------------>
                         
-                                        {% for sale in payments %}
+                                        <!-- {% for sale in payments %}
                                          {% if i.cid_id == cmp1.cid %}
                                            
                                                 <tr tr class="clickable-row " data-href="{% url 'gopayment_received' sale.payment.paymentid %}"  >
                                                     <td style="text-align: center;"> Payment Recived</td>
                                                     <td style="text-align: center;"> {{ sale.payment.customer }}</td>
                                                     <td style="text-align: center;">{{ sale.payment.paymdate | date:'d-m-Y' }}</td>
-                                                <!-- <td style="text-align: center;">{{ sale.payment.refno }}</td> -->
+                                               <td style="text-align: center;">{{ sale.payment.refno }}</td> 
                                                
                                                 <td style="text-align: center;">{{ sale.quantity }}</td>
                                                 <td style="text-align: center;"> {{ sale.rate }}</td>
                                                 <td style="text-align: center;">{{ sale.amount }}</td>
-                                                <!-- <td style="text-align: center;"> {{ sale.payment.status }}</td> -->
+                                                 <td style="text-align: center;"> {{ sale.payment.status }}</td> 
                                                
                                                
                                             </tr>
                                        {% endif %} 
                                     {% endfor %}
-                        
+                         -->
                                     <!------------------------------------credit notes------------------------------------------------------------------>
                         
                                         {% for sale in credititem %}
                                          {% if sale.items == a.name %}
                                            
                                                 <tr tr class="clickable-row " data-href="{% url 'viewcredit' sale.scredit.screditid %}"  >
+                                                    <td style="text-align: center;"></td>
                                                     <td style="text-align: center;"> credit notes</td>
                                                     <td style="text-align: center;"> {{ sale.scredit.customer }}</td>
                                                     <td style="text-align: center;">{{ sale.scredit.creditdate | date:'d-m-Y' }}</td>
@@ -591,38 +773,60 @@
                                                
                                                 <td style="text-align: center;">{{ sale.quantity }}</td>
                                                 <td style="text-align: center;"> {{ sale.price }}</td>
-                                                <td style="text-align: center;">{{ sale.total }}</td>
-                                                <!-- <td style="text-align: center;"> {{ sale.scredit.status|default:'NAN' }}</td> -->
+                                                <!-- <td style="text-align: center;">{{ sale.total }}</td> -->
+                                                <td style="text-align: center;"> {{ sale.scredit.status|default:'NAN' }}</td>
                                              
                                                
                                             </tr>
                                        {% endif %} 
                                     {% endfor %}
-                                     <!------------------------------------Dedit notes------------------------------------------------------------------>
-                        
+                                     <!------------------------------------Debit notes------------------------------------------------------------------>
+                                     
+
                                      {% for sale in pdebit_item %}
                                      {% if sale.items == a.name %}
-                                       
+                                     
                                             <tr tr class="clickable-row " data-href="{% url 'viewpurchasedebit' sale.pdebit.pdebitid %}"  >
-                                                <td style="text-align: center;"> Debit notes</td>
+                                            <td style="text-align: center;"></td>
+                                            <td style="text-align: center;"> Debit notes</td>
+                                               
                                                 <td style="text-align: center;"> {{ sale.pdebit.vendor }}</td>
                                                 <td style="text-align: center;">{{ sale.pdebit.debitdate | date:'d-m-Y' }}</td>
                                             <!-- <td style="text-align: center;">{{ sale.pdebit.debit_no }}</td> -->
                                            
                                             <td style="text-align: center;">{{ sale.quantity }}</td>
                                             <td style="text-align: center;"> {{ sale.price }}</td>
-                                            <td style="text-align: center;">{{ sale.total }}</td>
-                                            <!-- <td style="text-align: center;"> {{ sale.pdebit.status|default:'NAN' }}</td> -->
+                                            <!-- <td style="text-align: center;">{{ sale.total }}</td> -->
+                                            <td style="text-align: center;"> {{ sale.pdebit.status|default:'NAN' }}</td>
                                             
                                            
                                         </tr>
                                         </fieldset>
-                                      
+                                        
+                                        
                                    {% endif %} 
                                 {% endfor %}
+                                
                                     </tbody>
                                 </table>
                                 </div>
+
+
+                                <script>
+                                    $(document).ready(function() {
+                                        var addSerialNumber = function () {
+                                            $('table tr:gt(0)').each(function(index) {
+                                                $(this).find('td:first').text(index + 1);
+                                            });
+                                        };
+                                    
+                                        addSerialNumber();
+                                    });
+                                    </script>
+                                    
+
+                                
+                                             
                              
                           <script>
                             // Assuming you have the stock quantity and purchase cost as variables

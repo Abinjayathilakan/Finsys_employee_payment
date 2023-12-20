@@ -1,0 +1,92 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    #tab td{
+        margin-left: 40px;
+    }
+  </style>
+</head>
+<body>
+    
+
+
+
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div id="ember2512" class="row tooltip-container ember-view ribbon text-ellipsis"
+                style="display: flex; justify-content: space-between;">
+                <div class="col-md-4 ribbon-inner ribbon-open" style="
+                margin-right: 600px;
+                color: white;
+                text-align: center;
+                padding-top: 10px;">
+                </div>
+                <div class="">
+                    
+                </div>
+                <div class="col-md-4 graphic-path" style="
+                  text-align: right;
+                  padding-top: 10px;
+                  margin-left: 550px;
+                  text-align: center;
+                  color: rgb(0, 0, 0);">
+                  
+
+                </div>
+            </div>
+            <div ><center>
+                <h3 style="color: rgb(0, 0, 0);">
+                    <center class="text-black"><b>RECURRING BILL REPORT</b></center>
+                     <center class="text-black"><b>{{ cmp.cname }}</b></center>
+                 </h3>
+            </center></div>
+            <hr />
+            <section class="product-area mt-4">
+                <table class="table table-bordered table-striped mt-4" id="data-table">
+                    <thead class="text-white">
+                      
+                        <tr style="color: black;">
+                            <th style="text-align: center;">Date</th>
+                            <th style="text-align: center;">Number </th>
+                            <th style="text-align: center;">Due Date</th>
+                            <th style="text-align: center;">Vendor Name</th>
+                            <th style="text-align: center;">Status</th>
+                            <th style="text-align: center;">Amount</th>
+                            
+                        </tr>
+                       
+                    </thead>
+                  <tbody>
+                    {% for i in data %}
+                    <tr class="text-center" id="tab">
+                        <td style="color: black;">{{i.date}}</td>
+                        <td style="color: black;">{{i.puchaseorder_no}}</td>
+                        <td style="color: black;">{{i.due_date}}</td>
+                        <td style="color: black;">{{i.vendor_name}}</td>
+                        <td style="color: black;">{% if i.status == 'Billed' %}Converted to Bill{% else %} Not converted to Bill {% endif %}</td>
+                        <td style="color: black;">{{i.grand_total}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                                            
+                  </table> 
+            </section>
+            <hr />
+            
+            
+        </div>
+    </div>
+
+</body>
+</html>

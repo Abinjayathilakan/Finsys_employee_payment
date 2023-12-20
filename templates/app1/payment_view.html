@@ -13,7 +13,6 @@
 
 <style>
 
-
 hr {
     border: 0;
     clear:both;
@@ -82,7 +81,7 @@ hr {
         padding-left: 10px
     }
     
-    .widget-header>.widget-title {
+    .widget-header >.widget-title {
         line-height: 36px;
         padding: 0;
         margin: 0;
@@ -96,7 +95,7 @@ hr {
         display: inline-block;
         padding: 0 10px;
         line-height: 37px;
-        float: right;
+        /* float: right; */
         position: relative;
     }
     
@@ -137,7 +136,19 @@ hr {
         
         text-align: center;
     }
-   
+    .nav_icon_a{
+        border: 1px solid lightslategray;
+        margin-right: 0.2rem;
+    }
+    .epov_icons{
+        font-size: 1.05rem !important;
+    }
+    .nav-link{
+        padding: 0.5rem !important;
+    }
+    .vl {
+        border-left: 6px solid gray;
+    }
     
 </style>
 
@@ -206,13 +217,281 @@ function uplodfile(){
 
     <div class="page-content" >
 
+        <div id="overviewSection" style="display: block;">
         <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
                     <center><h2 class="mb-0">PAYMENT VIEW</h2> <h4></h4></center>
                     <hr>
+                    <div class="d-flex justify-content-between" id="navButtons">
+                        <div>
+                            <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="showOverview()" >Overview</a>
+                            <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="showTemplates()">Template</a>
+                        </div>
+                        <ul class="ml-auto mt-2 d-flex">
+                            <li class="nav-item">
+                                <a class="nav-link text-light btn nav_icon_a" role="button" href="{% url 'edit_payment' pay.paymentid  %}"><i class=" fa fa-pencil mr-1 epov_icons"></i>Edit</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light btn nav_icon_a" role="button" href="{% url 'delete_payment' pay.paymentid  %}" onclick="return confirm('Are you sure you want to delete this record? If you delete this, can not retrieve again.!')"><i class="fa fa-trash-o delete mr-1 epov_icons"></i>Delete</a>
+                            </li>
+                            
+                            {% if pay.status == "Draft"  %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light btn nav_icon_a" href="#" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-exchange mr-1 epov_icons"></i>Convert
+                                </a>
+                                
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{% url 'paymentDraftToSave' pay.paymentid %}">
+                                            <i class="fas fa-receipt">To Save</i>
+                                        </a>
+                                    </div>
+                            </li>
+                            {% endif %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light btn nav_icon_a" href="#" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-share-alt mr-1 epov_icons"></i>Share 
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li style="margin-left: 50px;" > {% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                    <li style="margin-left: 50px;" >{% send_email object.title "New: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
+                                </ul>
+                            </li>
+                            
+                        </ul>
+                    </div>
                 </div>
-                <div class="btn-group" style="float: right; ">
+            </div>
+
+        </div>
+
+        
+        <!-- overview content -->
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;"  >
+            <div class="card-body p-0" >
+               
+                <div id="details">
+                <div class="row g-0" >
+                   
+                    <div class="col-lg-8">
+                        <div class="p-5">
+                            <!-- <div class="d-flex justify-content-between align-items-center mb-5">
+                                <h1 class="fw-bold mb-0 text-black">{{ewbill.profile_name}}</h1>
+                          
+                            </div>
+                            <hr class="my-4"> -->
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Company Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Company</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ cmp1.cname}}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ cmp1.cemail }}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Mobile</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ cmp1.phone }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Address</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ cmp1.caddress }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Name</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{custobject.firstname}} {{custobject.lastname}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                               
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{custobject.email}}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3 ">
+                                    <h6 class="mb-0">GST Treatment</h6>
+                                </div>
+                                <div class="col-md-4 mt-3 ">
+                                    <p class="mb-0">{{custobject.gsttype}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">GST Number</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{custobject.gstin}}</p>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Payment Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Payment #</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{ pay.refno }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Date</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pay.paymdate}}</p>
+                                </div>
+                                
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Payment Method</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{ pay.pmethod }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Amt. Received</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pay.amtreceived}}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Balance</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{pay.balance}}</p>
+                                </div>
+                            </div>
+                            
+
+                    </div>
+                    </div>
+
+                    <div class="col-lg-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);">
+                        <div class="p-5">
+                            <h3 class="fw-bold mb-3 mt-2 pt-1">PAYMENT</h3>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Customer</h5>
+                                <h6>{{custobject.firstname}} {{custobject.lastname}}</h6>
+                            </div>
+                            <hr class="my-4" style="background-color: #fff;">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Amount Received</h5>
+                                <h6>{{ pay.amtapply }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Balance</h5>
+                                <h6>{{pay.balance }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Status</h5>
+                                <h6>{{ pay.status }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+        </div>
+
+        </div>
+
+
+        <!-- Template section -->
+
+        <div class="card radius-15" id="templateSection" style="display: none;">
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h2 class="mb-0">PAYMENT VIEW</h2> <h4></h4></center>
+                    <hr>
+                    <div class="d-flex justify-content-between" id="navButtons">
+                        <div>
+                            <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="showOverview()">Overview</a>
+                            <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="showTemplates()">Template</a>
+                        </div>
+                        <ul class="ml-auto mt-2 d-flex">
+                          <li class="nav-item" >
+                            <a class="nav-link text-light btn nav_icon_a" role="button" id="templatePrintButton" onclick="printSection('print1')"><i class="fa fa-print mr-1 epov_icons"></i>Print</a>
+                          </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light btn nav_icon_a" href="#" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-share-alt mr-1 epov_icons"></i>Share 
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li style="margin-left: 50px;" > {% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                    <li style="margin-left: 50px;" >{% send_email object.title "New: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
+                                </ul>
+                            </li>
+                            {% if pay.status == "Draft"  %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light btn nav_icon_a" href="#" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-exchange mr-1 epov_icons"></i>Convert
+                                </a>
+                                
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{% url 'paymentDraftToSave' pay.paymentid %}">
+                                            <i class="fas fa-receipt">To Save</i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                              
+                        </li>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light btn nav_icon_a" role="button" href="{% url 'render_pdfpayment_view' pay.paymentid %}">
+                                    <i class="fa fa-file-pdf-o mr-1 epov_icons"></i>Pdf
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light btn nav_icon_a" role="button" href="{% url 'edit_payment' pay.paymentid  %}"><i class=" fa fa-pencil mr-1 epov_icons"></i>Edit</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light btn nav_icon_a" role="button" href="{% url 'delete_payment' pay.paymentid  %}" onclick="return confirm('Are you sure you want to delete this record? If you delete this, can not retrieve again.!')"><i class="fa fa-trash-o delete mr-1 epov_icons"></i>Delete</a>
+                            </li>
+                        </ul>
+                    </div>
+                
+                </div>
+                <!-- <div class="btn-group" style="float: right; ">
 
                    
                 <a href="{% url 'edit_payment' pay.paymentid  %}" class=" fa fa-pencil" style="padding: 10px; cursor: pointer;"> Edit</a>
@@ -225,11 +504,11 @@ function uplodfile(){
                     <input name="_method" type="hidden" value="DELETE">
                     
                     </form> </a>
-                
+
                     <div class="dropdown  " style="padding: 10px; cursor: pointer; margin-top: -10px;" onclick="uplodfile()">
-                        <li  class=" dropdown-toggle fa fa-share-alt "data-toggle="dropdown"> &nbsp;Share
+                        <li  class=" dropdown-toggle fa fa-share-alt nav_icon_a" data-toggle="dropdown"> &nbsp;Share
                     </li>
-                        <ul class="dropdown-menu" style="background-color: black;">
+                        <ul class="dropdown-menu" style="background-color: black;"> -->
                             <!-- <a class="dropdown-item fa fa-facebook" target="_blank" 
                            > &nbsp;</a>{% post_to_facebook object_or_url "<p style='color: green;'>facebook</p>" %}
                            
@@ -238,7 +517,7 @@ function uplodfile(){
 
                          
                             <!-- <li style="margin-left: 50px;" > {% post_to_whatsapp object_or_url "WhatsApp" %}</li> -->
-                            <li style="margin-left: 50px;" ><a href="">WhatsApp </a></li>
+                            <!-- <li style="margin-left: 50px;" ><a href="">WhatsApp </a></li>
                             <li style="margin-left: 50px;" >{% send_email object.title "New Song: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
                             
                            
@@ -249,7 +528,7 @@ function uplodfile(){
                     
                 
                 <a class="fa fa-print btn_print" href="{% url 'render_pdfpayment_view' pay.paymentid %}" style="padding: 10px; cursor: pointer;" id="rep"  > PDF</a>
-                
+                 -->
 
                   <!-- <div class="dropdown  " style="padding: 10px; cursor: pointer; margin-top: -14px;">
                     <li  class=" dropdown-toggle  "data-toggle="dropdown"> &nbsp;Convert
@@ -263,157 +542,379 @@ function uplodfile(){
                     </ul>
             </div> -->
             <!-- <a class="fa fa-download" style="padding: 10px; cursor: pointer;" download  href="" >Attachefile</a> -->
-            </div>    
-            </div>
-        </div>
-        
+            <!-- </div>    
+            </div> -->
 
-        
-        <div  id="whatToPrint">
             
-                <div class="my-5 page " size="A4" >
-                    <div class="py-5">
-                        <div class="container" style="font-size: 14px;">
-                          <div class="row hidden-md-up">
-                            <div class="col-md-8" style="margin: auto;" >
-                              <div class="card">
-                                <div class="card-block">
-                                  <div class="card-body">
-                                    <div class="container bootdey">
-                                        <div class="row">
-                                                <div class="col-sm-12 col-sm-offset-1" style="padding:20px;">
-                                                    <div class="widget-box">
-                                                        <div class="widget-header widget-header-large" >
-                                                            <h6 class="widget-title " style="margin-left: 40%;">
-                                                                Payment receipt
-                                                            </h6>
-                                        
-                                                          
-                                                        </div>
-                                        
-                                                        <div class="widget-body">
-                                                            <div class="widget-main padding-24">
-                                                                <div class="row"  style="padding:20px;" >
-                                                                    <div class="col-sm-12">
-                                                                        <div class="col-6">
-                                                                            <div style="width:30px;">
-                                                                                <img src="/media/images/default.png">
-                                                                              </div>
-                                                          
-                                                                        </div>
-                                        
-                                                                        <div class="col-6">
-                                                                            <p style="font-size:14px;color:black;">{{cmp1.cname}}<br>
-                                                                              {{cmp1.pincode}}<br>
-                                                                                 {{cmp1.state}}, <br>
-                                                                                 {{cmp1.cemail}}
-                                                                                <br>
-                                                                                {{cmp1.phone}} <br></p>
+                </div>
+        
+                <div class="templatesToPrint" id="templatesToPrint">
+
+                    <!-- Template 1 -->
+                    <div  id="whatToPrint1" style="display: block;" class="printTemplates template1">
+                        <div class="mt-5 mb-1 page " size="A4" >
+                            <div class="pt-1 pb-4">
+                                <div class="container" style="font-size: 14px;">
+                                  <div class="row hidden-md-up">
+                                    <div class="col-md-8" style="margin: auto;" >
+                                      <div class="card">
+                                        <div class="card-block">
+                                          <div class="card-body">
+                                            <div class="container bootdey">
+                                                <div class="row">
+                                                        <div class="col-sm-12 col-sm-offset-1" style="padding:20px;">
+                                                            <div class="widget-box" id="print1">
+                                                                <div class="widget-header widget-header-large d-flex justify-content-center py-3" style="background-color: #444;">
+                                                                    <h4>
+                                                                        Payment Receipt
+                                                                    </h4>
+                                                                </div>
+                                                
+                                                                <div class="widget-body">
+                                                                    <div class="widget-main padding-24">
+                                                                        <div class="row"  style="padding:20px;" >
+                                                                            <div class="col-sm-12">
+                                                                                <div class="col-12">
+                                                                                    <div style="width:30px;">
+                                                                                        <img src="/media/images/default.png">
+                                                                                      </div>
+                                                                  
+                                                                                
+                                                                                    <p style="font-size:14px;color:black;">{{cmp1.cname}}<br>
+                                                                                      {{cmp1.pincode}}<br>
+                                                                                         {{cmp1.state}}, <br>
+                                                                                         {{cmp1.cemail}}
+                                                                                        <br>
+                                                                                        {{cmp1.phone}} <br></p>
+                                                                                   
+                                                                                </div>
+                                                                                 <hr>
+                                                                            </div><!-- /.col -->
                                                                            
+                                                                          
+                                                                        </div><!-- /.row -->
+                                               
+                                                                        <div class="row col-12">
+                                                                            <div class="col-8">
+                                                                                <p style="font-size:14px;color:black;">Payment date : {{pay.paymdate | date:'d-m-Y'}}<br>
+                                                                                    Payment mode : {{pay.pmethod}}<br>
+                                                                                    Payment No. : {{pay.refno}}<br>
+                                                                            
+                                                                            </div>
+                                                                            <div class="col-4">
+                                                                                <p style="background-color:green; text-align:center; text-align: 14px;">&nbsp &nbspAmount<br>
+                                                                                    &nbsp ₹ {{pay.amtapply}}</p>
+                                                                            </div>
+                                                                           
+                                                                        </div><br>
+                                                
+                                                                        <div class="hr hr8 hr-double hr-dotted"></div>
+                                                                        <hr>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <table class="table table-resposive">
+                                                                                    <thead class="table-head">
+                                                                                        <tr >
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;" >Date</th>
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;" >Particulars</th>
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;">Payment Amount</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">{{pay.paymdate}}</td>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">Payment</td>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">{{pay.amtreceived}}</td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
                                                                         </div>
                                                                          <hr>
-                                                                    </div><!-- /.col -->
-                                                                   
-                                                                  
-                                                                </div><!-- /.row -->
-                                       
-                                                                <div class="row col-12">
-                                                                    <div class="col-8">
-                                                                        <p style="font-size:14px;color:black;">payment date : {{pay.paymdate | date:'d-m-Y'}}<br>
-                                                                            payment mode : {{pay.pmethod}}<br>
-                                                                            reference no. : {{pay.refno}}<br>
-                                                                    
-                                                                    </div>
-                                                                    <div class="col-4">
-                                                                        <p style="background-color:green;align:center; text-align: 14px;">&nbsp &nbspAmount<br>
-                                                                            &nbsp ₹ {{pay.amtapply}}</p>
-                                                                    </div>
-                                                                   
-                                                                </div><br>
-                                        
-                                                                <div class="hr hr8 hr-double hr-dotted"></div>
-                                        
-                                                                
-
-                                                                <div class="row">
-                                                                    <div class="col-sm-12">
-                                                                        <table class="table table-resposive">
-                                                                            <thead class="table-head" style="background-color: aqua;" >
-                                                                                <tr >
-                                                                                  <th style="color: black; font-weight: bolder; font-size: 14px;" >Invoice Number</th>
-                                                                                  <th style="color: black; font-weight: bolder; font-size: 14px" >Invoice Date</th>
-                                                                                  <th style="color: black; font-weight: bolder; font-size: 14px">Invoice Amount</th>
-                                                                                  <th style="color: black; font-weight: bolder; font-size: 14px">Payment Amount</th>
-                                                                                  
-                                                                                  
-                                                                                  
-                                                                                </tr>
-                                                                            </thead>
-                                                                         
-                                                                            <tbody >
-                                                                                
-                                                                
-                                                                                {% for j in inv_dtl %}
-                                                                                <tr >
-                                                                                  <td style="color: black;font-size: 14px">{{j.invoiceno}}</td>
-                                                                                  <td style="color: black;font-size: 14px">{{j.invoicedate}}</td>
-                                                                                  <td style="color: black;font-size: 14px">{{j.grandtotal}}</td>
-                                                                                  <td style="color: black;font-size: 14px">{{pay.amtapply}}</td>
-                                                                                 
-                                                                                </tr>
-                                                                                {% endfor %}
-                                                                                
-                                                                                
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
+                                                                         <div class="row">
+                                                                          
+                                                                            <div class="col-md-4" 
+                                                                                style="color:black;font-size:14px;margin-left:20px;">RECEIVED FROM
+                                                                                <br>
+                                                                                <p style="font-size:14px;color:black;">{{custobject.firstname}} {{custobject.lastname}}<br>
+                                                                                    {{custobject.street}},{{custobject.city}}<br>
+                                                                               {{custobject.pincode }}<br>
+                                                                                {{custobject.state}},{{custobject.country}} <br>
+                                                                                 {{custobject.email}}
+                                                                                <br>
+                                                                                 {{custobject.mobile}}<br></p>
+                                                                            </div>
+                                                                        </div>
+         
                                                                 </div>
-
-                                                                <div class="row">
-                                                                  
-                                                                    <div class="col-md-4" 
-                                                                        style="color:black;font-size:14px;margin-left:20px;">RECEIVED FROM
-                                                                        <br>
-                                                                        <p style="font-size:14px;color:black;"> {{custobject.street}},{{custobject.city}}<br>
-                                                                       {{custobject.pincode }}<br>
-                                                                        {{custobject.state}},{{custobject.country}} <br>
-                                                                         {{custobject.email}}
-                                                                        <br>
-                                                                         {{custobject.mobile}}<br></p>
-                                                                    </div>
-                                                                </div>
- 
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>    
+                                                </div>    
+                                        
+                                          
+                                         
+                                        </div>
+                                      </div>
+                                    </div>
+                                   
+                                  </div>
+        
                                 
-                                  
-                                 
+        
                                 </div>
                               </div>
                             </div>
-                           
-                          </div>
-
-                        
-
+                            </div>
                         </div>
-                      </div>
                     </div>
-                    </div>
-                </div>
 
-            </div>
-            
+                    <!-- Template 2 -->
+
+                    <div  id="whatToPrint2" style="display: none;" class="printTemplates template2">
+                        <div class="mt-5 mb-1 page " size="A4" >
+                            <div class="pt-1 pb-4">
+                                <div class="container" style="font-size: 14px;">
+                                  <div class="row hidden-md-up">
+                                    <div class="col-md-8" style="margin: auto;" >
+                                      <div class="card">
+                                        <div class="card-block">
+                                          <div class="card-body">
+                                            <div class="container bootdey">
+                                                <div class="row">
+                                                        <div class="col-sm-12 col-sm-offset-1" style="padding:20px;">
+                                                            <div class="widget-box" id="print2">
+                                                                <div class="widget-header widget-header-large d-flex justify-content-center py-3" style="background-color: #444;">
+                                                                    <h4>
+                                                                        Payment Receipt
+                                                                    </h4>
+                                                                </div>
+                                                
+                                                                <div class="widget-body">
+                                                                    <div class="widget-main padding-24">
+                                                                        <div class="row" style="padding:20px;" >
+                                                                            <div class="col-sm-6 col-md-6">
+                                                                                <div class="col-12">
+                                                                                    <div style="width:30px;">
+                                                                                        <img src="/media/images/default.png">
+                                                                                      </div>
+                                                                                    <p style="font-size:14px;color:black;">{{cmp1.cname}}<br>
+                                                                                        {{cmp1.pincode}}<br>
+                                                                                        {{cmp1.state}},<br>
+                                                                                        {{cmp1.cemail}}<br>
+                                                                                        {{cmp1.phone}}<br>
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6">
+                                                                                <div class="">
+                                                                                    <p style="background-color:#1b2f40db; text-align:center;">Amount <br> ₹ {{pay.amtapply}}</p>
+                                                                                </div>
+                                                                                <div class="text-dark">
+                                                                                    <p class="d-flex justify-content-between"><span>payment date :</span><span>{{pay.paymdate | date:'d-m-Y'}}</span></p>
+                                                                                    <p class="d-flex justify-content-between"><span>payment mode :</span><span>{{pay.pmethod}}</span></p>
+                                                                                    <p class="d-flex justify-content-between"><span>Payment No. :</span><span>{{pay.refno}}</span></p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="hr hr8 hr-double hr-dotted"></div>
+                                                                        <hr>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <table class="table table-resposive">
+                                                                                    <thead class="table-head">
+                                                                                        <tr >
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;" >Date</th>
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;" >Particulars</th>
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;">Payment Amount</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">{{pay.paymdate}}</td>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">Payment</td>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">{{pay.amtreceived}}</td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                         <hr>
+                                                                         <div class="row">
+                                                                          
+                                                                            <div class="col-md-4" 
+                                                                                style="color:black;font-size:14px;margin-left:20px;">RECEIVED FROM
+                                                                                <br>
+                                                                                <p style="font-size:14px;color:black;">{{custobject.firstname}} {{custobject.lastname}} <br>
+                                                                                {{custobject.street}},{{custobject.city}}<br>
+                                                                                {{custobject.pincode }}<br>
+                                                                                {{custobject.state}},{{custobject.country}} <br>
+                                                                                 {{custobject.email}}
+                                                                                <br>
+                                                                                 {{custobject.mobile}}<br></p>
+                                                                            </div>
+                                                                        </div>
+         
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>    
+                                        
+                                          
+                                         
+                                        </div>
+                                      </div>
+                                    </div>
+                                   
+                                  </div>
         
+                                
+        
+                                </div>
+                              </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Template 3 -->
+
+                    <div  id="whatToPrint3" style="display: none;" class="printTemplates template3">
+                        <div class="mt-5 mb-1 page " size="A4" >
+                            <div class="pt-1 pb-4">
+                                <div class="container" style="font-size: 14px;">
+                                  <div class="row hidden-md-up">
+                                    <div class="col-md-8" style="margin: auto;" >
+                                      <div class="card">
+                                        <div class="card-block">
+                                          <div class="card-body">
+                                            <div class="container bootdey">
+                                                <div class="row">
+                                                        <div class="col-sm-12 col-sm-offset-1" style="padding:20px;">
+                                                            <div class="widget-box bg-white" id="print3">
+                                                                <div class="row" style="padding:20px;" >
+                                                                    <div class="col-sm-12 col-md-12">
+                                                                        <div class="text-center">
+                                                                            <div class="d-flex justify-content-center">
+                                                                                <img src="/media/images/default.png" style="width:30px;">
+                                                                            </div>
+                                                                            <p style="font-size:14px;color:black;">{{cmp1.cname}}<br>
+                                                                                {{cmp1.pincode}}<br>
+                                                                                {{cmp1.state}},<br>
+                                                                                {{cmp1.cemail}}<br>
+                                                                                {{cmp1.phone}}<br>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div class="d-flex justify-content-center py-2">
+                                                                    <h4 class="text-dark" style="border-bottom: 1px solid #444;">Payment Receipt</h4>
+                                                                </div>
+                                                
+                                                                <div class="widget-body">
+                                                                    <div class="widget-main padding-24">
+                                                                        <div class="row" style="padding:20px;" >
+                                                                            <div class="col-sm-6 col-md-6">
+                                                                                <p class="h5 text-dark">Customer</p>
+                                                                                <br>
+                                                                                <p style="font-size:14px;color:black;">{{custobject.firstname}} {{custobject.lastname}}<br>
+                                                                                    {{custobject.street}},{{custobject.city}}<br>
+                                                                                {{custobject.state}},{{custobject.country}} <br>
+                                                                                 {{custobject.email}}
+                                                                                <br>
+                                                                                 {{custobject.mobile}}<br></p>
+                                                                        
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6">
+                                                                                <div class="">
+                                                                                    <p style="background-color:#1b2f40db; text-align:center;">Amount <br> ₹ {{pay.amtapply}}</p>
+                                                                                </div>
+                                                                                <div class="text-dark">
+                                                                                    <p class="d-flex justify-content-between"><span>payment date :</span><span>{{pay.paymdate | date:'d-m-Y'}}</span></p>
+                                                                                    <p class="d-flex justify-content-between"><span>payment mode :</span><span>{{pay.pmethod}}</span></p>
+                                                                                    <p class="d-flex justify-content-between"><span>Payment No. :</span><span>{{pay.refno}}</span></p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="hr hr8 hr-double hr-dotted"></div>
+                                                                        <hr>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <table class="table table-striped" style="background-color: #e5e5e5;">
+                                                                                    <thead class="table-head" style="background-color: #b5b6b7;">
+                                                                                        <tr >
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;" >Date</th>
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;" >Particulars</th>
+                                                                                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;">Payment Amount</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">{{pay.paymdate}}</td>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">Payment</td>
+                                                                                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">{{pay.amtreceived}}</td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                         <!-- <hr>
+                                                                         <div class="row">
+                                                                          
+                                                                            <div class="col-md-4" 
+                                                                                style="color:black;font-size:14px;margin-left:20px;">RECEIVED FROM
+                                                                                <br>
+                                                                                <p style="font-size:14px;color:black;"> {{custobject.street}},{{custobject.city}}<br>
+                                                                               {{custobject.pincode }}<br>
+                                                                                {{custobject.state}},{{custobject.country}} <br>
+                                                                                 {{custobject.email}}
+                                                                                <br>
+                                                                                 {{custobject.mobile}}<br></p>
+                                                                            </div>
+                                                                        </div> -->
+         
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </div>    
+                                        
+                                          
+                                         
+                                        </div>
+                                      </div>
+                                    </div>
+                                   
+                                  </div>
+        
+                                
+        
+                                </div>
+                              </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Template toggle buttons -->
+                    <div id="templateToggle" class="templateToggleSegment mt-1 mb-0 w-100 d-flex justify-content-center">
+                        <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1','print1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
+                        <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2','print2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+                        <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3','print3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
+                    </div>
+
+                </div>
             </div>
+        </div>
 
 
-            <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-            <script>
+    <script>
         
         $('.delete').click(function(event) {
             var form =  $(this).closest("form");
@@ -440,9 +941,40 @@ function uplodfile(){
                     }
             });
         });
-        
-            </script> 
 
+        function showOverview(){
+            document.getElementById('overviewSection').style.display = 'block';
+            document.getElementById('templateSection').style.display = 'none';
+        }
+
+        function showTemplates(){
+            document.getElementById('overviewSection').style.display = 'none';
+            document.getElementById('templateSection').style.display = 'block';
+        }
+
+        function toggleTemplate(templateId,buttonId,printId){
+        $('.printTemplates').css('display','none');
+        $('#'+templateId).css('display','block');
+        $('.templateToggleButtons').removeClass('active');
+        $('#'+buttonId).addClass('active');
+        $("#templatePrintButton").attr("onclick","printSection('"+printId+"')");
+        
+        document.getElementById('templateSection').scrollIntoView();
+    }
+        
+    function printSection(sectionId) {
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.style.backgroundColor = 'white';
+        $('.page-content-wrapper').css('background-color','white');
+        document.body.innerHTML = printContents;
+    
+        window.print();
+    
+        document.body.innerHTML = originalContents;
+    }
+    </script> 
 
 
     {% endif %}

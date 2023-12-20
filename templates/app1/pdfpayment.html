@@ -76,13 +76,13 @@
         </div>
         <div class="row">
             <div class="col-sm-8" >
-                <p style="color:black; font-size: 14px;">payment date : {{pay.paymdate | date:'d-m-Y'}}<br>
-                payment mode : {{pay.pmethod}}<br>
-                reference no. : {{pay.refno}}</p>
+                <p style="color:black; font-size: 14px;">Payment date : {{pay.paymdate | date:'d-m-Y'}}<br>
+                Payment mode : {{pay.pmethod}}<br>
+                Payment no. : {{pay.refno}}</p>
             </div>
             <div class="col-sm-4" style="margin-left: 600px; margin-top: -100px;">
                 <p style="background-color: green; font-size: 14px;color: white; text-align: center;" >&nbsp &nbspAmount<br>
-                &nbsp ₹ {{pay.amtapply}}</p>
+                &nbsp; Rs. {{pay.amtapply}}</p>
             </div>
         </div>
         
@@ -106,6 +106,22 @@
         <div class="row">
             <div class="col-sm-12">
                 <table class="table2">
+                    <thead class="table-head">
+                        <tr >
+                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;" >Date</th>
+                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;" >Particulars</th>
+                            <th style="color: black; font-weight: bolder; font-size: 14px;border: 1px solid black;background-color: #b5b6b7;">Payment Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">{{pay.paymdate}}</td>
+                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">Payment</td>
+                          <td style="color: black;font-size: 14px;border: 1px solid black;background-color: #e5e5e5;">{{pay.amtreceived}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- <table class="table2">
                     <thead class="table-head" >
                         <tr>
                           <th >Invoice Number</th>
@@ -132,7 +148,7 @@
                         
                         
                     </tbody>
-                </table>
+                </table> -->
             </div>
         </div>
     </div>

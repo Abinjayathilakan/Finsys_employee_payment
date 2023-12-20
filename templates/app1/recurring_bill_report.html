@@ -1,0 +1,810 @@
+{% extends 'app1/base.html' %}
+{% block body %}
+{% load static %}
+{% if user.is_authenticated %}
+<!-- Include jQuery -->
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+
+
+<!-- Include jQuery.table2excel plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include jsPDF from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<!-- Include jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<!-- Include jsPDF-AutoTable plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- Add these links to include the required libraries -->
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
+<style>
+    #ui-datepicker-div {
+        width: 20rem;
+        left: 632px;
+    }
+
+    .ui-datepicker-calendar {
+        display: none;
+    }
+
+    .datepicker {
+        margin-top: 1rem;
+        display: grid;
+        justify-items: center;
+    }
+
+    select>option {
+        background-color: rgb(212, 212, 212);
+    }
+
+    .ui-datepicker-prev {
+        background: white;
+        cursor: pointer;
+    }
+
+    .ui-datepicker-next {
+        background: white;
+        cursor: pointer;
+    }
+
+    .ui-datepicker .ui-datepicker-buttonpane button {
+        color: white;
+        background: black;
+    }
+
+    .ui-datepicker .ui-datepicker-buttonpane button:hover {
+        color: rgb(0, 0, 0);
+        background: rgb(177, 177, 177);
+    }
+
+
+    .bar {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .bar .left {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .bar .left input {
+        height: 5vh;
+    }
+
+   
+</style>
+
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="card-title">
+                <center>
+                    <h6>{{cmp1.cname}}</h6>
+                    <h2 class="mb-0"> RECURRING BILL DETAILS</h2>
+                    <div class="display">
+                        <div id="d1" style="display: inline-block;"></div>
+                        <div id="d2" style="display: inline-block;"></div>
+                    </div>
+                </center>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+    <div class="card radius-15">
+        <div class="card-body">
+
+            <div class="bar">
+                <div class=" left">
+                    <div class="px-2">
+                        <label style="text-align:left ">From</label><br>
+                        <input name="FromDate" class="inputdate form-control" onchange="filterTable()" id="in1" type="date">
+                    </div>
+                    <div class="px-2">
+                        <label style="text-align:left ">To</label><br>
+                        <input name="ToDate" class="inputdate form-control" onchange="filterTable()" id="in2" type="date">
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="bar pt-4 px-2">
+                <!-- <div class="left ">
+                    <a class="btn btn-outline-info" onclick="filterTable('All')" role="button"><i class="fa fa-filter"></i> Filter By Date </a>
+                    
+                </div> -->
+                <div class="right ml-auto" >
+
+                    <button class="btn btn_pdf btn-outline-info" onclick="exportAsPDF()" >pdf</button>
+                    <button class="btn btn_print btn-outline-info" onclick="printTable()">Print</button>
+                    <button class=" btn btn-outline-info" id="export-button" onclick="exportAsExcel()">Excel</button>
+                    <button class="btn btn-outline-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Share
+                    </button>
+                    <div class="dropdown-menu " style="background-color: #243e54 ;" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" style="cursor: pointer;" onclick="shareViaWhatsApp()">Whatsapp</a>
+                        <a class="dropdown-item" style="cursor: pointer;" data-target="#shareBillEmail" data-toggle="modal">Email</a>
+                        
+                    </div>
+                        <!--  -->
+                    <div class="modal fade" id="shareBillEmail">
+                        <div class="modal-dialog modal-xl">
+                          <div class="modal-content" style="background: #243e54;border-radius: 20px;">
+                            <div class="modal-header" style="background: #243e54;">
+                              <h5 class="m-3 text-uppercase" id="shareBillEmailLabel">Share Sales Order Via Email</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                  aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body" style="background: #243e54;">
+                              <div class="card p-3 m-3">
+                                <form action="{% url 'recurringBillDetailsToEmail' %}" method="post" class="needs-validation"
+                                  id="share_to_email_form" autocomplete="off">
+                                  {% csrf_token %}
+                                  <input name="FromD" class="inputdate form-control"  id="date1"  type="date" hidden >
+                                  <input name="ToD" class="inputdate form-control"  id="date2" type="date" hidden>
+                                  <div class="form-group">
+                                    
+                                    <label for="emailIds">Email IDs</label>
+                                    <textarea class="form-control text-light" name="email_ids" id="emailIds" rows="5"
+                                      placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                                  </div>
+                                  <div class="form-group mt-2">
+                                    <label for="item_unitname">Message(optional)</label>
+                                    <textarea name="email_message" id="email_message" class=" form-control text-light" cols=""
+                                      rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                                  </div>
+                                
+                              </div>
+                              <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffff;">
+                                <input type="submit" id="generateAndSendPdf" class="submitShareEmailBtn rounded-pill text-grey w-50 my-4 mx-3" style="background-color: #0d2b46;padding: 7px 0;" value="SEND MAIL">
+                              </div>
+                            </div></form>
+            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                    <!--  -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function exportAsPDF() {
+    const container = document.getElementById('pdf-card');
+
+    // Save the original background color
+    const originalBackgroundColor = container.style.backgroundColor;
+
+    // Set the container's background color to white
+    container.style.backgroundColor = 'white';
+
+    // Apply styling changes to the container's content
+    const textWhiteElements = container.querySelectorAll('.text');
+    textWhiteElements.forEach(element => {
+        element.style.color = 'black'; // Set text color to black
+    });
+
+    const tableElements = container.querySelectorAll('table');
+    const tableCells = container.querySelectorAll('td, th');
+    const tableRows = container.querySelectorAll('tr');
+
+    tableElements.forEach(table => {
+        table.style.backgroundColor = '#ffffff'; // Set background color to white
+        table.style.color = '#000000'; // Set text color to black
+    });
+
+    tableCells.forEach(cell => {
+        cell.style.backgroundColor = '#ffffff'; // Set background color to white
+        cell.style.color = '#000000'; // Set text color to black
+        cell.style.border = '1px solid black'; // Add a black border
+    });
+
+    tableRows.forEach(row => {
+        row.style.backgroundColor = '#000000'; // Set background color to black
+    });
+
+    const pdfOptions = {
+        margin: 0,
+        filename: '{{cmp1.cname}}_Recurring_Bill_Details.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }, // Adjust format and orientation
+    };
+
+    // Generate PDF from the container
+    html2pdf().from(container).set(pdfOptions).save().then(() => {
+
+        // Restore the original background color
+        container.style.backgroundColor = '#243e54';
+
+        textWhiteElements.forEach(element => {
+            element.style.color = 'white'; // Restore original text color
+        });
+
+        tableCells.forEach(cell => {
+            cell.style.backgroundColor = '#243e54'; // Set background color to white
+            cell.style.color = 'white'; // Set text color to black
+            cell.style.border = '1px solid gray'; // Add a black border
+        });
+
+        // Remove the pdf-background class after generating the PDF
+        container.classList.remove('pdf-background');
+        
+    });
+}
+
+
+
+function shareViaWhatsApp() {
+                    var FromDate = document.getElementById('in1').value;
+                    var ToDate = document.getElementById('in2').value;
+                    // Collect data from the table or any other relevant information
+                    if (FromDate == '' && ToDate == ''){
+                        var tableData = getTableData();// Implement the function to fetch table data
+                        // Create a message to be shared on WhatsApp
+                    var message = "Check out the Purchase Order Details:\n" + tableData;
+
+                    // Create a link with the WhatsApp API format
+                    var whatsappLink = "https://wa.me/?text=" + encodeURIComponent(message);
+
+                    // Open the link in a new tab or window
+                    window.open(whatsappLink, "_blank");
+                    }
+                    else{
+                        var tableData = getFilteredTableData();// Implement the function to fetch table data
+                    
+                    // Create a message to be shared on WhatsApp
+                    var message = "Check out the Purchase Order Details:\n" + tableData;
+
+                    // Create a link with the WhatsApp API format
+                    var whatsappLink = "https://wa.me/?text=" + encodeURIComponent(message);
+
+                    // Open the link in a new tab or window
+                    window.open(whatsappLink, "_blank");
+                }
+                }
+
+
+                function getFilteredTableData() {
+                    var table = document.getElementById('myTable');
+                    var data = "";
+                    var anyRowHidden = false;  // Flag to check if any row is hidden
+
+                    for (var i = 0; i < table.rows.length; i++) {
+                        var row = table.rows[i];
+
+                        // Check if the row is visible (filtered)
+                        if (row.style.display === 'table-row') {
+                            for (var j = 0; j < row.cells.length; j++) {
+                                data += row.cells[j].textContent + "\t";
+                            }
+                            data += "\n";
+                        } else {
+                            anyRowHidden = true;  // Set the flag if any row is hidden
+                        }
+                    }
+
+                    // If no rows are hidden, you don't need to clear the data
+                    if (!anyRowHidden) {
+                        for (var i = 0; i < table.rows.length; i++) {
+                            var row = table.rows[i];
+                            for (var j = 0; j < row.cells.length; j++) {
+                                data += row.cells[j].textContent + "\t";
+                            }       
+                            data += "\n";
+                        }
+                    }
+
+                    return data;
+                }
+
+                function getTableData() {
+                    // Implement this function to fetch and format your table data
+                    // You can iterate through the table rows and cells to collect the necessary information
+                    // Return a formatted string containing the data you want to share
+                    var table = document.getElementById('myTable');
+                    var data = "";
+                    // Example: Iterate through rows and cells
+                    for (var i = 0; i < table.rows.length; i++) {
+                        for (var j = 0; j < table.rows[i].cells.length; j++) {
+                            data += table.rows[i].cells[j].textContent + "\t";
+                        }
+                        data += "\n";
+                    }
+                    return data;
+                }
+
+
+
+
+             
+//                 function exportAsPDF() {
+//     const container = document.getElementById('pdf-card');
+
+//     // Save the original background color
+//     const originalBackgroundColor = container.style.backgroundColor;
+
+//     // Set the container's background color to white
+//     container.style.backgroundColor = 'white';
+
+//     // Apply styling changes to the container's content
+//     const textWhiteElements = container.querySelectorAll('.text');
+//     textWhiteElements.forEach(element => {
+//         element.style.color = 'black'; // Set text color to black
+//     });
+
+//     const tableElements = container.querySelectorAll('table');
+//     const tableCells = container.querySelectorAll('td, th');
+//     const tableRows = container.querySelectorAll('tr');
+
+//     tableElements.forEach(table => {
+//         table.style.backgroundColor = '#ffffff'; // Set background color to white
+//         table.style.color = '#000000'; // Set text color to black
+//     });
+
+//     tableCells.forEach(cell => {
+//         cell.style.backgroundColor = '#ffffff'; // Set background color to white
+//         cell.style.color = '#000000'; // Set text color to black
+//         cell.style.border = '1px solid black'; // Add a black border
+//     });
+
+//     tableRows.forEach(row => {
+//         row.style.backgroundColor = '#000000'; // Set background color to black
+//     });
+
+//     const pdfOptions = {
+//         margin: 0,
+//         filename: '{{cmp1.cname}}_Recurring_Bill_Details.pdf',
+//         image: { type: 'jpeg', quality: 1 },
+//         html2canvas: { scale: 2 },
+//         jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }, // Adjust format and orientation
+//     };
+
+//     // Generate PDF from the container
+//     html2pdf().from(container).set(pdfOptions).save().then(() => {
+
+//         // Restore the original background color
+//         container.style.backgroundColor = '#243e54';
+
+//         textWhiteElements.forEach(element => {
+//             element.style.color = 'white'; // Restore original text color
+//         });
+
+//         tableCells.forEach(cell => {
+//         cell.style.backgroundColor = '#243e54'; // Set background color to white
+//         cell.style.color = 'white'; // Set text color to black
+//         cell.style.border = '1px solid gray'; // Add a black border
+//     });
+//         // Remove the pdf-background class after generating the PDF
+//         container.classList.remove('pdf-background');
+        
+//     });
+// }
+
+
+
+
+
+// $(document).ready(function ($) {
+//     $(document).on('click', '.btn_pdf', function (event) {
+//         console.log('print1');
+//         event.preventDefault();
+
+//         var element = document.getElementById('myTable');
+//         element.style.backgroundColor = '#00000000'; // Set background color to transparent
+//         element.style.color = 'black'; // Set text color to black
+//         var columnelement = document.getElementById('rooww')
+//         columnelement.style.color = 'black';
+        
+
+//         var opt = {
+//             margin: 1,
+//             filename: 'Recurring_bill_report' + '.pdf',
+//             image: { type: 'png', quality: 1.0 },
+//             html2canvas: { scale: 3, useCORS: true, backgroundColor: null , color: 'black' },
+//             jsPDF: { unit: 'in', format: 'a3', orientation: 'portrait' }
+//         };
+
+//         html2pdf().set(opt).from(element).save();
+//     });
+// });
+
+         
+
+
+        
+    
+    </script>
+
+    <!-- <script type="text/javascript">
+
+        $(document).ready(function ($) {
+
+            $(document).on('click', '.btn_print', function (event) {
+                console.log('print1');
+                event.preventDefault();
+
+
+                const pdfCard = document.getElementById('myTable').cloneNode(true);
+
+                // Create a new window for printing
+                const printWindow = window.open('', '');
+                pdfCard.style.color = 'black';
+                pdfCard.style.backgroundColor = 'white';
+                const pageTitle = printWindow.document.createElement('h1');
+                pageTitle.textContent = 'RECURRING BILL REPORTS'; // Replace 'Page Title' with your desired title text
+                pageTitle.style.textAlign = 'center';
+                pageTitle.style.color = 'black';
+
+                // Append the <h1> element to the new window's body
+                printWindow.document.body.appendChild(pageTitle);
+
+                // Append the cloned 'pdf-card' div to the new window
+                printWindow.document.body.appendChild(pdfCard);
+
+                // Ensure the styles are preserved by copying CSS from the original document
+                const stylesheets = document.styleSheets;
+                for (let i = 0; i < stylesheets.length; i++) {
+                    const stylesheet = stylesheets[i];
+                    if (stylesheet.href) {
+                        const link = printWindow.document.createElement('link');
+                        link.rel = 'stylesheet';
+                        link.href = stylesheet.href;
+                        printWindow.document.head.appendChild(link);
+                    }
+                }
+                const table = printWindow.document.querySelector('#pdf-card table'); // Adjust the selector based on your table structure
+                if (table) {
+                    table.style.margin = 'auto';
+                    table.style.width = '100%';
+                }
+
+                // Trigger the print dialog for the new window
+                printWindow.print();
+
+                // Close the new window after printing
+                printWindow.close();
+
+
+            });
+
+        });
+    </script> -->
+
+
+    <script type="text/javascript">
+        function exportAsExcel() {
+            const table = document.getElementById('myTable'); // Replace 'myTable' with your table's ID
+            const wb = XLSX.utils.table_to_book(table);
+
+            XLSX.writeFile(wb, 'recurringbillreports.xlsx');
+        }
+    </script>
+    <br>
+    <br>
+
+
+
+    <div class="card radius-15 print-only" id="pdf-card">
+        <div class="card-body">
+            <div class="container-fluid" id="myTable1">
+
+                <table class="table table-responsive-md mt-4 table-hover table-bordered"
+                    style="background-color: rgba(0, 0, 0, 0.2);" id="myTable">
+                    <thead>
+                        <tr>
+                            <th colspan="7" style="text-align: center;" id="rooww">Recurring Bill Details</th>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th style="text-align: center;" id="rooww">Date</th>
+                            <th style="text-align: center;" id="rooww">Due Date</th>
+                            <th style="text-align: center;" id="rooww">Profile Name</th>
+                            <th style="text-align: center;" id="rooww">RB number</th>
+                            <th style="text-align: center;" id="rooww">Vendor Name</th>
+                            <th style="text-align: center;" id="rooww">Amount</th>
+                            <th style="text-align: center;" id="rooww">Balance</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in recur %}
+                        <tr class="text-center" >
+                            <td id="rooww">{{i.start_date}}</td>
+                            <td id="rooww">{{i.end_date}}</td>
+                            <td id="rooww">{{i.profile_name}}</td>
+                            <td id="rooww">{{i.billno}}</td>
+                            <td id="rooww">{{i.vendor_name}}</td>
+                            <td id="rooww">{{i.paid_amount}}</td>
+                            <td id="rooww">{{i.balance}}</td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                    
+                </table>
+
+                <div>
+                    <span style="font-weight: 600; color: white;">Total Count :</span> <label id="countDisplay">{{defaultCount}}</label> <br>
+                    <span style="font-weight: 600; color: white;">Total Amount:</span> <label id="amountDisplay">{{defaultAmount}}</label>
+                </div>
+                <br>
+
+            </div>
+        </div>
+    </div>
+<script>
+    
+
+
+
+
+
+function filterTable() {
+    const table = document.getElementById('myTable');
+    const rows = table.getElementsByTagName('tr');
+    let count = 0;
+    let totalAmount = 0;
+
+    
+    const fromDate = new Date(document.getElementById('in1').value);
+    const toDate = new Date(document.getElementById('in2').value);
+    if(fromDate === '' || toDate === ''){
+        
+    }else{
+        var formattedDate1 = toDate.toISOString().split('T')[0];
+        var formattedDate2 = fromDate.toISOString().split('T')[0];
+    }
+    
+
+    document.getElementById("date1").value = formattedDate2;
+    document.getElementById("date2").value = formattedDate1;
+
+    // Set the time component of toDate to the end of the day
+    toDate.setHours(23, 59, 59, 999);
+
+    // Check if only one date field is filled
+    if (fromDate && !toDate) {
+        for (let i = 2; i < rows.length; i++) {
+            const row = rows[i];
+            const dateCell = new Date(row.cells[0].textContent); // Assuming date is in the first column
+            const amountCell = parseFloat(row.cells[5].textContent); // Assuming amount is in the sixth column
+
+            // Set the time component of dateCell to the end of the day
+            dateCell.setHours(23, 59, 59, 999);
+
+            if (fromDate <= dateCell) {
+                count = count + 1;
+                totalAmount += amountCell;
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    } else if (fromDate && toDate) {
+        // Both fromDate and toDate are filled
+        for (let i = 2; i < rows.length; i++) {
+            const row = rows[i];
+            const dateCell = new Date(row.cells[0].textContent); // Assuming date is in the first column
+            const amountCell = parseFloat(row.cells[5].textContent); // Assuming amount is in the sixth column
+
+            // Set the time component of dateCell to the end of the day
+            dateCell.setHours(23, 59, 59, 999);
+
+            if (fromDate <= dateCell && dateCell <= toDate) {
+                count = count + 1;
+                totalAmount += amountCell;
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    } else {
+        // Both fromDate and toDate are not filled, show the entire table
+        for (let i = 2; i < rows.length; i++) {
+            const row = rows[i];
+            row.style.display = 'table-row';
+        }
+    }
+
+    // Update the count and total amount in HTML
+    document.getElementById('countDisplay').textContent = count;
+    document.getElementById('amountDisplay').textContent = totalAmount.toFixed(2);
+}
+
+
+
+
+</script>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+
+
+
+
+
+<script>
+    var fromDate;
+    $('#in1').on('change', function () {
+        fromDate = $(this).val();
+        $('#in2').prop('min', function () {
+            return fromDate
+        })
+        var tdate = new Date(fromDate)
+        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("d1").innerHTML = tdate.toLocaleDateString(undefined, options);
+    })
+    var toDate;
+    $('#in2').on('change', function () {
+        toDate = $(this).val();
+        $('#in1').prop('max', function () {
+            return toDate
+        })
+        var tdate = new Date(toDate)
+        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("d2").innerHTML = "  To  " + tdate.toLocaleDateString(undefined, options);
+    })
+
+//     function printTable() {
+//     const tableToPrint = document.getElementById('myTable').cloneNode(true);
+
+//     // Set background color and text color for printing
+//     style.backgroundColor = 'white'
+//     tableToPrint.style.backgroundColor = 'white';
+//     const textElements = tableToPrint.querySelectorAll('th, td');
+//     textElements.forEach(element => {
+//         element.style.color = 'black';
+//     });
+
+//     // Create a new window for printing
+//     const printWindow = window.open('', '_blank');
+
+//     // Append the modified table to the new window's body
+//     printWindow.document.body.appendChild(tableToPrint);
+
+//     // Trigger the print dialog for the new window
+//     printWindow.print();
+
+//     // Close the new window after printing
+//     printWindow.close();
+// }
+
+function exportAsPDF() {
+    const container = document.getElementById('pdf-card');
+
+    // Save the original background color
+    const originalBackgroundColor = container.style.backgroundColor;
+
+    // Set the container's background color to white
+    container.style.backgroundColor = 'white';
+
+    // Apply styling changes to the container's content
+    const textWhiteElements = container.querySelectorAll('.text');
+    textWhiteElements.forEach(element => {
+        element.style.color = 'black'; // Set text color to black
+    });
+
+    const tableElements = container.querySelectorAll('table');
+    const tableCells = container.querySelectorAll('td, th');
+    const tableRows = container.querySelectorAll('tr');
+
+    tableElements.forEach(table => {
+        table.style.backgroundColor = '#ffffff'; // Set background color to white
+        table.style.color = '#000000'; // Set text color to black
+    });
+
+    tableCells.forEach(cell => {
+        cell.style.backgroundColor = '#ffffff'; // Set background color to white
+        cell.style.color = '#000000'; // Set text color to black
+        cell.style.border = '1px solid black'; // Add a black border
+    });
+
+    tableRows.forEach(row => {
+        row.style.backgroundColor = '#000000'; // Set background color to black
+    });
+
+    const pdfOptions = {
+        margin: 0,
+        filename: '{{cmp1.cname}}_Recurring_Bill_Details.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }, // Adjust format and orientation
+    };
+
+    // Generate PDF from the container
+    html2pdf().from(container).set(pdfOptions).save().then(() => {
+
+        // Restore the original background color
+        container.style.backgroundColor = '#243e54';
+
+        textWhiteElements.forEach(element => {
+            element.style.color = 'white'; // Restore original text color
+        });
+
+        tableCells.forEach(cell => {
+        cell.style.backgroundColor = '#243e54'; // Set background color to white
+        cell.style.color = 'white'; // Set text color to black
+        cell.style.border = '1px solid gray'; // Add a black border
+    });
+        // Remove the pdf-background class after generating the PDF
+        container.classList.remove('pdf-background');
+        
+    });
+}
+
+
+
+    function printTable() {
+        // Clone the table element
+        const tableToPrint = document.getElementById('myTable').cloneNode(true);
+
+        // Set background color and text color for printing
+        tableToPrint.style.backgroundColor = 'white';
+        const textElements = tableToPrint.querySelectorAll('th, td');
+        
+        // Set a common width for all columns
+        const columnWidth = 100 / tableToPrint.rows[0].cells.length + '%';
+        
+        // Iterate over the columns and set the width for each cell
+        for (let i = 0; i < tableToPrint.rows.length; i++) {
+            const cells = tableToPrint.rows[i].cells;
+            for (let j = 0; j < cells.length; j++) {
+                cells[j].style.width = '14%';
+                // cells[j].style.height = '2px';
+                cells[j].style.color = 'black';
+                cells[j].style.backgroundColor = 'white';
+                cells[j].style.border = '1px solid black';
+                cells[j].style.fontSize = '20px';
+            }
+        }
+
+        // Create a new window for printing
+        const printWindow = window.open('', '_blank');
+
+        // Set the background color and styles for centering
+        printWindow.document.body.style.backgroundColor = 'white';
+        printWindow.document.body.style.margin = '0'; // Remove default margin
+        // printWindow.document.body.style.display = 'flex';
+        printWindow.document.body.style.justifyContent = 'center';
+
+        // Set the width of the table to 100%
+        tableToPrint.style.width = '100%';
+
+        // Append the modified table to the new window's body
+        printWindow.document.body.appendChild(tableToPrint);
+
+        // Trigger the print dialog for the new window
+        printWindow.print();
+
+        // Close the new window after printing
+        printWindow.close();
+    }
+
+
+
+
+
+</script>
+{% endif %}
+{% endblock %}

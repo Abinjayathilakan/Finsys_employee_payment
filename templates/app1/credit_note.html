@@ -20,10 +20,10 @@
             <div class="card radius-15">
                 <div class="card-body">
                     <div class="card-title">
-                        <center><h2 class="mb-0">Credit Note</h2></center>
+                        <center><h2 class="mb-0">Credit Note Details</h2></center>
                         <hr>
                         <div class="btn-group col-md-2" style="float: right;">
-                            <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
+                            <a class="btn btn-outline-info text-grey" id="exportBtn">Export To Excel</a>
                         </div>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                         
                         <div class="col-md-2" style="width: 40%; margin-top: 9px;">
                             <div class="dropdown">
-                                <button type="button" class="btn btn-outline-info   text-grey fas fa-sort"
+                                <button type="button" class="btn btn-outline-info   text-grey fa fa-sort"
                                         data-toggle="dropdown"> Sort by
                                 </button>
                                 <div class="dropdown-menu " style="background-color: black;">
@@ -49,8 +49,8 @@
                                 <!-- <a class="dropdown-item  " href="{% url 'credit_num_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Credit Number <icon class=" fas fa-arrow-up"></icon></a> -->
 
-                                <a class="dropdown-item " href="{% url 'credit_date_asc' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date   </a>
+                                <!-- <a class="dropdown-item " href="{% url 'credit_date_asc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date   </a> -->
                                 <!-- <a class="dropdown-item " href="{% url 'credit_date_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date  </a> -->
 
@@ -64,10 +64,18 @@
                                 </div> 
                             </div>
                         </div>
-                        <div class="col-md-5"></div>
-                        <div class="col-md-2">
-                            <a href="{% url 'addpurchasecredit' %}" >
-                                <button id="myBtn" class="btn btn-outline-info text-grey fas fa-plus" style="margin-top: 8px;">&nbsp;Add Credit Note</button>
+                        <div class="col-md-4"></div>
+                        <div class="btn-group col-md-3" >
+                            <a class="btn btn-outline-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                role="button" style="margin-top: 8px;color: white;">Filter By
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item"  style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'credit_note' %}">All</a>
+                                <a class="dropdown-item"  style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'credit_note_filter_draft' %}">Draft</a>
+                                <a class="dropdown-item"  style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'credit_note_filter_save' %}">Save</a>
+                            </div>
+                            <a href="{% url 'addpurchasecredit' %}" id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="margin-top: 8px;text-decoration: none;">New
+                                <!-- <button id="myBtn" class="btn btn-outline-info text-grey fas fa-plus" style="margin-top: 8px;">&nbsp;Add Credit Note</button> -->
                             </a>
                         </div>
                             
@@ -82,19 +90,22 @@
                                     <th class="text-uppercase">Credit Number</th>
                                     <th class="text-uppercase">Customer</th>
                                     <th class="text-uppercase">Email ID</th>
-                                    <th class="text-uppercase">Tax Amount</th>
                                     <th class="text-uppercase">Amount</th>
+                                    <th class="text-uppercase">Status</th>
+                                    <th class="text-uppercase">Balance</th>
+
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for p in pdebit %}
                                     <tr  class="table-row " >
                                         <td><a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} "> {{ p.creditdate |date:'d-m-Y' }}</a></td>
-                                        <td > <a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} "> CN - {{ p.credit_no }}</a></td>
+                                        <td > <a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} ">{{ p.credit_no }}</a></td>
                                         <td ><a class="idsr" style="list-style: none;"  href=" {% url 'viewcredit'  p.screditid %}">{{ p.cust }}</a></td>
                                         <td ><a class="idsr" style="list-style: none;"  href=" {% url 'viewcredit'  p.screditid %}">{{ p.email }}</a></td>
-                                        <td><a class="idsr" style="list-style: none;"  href=" {% url 'viewcredit'  p.screditid %}"> {{ p.taxamount }}</a></td>
                                         <td><a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} "> {{ p.grandtotal }}</a></td>
+                                        <td><a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} "> {{ p.status }}</a></td>
+                                        <td><a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} "> {{ p.balance }}</a></td>
                                     </tr> 
                                 {% endfor %}
                             </tbody>
@@ -104,6 +115,20 @@
             </div>
         </div>
         <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
+        <script>
+            document.getElementById("exportBtn").addEventListener("click", function () {
+            const Table = document.getElementById("table");
+            const ws = XLSX.utils.table_to_sheet(Table);
+            ws['!cols'] = [{ wch: 15 },{ wch: 15 },{ wch: 15 },{ wch: 15 },{ wch: 15 },{ wch: 15 }];
+            ws['!rows'] = [{ hpt: 30 }];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+            XLSX.writeFile(wb, "credit_note.xlsx"); 
+          });
+
+        </script>
 
 
         <script>

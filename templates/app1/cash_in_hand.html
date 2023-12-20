@@ -14,22 +14,37 @@
     <div class="card radius-15 h-20">
         <div class="row">
             <div class="col-md-12">
-                <center><h2 class="mt-3">CASH</h2></center>
+                <center><h2 class="mt-3">CASH IN HAND</h2></center>
                 
                 <hr style="width:95%">
+                
             </div>
+            
+        </div>
+        <div class="col-md-4 mt-5" style="margin-left: 1000px;">
+            <!-- <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
+                                    data-toggle="dropdown">Filter by
+                            </button> -->
+            <button type="button" class="btn btn-outline-info  text-grey"><a href="{% url 'cash_statement' %}">STATEMENT</a>
+            </button>
+            <button type="button" class="btn btn-outline-info text-grey" >
+                <a href="{% url 'add_cash_adjust' %}">Add Cash</a>
+            </button>     
+           
+              
         </div>
     </div>
    
-   
+   <!-- ffff -->
 <div class="card radius-15">
     <div class="card-body">
         <div class="container-fluid">
             <div class="row">
                 <div class="col form-inline d-flex">
-                    <p class="form-inline d-flex mt-2 ml-5" style="font-size: large;"><span>  </span> cash :<h3 class="form-inline">{{cmp1.cash}}</h3> </p>
+                    <p class="form-inline d-flex mt-2 " style="font-size: large;margin-left: 1000px;"><span>  </span> Balance : <h5 class="form-inline">{{cmp1.cash}}</h5> </p>
                  </div>
             </div>
+            
             <div class="row">
                
                 
@@ -46,14 +61,24 @@
                            
                     
                                 </div>
+                                
                             </div>
+                            
                           </div>
-                          <div class="col-md-2"></div>
+                          <div class="col-md-4">
+                            <form method='POST' id="dateFilterForm">
+                                {% csrf_token %}
+                                <input type="date" id="start_date" name='sdate' value="{{ today_date }}">
+                                <span class="ml-2 mr-2 mt-2"> TO </span>
+                                <input type="date" id="end_date" name='edate' value="{{ today_date }}">
+                                <input type="button" value='View' onclick="filterByDate()">
+                            </form>
+                        </div>
                           <div class="col-md-2">
                           <div class="dropdown">
-                            <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
+                            <!-- <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
                                     data-toggle="dropdown">Filter by
-                            </button>
+                            </button> -->
                             <div class="dropdown-menu" style="background-color: black;">
     <a class="dropdown-item" href="javascript:void(0);" onclick="sortTable(0, 'asc')"
        style="height: 40px; font-size: 15px; color: white;">Name Ascending</a>
@@ -64,8 +89,8 @@
                         </div>
                     </div>
                   <div class="col-md-2">
-                    <button type="button" class="btn btn-outline-info  text-grey"><a href="{% url 'cash_statement' %}">STATEMENT</a>
-            </button>
+                    <!-- <button type="button" class="btn btn-outline-info  text-grey"><a href="{% url 'cash_statement' %}">STATEMENT</a>
+            </button> -->
                     
                   </div>
                  
@@ -73,9 +98,9 @@
                 
             <div class="col-md-2">
                 <div class="dropdown">
-                    <button type="button" class="btn btn-outline-info text-grey" >
+                    <!-- <button type="button" class="btn btn-outline-info text-grey" >
                         <a href="{% url 'add_cash_adjust' %}">Add Cash</a>
-                    </button>
+                    </button> -->
                 </div>
             </div>
             
@@ -86,21 +111,29 @@
             <div class="table-responsive">
                 <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
                     <thead>
+                        
+                        <th>DATE</th>
                         <th >TYPE</th>
                         <th >NAME</th>
-                        <th>DATE</th>
-                        <th >DESCRIPTION</th>
-                        <th >BALANCE</th>
+                        <!-- <th >DESCRIPTION</th> -->
+                        <th >AMOUNT</th>
                         <th>ACTION</th>
                     </thead>
                     <tbody>
                         {% for i in toloan %}
                         <tr>
+                            
+                            <td>{{i.loan_date}}</td>
                             <td>{{i.bank_type}}</td>
                             <td>{{i.type}}</td>
-                            <td>{{i.loan_date}}</td>
-                            <td>{{i.loan_desc}}</td>
-                            <td>{{i.loan_amount}}</td>
+                            <!-- <td>{{i.loan_desc}}</td> -->
+                            <td>
+                                {% if i.bank_type == "EMI PAID" %}
+                                    -{{ i.loan_amount }}
+                                {% else %}
+                                    {{ i.loan_amount }}
+                                {% endif %}
+                            </td>
                             <td>
                                 <div class="dropdown">
                                     <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -114,11 +147,18 @@
                         {% endfor %}
                         {% for i in getloan %}
                         <tr>
+                            
+                            <td>{{i.loan_date}}</td>
                             <td>{{i.bank_type}}</td>
                             <td>{{i.type}}</td>
-                            <td>{{i.loan_date}}</td>
-                            <td>{{i.loan_desc}}</td>
-                            <td>{{i.loan_amount}}</td>
+                            <!-- <td>{{i.loan_desc}}</td> -->
+                            <td>
+                                {% if i.bank_type == "EMI PAID" %}
+                                    -{{ i.loan_amount }}
+                                {% else %}
+                                    {{ i.loan_amount }}
+                                {% endif %}
+                            </td>
                             <td>
                                 <div class="dropdown">
                                     <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
@@ -132,6 +172,7 @@
                         {% endfor %}
                 {% for a in bnk %}
                         <tr>
+                            <td>{{a.cash_date}}</td>
                             {% if a.type != 'OPENING BAL'  %}
                             {% if a.cash_adjust == 'ADD CASH' %}
                                 <td>  {{a.cash_adjust }}</td>
@@ -139,10 +180,10 @@
                                 <td> {{a.cash_adjust }}</td>
                             {% endif %}
                             <td>{{a.bank_type}}</td>
-                           <td>{{a.cash_date}}</td>
-                            <td>{{a.cash_description}}</td>
+                           
+                            <!-- <td>{{a.cash_description}}</td> -->
                             {% if a.cash_adjust == 'ADD CASH' %}
-                            <td>+ {{a.cash_cash}}</td>
+                            <td> {{a.cash_cash}}</td>
                             {% elif a.cash_adjust == 'REDUCE CASH' %}
                             <td>-{{a.cash_cash}}</td>
                             {% endif %}
@@ -170,6 +211,7 @@
                             {% endif %}
                 {% endif %}
                         </tr>
+                       
    
 <script>
 
@@ -221,11 +263,137 @@
                         
                             
                      {% endfor %}
+                     <!-- {% for a in pordr %}  
+                     <tr>
                         
-                  
-                  
-                   
-                  
+                        <td>{{a.date}}</td>
+                        <td>PURCHASE ORDER</td>
+                        <td>{{a.vendor_name}}</td>
+                        <td>-{{a.grand_total}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                <div class="dropdown-menu">
+
+                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}  -->
+                    <!-- {% for a in sordr %}
+                    <tr>
+                        
+                        <td>{{a.saledate}}</td>
+                        <td>SALES ORDER</td>
+                        <td>{{a.salename}}</td>
+                        <td>{{a.salestotal}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                <div class="dropdown-menu">
+
+                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                         
+                    </tr>
+                    {% endfor %} -->
+                    <!-- <tr>
+                        {% for a in empln %}
+                        <td>{{a.LoanDate}}</td>
+                        <td>EMPLOYEE LOAN</td>
+                        <td>{{a.employee.firstname}}</td>
+                        <td>-{{a.LoanAmount}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                <div class="dropdown-menu">
+
+                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                        {% endfor %} 
+                    </tr> -->
+                    <!-- {% for a in payrec %}
+                    <tr>
+                        
+                        <td>{{a.paymdate}}</td>
+                        <td>PAYMENT RECEIVED</td>
+                        <td>{{a.customer}}</td>
+                        <td>{{a.balance}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                <div class="dropdown-menu">
+
+                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %} -->
+                    <!-- {% for a in bill %}
+                    <tr>
+                        
+                        <td>{{a.date}}</td>
+                        <td>BILL</td>
+                        <td>{{a.vendor_name}}</td>
+                        <td>-{{a.paid_amount}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                <div class="dropdown-menu">
+
+                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %} 
+                    {% for a in dbtnt %}
+                    <tr>
+                        
+                        <td>{{a.debitdate}}</td>
+                        <td>DEBIT NOTE</td>
+                        <td>{{a.vendor}}</td>
+                        <td>{{a.paid_amount}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                <div class="dropdown-menu">
+
+                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                       
+                    </tr>
+                    {% endfor %} 
+                    {% for a in rcrbl %}
+                    <tr>
+                       
+                        <td>{{a.start_date}}</td>
+                        <td>RECURRING BILL</td>
+                        <td>{{a.vendor_name}}</td>
+                        <td>-{{a.paid_amount}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                <div class="dropdown-menu">
+
+                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal" data-target="#deleteModal{{ a.id }}">Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}  -->
                     </tbody>
                 </table>
             </div>
@@ -354,6 +522,31 @@
             row.style.display = foundMatch ? 'table-row' : 'none';
         });
     });
+</script>
+<script>
+    function filterByDate() {
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+
+        const tableRows = document.querySelectorAll('#tabletobe tbody tr');
+
+        tableRows.forEach(row => {
+            const dateCell = row.querySelector('td:first-child'); // Assuming date is the first column
+
+            if (dateCell) {
+                const rowDate = dateCell.textContent;
+                row.style.display = isDateInRange(rowDate, startDate, endDate) ? 'table-row' : 'none';
+            }
+        });
+    }
+
+    function isDateInRange(date, startDate, endDate) {
+        const currentDate = new Date(date);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        return currentDate >= start && currentDate <= end;
+    }
 </script>
 
 {% endblock %}

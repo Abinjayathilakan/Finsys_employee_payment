@@ -11,11 +11,41 @@
             background-color: rgba(0,0,0,.4) !important;
             color: #fff;
         }
+
+        .form-control.select2.vendor,
+    .select2-container--default .select2-selection--single {
+        background-color: #243e54 !important;
+        color: white !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: white !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        background-color: black !important;
+        color: white !important;
+    }
+    .select2-container--default .select2-results__option {
+            color: white;
+            background-color: black;
+
+
+        }
+        .select2-container--default .select2-selection--single{
+    padding:6px;
+    height: 35px!important;
+    
+    
+    
+    font-size: 1.2em;  
+    
+}
+
     </style>
     <script>
         $(':input[readonly]').css({'background-color':'rgba(0,0,0,.4)'});
     </script>
     <script>
+       
         $(document).ready(function(){
             var roinc = parseInt(document.getElementById("tab_logic").rows.length)-2
             $('#addrow').click(function(){
@@ -67,8 +97,9 @@
                                 <input type="text" name='hsn[]' id="hsn1${roinc}" placeholder='Enter HSN Code' class="form-control"/>
                             </td>                
                             <td>
-                                <input type="number" name='quantitys'   style='margin-top:21px' placeholder='Enter Qty' id="quantitys${roinc}" class="form-control quty" hidden >
-                                <input type="number" name='quantity[]' onchange="qtychange1(this)" placeholder='Enter Qty' id="qty1${roinc}" class="form-control qty" step=0 min=0>
+                                <input type="number" name='quantitys'  style='margin-top:21px' placeholder='Enter Qty' id="quantitys${roinc}" class="form-control quty" hidden >
+                                <input type="number" id="reducedQty1${roinc}" value="" hidden>
+                                <input type="number" name='quantity[]' onchange="qtychange2(this)" placeholder='Enter Qty' id="qty1${roinc}" class="form-control qty" > 
                                 <div><span>Available Qty :</span> <span id="qtyspan${roinc}"class='text-muted'></span></div>
                                 </td>                
                             <td>
@@ -124,7 +155,24 @@
                 // $('#addr0'+row_id+'').remove();
                 // calc()
             });
+
+            $(document).on('change', '.tax', function() {
+                var selectedTaxValue = parseFloat($(this).val());
+                var inputTaxValue = parseFloat($(this).closest('tr').find('.taxs').val());
+                var vid = $('#billno').val();
+               console.log(vid)
+
+                // Check if the "billno" field is empty
+                if (vid === "") {
+                    return;        // Exit the function and do not show the alert
+                }
+
+                if (selectedTaxValue !== inputTaxValue) {
+                    alert("Selected tax is not the same as bill tax.");
+                }
+            });
     
+            $('.select2').select2();
             var place = document.getElementById('plosu').value;
             $(document).on('click','#product',function(){
                 select = $('#product').val();
@@ -1038,9 +1086,73 @@
                                 <div class="col-md-5 mt-3">
                                     
                                         <label for="validationCustom01">Select Vendor</label>
-                                        <input type="text" value="{{ pdebt.vendor }}" name="vendor" class="form-control">
+                                        <!-- <input type="text"  name="vendor" class="form-control"> -->
+                                        <select class="form-control select2 vendor " data-width="100%" id="selected" style="background-color: #243e54; color: white;">
+                                            <option selected disabled value="{{ pdebt.vendor }}" hidden> {{ pdebt.vendor }}</option>
+                                            {% for v in vndr %}
+                                            <option value="{{ v.firstname }} {{ v.lastname }}" data-tokens="{{ v.firstname }} {{ v.lastname }}" >{{ v.firstname }} {{ v.lastname }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        
+                                          <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
+                                          <!-- Include Select2 -->
+                                         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+                                        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" ></script>
+                                        
+                                        
+                                        
+                                        <script src="https://code.jquery.com/jquery-3.6.4.min.js" ></script>
+                                        
+                                        
+                                        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" ></script>
+                                        
+
                                     
                                 </div>
+
+
+                                
+ <script>
+    $('.select2').select2();
+    
+    console.log("select is 'select2'");
+
+    $('#selected').on('change', function() {
+                console.log('hello')
+                
+                select = $('#selected').val();
+                $('#billno').val('');
+                $.ajax({
+                type: "GET",
+                url: "{% url 'getvendordata' %}",
+                data: {
+                    id: select
+                }
+                }).done(function(response) {
+                var json_data = JSON.parse(response);
+                for (key in json_data) {
+                    console.log(json_data[key]['email'])
+                    document.getElementById('email').value = json_data[key]['email'];
+                    document.getElementById('mailaddr').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
+                    document.getElementById('plosu').value = json_data[key]['sourceofsupply'];
+                    document.getElementById('gst_type').value = json_data[key]['gsttype'];
+                    document.getElementById('gst_num').value = json_data[key]['gstin'];
+                console.log(json_data[key]['vendorid']);
+                
+                reloadbill(json_data[key]['vendorid']) ;
+                }
+                console.log(json_data);
+                
+                })
+                
+
+            })
+           
+
+
+</script>   
+
+
                                 <div class="col-md-5 mt-3">
                                     <label>Email</label>&nbsp;
                                     <input type="text" id="email" name="email" value="{{ pdebt.email }}" class="form-control">
@@ -1051,9 +1163,24 @@
                                     <label for="validationCustom02">Billing address</label>
                                     <textarea class="form-control" name="address" rows="5" id="mailaddr">{{ pdebt.address }}</textarea>
                                 </div>
+                                <div class="col-md-5 mt-3"></div>
+                                <div class="col-md-5 mt-3">
+                                    <label for="validationCustom02">GST Treatment</label>
+                                    
+                                    <input type="text" class="form-control" name="gst_type" id="gst_type" value="{{ pdebt.gsttype }}" required>
+                                </div>
+                                <div class="col-md-5 mt-3">
+                                    <label for="validationCustom02">GST Number</label>
+                                    
+                                    <input type="text" class="form-control" name="gst_num" id="gst_num" value="{{ pdebt.gstnumber }}" required>
+                                </div>
                                 <div class="col-md-5 mt-3">
                                     <label for="validationCustom02">Debit Note Date</label>
                                     <input type="date" class="form-control" value="{{ pdebt.debitdate| date:'Y-m-d' }}" name="debitdate">
+                                </div>
+                                <div class="col-md-5 mt-3">
+                                    <label>Debit Note Number</label><span class="text-danger" id="dangerdiv" style="display: none;"><span class="text-white"> (</span>This number is not continous <span class="text-white">)</span></span>
+                                    <input type="text" id="deb_no"  name="debit_no"  value="{{ pdebt.debit_no }}" class="form-control">
                                 </div>
                             </div>
                             <div class="row">
@@ -1107,10 +1234,7 @@
                                         <option value="{{ pdebt.billno }}">{{ pdebt.billno }}</option>
                                     </select>
                                 </div>
-                                <div class="col-md-4 mt-3">
-                                    <label>Debit Note Number</label>
-                                    <input type="text" id="" name="debit_no" value="{{ pdebt.debit_no }}" class="form-control">
-                                </div>
+                                
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -1158,7 +1282,7 @@
                                         <td>{{forloop.counter}}</td>
                                         <td style="width: 20%;">
                                             <div class="d-flex">
-                                                <select name='items[]' id="product{{forloop.counter}}" class="form-control">
+                                                <select name='items[]' id="product{{forloop.counter}}" class="form-control select2">
                                                     <option selected>{{pro.items}}</option>
                                                     {% for i in item %}
                                                         <option value="{{ i.name }}">
@@ -1174,8 +1298,9 @@
                                             class="form-control hsn"/>
                                         </td>
                                         <td>
-                                            <input type="number" name='quantitys'   style='margin-top:21px' placeholder='Enter Qty' id="quantitys" class="form-control quty" hidden >
-                                            <input type="number" name='quantity[]' value="{{pro.quantity}}"  onchange="qtychange1(this)" style="margin-top: 21px;" placeholder='Enter Qty' id="qty1{{forloop.counter}}" class="form-control qty" step=0 min=0>
+                                            <input type="number" name='quantitys'   style='margin-top:21px' placeholder='Enter Qty' id="quantitys"   class="form-control quty"hidden>
+                                            <input type="hidden" id="reducedQty1" value="" hidden>
+                                            <input type="number" name='quantity[]' value="{{pro.quantity}}"  onchange="qtychange1(this)" style="margin-top: 21px;" placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
                                                 <div><span>Available Qty :</span> <span id="qtyspan"class=''></span></div>
                                             
 
@@ -1232,24 +1357,37 @@
                         <div class="col-md-6">
                             <label for="">Payment Type</label>
                             <div class="d-flex">
-                                <select class="form-control" name="paytype" id="paytype" required style="width:70%;">
+                                <select class="form-control my-select" name="paytype" id="pay_method" required style="width:70%;">
 
                                     {% if bank %}
-                                    <option value="{{bank.id}}" hidden>{{bank.bankname}}</option>
+                                    <option value="{{i.bankname}}" hidden>{{bank.bankname}}</option>
                                     {% else %}
                                     <option value="{{pdebt.payment_type}}" hidden>{{pdebt.payment_type}}</option>
                                     {% endif %}
                                     
+                                    
+
+                                    <option value="cash">Cash</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="upi">UPI</option>
                                     {% for i in banks %}
-                                    <option value="{{i.id}}">{{i.bankname}}</option>
+                                    <option value="{{i.bankname}}">{{i.bankname}}</option>
                                     {% endfor %}
-                                    <option value="Cash">Cash</option>
-                                    <option value="Cheque">Cheque</option>
-                                    <option value="Creadit Card/Debit Card">Creadit Card/Debit Card</option>
-                                    <option value="Paypal/Other service">Paypal/Other service</option>
                                 </select>
                                 
                             </div> 
+                            <div class="col-md-9 mt-2" style="display:none;margin-left: -1rem;"  id="chequediv">
+                                <label class="col-form-label" >Cheque No</label>
+                                <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque No" value="">
+                            </div>
+                            <div class="col-md-9 mt-2"  style="display:none;margin-left: -1rem;" id="upidiv">
+                                <label class="col-form-label" >UPI ID</label>
+                                <input type="text" class="form-control" name="upi_id" id="upi_id" placeholder="Enter UPI ID">
+                            </div>
+                            <div class="col-md-9 mt-2"  style="display:none;margin-left: -1rem;" id="bnkdiv">
+                                <label class="col-form-label" >Bank Account</label>
+                                <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" value="" readonly>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -1392,7 +1530,7 @@
                                         <p id="error-message" class="mt-1" style="color: red;"></p>
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
-                                </div>
+                                </div> 
                                 {% endif %}
                                 <div class="row container-fluid  p-2 m-0">
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">Balance Due</label></div>
@@ -1953,6 +2091,32 @@
             
         });
     </script>
+    <script>
+        function qtychange2(input) {
+            // Your JavaScript function code here
+            var enteredQty = parseFloat(input.value);
+            var row_id = input.id.replace("qty1", "");
+            var availableQtyElement = document.getElementById("quantitys" + row_id);
+            var availableQty = parseFloat(availableQtyElement.value);
+            var reducedQtyElement = document.getElementById("reducedQty1" + row_id);
+            var remainingQty = (availableQty - enteredQty)-1;
+            reducedQtyElement.value = remainingQty;
+
+            if (isNaN(enteredQty) || enteredQty < 0) {
+                alert("Please enter a valid quantity.");
+                input.value = 0;
+            } else if (enteredQty > remainingQty) {
+                alert("Entered quantity is greater than purchasebill quantity.");
+            } else {
+               
+                
+                
+                // Additional logic if needed
+            }
+        }
+    </script>
+
+
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
@@ -2010,52 +2174,77 @@
 
     </script>
 
+
+
+#payment method
 <script>
-    function qtychange1(input) {
-var enteredQty = parseFloat(input.value);
-var availableQty = parseFloat(document.getElementById("quantitys2").value);
+    $(document).ready(function() {
+      $("#pay_method").change(function() {
+        var x=$('#pay_method').val();
+        if(x==='cash'){
+          $('#chequediv').hide()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+        }else if(x==='cheque'){
+          $('#chequediv').show()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('upi_id').value=null
+        }else if(x==='upi'){
+          $('#upidiv').show()
+          $('#bnkdiv').hide()
+          $('#chequediv').hide()
+          document.getElementById('cheque_id').value=null
+        }else{
+          $('#bnkdiv').show()
+          $('#chequediv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
 
-if (isNaN(enteredQty) || enteredQty < 0) {
-    alert("Please enter a valid quantity.");
-    input.value = 0;
-    return;
-}
-
-if (enteredQty > availableQty) {
-    alert("Entered quantity greaterthan purchasebill quantity");
-    
-}
-}
-</script>
-
-
- 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    // Get the relevant elements
-    var taxSelect = document.getElementById("tax1");
-    var taxInput = document.getElementById("taxs");
-
-    // Add an event listener to the tax select element
-    taxSelect.addEventListener("change", function () {
-        // Get the selected tax value from the select element
-        var selectedTaxValue = parseFloat(taxSelect.value);
-
-        // Get the tax value from the input field
-        var inputTaxValue = parseFloat(taxInput.value);
-
-        // Check if the selected tax value is greater than the input tax value
-        if (selectedTaxValue > inputTaxValue) {
-            // Show an alert message
-            alert("Selected tax is greater than the input tax value. ");
-
-            // You can also reset the tax value to its previous value here if needed
-           // Clear the selection
+          $.ajax({
+              type: "GET",
+              url: "{% url 'bankdata' %}",
+              data: {
+                  id: x,
+              },
+              success: function (response) {
+                  data = response.bank
+                  document.getElementById('cheque_id').value=null
+                  document.getElementById('upi_id').value=null
+                  document.getElementById("bnk_id").value = data
+              }
+          });
         }
+      });
     });
-});
-
 </script>
+
+
+
+<script type="text/javascript">
+    $(document).on('change','#deb_no', function() {
+        deb = '{{deb_no}}'
+        deb_value = $('#deb_no').val();
+        if(deb_value != deb){
+            document.getElementById('dangerdiv').style.display = 'block';
+        }else{
+            document.getElementById('dangerdiv').style.display = 'none';
+        }
+        var deb_list = "{{ purdebit}}";
+        deblist = deb_list.split(",");
+        for(let i=0; i<deblist.length; i++){
+            if (deb_value == deblist[i]){
+                alert('Debit Number already in use.')
+                document.getElementById('dangerdiv').style.display = 'none';
+                document.getElementById('deb_no').value = ''
+            }
+        }
+    })
+</script>
+
 
      
   

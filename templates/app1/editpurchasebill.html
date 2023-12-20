@@ -12,7 +12,107 @@
         }
     </style>
     <script>
+        $(document).ready(function(){
+            $(".toggler").click(function(e){
+                e.preventDefault();
+                $('.cat'+$(this).attr('data-prod-cat')).toggle();
+            });
+        });
+    </script>
+    <script>
         $(':input[readonly]').css({'background-color':'rgba(0,0,0,.4)'});
+    </script>
+    <script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>    
+    <script>
+        function insertValue() {
+            var select = document.getElementById("select"),
+            txtVal = document.getElementById("val").value,
+            newOption = document.createElement("OPTION"),
+            newOptionval = document.createTextNode(txtVal);
+            newOption.appendChild(newOptionval);
+            select.insertBefore(newOption, select.lastChild);
+        }
+        
+        $('.datepicker').pickadate({
+            selectMonths: true,
+            selectYears: true
+        }),
+        $('.timepicker').pickatime()
+        
+        $(function () {
+            $('#date-time').bootstrapMaterialDatePicker({
+                format: 'YYYY-MM-DD HH:mm'
+            });
+            $('#date').bootstrapMaterialDatePicker({
+                time: false
+            });
+            $('#time').bootstrapMaterialDatePicker({
+                date: false,
+                format: 'HH:mm'
+            });
+        });
+        
+        $(document).ready(function () {
+            var current_fs, next_fs, previous_fs; //fieldsets
+            var opacity;
+            $(".next").click(function () {
+                current_fs = $(this).parent();
+                next_fs = $(this).parent().next();
+
+                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                next_fs.show();
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        opacity = 1 - now;
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        next_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+            $(".previous").click(function () {
+                current_fs = $(this).parent();
+                previous_fs = $(this).parent().prev();
+                $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+                previous_fs.show();
+                current_fs.animate({opacity: 0}, {
+                    step: function (now) {
+                        opacity = 1 - now;
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        previous_fs.css({'opacity': opacity});
+                    },
+                    duration: 600
+                });
+            });
+
+            $('.radio-group .radio').click(function () {
+                $(this).parent().find('.radio').removeClass('selected');
+                $(this).addClass('selected');
+            });
+        });
+            // $('#tax').on('change', function () {
+            //     alert(" INFORMATION \n\n Change saleprice before changing tax.\n Never mind if already done.")
+            //     tax = parseFloat($('#tax').val());
+            //     saleprice = parseFloat($('#saleprice').val());
+            //     if ($("#inclusive").prop('checked') == true) {
+            //         taxm = 1 + (tax / 100)
+            //         salep = saleprice / taxm
+            //         document.getElementById('saleprice').value = salep.toFixed(2)
+            //     }
+            // });
+
+        
+        function ShowHideDiv(track) {
+            var inventorytrack = document.getElementById("inventorytrack");
+            inventorytrack.style.display = track.checked ? "flex" : "none";
+
+        } 
     </script>
     <script>
         $(document).ready(function(){
@@ -51,6 +151,7 @@
                                 <div class="d-flex">
                                     <select name='items[]' id="product${roinc}" class="form-control">
                                         <option value=" " hidden>Select Item</option>
+                                        <option id="new_itm1"></option>
                                         {% for i in item %}
                                             <option value="{{ i.name }}">{{ i.name }}</option>
                                         {% endfor %}
@@ -87,31 +188,95 @@
                 );
             });
     
+           
+
+            $(document).ready(function () {
+    $('#newitemform').submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            headers: {'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()},
+            success: function (data) {
+                console.log(data);
+
+                var newCustomerName = data.name;
+
+                $("#new_itm").text(newCustomerName);
+                $("#new_itm1").text(newCustomerName);
+
+                $("#newitem").modal("hide");
+
+                // Reset the form
+                $('#newitemform')[0].reset();
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    });
+});
+
+    $(document).ready(function () {
+        $('#newunitform').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            var method = form.attr('method');
+            var data = form.serialize();
+
+            $.ajax({
+                url: url,
+                method: method,
+                data: data,
+                success: function (response) {
+                    // Update the dropdown with the new option
+                    $('#new_unit').append($('<option>', {
+                        value: response.unit_symbol + '-' + response.name,
+                        text: response.unit_symbol + '-' + response.name
+                    }));
+
+                    // Close the modal
+                    $('#unit').modal('hide');
+                },
+                error: function (error) {
+                    console.log('Error creating unit:', error);
+                }
+            });
+        });
+    });
+
+
             $(document).on('click','.remove_row',function(){
                 
                 
                 const response = confirm("Are you sure you want to do that?");
 
                 if (response) {
-                    var row_id = $(this).attr("id");
-                    var rowprd = document.getElementById('product'+row_id).value
-                    var crdid='{{pbill.billid}}'
-                    
-                    
-                    $.ajax({
-                        type: "GET",
-                        url: "{% url 'removepbill' %}",
-                        data: {
-                        id: rowprd,
-                        cr:crdid
-                        
-                        }});
-                    $('#addr0'+row_id+'').remove();
-                    calc()
-                } else {
-                    pass;
-                }
+        var row_id = $(this).attr("id");
+        var rowprd = document.getElementById('product' + row_id).value;
+        var crdid = '{{pbill.billid}}';
 
+        $.ajax({
+            type: "GET",
+            url: "{% url 'removepbill' %}",
+            data: {
+                id: rowprd,
+                cr: crdid
+            },
+            success: function (data) {
+                // Call calc after the row is removed from the database
+                $('#addr0' + row_id).remove();
+                calc();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    } else {
+        // Handle cancel action
+    }
                 // var row_id = $(this).attr("id");
                 // $('#addr0'+row_id+'').remove();
                 // calc()
@@ -713,19 +878,40 @@
                                     rows="5">{{ pbill.billing_address }}</textarea>
                                 </div>
                             </div>
+                            <div class="col-md-4 mt-3">
+                                <label for="">Email</label> 
+                                <input type="text" id="email1" name="email" value="{{pbill.vendor_mail}}" placeholder='Email' class="form-control ml-1"><br>
+                                <label for="">GST Treatment</label> 
+                                <input type="text" id="gstTreatment" name="gsttype" value="{{pbill.vendor_gsttype}}" placeholder='GST Treatment' class="form-control ml-1">
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <!-- <label for="">Balance</label> 
+                                <input type="text" id="balance1" name="Balance" value="{{pbill.vendor_balance}}" placeholder='Balance' class="form-control ml-1"><br> -->
+                                <div id="disabled" style="display: none;">
+                                    <label for="">GSTIN</label> 
+                                    <input type="text" id="gstin1" name="gstin" value="{{pbill.vendor_gstin}}" placeholder='29APPCK7465F1Z1' class="form-control ml-1">
+                                </div>                                
+                        </div>   
                         </div>
                         <hr>
                         <br><br>
                         <div class="row">
                             <div class="col-md-3 mt-2"><h5>Bill Details</h5></div>
                             <div class="col-md-3 mt-2"></div>
+                            <!-- <div class="col-md-3 mt-2">
+                                <label>Purchase Order Number</label>
+                                <div class="d-flex">
+                                    <input name="purchase_order_number" value="{{ pbill.purchase_order_number }}" type="number" class="form-control" placeholder="" readonly>
+                                    <a class="form-control" data-target="#porderno" data-toggle="modal" style="width: 60px; cursor: pointer;"><center><i class="fa fa-gear"></i></center></i></a>
+                                </div>   
+                            </div>
                             <div class="col-md-3 mt-2">
                                 <label>Bill Number</label>
                                 <div class="d-flex">
                                     <input name="bill_no" value="{{ pbill.bill_no }}" type="number" class="form-control" placeholder="1000" readonly>
                                     <a class="form-control" data-target="#porderno" data-toggle="modal" style="width: 60px; cursor: pointer;"><center><i class="fa fa-gear"></i></center></i></a>
                                 </div>    
-                            </div>
+                            </div> -->
                         </div>
                         <hr>
                         <div class="row">
@@ -827,32 +1013,64 @@
                                 <input type="text" class="form-control" value="{{ pbill.reference }}" name="reference" placeholder="">   
                             </div>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-3 mt-2"><h5>Deliver to Details</h5></div>
+                        <div class="row mt-3">
                             <div class="col-md-3 mt-2">
-                                <input type="text" value="{{ pbill.contact_name }}" name="contact_name" class="form-control">
+                                <label>Purchase Order Number</label>
+                                <div class="d-flex">
+                                    <input name="purchase_order_number" value="{{ pbill.purchase_order_number }}" type="number" class="form-control" placeholder="" readonly>
+                                    <a class="form-control" data-target="#porderno" data-toggle="modal" style="width: 60px; cursor: pointer;"><center><i class="fa fa-gear"></i></center></i></a>
+                                </div>   
                             </div>
+                            <div class="col-md-3 mt-2">
+                                <label>Bill Number</label>
+                                <div class="d-flex">
+                                    <input name="bill_no" value="{{ pbill.bill_no }}" type="number" class="form-control" placeholder="1000" readonly>
+                                    <a class="form-control" data-target="#porderno" data-toggle="modal" style="width: 60px; cursor: pointer;"><center><i class="fa fa-gear"></i></center></i></a>
+                                </div>    
+                            </div>
+
                         </div>
+                        <hr><br>
+                        <div class="col-md-3 mt-2"><h5>Deliver to Details</h5></div><hr>
+                        <div class="row">
+                            <div class="col-md-4 mt-2">
+                                <div class="d-flex">
+                                <input type="text" value="{{ pbill.contact_name }}" name="contact_name" class="form-control">
+                                </div>
+                            </div>
+                        </div><br>
                         <div class="row">
                             <div class="col-md-4 mt-2">
                                 <div class="form-row">
+                                    <label for="">Details</label>
                                     <textarea class="form-control" id="deliverto" value="" name="deliverto"
                                     rows="5">{{ pbill.deliverto }}</textarea>
                                 </div>
                             </div>
+                            <div class="col-md-4 mt-2">
+                                <div class="form-row">
+                                    <label for="">GST Treatment</label>
+                                    <input type="text" id="gstTreatment1" value="{{ pbill.customer_gsttype }}" name="cgsttype" placeholder='GST Treatment' class="form-control ml-1">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2" id="disabled2" style="display: none;">
+                                <div class="form-row">
+                                    <label for="">GSTIN</label>
+                                    <input type="text" id="gstin2" value="{{ pbill.customer_gstin }}" name="cgstin" placeholder='29APPCK7465F1Z1' class="form-control ml-1">
+                                </div>
+                            </div>                            
                         </div><hr>
                         
                         <div class="row">
-                            <div class="col-md-3 mt-2">
+                            <div class="col-md-4 mt-2">
                                 <label for="">Date</label>
                                 <input type="date" class="form-control" value="{{ pbill.date | date:'Y-m-d' }}" name="date">
                             </div>
-                            <div class="col-md-3 mt-2">
+                            <!-- <div class="col-md-3 mt-2">
                                 <label for="">Expected Deliver Date</label>
                                 <input type="date" class="form-control" value="{{ pbill.deliver_date | date:'Y-m-d' }}" name="deliver_date">
-                            </div>
-                            <div class="col-md-3 mt-2">
+                            </div> -->
+                            <div class="col-md-4 mt-2">
                                 <label for="">Credit Period</label>
                                 <select class="custom-select" name="credit_period" id="termadd" onclick="showinp('newtrm', this)">
                                     {% if pbill.credit_period == '0' %}
@@ -866,7 +1084,7 @@
                                     <option value="60">NET60</option>
                                   </select>
                             </div>
-                            <div class="col-md-3 mt-2">
+                            <div class="col-md-4 mt-2">
                                 <label>Due Date</label>
                                 <input type="text" id="duedat" value="{{ pbill.due_date }}" class="form-control" name="due_date">
                             </div>
@@ -902,9 +1120,8 @@
                                                         </option>
                                                     {% endfor %}
                                                 </select>
-                                                <td>
-                                                    <input type="number" value="{{ p.hsn }}" name='hsn[]' placeholder='Enter HSN'
-                                                id="hsn1{{ forloop.counter }}" class="form-control hsn">
+                                                <td><input type="number" value="{{ p.hsn }}" name='hsn[]' id="hsn1" placeholder='Enter HSN' 
+                                                    class="form-control hsn" step="0.00" min="0">
                                                 </td>
                                             <td>
                                                 <input type="number" value="{{ p.quantity }}" name='quantity[]'  onchange="qtychange1(this)" placeholder='Enter Qty'
@@ -986,10 +1203,9 @@
 
                                 <div class="row mt-5 mb-3">
                                     <div class="col-md-6">
-                                        <label for="">Payment Type</label>
+                                        <label for="paytype">Payment Type</label>
                                         <div class="d-flex">
                                             <select class="form-control" name="paytype" id="paytype" required>
-
                                                 {% if bank %}
                                                 <option value="{{bank.id}}" hidden>{{bank.bankname}}</option>
                                                 {% else %}
@@ -999,12 +1215,33 @@
                                                 {% for i in banks %}
                                                 <option value="{{i.id}}">{{i.bankname}}</option>
                                                 {% endfor %}
-                                                <option value="CASH">Cash</option>
+                                                <option value="Cash">Cash</option>
                                                 <option value="Cheque">Cheque</option>
-                                                
+                                                <option value="UPI">UPI</option>
                                             </select>
-                                            
-                                        </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Add this section to your HTML form -->
+                                <div class="row mt-3 mb-3" id="accountNumberField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="accountNumber">Account Number</label>
+                                        <input type="text" class="form-control" name="accountNumber" id="accountNumber" value="{{ pbill.account_number }}">
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3 mb-3" id="chequeNumberField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="chequeNumber">Cheque Number</label>
+                                        <input type="text" class="form-control" name="chequeNumber" id="chequeNumber" value="{{ pbill.cheque_number }}">
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3 mb-3" id="upiField" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="upiNumber">UPI Number</label>
+                                        <input type="text" class="form-control" name="upiNumber" id="upiNumber" value="{{ pbill.upi_number }}">
                                     </div>
                                 </div>
                                 
@@ -1183,6 +1420,363 @@
         </div>
     </div>
 
+    <div class="modal fade" id="newitem">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" style="background-color: #213b52;">
+                <div class="modal-header">
+                    <h3 class="m-3">New Item</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card p-3 m-3">
+                        <form id="newitemform" action="{% url 'create_item2' %}" method="post" class="needs-validation" novalidate autocomplete="off">
+                            {% csrf_token %}
+    
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <label for="validationCustom02">Name</label>
+                                    <input type="text" class="form-control" id="validationCustom02" name="name"
+                                        required>
+                                    
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <label for="validationCustom03">Type</label>
+                                    <select name="type" class="form-control" id="validationCustom01">
+                                        <option >Choose...</option>
+                                        <option value="Goods">Goods</option>
+                                        <option value="Services">Services</option></select>
+                                    
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <label for="validationCustom03">Unit</label>
+                                    <div class="d-flex">
+                                        <select class="custom-select" name="unit" id="validationCustom04">
+                                            <option selected disabled value="">Choose...</option>
+                                            <option id="new_unit"></option>
+                                            {% for a in unit %}
+                                                <option style="text-transform:Uppercase;">{{ a.unit_symbol}}-{{ a.name }}</option>
+                                            {% endfor %}
+                                            <option>BAG-BAGS</option>
+                                            <option>BAL-BALE</option>
+                                            <option>BDL-BUNDLES</option>
+                                            <option>BKL-BUCKLES</option>
+                                            <option>BOX-BOX</option>
+                                            <option>BOU-BILLIONS OF UNITS</option>
+                                            <option>BTL-BOTTLES</option>
+                                            <option>BUN-BUNCHES</option>
+                                            <option>CAN-CANS</option>
+                                            <option>CBM-CUBIC METER</option>
+                                            <option>CMS-CENTIMETER</option>
+                                            <option>CCM-CUBIC CENTIMETER</option>
+                                            <option>CTN-CARTONS</option>
+                                            <option>DOZ-DOZEN</option>
+                                            <option>DRM-DRUM</option>
+                                            <option>GGR-GREAT GROSS</option>
+                                            <option>GMS-GRAMS</option>
+                                            <option>GRS-GROSS</option>
+                                            <option>GYD-GROSS YARDS</option>
+                                            <option>KGS-KILOGRAMS</option>
+                                            <option>KLR-KILOLITER</option>
+                                            <option>KME-KILOMETRE</option>
+                                            <option>MTS Metric ton</option>
+                                            <option>MLT-MILLILITRE</option>
+                                            <option>MTR-METERS</option>
+                                            <option>NOS-NUMBER</option>
+                                            <option>PAC-PACKS</option>
+                                            <option>PCS-PIECES</option>
+                                            <option>PRS-PAIRS</option>
+                                            <option>QTL-QUINTAL</option>
+                                            <option>ROL-ROLLS</option>
+                                            <option>SQF-SQUARE FEET</option>
+                                            <option>SET-SETS</option>
+                                            <option>SQM-SQUARE METERS</option>
+                                            <option>SQY-SQUARE YARDS</option>
+                                            <option>TBS-TABLETS</option>
+                                            <option>TGM-TEN GROSS</option>
+                                            <option>THD-THOUSANDS</option>
+                                            <option>TON-TONNES</option>
+                                            <option>TUB-TUBES</option>                                            
+                                            <option>UNT-UNITS</opion>
+                                            <option>UGS-US GALLONS</option>
+                                            <option>YDS-YARDS</otion> 
+                                        </select>
+                                        <a class="btn btn-outline-secondary ml-1" data-target="#unit" data-toggle="modal">+</a>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <label for="validationCustom02">HSN Code</label>
+                                    <input type="text" name="hsn" class="form-control" placeholder="Enter a valid HSN code"
+                                    required>
+                                    
+                                </div>
+                                <div class="col-md-3 mt-5"><label for="">Tax Preference : </label></div>
+                                <div class="col-md-2 mt-5">
+                                    <div class="form-check">
+                                        <input class="form-check-input" name="taxref" type="checkbox" value="Taxable" 
+                                        id="inclusive" checked>Taxable
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mt-5">
+                                    <div class="form-check">
+                                        <input class="form-check-input" name="taxref" type="checkbox" value="Non Taxable" >Non Taxable
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <h5>Purchase Price Details</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <label for="">Purchase Price</label>
+                                    <div class="d-flex">
+                                        <p class="form-control" style="width:60px">INR</p>
+                                        <input type="text" name="pcost" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <label for="">Account</label>
+                                    <select name="pur_account" class="form-control">
+                                        
+                                        {% for a in acc1 %}
+                                            <option value="{{ a.name }}">{{ a.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <label for="">Description</label>
+                                    <textarea class="form-control" name="pur_desc"></textarea>  
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <h5>Sales Price Details</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <label for="">Sales Price</label>
+                                    <div class="d-flex">
+                                        <p class="form-control" style="width:60px">INR</p>
+                                        <input type="text" name="salesprice" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <label for="">Account</label>
+                                    <select name="sale_account" class="form-control">
+                                        <option value="Sales">Sales</option>
+                                        {% for a in acc2 %}
+                                            <option value="{{ a.name }}">{{ a.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <label for="">Description</label>
+                                    <textarea class="form-control" name="sale_desc"></textarea>  
+                                </div>
+                            </div>   
+                            <hr> 
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <h5>Tax Rate Details</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="col-md-6 mt-2">
+                                    <label for="">Intra State Tax Rate</label>
+                                    <select name="intra_st" class="form-control">
+                                        <option selected >Choose...</option>
+                                        <option value=0>GST 0 (0%)</option>
+                                        <option value=5>GST 5 (5%)</option>
+                                        <option value=12>GST 12 (12%)</option>
+                                        <option value=18>GST 18 (18%)</option>
+                                        <option value=28>GST 28 (28%)</option>
+                                        <option value=0>Out of Scope(0%)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <label for="">Inter State Tax Rate</label>
+                                    <select name="inter_st" class="form-control">
+                                        <option selected>Choose...</option>
+                                        <option value=0>IGST 0 (0%)</option>
+                                        <option value=5>IGST 5 (5%)</option>
+                                        <option value=12>IGST 12 (12%)</option>
+                                        <option value=18>IGST 18 (18%)</option>
+                                        <option value=28>IGST 28 (28%)</option>
+                                        <option value=0>Out of Scope(0%)</option>
+                                    </select>   
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <h5>Inventory</h5>
+                                    <div class="form-check">
+                                        <input class="form-check-input" onclick="ShowHideDiv(this)" type="checkbox"  id="track">
+                                        <label class="form-check-label" for="track" >
+                                        Track Inventory
+                                        </label>
+                                    </div>  
+                                </div>
+                            </div> 
+                            <div class="row"  id="inventorytrack" style="display: none">
+                                <div class="col-md-6 mt-2">
+                                    <label for="">Inventory Account</label>
+                                    <select name="invacc" class="form-control">
+                                        <option selected value="">Choose...</option>
+                                        <option value="Inventory Assets">Inventory Assets</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <label for="">Stock on hand</label>
+                                    <input type="number" name="stock" value="0" class="form-control">
+                                </div>
+                            
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-4 mt-2">
+                                    <label for="" name style="color: white;">Active / Inactive</label>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" value="Active" type="radio" 
+                                        name="status" id="flexRadioDefault1" checked>
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                        Active
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" value="Inactive" type="radio" name="status" id="flexRadioDefault2" >
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                        Inactive
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="col-md-3" style="display: none;">
+                                    <input type="date" name="itmdate" id="date3" class="form-control">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                                        <label>Agree to terms and conditions</label>
+                                        <div class="invalid-feedback">You must agree before submitting.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-outline-info rounded-pill text-grey w-100 mt-3 mb-3"
+                                            type="submit" id="saveitembtn">
+                                        Submit form
+                                    </button>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>  
+    <div class="modal fade" id="unit">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: #213b52;">
+                <div class="modal-header">
+                    <h5 class="m-3">Unit Create</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card p-3 m-3">
+                        <form id="newunitform" method="post" action="create_unit1" autocomplete="off">
+                            {% csrf_token %}
+                            <div class="row mt-2 mb-2">
+                                <div class="col-md-6">
+                                    <label for="acctyp">Unit Symbol</label>
+                                    <input type="text" name="usymbol" id="select1" class="custom-select-md form-control w-100">        
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="name">Name</label>
+                                    <input name="uname" id="name" class="custom-select-md form-control w-100">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4 mt-4 mb-4">
+                                    <button type="submit" class="btn btn-outline-info rounded-pill w-100" id="saveunitbtn">Create</button>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>   
+        </div>
+    </div> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $('#date').val(new Date().toJSON().slice(0,10));
+        $('#date1').val(new Date().toJSON().slice(0,10));
+        $('#date2').val(new Date().toJSON().slice(0,10));
+        $('#date3').val(new Date().toJSON().slice(0,10));
+
+        function checkDate() {
+            var selectedText = document.getElementById('date1').value;
+            var selectedDate = new Date(selectedText);
+            var now = new Date();
+            if (selectedDate < now) {
+                alert("Date must be in the future");
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function showPaymentTypeField(paymentType) {
+                document.getElementById('chequeNumberField').style.display = 'none';
+                document.getElementById('upiField').style.display = 'none';
+                document.getElementById('accountNumberField').style.display = 'none';
+    
+                if (paymentType === 'Cheque') {
+                    document.getElementById('chequeNumberField').style.display = 'block';
+                } else if (paymentType === 'UPI') {
+                    document.getElementById('upiField').style.display = 'block';
+                } else if (paymentType === 'Cash') {
+                } else {
+                    document.getElementById('accountNumberField').style.display = 'block';
+                }
+            }
+    
+            var initialPaymentType = "{{ pbill.payment_type }}";
+    
+            showPaymentTypeField(initialPaymentType);
+    
+            document.getElementById('paytype').addEventListener('change', function () {
+                var selectedOption = this.options[this.selectedIndex];
+                var selectedValue = selectedOption.value;
+    
+                showPaymentTypeField(selectedValue);
+            });
+        });
+    </script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
         function qtychange1(element) {
@@ -1476,5 +2070,27 @@
         });
 
     </script>
-    
+ <script>
+    $(document).ready(function () {
+    var gstinValue = "{{ pbill.vendor_gstin }}"; 
+
+    if (gstinValue) {
+        $('#disabled').show();
+    } else {
+        $('#disabled').hide();
+    }
+});
+
+$(document).ready(function () {
+    var customerGstinValue = "{{ pbill.customer_gstin }}"; 
+
+    if (customerGstinValue) {
+        $('#disabled2').show();
+    } else {
+        $('#disabled2').hide();
+    }
+});
+
+ </script>   
+
 {% endblock %}

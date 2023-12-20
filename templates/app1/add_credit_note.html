@@ -4,7 +4,10 @@
 <script src="https://kit.fontawesome.com/a076d05399.js" ></script>
 <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"> -->
 
-<form action="{% url 'create_credit'%}" method="post" class="needs-validation" novalidate>
+
+
+
+<form action="{% url 'create_credit' %}" method="post" class="needs-validation" id="forms" novalidate>
 {% csrf_token %}
     <div class="page-content">
             <!--breadcrumb-->
@@ -51,9 +54,19 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-5 mt-3">
+                                    <label for="validationCustom02">Gst Treatemnt</label>
+                                    <input type="text" class="form-control" name="gst_treat" id="gst_treat">
+                                </div>
+                                <div class="col-md-5 mt-3" >
+                                    <label for="validationCustom02" id="gst_no_label" style="display: none;">GST No</label>
+                                    <input type="text" class="form-control" name="gst_no" id="gst_no" style="display: none;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 mt-3">
                                     <label>Place of supply</label>&nbsp;
                                     <select type="text" class="form-control" id="plosu" name="supply"  >
-                                        <option value="{{ cmp1.state }}" selected> {{ cmp1.state }}</option>
+                                        <!-- <option value="{{ cmp1.state }}" selected> {{ cmp1.state }}</option> -->
                                         <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
                                         <option value="Andhra Predhesh">Andhra Predhesh</option>
                                         <option value="Arunachal Predesh">Arunachal Predesh</option>
@@ -97,12 +110,24 @@
                                 <div class="col-md-5 mt-3">
                                     <label for="validationCustom02">Invoice Number</label>
                                     <select name="billno" id="inv_no" class="form-control">
-                                        <option selected >Select Invoice</option>
+                                        <option>Select Invoice</option>
                                         
                                         
                                     </select>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-5 mt-3">
+                                    <label for="validationCustom02">Reference Number</label>
+                                    <input type="number" class="form-control" style="background-color: #3d5468;" name="referenceNumber" id="referenceNumber" value="{{next_id}}" readonly>
+                                </div>
+                                <div class="col-md-5 mt-3" >
+                                    <label for="validationCustom02" id="credit_note_no" >Credit Note Number </label>  <label for="" style="color: rgb(190, 190, 190);" id="credit_span">( Credit number format {{cred_no}} )</label>
+
+                                    <input type="text" class="form-control" onchange="check_credit_note_number()" name="credit_no" id="credit_no">
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="col-md-4">
                             <div class="row" style="margin-top: 20%">
@@ -119,6 +144,34 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12 col-sm-12">
+                            <div class="row">
+                                <div class="col-md-3 mt-3">
+                                    <label for="validationCustom02">Payment Method</label>
+                                    <!-- <input type="number" class="form-control" style="width: 110%;" name="referenceNumber" id="referenceNumber" value="{{next_id}}" readonly> -->
+                                    <select name="select_payment" id="select_payment" style="width: 110%;" onclick="show_fields()"  class="form-control">
+                                        <option value="no_option">select</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="UPI">UPI</option>
+                                        {% for i in banks%}
+                                        <option value="{{ i.bankname }}">{{ i.bankname }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mt-3" >
+                                    <label for="validationCustom02" id="acc_no_label"  style="margin-left: 11%;display: none;" >Ac/Number</label>
+                                    <input type="text" class="form-control" id="acc_no" name="acc_no" style="margin-left: 11%;width: 112%;display: none;" >
+                                    <label for="validationCustom02" id="cheque_no_label" style="margin-left: 11%;display: none;" >Cheque Number</label>
+                                    <input type="text" class="form-control" style="margin-left: 11%;width: 112%;display: none;" name="cheque_no" id="cheque_no" >
+                                    <label for="validationCustom02" id="upi_id_label" style="margin-left: 11%;display: none;" name="credit_note_no">UPI Id</label>
+                                    <input type="text" class="form-control" style="margin-left: 11%;width: 112%;display: none;" name="upi_id" id="upi_id" >
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
                     <hr style="margin-top: 25px;">
                 
                     <div class="row">
@@ -129,6 +182,7 @@
                     <div class="row mt-4">
                         <div class="col-md-12 mt-3">
                             <div class="table-responsive">
+
                                 <table class="table table-bordered table-hover" id="tab_logic">
                                     <thead>
                                     <tr>
@@ -151,19 +205,21 @@
                                                 <select name='items[]' id="product1" class=" product form-control">
                                                     <option selected disabled>Select Items</option>
                                                     {% for i in item %}
-                                                        <option value="{{ i.name }}"> {{ i.name }}
-                                                        </option>
+                                                       
+                                                        <option value="{{ i.name }}"> {{ i.name }}</option>
+                                                        
                                                     {% endfor %}
                                                 </select>
                                                 <a class="btn btn-outline-secondary ml-1" role="button" data-target="#newitem" data-toggle="modal">+</a> 
                                             </div>
+                                            
                                         </td>
                                         <td>
                                             <input type="text" name='hsn[]' id="hsn1" placeholder='HSN'
                                             class="form-control hsn"/>
                                         </td>
                                         <td>
-                                               
+                                            <input  type="number" style="display: none;"  name="stock_quantity[]" id="stock_qty1" >
                                             <input type="number" name='quantity[]'  style="margin-top: 21px;" placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
                                                 <div class="d-flex"><span>Available Qty :</span> <span id="qtyspan1"class=''></span></div>
                                             
@@ -208,14 +264,19 @@
                                             <input type="number" name='total[]' id="total1" placeholder='0.00' class="form-control total"/>
                                         </td>
                                         <td>
-                                            <button type="button" id="1" class="btn  font-weight-bold clone_row fas fa-clone px-2 my-1 py-1" title="Clone Row" style="background-color:rgb(88, 107, 143);"></button><br>
+                                            <!-- <button type="button" id="1" class="btn  font-weight-bold clone_row fas fa-clone px-2 my-1 py-1" title="Clone Row" style="background-color:rgb(88, 107, 143);"></button><br> -->
                                             <button type="button" id="1" class="btn btn-danger remove_row px-2 py-1 mx-1 fas fa-close" title="Remove Row"> </button>
                                         </td>
                                     </tr>
                                     </tbody>
                                     <tr>
-                                        <td style="border: none;"><a class="btn btn-outline-secondary ml-1" title="Add Row" role="button" id="addrow" >+</a></td>
+                                        <td style="border: none;border: transparent;">
+                                            <a class="btn btn-outline-secondary ml-1" title="Add Row" role="button" id="addrow" >+</a>
+                                            
+                                        </td>
                                     </tr>
+                                    <label for="" id="item_label" ></label>    <input style="display: none;" type="number" name="stock_quantity_outer" id="stock_qty_outer" >
+
                                 </table>
                             </div>
                         </div>
@@ -238,7 +299,7 @@
                                 <div class="row container-fluid p-2 m-0" id="igst1">
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">IGST</label></div>
                                     <div class="col-sm-1 mt-2">:</div>
-                                    <div class="col-sm-7 mt-2"><input type="number" name='igst' step="any" id="igst" placeholder=0 
+                                    <div class="col-sm-7 mt-2"><input type="number" name='igst' step="any" id="igst" value="0" placeholder=0 
                                         class="form-control"/>
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
@@ -246,7 +307,7 @@
                                 <div class="row container-fluid p-2 m-0" style="display: none;" id="cgst1">
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">CGST</label></div>
                                     <div class="col-sm-1 mt-2">:</div>
-                                    <div class="col-sm-7 mt-2"><input type="number" name='cgst' step="any" id="cgst" placeholder=0 
+                                    <div class="col-sm-7 mt-2"><input type="number" name='cgst' step="any" value="0" id="cgst" placeholder=0 
                                         class="form-control"/>
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
@@ -254,7 +315,7 @@
                                 <div class="row container-fluid p-2 m-0" style="display: none;" id="sgst1">
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">SGST</label></div>
                                     <div class="col-sm-1 mt-2">:</div>
-                                    <div class="col-sm-7 mt-2"><input type="number" name='sgst' step="any" id="sgst" placeholder=0 
+                                    <div class="col-sm-7 mt-2"><input type="number" name='sgst' step="any" value="0" id="sgst" placeholder=0 
                                         class="form-control"/>
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
@@ -278,7 +339,7 @@
                                 <div class="row container-fluid p-2 m-0">
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
                                     <div class="col-sm-1 mt-2">:</div>
-                                    <div class="col-sm-7 mt-2"><input type="number" step="any" name='adj' id="adj" placeholder='0.00' 
+                                    <div class="col-sm-7 mt-2"><input type="number" step="any" name='adj' id="adj" value="0" placeholder='0.00' 
                                         class="form-control"/>
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
@@ -291,14 +352,36 @@
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
                                 </div>
+                                <div class="row container-fluid p-2 m-0">
+                                    <div class="col-sm-4 mt-2"><label for="a" class="text-center">Paid</label></div>
+                                    <div class="col-sm-1 mt-2">:</div>
+                                    <div class="col-sm-7 mt-2"><input type="number" name='paid' id="paid" value="0.00" 
+                                        class="form-control"/>
+                                    </div>
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                                <div class="row container-fluid p-2 m-0">
+                                    <div class="col-sm-4 mt-2"><label for="a" class="text-center">Balance</label></div>
+                                    <div class="col-sm-1 mt-2">:</div>
+                                    <div class="col-sm-7 mt-2"><input type="number" name='balance' id="balance" placeholder='0.00' readonly 
+                                        class="form-control"/>
+                                    </div>
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                                
                             </div>
                             
                         </div>
                     </div>
                     <div class="row mt-4 mb-4">
-                        <div class="col-md-9"></div>
+                        <div class="col-md-6"></div>
                         <div class="col-md-3 mt-3 mb-4">
-                            <button class="btn btn-outline-info w-100 text-light rounded-pill" type="submit">Save Credit Note</button>
+                            <button type="submit" name="bt" class="btn btn-outline-info w-100 text-light rounded-pill"  
+                 value="Draft">Draft</button>
+                        </div>
+                        <div class="col-md-3 mt-3 mb-4">
+                            <button type="submit" name="bt"  class="btn btn-outline-info w-100 text-light rounded-pill"  
+                 value="Save">Save</button>
                         </div>
                     </div>
                 </div>
@@ -357,7 +440,51 @@
                                     style="background-color: #2f516f;color: white;">
                             <div class="valid-feedback">Looks good!</div>
                         </div>
-                        <div class="col-md-4 mt-3"></div>
+                        <div class="col-md-4 mt-3">
+                            <label for="location">Place Of Supply</label>
+                            <select type="text" class="form-control" id="placesupply" name="placesupply" >
+                                <option value="">Select</option>
+                                <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                                <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                <option value="Damn anad Diu">Damn and Diu</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Predesh">Himachal Predesh</option>
+                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                <option value="Jharkhand">Jharkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Ladakh">Ladakh</option>
+                                <option value="Lakshadweep">Lakshadweep</option>
+                                <option value="Madhya Predesh">Madhya Predesh</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Odisha">Odisha</option>
+                                <option value="Puducherry">Puducherry</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Uttar Predesh">Uttar Predesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>
+                                <option value="Other Territory">Other Territory</option>
+                            </select>
+                            
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 mt-3">
@@ -412,15 +539,26 @@
                         </div>
 
                         <div class="col-md-4 mt-3" >
-                          <div>
-                              <label for="openbalance">OPENING BALANCE</label>
-                              <input type="text" class="form-control" id="openbalance" value=""  name="openbalance"
+                            <label for="openbalance">OPENING BALANCE</label>
+                          <div class="d-flex">
+                              <select name="bal" id="bal" class="form-select text-white pl-1" style="background-color: #243e54; width: 25%; border-radius: 5px;">
+                                <option value="credit">Credit</option>
+                                <option value="debit">Debit</option>
+                            </select>
+                              <input type="number" class="form-control" id="openbalance" value=""  name="openbalance"
+                                     style="background-color: #2f516f;color: white;">
                                      
-                                     style="background-color: #2f516f;color: white;"
-                                     >
                               <div class="text-danger m-2" ></div>
                           </div>
                       </div>
+                      <div class="col-md-4 mt-3" >
+                        <div>
+                            <label for="openbalance">Credit Limit</label>
+                            <input type="number" class="form-control" id="crd_lmt"  name="crd_lmt"
+                                style="background-color: #43596c;color: white;">
+                            <div class="text-danger m-2" ></div>
+                        </div>
+                    </div>
  
                     </div>
  
@@ -1049,6 +1187,109 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+    <script>
+        $(document).on('change',function(){
+            var paid_off=$('#paid').val();
+           var total=$('#grandtotal').val();
+           var bal=total-paid_off;
+           $('#balance').val(bal);
+            
+        })
+    </script>
+    <script>
+       function check_credit_note_number(){
+
+            var str=document.getElementById('credit_no').value;
+
+            var ref_no=document.getElementById('referenceNumber').value;
+            var ref_len=ref_no.length;
+            var x=ref_len
+            var sliced_string=str.slice(-x,)
+
+            if(parseInt(ref_no) == parseInt(sliced_string))
+            {
+                document.getElementById('credit_span').style.color="green";
+                document.getElementById('credit_span').innerHTML="consicutive number";
+
+            }
+            else{
+                document.getElementById('credit_span').style.color="red";
+                document.getElementById('credit_span').innerHTML="not consicutive number";
+            }
+        }
+    </script>
+
+    <script>
+
+        
+
+    // <script>
+        
+
+    //         function saveAsDraftDialog() 
+    //         {
+
+    //         var frm = document.getElementById("forms");
+    //         frm.action = ("{% url 'create_credit' %}")
+    //         }
+    //         function saveDialog() 
+    //         {
+
+    //         var frm = document.getElementById("forms");
+    //         frm.action = ("{% url 'create_credit_save' %}")
+    //         }
+    // </script>
+    <script>
+        function show_fields()
+        {
+            var option=document.getElementById('select_payment').value;
+            if(option == 'Cash'){
+                document.getElementById('acc_no_label').style.display='none';
+                document.getElementById('acc_no').style.display='none';
+                document.getElementById('cheque_no_label').style.display='none';
+                document.getElementById('cheque_no').style.display='none';
+                document.getElementById('upi_id_label').style.display='none';
+                document.getElementById('upi_id').style.display='none';
+            }
+            else if(option == 'Cheque'){
+                document.getElementById('acc_no_label').style.display='none';
+                document.getElementById('acc_no').style.display='none';
+                document.getElementById('cheque_no_label').style.display='block';
+                document.getElementById('cheque_no').style.display='block';
+                document.getElementById('upi_id_label').style.display='none';
+                document.getElementById('upi_id').style.display='none';
+
+            }
+            else if(option == 'UPI'){
+                document.getElementById('acc_no_label').style.display='none';
+                document.getElementById('acc_no').style.display='none';
+                document.getElementById('cheque_no_label').style.display='none';
+                document.getElementById('cheque_no').style.display='none';
+                document.getElementById('upi_id_label').style.display='block';
+                document.getElementById('upi_id').style.display='block';
+            }
+            else if(option == 'no_option'){
+                document.getElementById('acc_no_label').style.display='none';
+                document.getElementById('acc_no').style.display='none';
+                document.getElementById('cheque_no_label').style.display='none';
+                document.getElementById('cheque_no').style.display='none';
+                document.getElementById('upi_id_label').style.display='none';
+                document.getElementById('upi_id').style.display='none';
+            }
+            else
+            {
+                
+                document.getElementById('acc_no_label').style.display='block';
+                document.getElementById('acc_no').style.display='block';
+                document.getElementById('cheque_no_label').style.display='none';
+                document.getElementById('cheque_no').style.display='none';
+                document.getElementById('upi_id_label').style.display='none';
+                document.getElementById('upi_id').style.display='none';
+            }
+        }
+    </script>
     <script>
 
         $(document).ready(function() {
@@ -1187,7 +1428,9 @@
                                     <select name='items[]' id="product${roinc}" class = "product form-control" >
                                         <option value=" " selected>Select Item</option>
                                         {% for i in item %}
+                                           
                                             <option value="{{ i.name }}">{{ i.name }}</option>
+                                            
                                         {% endfor %}
                                     </select>
                                     <a href="#">
@@ -1198,7 +1441,9 @@
                             <td>
                                 <input type="text" name='hsn[]' id="hsn${roinc}" placeholder='Enter HSN Code' class="form-control"/>
                             </td>                
-                            <td><input type="number" name='quantity[]' placeholder='Enter Qty' id="qty${roinc}" style="margin-top: 21px;" class="form-control qty" step=0 min=0>
+                            <td>
+                                <input type="number" style="display: none;" name="stock_quantity[]" id="stock_qty${roinc}">  
+                                <input type="number" name='quantity[]' placeholder='Enter Qty' id="qty${roinc}" style="margin-top: 21px;" class="form-control qty" step=0 min=0>
                                 <div><span>Available Qty :</span> <span id="qtyspan${roinc}"class=''></span></div>
                             </td>                
                             <td>
@@ -1215,7 +1460,7 @@
                                     <option value=12  >12.0% GST(12%)</option>
                                         <option value=5  >05.0% GST(05%)</option>
                                     <option value=3  >03.0% GST(03%)</option>
-                                        <option value=0  >0.0% GST(0%)</option>
+                                        <option value=0>0.0% GST(0%)</option>
                                 </select>
                                 <select name='tax2[]' id="tax2${roinc}" class="form-control tax inter_tax d-none">
                                     <option selected disabled  >Select IGST</option>
@@ -1237,7 +1482,6 @@
                             </td>        
 
                             <td>
-                                <button type="button" id="${roinc}" class="btn  font-weight-bold clone_row fas fa-clone px-2 py-1 my-1" style="background-color:rgb(88, 107, 143);"></button><br>
                                 <button type="button" id="${roinc}" class="btn btn-danger px-2 mx-1 py-1 remove_row fas fa-close"></button>
                             </td>
                             
@@ -1245,6 +1489,7 @@
                                                     
                     `
                 );
+            });
                 $('.product').each(function(index, dropdown) {
                     var row = $(dropdown).closest('.items-table-body'); // Assuming each row has a class 'item-row'
                     $.ajax({
@@ -1269,19 +1514,28 @@
                         }
                     });
                 });
-            });
+            
 
         });
-            // calculation---------------------------
 
-            $(document).on('change', '.product',function(){ 
+
+
+        // calculation---------------------------
+
+        $(document).on('change', '.product',function(){ 
                 
                 var n = $(this).attr("id").slice(7);
+                var x=$('#inv_no').val();
+                var tbldata = document.getElementById("tab_logic");
+                var total_rows = tbldata.rows.length;
+                var xx=document.getElementById("tab_logic");
+                
                 $.ajax({
                 url: "{% url 'itemdata' %}",
                 type : 'GET',
                 data:{
                     id : $(this).val(),
+                    invoice_no:$('#inv_no').val(),
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                 
@@ -1291,29 +1545,172 @@
                     data3 = response.price
                     data4 = response.gst
                     data5 = response.sgst
+                    data6=response.mesg
+                    data7=response.itm
+                    data8=response.tot_qty
+                    var i;
+                    var count=0
+                    console.log("successfullllllllllllllllllllllllllll");
 
-                    console.log(data)
-                    
+                    for( i=1; i < total_rows-1; i++)
+                    {
+                        var a1=tbldata.rows[i].cells[2].getElementsByTagName('input')[0].value;
+                        if(data == a1)
+                        {
+                            count=count+1;
+                        }
+
+                    }
+
+                        
+                   if(count == 0)
+                   {
                     document.getElementById('hsn'+n).value = data;
                     document.getElementById('qtyspan'+n).innerHTML = data2;
                     document.getElementById('unit'+n).value = data3;
+                    document.getElementById('stock_qty'+n).value=data8;
+                    document.getElementById('stock_qty_outer').value=data8;
+                    console.log("haiiiiiiiiiiiiiiiiiiii")
+
+                    if(data6 == 'different item')
+                    {
+                        document.getElementById('item_label').innerHTML="";
+                        document.getElementById('item_label').style.color="red"
+                        document.getElementById('item_label').innerHTML=data6;
+                       
+
+                    }
+                    else
+                    {
+                        document.getElementById('item_label').innerHTML="";
+                    }
+                   }
+                   else{
+                    console.log("ffffffffffffffffffffffffffffffffffff");
+                    document.getElementById('item_label').innerHTML="";
+                        document.getElementById('item_label').style.color="red"
+                        document.getElementById('item_label').innerHTML="item is already selected,Can't select again.But can modify quantity !!!!!!!!!!!!!!";
+                   }
+
+                   
+                    
 
                 },
                 });
                 
+                        
 
             });
+
+            
+            $(document).on('change','.qty',function(){ 
+                var n = $(this).attr("id").slice(3);
+                var n1=$(this).val();
+                
+                $.ajax({
+                url: "{% url 'itemdata_qty' %}",
+                type : 'GET',
+                data:{
+                    id1 : $(this).val(),
+                    id:$('#hsn'+n).val(),
+                    id2:$('#product'+n).val(),
+                    tot_quan:$('#stock_qty'+n).val(),
+                    invoice_no:$('#inv_no').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                success: function(response) {
+                    data6=response.msg
+                    data5=response.quantity1
+                    document.getElementById('item_label').innerHTML=""
+                    sum=parseInt(data5)+parseInt(n1) 
+                    document.getElementById('qtyspan'+n).innerHTML=sum;
+                    console.log(response.tot_quan);
+                    document.getElementById('stock_qty'+n).value=response.tot_quan;
+
+
+
+                     if(data6 == 'bigger quantity selected')
+                    {
+                        document.getElementById('item_label').innerHTML=""
+                        document.getElementById('item_label').style.color="red"
+                        document.getElementById('item_label').innerHTML=data6;
+                    }
+                    if(data6 == 'no remaining quantity')
+                    {
+                        document.getElementById('item_label').innerHTML=""
+                        document.getElementById('item_label').style.color="red"
+                        document.getElementById('item_label').innerHTML=data6;
+                    }
+                },
+                });
+            });
+
+            $(document).on('change','.intra_tax',function(){ 
+                var n = $(this).attr("id").slice(4);
+                
+                $.ajax({
+                url: "{% url 'itemdata_tax1' %}",
+                type : 'GET',
+                data:{
+                    id1 : $(this).val(),
+                    id:$('#hsn'+n).val(),
+                    invoice_no:$('#inv_no').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                success: function(response) {
+                    data6=response.msg
+                    document.getElementById('item_label').innerHTML=""
+
+                     if(data6 == 'different tax selected')
+                    {
+                        document.getElementById('item_label').innerHTML="";
+                        document.getElementById('item_label').style.color="red";
+                        document.getElementById('item_label').innerHTML=data6;
+                    }
+                    else
+                    {
+                        document.getElementById('item_label').innerHTML="";
+                    }
+                },
+                });
+            });
+
+
+            $(document).on('change','.inter_tax',function(){ 
+                var n = $(this).attr("id").slice(4);
+                
+                $.ajax({
+                url: "{% url 'itemdata_tax1' %}",
+                type : 'GET',
+                data:{
+                    id1 : $(this).val(),
+                    id:$('#hsn'+n).val(),
+                    invoice_no:$('#inv_no').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                success: function(response) {
+                    data6=response.msg
+                    document.getElementById('item_label').innerHTML=""
+
+                     if(data6 == 'different tax selected')
+                    {
+                        document.getElementById('item_label').innerHTML=""
+                        document.getElementById('item_label').style.color="red"
+                        document.getElementById('item_label').innerHTML=data6;
+                    }
+                },
+                });
+            });
+
 
             $(document).on('click','.remove_row',function(){
                 var row_id = $(this).attr("id");
                 $('#addr0'+row_id+'').remove();
+                document.getElementById('item_label').innerHTML="";
                 
                 calc();
             });
         
-            
-    
-
             $(document).on('click','.clone_row',function(){
                 var roinc = $("#items-table-body tr").length;
 
@@ -1407,7 +1804,7 @@
                 gst = taxamount/2
                 $('#cgst').val(parseFloat(gst.toFixed(2)));
                 $('#sgst').val(parseFloat(gst.toFixed(2)));
-                $('#igst').val(parseFloat(d.toFixed(2)));
+                $('#igst').val(d.toFixed(2));
             }
                 
             if (bc != "{{ cmp1.state }}"  ) {
@@ -1426,7 +1823,7 @@
             }
         }
 
-        $(document).on('keyup',"#ship",function(){
+        $(document).on('change',"#ship",function(){
             var subtot = $('#sub_total').val();
             var tax = $('#tax_amount').val();
             var sh = $("#ship").val();
@@ -1448,15 +1845,15 @@
     
                 type : 'POST',
                 url:"{% url 'customers21' %}",
-
                 data:{
-                    
                     title : $('#title').val(),
                     first_name : $('#firstname').val(),
                     last_name : $('#lastname').val(),
                     company_name : $("#company").val(),
                     location : $("#location").val(),
+                    placesupply:$("#placesupply").val(),
                     openbalance : $("#openbalance").val(),
+                    credit_limit : $("#crd_lmt").val(),
                     email : $("#email").val(),
                     website :$("#website").val(),
                     mobile :$("#mobile").val(),
@@ -1473,12 +1870,8 @@
                     gsttype :$("#gsttype").val(),
                     gstin :$("#gstin").val(),
                     panno :$("#panno").val(),
-
-                  
                     csrfmiddlewaretoken: '{{ csrf_token }}'
-                    
                 },
-                
                 success: function(response) {
                     console.log("success")
                     document.getElementById("modalCustomer").reset();
@@ -1488,8 +1881,9 @@
         });
 
 
-        function reloadCustomer() {
 
+        
+        function reloadCustomer() {
             $.ajax({
                 url: "{% url 'cust_dropdown' %}",
                 type: "GET",
@@ -1497,14 +1891,34 @@
                 data: $(this).serialize(),
                 csrfmiddlewaretoken: '{{ csrf_token }}',
 
-                success: function(data) {
+                success: function(response) {
+                    id_list = response.id_list
+                    title_list = response.title_list
+                    first_name = response.first_name
+                    last_name = response.last_name
+                    console.log('hellooooooooooooooooooooo')
+
                     var dropdown = $('#customer');
                     dropdown.empty();
                 dropdown.append(`<option selected>Select Customer</option>`);
-                    $.each(data, function(key, value) {
-                        console.log(value)
-                        dropdown.append($('<option></option>').attr('value', key).text(value[1] + " " +value[2] + " "+ value[3]).val(value[0] + " " +value[2] + " "+ value[3]));
-                    });
+
+                let select = document.getElementById("customer");
+             for(let i=0; i<id_list.length;i++){
+            // Create a new option element    
+            let newOption = document.createElement("option");
+            newOption.text = title_list[i] + ' ' + first_name[i] + ' ' + last_name[i];
+            newOption.value = id_list[i] + ' ' + first_name[i] + ' ' + last_name[i]; // Set a value for the new option
+             console.log('hellooooooooooooooooooooo')
+             console.log(newOption.value)
+            // Append the new option to the select field
+            select.appendChild(newOption);
+        }
+
+                    // $.each(data, function(key, value) {
+                    //     console.log(value)
+                        // dropdown.append($('<option></option>').attr('value', key).text(value[0] + " " +value[1] + " "+ value[2]).val(key + " " +value[1] + " "+ value[2]));
+                        
+                    // });
                 },
                 error: function(xhr, status, error) {
                 console.error(xhr.responseText);
@@ -1597,8 +2011,28 @@
             }
         
 
+             $(document).ready(function(){
+                $('#select_payment').on('change',function(){
+                    $.ajax({
+                        type:'POST',
+                        url:"{% url 'get_account_no' %}",
+                        data:{
+                            id:$('#select_payment').val(),
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+
+                        },
+                        success:function(data){
+                            document.getElementById('acc_no').value = data.accno;
+
+                        }
+                    })
+                })
+            })
+
+            
 
 
+           
             $(document).ready(function () {
                 $('#customer').on('change', function() {
                     console.log($('#customer').val())
@@ -1615,6 +2049,83 @@
                             console.log(data.email);
                             document.getElementById('cred_email').value = data.email;
                             document.getElementById('mailaddr').value = data.street + '\n' + data.city + '\n' + data.state + '\n' + data.country  + '\n' + data.pincode ;
+                            
+                            document.getElementById('plosu').value=data.state;
+                            document.getElementById('gst_treat').value=data.gst_treat;
+                            $(".seltax").removeClass('d-flex');
+                $(".seltax").addClass('d-none');
+        var place_supply=document.getElementById('plosu').value;
+        var cmp_place=document.getElementById('cmpstate').value;
+        if( place_supply == cmp_place ){
+            $(".inter_tax").removeClass('d-flex');
+                    $(".inter_tax").addClass('d-none');
+
+                    $(".intra_tax").removeClass('d-none');
+                    $(".intra_tax").addClass('d-flex');
+                    document.getElementById('cgst1').style.display = 'flex';
+                    document.getElementById('sgst1').style.display = 'flex';
+                    document.getElementById('igst1').style.display = 'none'; 
+                   
+
+        }
+        else{
+            $(".intra_tax").removeClass('d-flex');
+                    $(".intra_tax").addClass('d-none');
+
+                    $(".inter_tax").removeClass('d-none');
+                    $(".inter_tax").addClass('d-flex');
+                    document.getElementById('cgst1').style.display = 'none';
+                    document.getElementById('sgst1').style.display = 'none';
+                    document.getElementById('igst1').style.display = 'flex';
+
+                   
+
+        }
+        
+
+
+                            $('#inv_no').empty();
+                            if(data.gstno)
+                            {
+                                document.getElementById('gst_no').style.display='block';
+                                document.getElementById('gst_no_label').style.display='block';
+                                $('#gst_no').val(data.gstno);
+
+                            }
+                            else{
+                                document.getElementById('gst_no').style.display='none';
+                                document.getElementById('gst_no_label').style.display='none';
+                            }
+
+                            if (data.inv_id) {
+                                $('#inv_no').append($('<option>', {
+                            value:0+" "+data.inv_id,
+                            text:'Invoice'+" "+ data.inv_id
+                        }));
+
+                        }
+                        else{
+                            $('#inv_no').append($('<option>', {
+                            value:3+" "+'0',
+                            text: 'invoice not available'
+                        }));
+                        }
+
+                        if (data.recinv_id) {
+                                $('#inv_no').append($('<option>', {
+                            value:1+" "+data.recinv_id,
+                            text:'Re.Invoice'+" "+data.recinv_id
+                        }));
+
+                        }
+                        else{
+                            $('#inv_no').append($('<option>', {
+                            value:3+" "+'0',
+                            text: 'recuring invoice not available'
+                        }));
+                        }
+                            
+
                         }
                     });
                 });
@@ -1885,5 +2396,32 @@
 
        
         
+    </script>
+    <script>
+        $(document).on('change', '#openbalance',function () {
+            openbal = $("#openbalance").val()
+            if($('#bal').val()=='credit'){
+                if(openbal.slice(0,1) != '-'){
+                    document.getElementById("openbalance").value = "-"+openbal
+                }else{
+                    document.getElementById("openbalance").value = openbal
+                }
+            }else{
+                document.getElementById("openbalance").value = openbal
+            }
+        });
+    
+        $(document).on('change', '#bal',function () {
+            openbal = $("#openbalance").val()
+            if(openbal != ""){
+                if($('#bal').val()=='credit'){
+                    openbal = $("#openbalance").val()
+                    document.getElementById("openbalance").value = "-"+openbal
+                }else{
+                    openbal = $("#openbalance").val()
+                    document.getElementById("openbalance").value = openbal.slice(1,)
+                }
+            }
+        });
     </script>
 {% endblock %}

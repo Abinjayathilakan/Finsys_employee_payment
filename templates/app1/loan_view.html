@@ -64,12 +64,13 @@
                 <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
                     <thead>
                     <tr>
+                        <th>DATE</th>
                         <th>ACCOUNT</th>
                         <th>ACCOUNT NUMBER</th>
-                        <th>LENDER</th>
-                        
+                        <!-- <th>LENDER</th>
+                         -->
                         <th>LOAN AMOUNT</th>
-                        <th>BALANCE</th>
+                        <!-- <th>BALANCE</th> -->
                         <th>STATUS</th>
                         <th>ACTION</th>
                     </tr>
@@ -78,12 +79,12 @@
                         {% for i in loan %}
                 <tr >
                     
-
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.date}}</td>
                                 <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_name}}</td>
                                 <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_number}}</td>
-                                <td class='clickable-row' data-href="loan_list/{{ i.id }}"> {{i.lenderbank}}</td>
+                                <!-- <td class='clickable-row' data-href="loan_list/{{ i.id }}"> {{i.lenderbank}}</td> -->
                                 <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.loan_amount}}</td>
-                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.balance}}</td>
+                                <!-- <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.balance}}</td> -->
                                 <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.status}}</td>
                                                             
                                 <td>

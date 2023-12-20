@@ -16,7 +16,7 @@
                 <hr/>
             </div>
         </div>
-        <form action="paymentcreate2" novalidate method="post">
+        <form action="paymentcreate2" method="post">
             {% csrf_token %}
             <div class="card radius-15">
                 <div class="card-body">
@@ -33,8 +33,8 @@
                             <div class="col-md-4 mt-3">
                                 <label class="scol-form-label">Customer</label>
                                 <div class="d-flex">
-                                    <select name="customer" id="select" class="form-control">
-                                        <option value="NIL" disabled selected>Select Customer</option>
+                                    <select required name="customer" id="select" class="form-control">
+                                        <option value="">Select Customer</option>
                                         {% for cust in customers %}
                                             {% if cust.cid_id == cmp1.cid %}
                                                 <option text="{{ cust.customerid }}"
@@ -53,11 +53,11 @@
                             </div>
                             <div class=" col-md-4 mt-3">
                                 <label class="scol-form-label">GST Treatment</label>
-                                <input type="text" name="gsttype" id="gst_trt_inp" readonly class="form-control" placeholder="Email">
+                                <input type="text" name="gsttype" id="gst_trt_inp" readonly class="form-control" placeholder="GST Type">
                             </div>
                             <div class=" col-md-4 mt-3 d-none" id="gstin_row" style="flex-direction: column;">
                                 <label class="scol-form-label">GST #</label>
-                                <input type="text" name="gstin" id="gstin_inp" readonly class="form-control" placeholder="Email">
+                                <input type="text" name="gstin" id="gstin_inp" readonly class="form-control" placeholder="GSTIN">
                             </div>
                             <!-- <div class="col-md-4">
                                 <label class="scol-form-label">Find by invoice number</label><br>
@@ -72,10 +72,13 @@
                             </div>
                             <div class="col-md-4 mt-3">
                                 <label class="col-form-label">Payment No</label>
-                                <input type="text" name="ref" id="payment_num" value="PL-" class="form-control">
+                                <input type="text" name="ref" id="payment_num" value="PL-{{referno}}" class="form-control">
                                 <span id="payment_warning" class="text-danger"></span>
                             </div>
-                            <div class="col-md-4 mt-3"></div>
+                            <div class="col-md-4 mt-3">
+                                <label for="reference_num" class="col-form-label">Reference No</label>
+                                <input type="text" name="reference_num" id="reference_num" value="{{referno}}" readonly class="form-control">
+                            </div>
                         </div>
                         <!-- <div class="row">
                             <div class="col-md-4">
@@ -89,11 +92,11 @@
                             <div class="col-md-4 mt-3">
                                 <label class="col-form-label">Payment Method</label>
                                 <div class="d-flex">
-                                    <select name="pmethod" id="paymeth" onclick="showinp('newmethod', this)"class="form-control">
-                                        <option value="NILL" selected disabled>Choose Payment Method</option>
-                                        
+                                    <select required name="pmethod" id="paymeth" onclick="showinp('newmethod', this)"class="form-control">
+                                        <option value="">Choose Payment Method</option>
+                                        {% for i in bank %}
                                         <option text="{{i.id}}" value="{{i.bankname}}">{{i.bankname}}</option>
-                                        
+                                        {%endfor%}
                                         <option value="Cash">Cash</option>
                                         <option value="Cheque">Cheque</option>
                                         <option value="Credit Card">Credit Card</option>
@@ -194,7 +197,7 @@
                                         <th class="text-center"> #</th>
                                         <th class="text-center"> Date</th>
                                         <th class="text-center"> Invoice Type</th>
-                                        <th class="text-center"> Transaction #</th>
+                                        <th class="text-center"> Invoice #</th>
                                         <th class="text-center"> Invoice Amount</th>
                                         <th class="text-center"> Payment</th>
                                         <th class="text-center"> Balance</th>
@@ -217,11 +220,11 @@
                                     <tbody>
                                     <tr>
                                         <th class="text-center">Amount to Apply</th>
-                                        <td class="text-center"><input type="number" name='amtapply' id="amtoapply" placeholder='0.00' class="form-control"></td>
+                                        <td class="text-center"><input type="number" name='amtapply' id="amtoapply" min="0" step="any" placeholder='0.00' class="form-control"></td>
                                     </tr>
                                     <tr>
                                         <th class="text-center">Amount to Credit</th>
-                                        <td class="text-center"><input type="number" min="0" step="0.00" name='amtcredit' id="amtcredit" placeholder='0.00' class="form-control"></td>
+                                        <td class="text-center"><input type="number" min="0" step="any" name='amtcredit' id="amtcredit" placeholder='0.00' class="form-control"></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -295,8 +298,7 @@
                     </div>
                 </div>   
             </div>
-        </div>   
-    </div>
+        </div>
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script>
@@ -362,7 +364,7 @@
                 var dropdown = $('#paymeth');
                 dropdown.empty()
                 dropdown.append(
-                    `<option value="NILL" selected disabled>Choose Payment Method</option>`,
+                    `<option value="">Choose Payment Method</option>`,
                     `{% for i in bank %}<option value="{{i.bankname}}">{{i.bankname}}</option>{%endfor%}`,
                     `<option value="Cash">Cash</option>`,
                     `<option value="Cheque">Cheque</option>`,
@@ -388,7 +390,7 @@
                 $('.pymnt-methd-inp').addClass('d-none');
                 $('.pymnt-methd-inp').removeClass('d-flex');
                 $.ajax({
-                    url: "{% url 'get_bankacc_num2' %}",
+                    url: "{% url 'get_bankacc_num' %}",
                     type: "POST",
                     data: {
                         bankId : bnkId,
@@ -442,7 +444,7 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
+    $(document).ready(function() {
         $('#payment_num').on('blur', function() {
           var num = $('#payment_num').val();
         //   alert(num)
@@ -526,11 +528,14 @@
                                         <input type="text" name="duedate[]" value="${invdata[key]['date']}"hidden>
                                         <div style="position: absolute;" class="d-flex"><span>duedate : ${invdata[key]['date']} </span></div>
                                     </td>
-                                    <td><input type="text" name='inv_type[]' id="" value="${invdata[key]['inv_type']}" class="form-control"/></td>
+                                    <td>
+                                        <input type="text" readonly name='inv_type[]' id="" value="${invdata[key]['inv_type']}" class="form-control"/>
+                                        <input type="text" name='inv_id[]' id="" value="${invdata[key]['id']}" hidden/>
+                                    </td>
                                     <td><input type="text" name='trans_no[]' value="${invdata[key]['trans_no']}" id="" class="form-control"/></td>
                                     <td><input type="number" readonly name='inv_amount[]' id="inv_amount${parseInt(key)+1}" value="${invdata[key]['inv_amount']}" class="form-control"/></td>
-                                    <td><input type="number" name='payment[]' onkeyup="calcBalance(${parseInt(key)+1})" id="payment${parseInt(key)+1}" placeholder='0.00' class="form-control total pymnt_rcvd"/></td>
-                                    <td><input type="number" readonly name='balance[]' id="balance${parseInt(key)+1}" placeholder='0.00' class="form-control total blnc_amnts"/></td>
+                                    <td><input type="number" name='payment[]' onkeyup="calcBalance(${parseInt(key)+1})" id="payment${parseInt(key)+1}" min="0" value=0 step="any" placeholder='0.00' class="form-control total pymnt_rcvd"/></td>
+                                    <td><input type="number" readonly name='balance[]' id="balance${parseInt(key)+1}" placeholder='0.00' value="${invdata[key]['inv_amount']}" class="form-control total blnc_amnts"/></td>
                                 </tr>
                             `
                         )
@@ -677,10 +682,18 @@
         function calcBalance(rowId){
             var amount = $('#inv_amount'+rowId).val();
             var paid = $('#payment'+rowId).val();
+            if(paid == ""){
+                paid = 0
+            }
             bal = $('#balance'+rowId);
 
             var balAmount = parseFloat(amount) - parseFloat(paid)
             bal.val(balAmount.toFixed(2));
+            if(parseFloat(paid) > parseFloat(amount)){
+                alert('Amount is greater than invoice amount.!')
+                $('#payment'+rowId).val(amount)
+                bal.val(0);
+            }
 
             calcApplyAmount()
             calcCreditAmount()
@@ -704,7 +717,14 @@
             }
             $('#amtcredit').val(totAmountToCredit.toFixed(2));
         }
-
+        
+        $(document).ready(function(){
+            $('.pymnt_rcvd').change(function(){
+                if ($(this).val() == ""){
+                    $(this).val(0);
+                }
+            })
+        })
 
         function showinnum(divId, element) {
             if (element.value) {

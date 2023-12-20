@@ -1,6 +1,13 @@
 {% extends 'app1/base.html' %}
 {% block body %}
     {% load static %}
+    <style>
+        input:read-only {
+            /* background-color: rgba(0,0,0,.4) !important; */
+            background-color: rgb(255 255 255 / 14%) !important;
+            color: #fff;
+        }
+    </style>
     <div class="page-content">
         <div class="card radius-15">
             <div class="card-body">
@@ -23,7 +30,15 @@
                             <div class="col-md-4">
                                 <label class="scol-form-label">Customer</label>
                                 <div class="d-flex">
-                                    <input name="customername" value="{{ pay.customer }}" id="select" class="form-control" style="background-color: #2f516f; color: white;">
+                                    <!-- <input name="customername" value="{{ pay.customer }}" id="select" class="form-control" style="background-color: #2f516f; color: white;"> -->
+                                    <select required name="customer" id="select" class="form-control">
+                                        <option value="">Select Customer</option>
+                                        {% for cust in customers %}
+                                            {% if cust.cid_id == cmp1.cid %}
+                                                <option text="{{ cust.customerid }}" value="{{ cust.firstname }} {{ cust.lastname }}">{{ cust.firstname }} {{ cust.lastname }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
                                     <!-- <a href="{% url 'goaddcustpayment' %}">
                                         <button type="button" class="btn btn-outline-secondary ml-1">+</button>
                                     </a> -->
@@ -31,28 +46,51 @@
                             </div>
                             <div class=" col-md-4">
                                 <label class="scol-form-label">Email</label><br>
-                                <input type="email" name="email" value="{{ pay.email}}" id="email" class="form-control" placeholder="Email">
+                                <input type="email" name="email" value="{{ pay.email}}" readonly id="email" class="form-control" placeholder="Email">
+                            </div>
+                            <div class=" col-md-4">
+                                <label class="scol-form-label">GST Treatment</label>
+                                <input type="text" value="{{custobject.gsttype}}" name="gsttype" id="gst_trt_inp" readonly class="form-control" placeholder="GST Type">
+                            </div>
+
+                            <div class="d-none col-md-4 mt-3" id="gstin_row" style="flex-direction: column;">
+                                <label class="scol-form-label">GST #</label>
+                                <input type="text" name="gstin" value="{{custobject.gstin}}" id="gstin_inp" readonly class="form-control" placeholder="GSTIN">
                             </div>
                             <!-- <div class="col-md-4">
                                 <label class="scol-form-label">Find by invoice number</label><br>
                                 <input type="fbin" name="findinvoice" id="fbin" class="form-control">
                             </div> -->
                         </div>
-                        <div class="row">
+                        <div class="row mt-3">
                             <div class="col-md-4">
                                 <label class="col-form-label">Payment Date</label>
                                 <input type="date" name="paymdate" value="{{ pay.paymdate | date:'Y-m-d' }}" class="form-control">
                             </div>
-                            <div class="col-md-8"></div>
-                        </div>
-                        <div class="row">
+
+                            <div class="col-md-4">
+                                <label class="col-form-label">Payment No</label>
+                                <input type="text" name="ref" id="payment_num" value="{{pay.refno}}" placeholder="{{pay.refno}}" class="form-control text-uppercase">
+                                <span id="payment_warning" class="text-danger"></span>
+                            </div>
+                            
                             <div class="col-md-4">
                                 <label class="col-form-label">Reference No</label>
-                                <input type="text" name="ref" value="{{ pay.referno}}"class="form-control">
+                                <input type="text" name="reference_num" id="reference_num" value="{{pay.referno}}" readonly class="form-control">
+                            </div>
+
+
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-md-4">
+                                <label class="col-form-label">Reference No</label>
+                                <input type="text" name="ref" value="{{ pay.referno}}"class="form-control" readonly>
                             </div>
                             <div class="col-md-8"></div>
-                        </div> 
-                        <div class="row">
+                        </div>  -->
+
+
+                        <!-- <div class="row">
                             <div class="col-md-4">
                                 <label class="col-form-label">Payment Method</label>
                                 <select name="pmethod"  id="paymeth" onclick="showinp('newmethod', this)"
@@ -80,7 +118,7 @@
                                         {% endfor %}
                                         {% for acc3 in acounts_undep %}
                                             <option value="{{ acc3.name }}">{{ acc3.name }}</option>
-                                        {% endfor %}
+                                        {% endfor %} -->
                                         <!-- <option value="Deferred GST Input Credit">Deferred GST Input Credit</option>
                                         <option value="Deferred IGST">Deferred IGST</option>
                                         <option value="Deferred Krishi Kalyan Cess Input Credit">Deferred Krishi
@@ -100,18 +138,60 @@
                                         <option value="TDS Receivable">TDS Receivable</option>
                                         <option value="Uncategorised Asset">Uncategorised Asset</option>
                                         <option value="Undeposited Fund">Undeposited Fund</option> -->
-                                    </select>
+                                    <!-- </select>
                                     <a href="{% url 'paym_acc' %}"><button type="button" class="btn btn-outline-secondary ml-1">+</button></a>
                                 </div>
                             </div>
+                        </div> -->
+
+                        <div class="row mt-3">
+                            <div class="col-md-4 mt-3">
+                                <label class="col-form-label">Payment Method</label>
+                                <div class="d-flex">
+                                    <select required name="pmethod" id="paymeth" onclick="showinp('newmethod', this)"class="form-control">
+                                        <option value="">Choose Payment Method</option>
+                                        {% for i in bank %}
+                                        <option text="{{i.id}}" value="{{i.bankname}}">{{i.bankname}}</option>
+                                        {%endfor%}
+                                        <option value="Cash">Cash</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="Credit Card">Credit Card</option>
+                                        {% for i in pmethods %}
+                                        <option value="{{i.newmethod}}">{{i.newmethod}}</option>
+                                        {%endfor%}
+                                        <!-- <option value="Add New">Add New</option> -->
+                                        <option id="newmth"></option>
+                                    </select>
+                                    <a class="btn btn-outline-secondary ml-1" data-target="#pymntmeth" data-toggle="modal" role="button">+</a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <div class="d-none pymnt-methd-inp" id="bank-field" style="flex-direction: column;">
+                                    <label class="scol-form-label">Account #</label>
+                                    <input type="text" value="{{pay.bankacc}}" name="bank_acc" id="bankacc_inp" class="form-control" placeholder="Account #">
+                                </div>
+                                <div class="d-none pymnt-methd-inp" id="cheq-field" style="flex-direction: column;">
+                                    <label class="scol-form-label">Cheque ID</label>
+                                    <input type="text" value="{{pay.cheq_id}}" name="chq_id" id="chequeid_inp" class="form-control" placeholder="Cheque ID">
+                                </div>
+                                <div class="d-none pymnt-methd-inp" id="cc-field" style="flex-direction: column;">
+                                    <label class="scol-form-label">Credit Card</label>
+                                    <input type="number" value="{{pay.creditcard}}" name="ccnum" id="ccnum_inp" class="form-control" placeholder="Card Number">
+                                </div>
+                                <div class="d-none pymnt-methd-inp" id="upi-field" style="flex-direction: column;">
+                                    <label class="scol-form-label">UPI ID</label>
+                                    <input type="text" value="{{pay.upi}}" name="upiid" id="upi_inp" class="form-control" placeholder="UPI ID">
+                                </div>
+                            </div>
                         </div>
-                        <div class="row mt-4">
+
+                        <!-- <div class="row mt-4">
                             <div class="col-md-4">
                                 <input type="text" id="newmethod"  onchange="addtemopt(this)" class="form-control"
                                        style="display: none;">
                             </div>
-                        </div>
-                        <div class="row">
+                        </div> -->
+                        <!-- <div class="row">
                             <div class="col-md-4">
                             </div>
                             <div class="col-md-4"></div>
@@ -121,55 +201,50 @@
                                        class="form-control"
                                        name="amtreceived">
                             </div>
-                        </div>
-                        <div class="row mt-4 mb-4">
+                        </div> -->
+                        <!-- <div class="row mt-4 mb-4">
                             <div class="col-md-8"></div>
                             <div class="col-md-4">
                                 <h5 class="text-grey">AMOUNT RECIEVED</h5>
                                 <h5 class="text-light"  id="amre">0.00</h5>
                             </div>
-                        </div>
-                        <div class="row clearfix">
+                        </div> -->
+                        <div class="row clearfix mt-4">
                             <div class="col-md-12 table-responsive-md">
                                 <table class="table table-bordered table-hover" id="tab_logic">
                                     <thead>
                                     <tr>
                                         <th class="text-center"> #</th>
                                         <th class="text-center"> Date</th>
-                                        <th class="text-center"> Invoice Number</th>
-                                        <th class="text-center"> Invoice Amount</th>
-                                        <th class="text-center"> Amount Due	</th>
-                                        <th class="text-center"> PAYMENT</th>
+                                        <th class="text-center"> Invoice Type</th>
+                                        <th class="text-center"> Invoice #</th>
+                                        <th class="text-center"> Amount</th>
+                                        <th class="text-center"> Payment</th>
+                                        <th class="text-center"> Balance</th>
 
                                     </tr>
                                     </thead>
                                     <tbody id='invoicedata'>
                                         {% for  i in payitem %}
 
-                                        <tr id='addr1' >
-                                            <td>{{forloop.counter}}
-                                                <input type="text" name="id[]" value="{{i.id}}" hidden>
+                                        <tr id='addr{{forloop.counter}}'>
+                                            <td>{{forloop.counter}}<input type="text" name="id[]" value="{{i.id}}" hidden></td>
+                                            <td>
+                                                <input type="text" name="inv_date[]" id="" style="margin-top:41px" value="{{i.invdate}}" class="form-control"/>
+                                                <br>
+                                                <input type="text" name="duedate[]" value="{{i.duedate}}"hidden> <span >duedate : {{i.duedate}}</span>
                                             </td>
-                                            <td><input type="text" name="invdate[]" id="" style="margin-top:41px"
-                                                       value="{{i.invdate}}" class="form-control"/><br>
-                                                <input type="text" name="duedate[]" 
-                                                       value="{{i.duedate}}"hidden> <span >duedate : {{i.duedate}}</span>
+                                            <td>
+                                                <input type="text" readonly name='inv_type[]' id="" value="{{i.invtype}}" class="form-control"/>
+                                                <input type="text" hidden name='inv_id[]' id="" value="{{i.invid}}"/>
                                             </td>
-                                            <td><input type="text" name='invno[]' id="" value="{{i.invno}}" 
-                                                       class="form-control"/></td>
-                                            <td><input type="text" name='inv_amount[]'
-                                                value="{{i.invamount}}" id=""
-                                                       class="form-control qty" step="0" min="0"/></td>
-                                            <td><input type="number" name='openbal[]' id="openbal{{forloop.counter}}"
-                                                value="{{i.balamount}}"
-                                                       class="form-control price" step="0.00" min="0"/></td>
-                                            <td><input type="number"  value="{{i.paymentamount}}"  name='payment[]' onchange="addagain()" id="payment{{forloop.counter}}"
-                                                       placeholder='0.00'
-                                                       class="form-control total" value="0"/></td>
+                                            <td><input type="text" name='trans_no[]' value="{{i.invno}}" id="" class="form-control"/></td>
+                                            <td><input type="number" readonly name='inv_amount[]' id="inv_amount{{forloop.counter}}" value="{{i.invamount|floatformat:2}}" class="form-control"/></td>
+                                            <td><input type="number" name='payment[]' value="{{i.paymentamount}}" onkeyup="calcBalance(`{{forloop.counter}}`)" id="payment{{forloop.counter}}" placeholder='0.00' min="0" step="any" class="form-control total pymnt_rcvd"/></td>
+                                            <td><input type="number" readonly name='balance[]' value="{{i.balamount}}" id="balance{{forloop.counter}}" placeholder='0.00' class="form-control total blnc_amnts"/></td>
                                         </tr>
 
                                         {% endfor %}
-                                       
                                     </tbody>
                                 </table>
                             </div>
@@ -181,16 +256,12 @@
                                     <tbody>
                                     <tr>
                                         <th class="text-center">Amount to Apply</th>
-                                        <td class="text-center"><input type="number" name='amtapply' id="amtoapply"
-                                                                       placeholder='0.00' value="{{pay.amtapply}}"
-                                                                       class="form-control">
+                                        <td class="text-center"><input type="number" name='amtapply' id="amtoapply" min="0" step="any" placeholder='0.00' value="{{pay.amtapply}}" class="form-control">
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="text-center">Amount to Credit</th>
-                                        <td class="text-center"><input type="number" name='amtcredit' id="amtcredit"
-                                                                       placeholder='0.00' value="{{pay.amtcredit}}"
-                                                                       class="form-control"></td>
+                                        <td class="text-center"><input type="number" name='amtcredit' id="amtcredit" min="0" step="any" placeholder='0.00' value="{{pay.amtcredit}}" class="form-control"></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -222,8 +293,367 @@
             </div>
         </form>
     </div>
+
+
+    <!-- new payment method modal -->
+    <div class="modal fade" id="pymntmeth">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: #213b52;">
+                <div class="modal-header">
+                    <h3 class="m-3">New Payment Method</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card p-3 m-3">
+                        <form autocomplete="off" id="new_payment_form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-8 mt-2">
+                                    <input type="text" id="newpmethod" name="newmethod" class="form-control">
+                                </div>
+                                <div class="col-md-2 mt-2">
+                                    <button class="btn btn-outline-info text-grey mb-3" data-dismiss="modal" id="savepaymentmethod" type="button">Save</button>
+                                </div>
+                            </div>
+                        </form>  
+                    </div>
+                </div>
+            </div>   
+        </div>
+    </div>
+
+
+
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script>
+        $(document).ready(function(){
+            const $pmethd = document.querySelector('#paymeth');
+            $pmethd.value = `{{pay.pmethod}}` 
+        })
+        $(document).ready(function(){
+            const $cust = document.querySelector('#select');
+            $cust.value = `{{pay.customer}}` 
+        })
+        $(document).ready(function(){
+            if (`{{custobject.gstin}}` != ""){
+                $("#gstin_row").removeClass('d-none');
+                $("#gstin_row").addClass('d-flex');
+            }
+        })
+
+        function calcBalance(rowId){
+            var amount = $('#inv_amount'+rowId).val();
+            var paid = $('#payment'+rowId).val();
+            if(paid == ""){
+                paid = 0
+            }
+            bal = $('#balance'+rowId);
+
+            var balAmount = parseFloat(amount) - parseFloat(paid)
+            bal.val(balAmount.toFixed(2));
+            if(parseFloat(paid) > parseFloat(amount)){
+                alert('Amount is greater than invoice amount.!')
+                $('#payment'+rowId).val(amount)
+                bal.val(0);
+            }
+
+            calcApplyAmount()
+            calcCreditAmount()
+        }
+        
+        function calcApplyAmount(){
+            var payments = $(".pymnt_rcvd");
+            var totAmountToApply = 0;
+            for(var i = 0; i < payments.length; i++){
+                totAmountToApply += Number($(payments[i]).val());
+            }
+            $('#amtoapply').val(totAmountToApply.toFixed(2));
+        }
+
+        function calcCreditAmount(){
+            var balances = $(".blnc_amnts");
+            var totAmountToCredit = 0;
+
+            for(var i = 0; i < balances.length; i++){
+                totAmountToCredit += Number($(balances[i]).val())
+            }
+            $('#amtcredit').val(totAmountToCredit.toFixed(2));
+        }
+
+        $(document).ready(function() {
+            $('#payment_num').on('blur', function() {
+                var num = $('#payment_num').val();
+                //   alert(num)
+                if(num != `{{pay.refno}}`){
+                    $.ajax({
+                    type: "GET",
+                    url: "{% url 'checkPymntNumberConti' %}",
+                    data: {
+                        payment_number: num
+                    }
+                    }).done(function(response) {
+                        console.log(response.status);
+                        console.log(response.message);
+                        if (!response.status){
+                            $('#payment_warning').text(response.message);
+                        }
+                        else{
+                            $('#payment_warning').text("");
+                        }
+                    })
+                }
+            
+            });
+        });
+        
+        $(document).ready(function(){
+            var select = $('#paymeth').val();
+            var bnkId = $('#paymeth').find(":selected").attr('text');
+            if(bnkId != undefined){
+                $('.pymnt-methd-inp').addClass('d-none');
+                $('.pymnt-methd-inp').removeClass('d-flex');
+
+                $.ajax({
+                    url: "{% url 'get_bankacc_num' %}",
+                    type: "POST",
+                    data: {
+                        bankId : bnkId,
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+
+                    success: function(data) {
+                        if(data.status){
+                            $('#bank-field').removeClass('d-none');
+                            $('#bank-field').addClass('d-flex');
+                            $('#bankacc_inp').val(data.accountNumber)
+                        }
+                        else{
+                            alert('Something went wrong.!')
+                        }
+                    }
+                });
+            }else{
+                if(select === 'Cash'){
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                }else if(select === 'Cheque'){
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+
+                    $('#cheq-field').removeClass('d-none');
+                    $('#cheq-field').addClass('d-flex');
+                }else if(select === 'Credit Card'){
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+
+                    $('#cc-field').removeClass('d-none');
+                    $('#cc-field').addClass('d-flex');
+                }else if(select === 'UPI'){
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+
+                    $('#upi-field').removeClass('d-none');
+                    $('#upi-field').addClass('d-flex');
+                }else{
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                    $('.pymnt-methd-inp').addClass('d-none');
+
+                    // $('#upi-field').removeClass('d-none');
+                    // $('#upi-field').addClass('d-flex');
+                }
+            }
+            
+        })
+        $(document).ready(function() {
+            $('#select').on('change', function() {
+            select = $('#select').val();
+            $.ajax({
+                type: "GET",
+                url: "{% url 'getdata' %}",
+                data: {
+                id: select
+                }
+            }).done(function(response) {
+                var json_data = JSON.parse(response);
+                for (key in json_data) {
+                document.getElementById('email').value = json_data[key]['email'];
+
+                $('#gst_trt_inp').val("" + json_data[key]['gsttype']);
+                
+                if (json_data[key]['gsttype'] === "unregistered Business" || json_data[key]['gsttype'] === "Consumer" || json_data[key]['gsttype'] === "Overseas") {
+                            $("#gstin_row").addClass('d-none');
+                            $("#gstin_row").removeClass('d-flex');
+                    } else {
+                        $("#gstin_row").removeClass('d-none');
+                        $("#gstin_row").addClass('d-flex');
+                        $('#gstin_inp').val("" + json_data[key]['gstin']);
+                    }
+                }
+            })
+            });
+        });
+
+        $(document).ready(()=>{
+            $(document).on("click","#savepaymentmethod",function(){
+                var mthd = $("#newpmethod").val();
+                if (mthd !=""){
+                    $.ajax({
+                    type : 'POST',
+                    url:"{% url 'new_payment_method' %}",
+                    data:{
+                        new_payment : mthd,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    
+                    success: function(response) {
+                        console.log("AJAX Success - Response Data:", response);
+                        document.getElementById("new_payment_form").reset();
+                        reloadPaymentMethod(mthd);
+                    },         
+                });
+                }
+                else{
+                    alert('Invalid')
+                }
+            });
+
+            function reloadPaymentMethod(paymentMethod) {
+                // console.log("reload pymnt Function Called");
+                $.ajax({
+                url: "{% url 'get_payment_methods' %}",
+                type: "GET",
+                dataType: "json",
+                data: $(this).serialize(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+
+                success: function(data) {
+                    console.log("AJAX Success - Dropdown Data:", data);
+                    var dropdown = $('#paymeth');
+                    dropdown.empty()
+                    dropdown.append(
+                        `<option value="">Choose Payment Method</option>`,
+                        `{% for i in bank %}<option value="{{i.bankname}}">{{i.bankname}}</option>{%endfor%}`,
+                        `<option value="Cash">Cash</option>`,
+                        `<option value="Cheque">Cheque</option>`,
+                        `<option value="Credit Card">Credit Card</option>`,
+                        );
+                    $.each(data, function(key, value) {
+                    dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                    });
+                },
+                error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                }
+                });
+            }
+            
+        })
+
+        $(document).ready(function() {
+            $('#paymeth').on('change', function() {
+            var select = $('#paymeth').val();
+            var bnkId = $(this).find(":selected").attr('text');
+            if(bnkId != undefined){
+                $('.pymnt-methd-inp').addClass('d-none');
+                $('.pymnt-methd-inp').removeClass('d-flex');
+                $.ajax({
+                    url: "{% url 'get_bankacc_num' %}",
+                    type: "POST",
+                    data: {
+                        bankId : bnkId,
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+
+                    success: function(data) {
+                        if(data.status){
+                            $('#bank-field').removeClass('d-none');
+                            $('#bank-field').addClass('d-flex');
+                            $('#bankacc_inp').val(data.accountNumber)
+                        }
+                        else{
+                            alert('Something went wrong.!')
+                        }
+                    }
+                });
+            }
+            else{
+                if(select === 'Cash'){
+                $('.pymnt-methd-inp').addClass('d-none');
+                $('.pymnt-methd-inp').removeClass('d-flex');
+                
+                }else if(select === 'Cheque'){
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+
+                    $('#cheq-field').removeClass('d-none');
+                    $('#cheq-field').addClass('d-flex');
+                }else if(select === 'Credit Card'){
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+
+                    $('#cc-field').removeClass('d-none');
+                    $('#cc-field').addClass('d-flex');
+                }else if(select === 'UPI'){
+                    $('.pymnt-methd-inp').addClass('d-none');
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+
+                    $('#upi-field').removeClass('d-none');
+                    $('#upi-field').addClass('d-flex');
+                }else{
+                    $('.pymnt-methd-inp').removeClass('d-flex');
+                    $('.pymnt-methd-inp').addClass('d-none');
+
+                    // $('#upi-field').removeClass('d-none');
+                    // $('#upi-field').addClass('d-flex');
+                }   
+            }
+            });
+        });
+
+        $("#select").change(function () {
+            const select = $(this).val();  
+            $.ajax({                      
+                type: "POST",
+                url: "{% url 'getdatainv' %}",
+                data: {
+                    'select': select,
+                    'custId':$(this).find(":selected").attr('text'),
+                    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success:function(data){
+                    console.log(data)
+                    $('#invoicedata').empty();
+                    var invdata = JSON.parse(data)
+                    for(key in invdata){
+                        $('#invoicedata').append(
+                            `
+                                <tr id='addr${parseInt(key)+1}' style="height:6rem;">
+                                    <td>${parseInt(key)+1}<input type="text" name="id[]" value=0 hidden></td>
+                                    <td style="position: relative;"><input type="text" name="inv_date[]" id="" value="${invdata[key]['date']}" class="form-control"/>
+                                        <input type="text" name="duedate[]" value="${invdata[key]['date']}"hidden>
+                                        <div style="position: absolute;" class="d-flex"><span>duedate : ${invdata[key]['date']} </span></div>
+                                    </td>
+                                    <td>
+                                        <input type="text" readonly name='inv_type[]' id="" value="${invdata[key]['inv_type']}" class="form-control"/>
+                                        <input type="text" hidden name='inv_id[]' id="" value="${invdata[key]['id']}"/>
+                                    </td>
+                                    <td><input type="text" name='trans_no[]' value="${invdata[key]['trans_no']}" id="" class="form-control"/></td>
+                                    <td><input type="number" readonly name='inv_amount[]' id="inv_amount${parseInt(key)+1}" value="${invdata[key]['inv_amount']}" class="form-control"/></td>
+                                    <td><input type="number" name='payment[]' onkeyup="calcBalance(${parseInt(key)+1})" min="0" step="any" id="payment${parseInt(key)+1}" value=0 placeholder='0.00' class="form-control total pymnt_rcvd"/></td>
+                                    <td><input type="number" readonly name='balance[]' id="balance${parseInt(key)+1}" value="${invdata[key]['inv_amount']}" placeholder='0.00' class="form-control total blnc_amnts"/></td>
+                                </tr>
+                            `
+                        )
+                    }
+                    
+                }
+              
+            });
+        });
+
+
         function showinp(divId, element) {
             if (element.value == 'Add New') {
                 document.getElementById(divId).style.display = 'block';

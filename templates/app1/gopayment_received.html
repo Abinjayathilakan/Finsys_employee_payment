@@ -158,7 +158,7 @@ body{
                                 <button id="myBtn" class="btn btn-outline-info text-grey" style="margin-top: 8px;">New </button>
                             </a> -->
                         </div>
-                        <div class="btn-group col-md-2 d-flex align-items-center">
+                        <div class="btn-group col-md-2">
                             <a class="btn btn-outline-info text-white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                                 role="button">Filter By
                             </a>
@@ -167,7 +167,7 @@ body{
                                 <a class="dropdown-item" href="{% url 'gopayment_received_draft' %}">Draft</a>
                                 <a class="dropdown-item" href="{% url 'gopayment_received_saved' %}">Saved</a>
                             </div>
-                            <a href="{% url 'payment_received' %}" class="btn btn-outline-info fa fa-plus text-white" role="button"> &nbsp;New</a>
+                            <a href="{% url 'payment_received' %}" class="btn btn-outline-info fa fa-plus text-white d-flex align-items-center" role="button"> &nbsp;New</a>
                         </div>
 
                     </div>

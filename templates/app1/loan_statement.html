@@ -321,6 +321,48 @@
                 }
 
             </style>
+            <style>
+              @media print {
+    body {
+        background-color: white;
+    }
+
+    .page {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        margin: 0;
+        padding: 20px;
+    }
+
+    /* Adjust font size for print */
+    h2, h5 {
+        font-size: 18px;
+    }
+
+    /* Remove unnecessary elements for print */
+    .btn-group, .dropdown, .fa-print {
+        display: none;
+    }
+
+    /* Adjust table styles for print */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        padding-left: 130px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .ribbon-open{
+        visibility: hidden;
+    }
+    /* Adjust other styles as needed */
+}
+            </style>
                 <div class="my-5 page" size="A4"  >
                     <div class="p-5">
                         <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
@@ -367,7 +409,7 @@
                                     </div>
                                     <div class="col-3">
                                         <p> Balance</p>
-                                        <h5>{{cmp1.cash}}</h5>
+                                        <h5>{{loan.balance}}</h5>
                                         
                                     </div>
                               
@@ -382,18 +424,28 @@
                                 <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
                                     <thead>
                                     <tr>
-                                        <th>TYPE</th>
-                                        <th>NAME</th>
                                         <th>DATE</th>
-                                        <th>DESCRIPTION</th>
-                                        <th>BALANCE</th>
-                                        <th>CLOSING BAL</th>
+                                        <th>TYPE</th>
+                                        <th>AMOUNT</th>
+                                        <th>INTEREST</th>
+                                        <!-- <th>NAME</th>
+                                        
+                                        <th>DESCRIPTION</th> -->
+                                        <th>TOTAL AMOUNT</th>
+                                        <!-- <th>CLOSING BAL</th> -->
                                     </tr>
                                     </thead>
                                     <tbody>
                                    
                                {% for a in bnk %}
+                               {% if a.loan_amount != 0 %}
                                         <tr>
+                                            {% if a.type == 'LOAN ADJ'   %}
+                                            <td>{{a.loan_date}}</td>
+                                            {% elif a.type == 'LOAN APPROVED' %}
+                                            <td>{{a.loan_date}}</td>
+
+                                            {% endif %}
                                             {% if a.bank_type == 'OPENING BAL' %}
                                            
                                                 <td>{{a.bank_type}}</td>
@@ -402,24 +454,20 @@
                                             {% elif a.bank_type == 'EMI PAID' %}
                                             <td>{{a.bank_type}}</td>
                                             {% endif %}
-                                            {% if a.type == 'LOAN APPROVED' %}
+                                            <!-- {% if a.type == 'LOAN APPROVED' %}
                                             <td>{{a.type}}</td>
                                             {% elif a.type == 'LOAN ADJ' %}
                                             <td>{{a.type}}</td>
-                                            {% endif %}
-                                            {% if a.type == 'LOAN ADJ'   %}
-                                            <td>{{a.loan_date}}</td>
-                                            {% elif a.type == 'LOAN APPROVED' %}
-                                            <td>{{a.loan_date}}</td>
-
-                                            {% endif %}
-                                            {% if a.type == 'LOAN ADJ' %}
+                                            {% endif %} -->
+                                            <td>{{ a.loan_amount }}</td> <!-- Displaying loan amount from loan_transaction model -->
+                                            <td>{{a.loan_intrest|default:0}}</td>
+                                            <!-- {% if a.type == 'LOAN ADJ' %}
                                             <td>{{a.loan_desc}}</td>
                                             {% elif a.type == 'LOAN APPROVED' %}
                                             <td>{{a.loan_desc}}</td>
                                             {% else %}
                                             <td>{{a.cash_description}}</td>
-                                            {% endif %}
+                                            {% endif %} -->
                                             {% if a.type == 'LOAN ADJ' %}
                                                 <td>{{a.loan_amount }}</td>
                                                 {% elif a.type == 'LOAN APPROVED' %}
@@ -431,13 +479,13 @@
                                                 <td>- {{a.cash_cash}}</td>
                                                 {% endif %}
                                                 {% endif %}
-                                                <td>{{a.balance}}</td>
+                                                <!-- <td>{{a.balance}}</td> -->
 
                                         </tr>
                                        
                                         <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
                                          
-                                            
+                                      {% endif %}    
                                      {% endfor %}
                                         
                                   

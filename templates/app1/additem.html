@@ -385,17 +385,17 @@
                                             <div class="col-md-3">
                                                 <div class="form-check mt-1">
                                                    
-                                                        <input class="form-check-input" name="taxref" type="checkbox" id="inclusive" 
-                                                             value="taxable"  onchange="ShowHideDivi(inclusive)" >taxable
+                                                        <input class="form-check-input" name="taxref" type="radio" id="inclusive" 
+                                                             value="taxable" onclick="showdiv()" >taxable
                                                         <label style="color: white;" for="inclusive">
                                                             </label>
                                                   
                                                 </div>
                                             </div>
                                             <div class="form-check mt-1">
-                                                <input class="form-check-input" name="taxref" type="checkbox"
+                                                <input class="form-check-input" name="taxref" type="radio"
                                                        value="non taxable" 
-                                                       id="check">
+                                                       id="check" onclick="hidediv()">
                                                 <label style="color: white;">non taxable</label>
                                             </div>
                                         </div>
@@ -403,7 +403,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 mx-0">
-                                            <div class="row"  id="intrastateFiled" style="display: none;">
+                                            <div class="row"  id="taxableDiv" style="display: none;">
                                                 <div class="col-md-6 mt-3">
                                                     <label for="validationCustom05"
                                                            style="color: white;">Intra State Tax Rate</label>
@@ -582,8 +582,11 @@
                                                           </div>
                                                          
                                                     </div>
+                                                    
                                                 
                                                 </div>
+
+                        
 
                                                 <div class="row" id="inventorytrack" style="display: none">
                                                     <div class="col-md-6 mt-3">
@@ -626,11 +629,30 @@
                                                     </div>
                                                    
                                                 </div>
+
+                                                <div class="row" >
+                                                    <div class="col-md-3 mt-3">
+                                                        <label for="validationCustom01"
+                                                               style="color: white;">Minimum Stock to maintain</label>
+                                                        <input type="text" name="min_stock" class="form-control" 
+                                                                  style="background-color: #2a4964; color: white;"
+                                                                 autocomplete="off" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6 mt-3">
+                                                       
+                                                    </div>
+                                                   
+                                                </div>
+
+
                                                 <div class="row">
                                                     <div class="col-md-3 mt-3">
                                                         <label for="validationCustom05" name style="color: white;">Active/Inactive</label> 
                                                     </div>
-                                                    <div class="col-md-3">
+                                                    <div class="col-md-3 mt-3">
                                                         <div class="form-check">
                                                             <input class="form-check-input" value="Active" type="radio" name="status" id="flexRadioDefault1" checked>
                                                             <label class="form-check-label" for="flexRadioDefault1">
@@ -638,7 +660,7 @@
                                                             </label>
                                                         </div>     
                                                     </div>
-                                                    <div class="form-check">
+                                                    <div class="form-check mt-3">
                                                         <input class="form-check-input" value="Inactive" type="radio" name="status" id="flexRadioDefault2" >
                                                         <label class="form-check-label" for="flexRadioDefault2">
                                                           Inactive
@@ -818,24 +840,35 @@
                 }
             }
         </script>
+
 <script>
     function validateHSN() {
-      var hsnField = document.getElementById("hsnField");
-      var errorText = document.getElementById("errorText");
-      var hsnValue = hsnField.value;
+        var hsnField = document.getElementById("hsnField");
+        var errorText = document.getElementById("errorText");
+        var hsnValue = hsnField.value;
 
-      // Check if the HSN value has more than 6 digits
-      if (hsnValue.length !== 6) {
-        errorText.innerText = "HSN must be exactly 6 digits ";
-        hsnField.style.borderColor = "red";
-      } else {
-        errorText.innerText = "";
-        hsnField.style.borderColor = ""; // Reset border color
-      }
+        if (hsnValue.length < 6) {
+            errorText.innerText = "HSN must contain at least 6 digits";
+            hsnField.setCustomValidity("HSN must contain at least 6 digits");
+            hsnField.style.borderColor = "red";
+        } else {
+            errorText.innerText = "";
+            hsnField.setCustomValidity(""); 
+            hsnField.style.borderColor = ""; 
+        }
     }
-  </script>
+</script>
 
-       
+<script>
+    function showdiv() {
+        document.getElementById("taxableDiv").style.display = "block";
+    }
+    
+    function hidediv() {
+        document.getElementById("taxableDiv").style.display = "none";
+    }
+</script>
+
     {% endif %}
 
 

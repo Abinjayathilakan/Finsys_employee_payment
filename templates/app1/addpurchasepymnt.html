@@ -68,8 +68,9 @@
                     
                         <div class="col-md-4 mt-3">
                             <label for="">Reference</label>
-                            <input type="text" name="reference" value="{{ ref_no }}" class="form-control" readonly>
+                            <input type="text" name="reference" value="{{ ref_no   }}" class="form-control" readonly>
                         </div>
+                        
                         
                     
 
@@ -105,8 +106,8 @@
                           
                        
                         <div style="display:none;"  id="chequediv">
-                            <label class="col-form-label" >Cheque ID</label>
-                            <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID">
+                            <label class="col-form-label" >Cheque Number</label>
+                            <input type="text" class="form-control" name="cheque_id" id="cheque_id" placeholder="Enter Cheque Number">
                         </div>
                         
                         <div style="display:none;" id="upidiv">
@@ -145,6 +146,7 @@
                                     </thead>
                                     <tbody id='vendordata'></tbody>
                                     <tbody id='billdata'></tbody>
+                                    <tbody id='recurdata'></tbody>
                                 </table>
                                 
                                 <div class="row clearfix mt-4">
@@ -369,14 +371,15 @@
                     // Clear existing rows
                     $('#tab_logic #vendordata').empty();
                     $('#tab_logic #billdata').empty();
+                    $('#tab_logic #recurdata').empty();
     
-                    if (response.opb != null) {
+                    if (response.opb !== null && parseFloat(response.obdue) > 0) {
                         // Display opening balance bill
                         $('#tab_logic #vendordata').append(
                             `<tr id='addr1'>
                                 <td>1</td>
-                                <td><input type="text" name="billdate[]" value="${response.date}" class="form-control"/></td>
-                                <td><input type="text" name='billno[]' value="Vendor Opening Balance" class="form-control"/></td>
+                                <td><input type="hidden" name='payment1[]' value="vendor_balance"/><input type="text" name="billdate[]" value="${response.date}" class="form-control"/></td>
+                                <td><input type="hidden" name='payment2[]' value="${response.vendorid}" ><input type="text" name='billno[]' value="Vendor Opening Balance" class="form-control"/></td>
                                 <td><input type="text" name='billamount[]' value="${response.opb}" class="form-control qty" step="0" min="0"/></td>
                                 <td><input type="text" name="duedate[]" value="${response.date}" class="form-control"/></td>
                                 <td><input type="number" name='amountdue[]' value="${response.obdue}" class="form-control price" step="0.00" min="0"/></td>
@@ -387,18 +390,44 @@
     
                     // Display regular purchase bills
                     for (let i = 0; i < response.purchase_bills.length; i++) {
-                        $('#tab_logic #billdata').append(
-                            `<tr id='addr${i + 2}'>
-                                <td>${i + 2}</td>
-                                <td><input type="text" name="billdate[]" value="${response.purchase_bills[i].date}" class="form-control"/></td>
-                                <td><input type="text" name='billno[]' value="${response.purchase_bills[i].bill_no}" class="form-control"/></td>
-                                <td><input type="text" name='billamount[]' value="${response.purchase_bills[i].grand_total}" class="form-control qty" step="0" min="0"/></td>
-                                <td><input type="text" name="duedate[]" value="${response.purchase_bills[i].deliver_date}" class="form-control"/></td>
-                                <td><input type="number" name='amountdue[]' value="${response.purchase_bills[i].balance_amount}" class="form-control price" step="0.00" min="0"/></td>
-                                <td><input type="number" id='payment_${i + 1}' name='payment[]' onchange="addagain()" value="0" class="form-control total"/></td>
-                            </tr>`
-                        );
-                    } 
+                        if (parseFloat(response.purchase_bills[i].balance_amount) > 0) {
+                            $('#tab_logic #billdata').append(
+                                `<tr id='addr${i + 2}'>
+                                    <td>${i + 2}</td>
+
+                                    <td><input type="hidden" name='payment1[]' value="purchasebill_balance"/><input type="text" name="billdate[]" value="${response.purchase_bills[i].date}" class="form-control"/></td>
+                                    <td><input type="hidden" name='payment2[]' value="${response.purchase_bills[i].billid}" ><input type="text" name='billno[]' value="${response.purchase_bills[i].bill_no}" class="form-control"/></td>
+                                    <td><input type="text" name='billamount[]' value="${response.purchase_bills[i].grand_total}" class="form-control qty" step="0" min="0"/></td>
+                                    <td><input type="text" name="duedate[]" value="${response.purchase_bills[i].deliver_date}" class="form-control"/></td>
+                                    <td><input type="number" name='amountdue[]' value="${response.purchase_bills[i].balance_amount}" class="form-control price" step="0.00" min="0"/></td>
+                                    <td><input type="number" id='payment_${i + 1}' name='payment[]' onchange="addagain()" value="0" class="form-control total"/></td>
+                                </tr>`
+                            );
+                        } 
+                    }
+
+                    // Display regular recur bills
+                    if (response.recurring_bills.length > 0) {
+                        for (let i = 0; i < response.recurring_bills.length; i++) {
+                            $('#tab_logic #recurdata').append(`
+                                <tr id='addr${i + 3}'>
+                                    <td>${i + 3}</td>
+                                    <td><input type="hidden" name='payment1[]' value="recurring_balance"/><input type="text" name="billdate[]" value="${response.recurring_bills[i].start_date}" class="form-control"/></td>
+                                    <td><input type="hidden" name='payment2[]' value="${response.recurring_bills[i].rbillid}" ><input type="text" name='billno[]' value="${response.recurring_bills[i].billno}" class="form-control"/></td>
+                                    <td><input type="text" name='billamount[]' value="${response.recurring_bills[i].grand_total}" class="form-control qty" step="0" min="0"/></td>
+                                    <td><input type="text" name="duedate[]" value="${response.recurring_bills[i].end_date}" class="form-control"/></td>
+                                    <td><input type="number" name='amountdue[]' value="${response.recurring_bills[i].balance}" class="form-control price" step="0.00" min="0"/></td>
+                                    <td><input type="number" id='payment_recurring_${i + 1}' name='payment[]' onchange="addagain()" value="0" class="form-control total"/></td>
+                                </tr>
+                            `);
+                        }
+                    } else {
+                        console.log('No recurring bills data available.');
+                        // Optionally, you can handle the case where there are no recurring bills.
+                    }
+
+
+
                     // Calculate and update amounts
                     addagain();
                 }
@@ -422,6 +451,13 @@
             $('#tab_logic #billdata input[name="amountdue[]"]').each(function () {
                 totalAmountDue += parseFloat($(this).val()) || 0;
             });
+
+            // Calculate total amount due from bill data
+            $('#tab_logic #recurdata input[name="amountdue[]"]').each(function () {
+                totalAmountDue += parseFloat($(this).val()) || 0;
+            });
+                        
+            
         
             var balanceAmount = totalAmountDue - totalPayment;
         

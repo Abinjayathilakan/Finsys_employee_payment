@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSTR2</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="page-content">
+        <div class="card radius-15" style="width: 100%">
+            <div class="card-body">
+                <div class="card-title">
+                    <center>
+                        <h6>{{cmp1.cname}}</h6>
+                        <h2 class="mb-0">GSTR-2 REPORT</h2>
+                        <div class="display">
+                            <div id="d1" style="display: inline-block;"></div>
+                            <div id="d2" style="display: inline-block;"></div>
+                        </div>
+                    </center>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    
+
+
+
+
+
+
+
+    
+    <div class="card radius-15 print-only" id="pdf-card" style="width: 100%;">
+        <div class="card-body">
+            <div class="container-fluid">
+
+                <table class="table "
+                    id="myTable">
+                    <thead>
+                        <tr>
+                            <th colspan="5" style="text-align: center;">Invoice Details</th>
+
+                            </th>
+                            <th colspan="5" style="text-align: center;">Tax Rate</th>
+                            <th colspan="5" style="text-align: center;">Cess Rate</th>
+                            <th colspan="5" style="text-align: center;">Taxable Value</th>
+                            <th colspan="4" style="text-align: center;">Amount</th>
+                            <th style="text-align: center;">Place of Supply</th>
+                            
+                            
+                        </th>
+                        </tr>
+                        <tr>
+                            <th style="text-align: center;">GSTIN/UIN</th>
+                            <th style="text-align: center;white-space: nowrap;">Party Name </th>
+                            <th style="text-align: center;white-space: nowrap;">No.</th>
+                            <th style="text-align: center;white-space: nowrap;">Date</th>
+                            <th style="text-align: center;white-space: nowrap;">Value</th>
+                            <th colspan="5"  ></th>
+                            <th colspan="5"></th>
+                            <th colspan="5" ></th>
+                           
+                            <th style="text-align: center;">Integrated Tax</th>
+                            <th style="text-align: center;">Central Tax</th>
+                            <th style="text-align: center;">State/UT Tax</th>
+                            <th style="text-align: center;">Cess</th>
+                          
+                          
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in bill %}
+                        <tr class="text-center">
+                            <td style="text-align: center;">{{i.gstin}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.vendor_name}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.bill_no}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.date}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.round_off}}</td>
+                            {% for b in pbill %}
+                            {% if b.bill_id == i.billid %}
+                            <td style="text-align: center;white-space: nowrap;"colspan="5" >{{b.tax}}</td>
+                            {%endif%}
+                            {%endfor%}
+                            <td style="text-align: center;white-space: nowrap;"colspan="5"   >0</td>
+                            <td  style="text-align: center;white-space: nowrap;"colspan="5"  >{{ i.tax_amount}}</td>
+                            <td  style="text-align: center;white-space: nowrap;" >{{i.igst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.sgst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.cgst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">0</td>
+                            <td style="text-align: center;white-space: nowrap;" >{{ i.sourceofsupply}}</td>
+
+                            
+                        </tr>
+                        {% endfor %}
+
+
+                        {% for trans in pdebt %}
+                     
+                        <tr class="text-center" data-href="" style="text-align: center;">
+                            <td style="text-align: center;">{{trans.gstin}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{ trans.vendor }}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{  trans.debit_no }}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{ trans.debitdate }}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{ trans.round_off }}</td>
+                            {% for d in pdebt1 %}
+                            {% if d.pdebit_id == trans.pdebitid %}
+                            <td style="text-align: center;white-space: nowrap;"colspan="5" >{{d.tax}}</td>
+                           {%endif%}
+                           {%endfor%}
+                            <td style="text-align: center;white-space: nowrap;" colspan="5" >0</td>
+                            <td  style="text-align: center;white-space: nowrap;" colspan="5">{{ trans.taxamount}}</td>
+                            <td  style="text-align: center;white-space: nowrap;" >{{trans.igst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{trans.sgst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{trans.cgst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">0</td>
+                            <td  >{{ trans.supply}}</td>
+                            
+
+                        </tr>
+                     
+                        {% endfor%}
+
+                        {% for i in rbill %}
+                        <tr class="text-center">
+                            <td style="text-align: center;">{{i.gstin}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.vendor_name}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.billno}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.start_date}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.adjustment}}</td>
+                            {% for r in ritem %}
+                            {% if r.bill_id == i.rbillid %}
+                            <td style="text-align: center;white-space: nowrap;"colspan="5" >{{r.tax}}</td>
+                            {%endif%}
+                            {%endfor%}
+                            <td style="text-align: center;white-space: nowrap;" colspan="5" >0</td>
+                            <td  style="text-align: center;white-space: nowrap;" colspan="5">{{ i.tax_amount}}</td>
+                            <td  style="text-align: center;white-space: nowrap;" >{{i.igst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.sgst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">{{i.cgst}}</td>
+                            <td style="text-align: center;white-space: nowrap;">0</td>
+                            <td>{{ i.place_supply}}</td>
+
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
