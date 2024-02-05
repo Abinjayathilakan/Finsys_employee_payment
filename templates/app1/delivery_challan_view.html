@@ -10,6 +10,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
 
 <style>
+    .equal-length-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        /* Make the container fill the height of the column */
+        margin-left: 2vh;
+        margin-right: 2vh;
+    }
+
+    .equal-length-item {
+        flex: 1;
+        text-align: center;
+    }
+
     #div1 {
         /* background-color: rgb(0, 255, 21); */
         width: 33.33%;
@@ -550,6 +565,7 @@ transform: rotate(-45deg); */
         display: inline-block;
         color: #000000;
     }
+
     .card-registration .select-input.form-control[readonly]:not([disabled]) {
         font-size: 1rem;
         line-height: 2.15;
@@ -701,7 +717,41 @@ transform: rotate(-45deg); */
 </style>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<!-- Share bill Modal -->
+<div class="modal fade" id="shareBillEmail" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shareBillEmailLabel">Share Sales Order Via Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body" style="background: rgb(32, 35, 37);">
+                <div class="card p-3 m-3">
+                    <form action="{% url 'shareDeliveryChallanToEmail' estimate.id %}" method="post" class="needs-validation" id="share_to_email_form" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="emailIds">Email IDs</label>
+                            <textarea class="form-control text-white" name="email_ids" id="emailIds" rows="5"
+                                placeholder="Multiple emails can be added by separating with a comma(,)."
+                                required></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="item_unitname">Message(optional)</label>
+                            <textarea name="email_message" id="email_message" class="text-white form-control" cols=""
+                                rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffff;">
+                    <input type="submit" id="share_with_email"
+                        class="submitShareEmailBtn rounded-pill text-dark w-50 my-4 mx-3" value="SEND MAIL">
+                </div>
+            </div>
 
+        </div>
+    </div>
+</div>
 <!-- modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
@@ -753,46 +803,50 @@ transform: rotate(-45deg); */
                         <div class="d-flex align-items-center overview-btn">
                             <!-- <center> -->
 
-                                <a href="{% url 'editchallan' estimate.id %}"
-                                    class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3 p-2"
-                                    role="button">
-                                    Edit
-                                </a>
+                            <a href="{% url 'editchallan' estimate.id %}"
+                                class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3 p-2"
+                                role="button">
+                                Edit
+                            </a>
 
-                                <a href="{% url 'deletechallan' estimate.id %}"
-                                    class=" fa fa-trash btn btn-outline-info rounded-pill text-grey mt-3 mb-3 ml-2 p-2"
-                                    role="button" onclick="return confirm('Are you sure you want to delete.?')"> Delete</a>
-                                <!-- <div class="dropdown  " > -->
-                                {% if estimate.status != 'Saved' %}    
-                                <div class="dropdown p-0 d-inline-flex ml-2">
-                                    <li class=" dropdown-toggle  fa fa-sort btn btn-outline-info rounded-pill text-grey p-2" data-toggle="dropdown"> &nbsp;Convert</li>
-                                    <ul class="dropdown-menu" style="background-color: black;">
-                                        <!-- <a class="dropdown-item " href="{% url 'challan_convert1' estimate.id %}">
+                            <a href="{% url 'deletechallan' estimate.id %}"
+                                class=" fa fa-trash btn btn-outline-info rounded-pill text-grey mt-3 mb-3 ml-2 p-2"
+                                role="button" onclick="return confirm('Are you sure you want to delete.?')"> Delete</a>
+                            <!-- <div class="dropdown  " > -->
+                            {% if estimate.status != 'Saved' %}
+                            <div class="dropdown p-0 d-inline-flex ml-2">
+                                <li class=" dropdown-toggle  fa fa-sort btn btn-outline-info rounded-pill text-grey p-2"
+                                    data-toggle="dropdown"> &nbsp;Convert</li>
+                                <ul class="dropdown-menu" style="background-color: black;">
+                                    <!-- <a class="dropdown-item " href="{% url 'challan_convert1' estimate.id %}">
                                             &nbsp;Approved </a> -->
-                                            <a class="dropdown-item " href="{% url 'challan_draftToSave' estimate.id %}">
-                                                &nbsp;Saved</a>
+                                    <a class="dropdown-item " href="{% url 'challan_draftToSave' estimate.id %}">
+                                        &nbsp;Saved</a>
 
 
-                                    </ul>
-                                </div>
-                                {% endif %}    
-                                <!-- </div> -->
-                                <!-- <button type="button"
+                                </ul>
+                            </div>
+                            {% endif %}
+                            <!-- </div> -->
+                            <!-- <button type="button"
                                     class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3 ml-3   fa fa-paperclip"
                                     style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">
 
                                     Attach file
                                 </button> -->
-                                <div class="dropdown p-0 d-inline-flex ml-2">
-                                    <li  class=" dropdown-toggle fa fa-paperclip btn btn-outline-info rounded-pill text-grey p-2"data-toggle="dropdown">Attach file</li>
-                                    <ul class="dropdown-menu" style="background-color: black;">
-                                        <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">&nbsp; Attach file</a>
-                                        {% if estimate.file != "default.jpg" %}
-                                            <a class="dropdown-item fa fa-download" style="cursor: pointer;"download  href="{{estimate.file.url}}">&nbsp; Download file</a>
-                                        {% endif %}
-                                    </ul>
-                                </div>
-                                <!-- <a data-toggle="modal"
+                            <div class="dropdown p-0 d-inline-flex ml-2">
+                                <li class=" dropdown-toggle fa fa-paperclip btn btn-outline-info rounded-pill text-grey p-2"
+                                    data-toggle="dropdown">Attach file</li>
+                                <ul class="dropdown-menu" style="background-color: black;">
+                                    <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal"
+                                        data-target="#exampleModal">&nbsp; Attach file</a>
+                                    {% if estimate.file != "default.jpg" %}
+                                    <a class="dropdown-item fa fa-download" style="cursor: pointer;" download
+                                        href="{{estimate.file.url}}">&nbsp; Download file</a>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <!-- <a data-toggle="modal"
                                         class=" fa fa-download btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                         data-target="#commentModal"> Download</a> -->
 
@@ -830,11 +884,13 @@ transform: rotate(-45deg); */
                                 <div class="card-body">
                                     <div class="row mb-4 d-flex justify-content-between align-items-center">
                                         <div class="col-md-4 mt-3">
-                                            <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Delivery Challan Details</h5>
+                                            <h5
+                                                style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">
+                                                Delivery Challan Details</h5>
                                         </div>
                                         <div class="col-md-4 mt-3"></div>
                                         <div class="col-md-4 mt-3"></div>
-        
+
                                         <div class="col-md-3 mt-3">
                                             <h6 class="mb-0">Challan Status</h6>
                                         </div>
@@ -847,7 +903,7 @@ transform: rotate(-45deg); */
                                         <div class="col-md-3 mt-3">
                                             <p class="mb-0 text-right">{{ estimate.chal_no }}</p>
                                         </div>
-                                    <!-- </div>
+                                        <!-- </div>
                                     
                                     <div class="row mb-4 d-flex justify-content-between align-items-center"> -->
                                         <div class="col-md-3 mt-3">
@@ -922,7 +978,7 @@ transform: rotate(-45deg); */
 
                                         </div>
                                     </div> -->
-                                   
+
                                     <hr>
                                     <!-- <div class="row">
                                         <div class="col mt-3">
@@ -1044,16 +1100,19 @@ transform: rotate(-45deg); */
                                             </tbody>
                                         </table>
                                     </div> -->
-                                    
-                                    
+
+
                                     <div class="row d-flex justify-content-between align-items-center">
                                         <div class="col-md-4 mt-3">
-                                            <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Product Details</h5>
+                                            <h5
+                                                style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">
+                                                Product Details</h5>
                                         </div>
                                         <div class="col-md-4 mt-3"></div>
                                         <div class="col-md-4 mt-3"></div>
-                                        
+
                                         {% for itm in estitem %}
+
                                         <div class="col-md-3 mt-3">
                                             <h6 class="mb-0">Name</h6>
                                         </div>
@@ -1090,6 +1149,10 @@ transform: rotate(-45deg); */
                                         <div class="col-md-3 mt-3">
                                             <p class="mb-0 text-right">{{ itm.total }}</p>
                                         </div>
+                                        <div class="col-md-3 mt-3"></div>
+                                        <div class="col-md-3 mt-3"></div>
+                                        <div class="col-md-3 mt-3"></div>
+                                        <div class="col-md-3 mt-3"></div>
                                         {% endfor %}
                                     </div>
 
@@ -1174,11 +1237,13 @@ transform: rotate(-45deg); */
 
                                     <div class="row d-flex justify-content-between align-items-center">
                                         <div class="col-md-4 mt-3">
-                                            <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Bill Summary</h5>
+                                            <h5
+                                                style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">
+                                                Bill Summary</h5>
                                         </div>
                                         <div class="col-md-4 mt-3"></div>
                                         <div class="col-md-4 mt-3"></div>
-        
+
                                         <div class="col-md-3 mt-3">
                                             <h6 class="mb-0">Sub Total</h6>
                                         </div>
@@ -1208,7 +1273,7 @@ transform: rotate(-45deg); */
                                             </div>
                                         </div>
                                         {% endif %}
-                                        
+
                                     </div>
                                     <div class="row d-flex justify-content-between align-items-center mb-3">
                                         <div class="col-md-3 mt-3">
@@ -1225,7 +1290,7 @@ transform: rotate(-45deg); */
                                         </div>
                                     </div>
 
-                                     <div class="row">
+                                    <div class="row">
                                         <div class="col-md-4 mr-5 mt-3">
                                             <label for="title">
                                                 <h5><b>Grand Total</b></h5>
@@ -1248,7 +1313,7 @@ transform: rotate(-45deg); */
                                         </div>
                                     </div>
                                     <hr> -->
-                                    
+
                                 </div>
 
 
@@ -1375,126 +1440,109 @@ transform: rotate(-45deg); */
                                         <h6 class="">TDS Amount</h6>
                                         {{ employee.employee.tds }}
                                     </div>
-                                    {% endif %}
-         -->
-
-
-
-
-
+                                    {% endif %}   -->
                             </div>
-
-
-
                         </div>
                     </div>
                 </div>
-
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="statment" style="display: none; ">
+    <div class="card radius-15">
+        <div class="card-body" id="card">
+            <div class="card-title">
+                <center>
+                    <h2 class="mb-0">VIEW DELIVERY CHALLAN</h2>
+                    <h4></h4>
+                </center>
+                <hr>
+            </div>
+            <div class="btn-group" style="float: left; ">
 
 
+                <a style="padding: 10px; cursor: pointer;" onclick="Overview()"> Overview</a>
 
+                <a style="padding: 10px; cursor: pointer;" onclick="Statment()"> Statement</a>
+                <a style="padding: 10px; cursor: pointer;" onclick="Slip()"> Slip</a>
+            </div>
+            <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll"
+                    aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarScroll">
+                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                        <li class="nav-item mx-1">
+                            <a href="{% url 'editchallan' estimate.id %}" role="button"
+                                class=" btn btn-outline-info rounded-pill text-grey p-1">
+                                &nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
 
+                        </li>
+                        <li class="nav-item mx-1">
+                            <a href="{% url 'deletechallan' estimate.id %}" role="button" id="deleteButton"
+                                class=" btn btn-outline-info rounded-pill text-grey p-1">&nbsp;&nbsp;Delete&nbsp;&nbsp;
+                            </a>
+                        </li>
+                        <li class="nav-item active mx-1">
+                            <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1"
+                                role="button" id="templatePrintButton">&nbsp;&nbsp;Print&nbsp;&nbsp;<span
+                                    class="sr-only">(current)</span></a>
+                        </li>
 
+                        <li class="nav-item mx-1">
+                            <a class="btn btn-outline-info rounded-pill text-grey p-1" role="button" href="#"
+                                id="downloadButton">&nbsp;&nbsp;PDF&nbsp;&nbsp;</a>
+                        </li>
+                        {% if estimate.status != 'Saved' %}
+                        <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
+                            <li class="btn btn-outline-info rounded-pill text-grey p-1  dropdown-toggle  "
+                                data-toggle="dropdown"> &nbsp;&nbsp;Convert&nbsp;&nbsp;</li>
+                            <ul class="dropdown-menu" style="background-color: black;">
+                                <a class="dropdown-item " href="{% url 'challan_draftToSave' estimate.id %}">
+                                    &nbsp;Saved </a>
 
+                            </ul>
 
+                        </div>
+                        {% endif %}
 
+                        <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
+                            <a class="btn btn-outline-info rounded-pill text-grey p-1" data-toggle="dropdown">
+                                &nbsp;&nbsp;Share&nbsp;&nbsp;
+                            </a>
+                            <div class="dropdown-menu ">
+                                <a class="dropdown-item" data-target="#shareBillEmail" data-toggle="modal">GMAIL</a>
+                                <a class="dropdown-item" href="javascript:void(0);"
+                                    onclick="shareOnWhatsApp()">WhatsApp</a>
+                            </div>
+                        </div>
 
-
-
-
-
-
-
-
-
-
-
+                        <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
+                            <li class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"
+                                data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
+                            <ul class="dropdown-menu" style="background-color: black;">
+                                <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal"
+                                    data-target="#exampleModal">Attach file</a>
+                                {% if estimate.file != "default.jpg" %}
+                                <a class="dropdown-item fa fa-download" style="cursor: pointer;" download
+                                    href="{{estimate.file.url}}">Download file</a>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+            </nav>
 
 
         </div>
     </div>
 
-    <div id="statment" style="display: none; ">
 
 
-        <div class="card radius-15">
-            <div class="card-body" id="card">
-                <div class="card-title">
-                    <center><h2 class="mb-0">VIEW DELIVERY CHALLAN</h2> <h4></h4></center>
-                    <hr>
-                </div>
-                <div class="btn-group" style="float: left; ">
-
-
-                    <a style="padding: 10px; cursor: pointer;" onclick="Overview()"> Overview</a>
-
-                    <a style="padding: 10px; cursor: pointer;" onclick="Statment()"> Statement</a>
-                    <a style="padding: 10px; cursor: pointer;" onclick="Slip()"> Slip</a>
-                </div>
-                <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarScroll">
-                        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                          <li class="nav-item mx-1">
-                            <a href="{% url 'editchallan' estimate.id %}" role="button" class=" btn btn-outline-info rounded-pill text-grey p-1"> &nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
-
-                          </li>
-                          <li class="nav-item mx-1">
-                            <a  href="{% url 'deletechallan' estimate.id %}" role="button"id="deleteButton" class=" btn btn-outline-info rounded-pill text-grey p-1">&nbsp;&nbsp;Delete&nbsp;&nbsp; 
-                            </a>
-                          </li>
-                            <li class="nav-item active mx-1" >
-                            <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" id="templatePrintButton"  onclick="printSpecificArea('whatToPrint1')">&nbsp;&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
-                            </li>
-      
-                            <li class="nav-item mx-1">
-                              <a class="btn btn-outline-info rounded-pill text-grey p-1" role="button" href="{% url 'render_pdfchallan_view' estimate.id %}" id="downloadButton" >&nbsp;&nbsp;PDF&nbsp;&nbsp;</a>
-                            </li>
-                            {% if estimate.status != 'Saved' %}
-                                <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
-                                    <li  class="btn btn-outline-info rounded-pill text-grey p-1  dropdown-toggle  "data-toggle="dropdown"> &nbsp;&nbsp;Convert&nbsp;&nbsp;</li>
-                                        <ul class="dropdown-menu" style="background-color: black;">
-                                        <a class="dropdown-item " href="{% url 'challan_draftToSave' estimate.id %}"> &nbsp;Saved </a>
-                                    
-                                        </ul>
-                              
-                                </div>
-                            {% endif %}
-
-                            <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;" onclick="uplodfile()">
-                              <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;&nbsp;Share&nbsp;&nbsp;</li>
-                              <ul class="dropdown-menu" style="background-color: black;">
-      
-                                  <!-- <li style="margin-left: 50px;"  ></i>{% post_to_facebook object_or_url "Facebook!" %}</li> -->
-                                  <li style="margin-left: 50px;" > {% post_to_whatsapp object_or_url "WhatsApp" %}</li>
-                                  <li style="margin-left: 50px;" >{% send_email object.title "New Song: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
-                                  
-                              </ul>
-                            </div>
-  
-                            <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
-                                <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
-                                <ul class="dropdown-menu" style="background-color: black;">
-                                    <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
-                                    {% if estimate.file != "default.jpg" %}
-                                        <a class="dropdown-item fa fa-download" style="cursor: pointer;"download  href="{{estimate.file.url}}" >Download file</a>
-                                    {% endif %}
-                                </ul>
-                            </div>
-                        </ul>
-                    </div>
-                </nav>
-            
-                
-            </div>
-        </div>
-
-
-
-        <!-- <div class="card radius-15">
+    <!-- <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
                     <center>
@@ -1595,174 +1643,174 @@ transform: rotate(-45deg); */
         </div> -->
 
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
-        <div id="whatToPrint" style="display: none;">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+    <div id="whatToPrint" style="display: none;">
 
-            <div class="my-5 page" size="A4" id="printArea">
-                
+        <div class="my-5 page" size="A4" id="printArea">
 
-                <div class="p-5">
-                    <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
-                        <div class="ribbon-inner ribbon-open">{{estimate.status}}</div>
+
+            <div class="p-5">
+                <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                    <div class="ribbon-inner ribbon-open">{{estimate.status}}</div>
+                </div>
+                <section class="top-content bb d-flex justify-content-between">
+                    <div class="logo">
+                        <!-- <img src="logo.png" alt="" class="img-fluid"> -->
                     </div>
-                    <section class="top-content bb d-flex justify-content-between">
-                        <div class="logo">
-                            <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                    <div class="top-left">
+                        <div class="graphic-path">
+                            <p>Delivery Challan</p>
                         </div>
-                        <div class="top-left">
-                            <div class="graphic-path">
-                                <p>Delivery Challan</p>
-                            </div>
-                            <div class="position-relative">
-                                <p>Challan No. <span>{{estimate.chal_no }}</span></p>
-                            </div>
+                        <div class="position-relative">
+                            <p>Challan No. <span>{{estimate.chal_no }}</span></p>
                         </div>
-                    </section>
+                    </div>
+                </section>
 
-                    <section class="store-user mt-5">
-                        <div class="col-12">
-                            <div class="row bb pb-3">
-                                <div class="col-6">
-                                    <p>FROM,</p>
-                                    <h5>{{cmp1.cname }}</h5>
-                                    <p class="address "> {{cmp1.caddress}}<br>
-                                        {{cmp1.city}},
-                                        {{cmp1.state}}<br>
-                                        {{cmp1.pincode}}<br>
-                                    </p>
+                <section class="store-user mt-5">
+                    <div class="col-12">
+                        <div class="row bb pb-3">
+                            <div class="col-6">
+                                <p>FROM,</p>
+                                <h5>{{cmp1.cname }}</h5>
+                                <p class="address "> {{cmp1.caddress}}<br>
+                                    {{cmp1.city}},
+                                    {{cmp1.state}}<br>
+                                    {{cmp1.pincode}}<br>
+                                </p>
 
-                                </div>
-                                <div class="col-6">
-                                    <p>TO,</p>
-                                    <h5>{{estimate.customer.firstname}}{{estimate.customer.lastname}}</h5>
-                                    <p class="address col-10" style="margin-left: -14px;"> {{ estimate.billto}} </p>
-
-                                </div>
                             </div>
-                            <div class="row extra-info pt-3">
-                                <div class="col-7">
-                                    <p>Challan Date: <span>{{estimate.challan_date | date:'d-m-Y'}}</span></p>
-                                </div>
-                                <div class="col-5">
-                                    <!-- <p>Expiration Date : <span>{{estimate.expirationdate | date:'d-m-Y'}}</span></p> -->
-                                </div>
+                            <div class="col-6">
+                                <p>TO,</p>
+                                <h5>{{estimate.customer.firstname}}{{estimate.customer.lastname}}</h5>
+                                <p class="address col-10" style="margin-left: -14px;"> {{ estimate.billto}} </p>
+
                             </div>
                         </div>
-                    </section>
+                        <div class="row extra-info pt-3">
+                            <div class="col-7">
+                                <p>Challan Date: <span>{{estimate.challan_date | date:'d-m-Y'}}</span></p>
+                            </div>
+                            <div class="col-5">
+                                <!-- <p>Expiration Date : <span>{{estimate.expirationdate | date:'d-m-Y'}}</span></p> -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-                    <section class="product-area mt-4">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <td style="color:black">Item Description</td>
-                                    <td style="color:black">Hsn</td>
-                                    <td style="color:black">Price</td>
-                                    <td style="color:black">Quantity</td>
-                                    <td style="color:black">Discount</td>
-                                    <td style="color:black">Tax</td>
-                                 
-                            
-                                    <td style="color:black">Total</td>
-                                </tr>
-                            </thead>
-                            <tbody>
+                <section class="product-area mt-4">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <td style="color:black">Item Description</td>
+                                <td style="color:black">Hsn</td>
+                                <td style="color:black">Price</td>
+                                <td style="color:black">Quantity</td>
+                                <td style="color:black">Discount</td>
+                                <td style="color:black">Tax</td>
 
-                                {% for j in estitem %}
-                                <tr>
-                                    <td>
-                                        <div class="media">
 
-                                            <div class="media-body">
-                                                <p class="mt-0 title" style="color:black">{{j.product}}</p>
-                                                <span style="color:black">{{j.description}}</span>
-                                            </div>
+                                <td style="color:black">Total</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for j in estitem %}
+                            <tr>
+                                <td>
+                                    <div class="media">
+
+                                        <div class="media-body">
+                                            <p class="mt-0 title" style="color:black">{{j.product}}</p>
+                                            <span style="color:black">{{j.description}}</span>
                                         </div>
-                                    </td>
-                                    <td style="color:black">{{j.hsn}}</td>
-                                    <td style="color:black">{{j.rate}}</td>
-                                    <td style="color:black">{{j.quantity}}</td>
-                                    <td style="color:black">{{j.discount}}</td>
-                                    <td style="color:black">{{j.tax}} %</td> 
-                                    
-                                    <td style="color:black">{{j.total}}</td>
+                                    </div>
+                                </td>
+                                <td style="color:black">{{j.hsn}}</td>
+                                <td style="color:black">{{j.rate}}</td>
+                                <td style="color:black">{{j.quantity}}</td>
+                                <td style="color:black">{{j.discount}}</td>
+                                <td style="color:black">{{j.tax}} %</td>
+
+                                <td style="color:black">{{j.total}}</td>
+                            </tr>
+
+                            {% endfor %}
+
+
+
+
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="balance-info">
+                    <div class="row mt-5">
+                        <div class="col-8">
+                            <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
+                            <p style="color:black">{{estimate.note}}</p>
+                        </div>
+                        <div class="col-4">
+                            <table class="table border-0 table-hover">
+                                <tr>
+                                    <td style="color:black; font-weight:bold">Sub Total :</td>
+                                    <td style="color:black; font-weight:bold">{{estimate.subtotal}}</td>
+                                </tr>
+                                {% if estimate.igst != 0 %}
+                                <tr>
+                                    <td style="color:black; font-weight:bold">IGST :</td>
+                                    <td style="color:black; font-weight:bold">{{estimate.igst}}</td>
+                                </tr>
+                                {% endif %}
+                                {% if estimate.cgst != 0 %}
+                                <tr>
+                                    <td style="color:black; font-weight:bold">CGST :</td>
+                                    <td style="color:black; font-weight:bold">{{estimate.cgst}}</td>
+                                </tr>
+                                {% endif %}
+                                {% if estimate.sgst != 0 %}
+                                <tr>
+                                    <td style="color:black; font-weight:bold">SGST:</td>
+                                    <td style="color:black; font-weight:bold">{{estimate.sgst}}</td>
+                                </tr>
+                                {% endif %}
+
+                                <tr>
+                                    <td style="color:black; font-weight:bold">Total Tax:</td>
+                                    <td style="color:black; font-weight:bold">{{estimate.taxamount}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:black; font-weight:bold">Shipping Charge:</td>
+                                    <td style="color:black; font-weight:bold">{{estimate.shipping}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:black; font-weight:bold">Adjustment:</td>
+                                    <td style="color:black; font-weight:bold">{{estimate.adjustment}}</td>
                                 </tr>
 
-                                {% endfor %}
-
-
-
-
-                            </tbody>
-                        </table>
-                    </section>
-
-                    <section class="balance-info">
-                        <div class="row mt-5">
-                            <div class="col-8">
-                                <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                <p style="color:black">{{estimate.note}}</p>
-                            </div>
-                            <div class="col-4">
-                                <table class="table border-0 table-hover">
+                                <tfoot>
                                     <tr>
-                                        <td style="color:black; font-weight:bold">Sub Total :</td>
-                                        <td style="color:black; font-weight:bold">{{estimate.subtotal}}</td>
+                                        <td style="color:black; font-weight:bold"> Challan Total:</td>
+                                        <td style="color:black; font-weight:bold ;">{{estimate.grand}}</td>
                                     </tr>
-                                    {% if estimate.igst != 0 %}
-                                    <tr>
-                                        <td style="color:black; font-weight:bold">IGST :</td>
-                                        <td style="color:black; font-weight:bold">{{estimate.igst}}</td>
-                                    </tr>
-                                    {% endif %}
-                                    {% if estimate.cgst != 0 %}
-                                    <tr>
-                                        <td style="color:black; font-weight:bold">CGST :</td>
-                                        <td style="color:black; font-weight:bold">{{estimate.cgst}}</td>
-                                    </tr>
-                                    {% endif %}
-                                    {% if estimate.sgst != 0 %}
-                                    <tr>
-                                        <td style="color:black; font-weight:bold">SGST:</td>
-                                        <td style="color:black; font-weight:bold">{{estimate.sgst}}</td>
-                                    </tr>
-                                    {% endif %}
+                                </tfoot>
+                            </table>
 
-                                    <tr>
-                                        <td style="color:black; font-weight:bold">Total Tax:</td>
-                                        <td style="color:black; font-weight:bold">{{estimate.taxamount}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="color:black; font-weight:bold">Shipping Charge:</td>
-                                        <td style="color:black; font-weight:bold">{{estimate.shipping}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="color:black; font-weight:bold">Adjustment:</td>
-                                        <td style="color:black; font-weight:bold">{{estimate.adjustment}}</td>
-                                    </tr>
-
-                                    <tfoot>
-                                        <tr>
-                                            <td style="color:black; font-weight:bold"> Challan Total:</td>
-                                            <td style="color:black; font-weight:bold ;">{{estimate.grand}}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-
-                                <!-- Signature -->
-                                <div class="col-12 mt-5">
-                                    <!-- <img src="signature.png" class="img-fluid" alt=""> -->
-                                    <p class="text-center m-0 mt-5" style="color:black"> Authorised Signature </p>
-                                </div>
+                            <!-- Signature -->
+                            <div class="col-12 mt-5">
+                                <!-- <img src="signature.png" class="img-fluid" alt=""> -->
+                                <p class="text-center m-0 mt-5" style="color:black"> Authorised Signature </p>
                             </div>
                         </div>
+                    </div>
 
-                    </section>
+                </section>
 
-                    <!-- Cart BG -->
-                    <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+                <!-- Cart BG -->
+                <img src="cart.jpg" class="img-fluid cart-bg" alt="">
 
-                    <!-- <footer>
+                <!-- <footer>
                                 <hr>
                                 <p class="m-0 text-center">
                                     View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
@@ -1790,932 +1838,875 @@ transform: rotate(-45deg); */
                                     </span>
                                 </div>
                             </footer> -->
-                </div>
             </div>
-
         </div>
 
+    </div>
 
-        <!-- Template section  Print-template -->
-        <div id="templatesToPrintSection">
-            <!-- Template Number-1 -->
 
-            <div  id="whatToPrint1" style="display: block;" class="printTemplates template1">
-                <div class="my-3 page" size="A4" >
-                    <div class="p-5">
-                        <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
-                            <div class="bg-info px-3 ribbon-inner ribbon-open" style="width: fit-content;">{{estimate.status}}<!----></div>
-                        </div>
-                        <div>
-                            <center class="h3" style="color: #000;"><b>DELIVERY CHALLAN</b></center>
-                        </div>
-                        <div class="row mt-5">
-                            <!-- <div class="col-md-8">
-                                <h5 class="text-info" style="font-weight: bold;">{{cmp1.cname }}</h5>
-                                <p class="address" style="font-weight: bold;color: #000;"> {{cmp1.caddress}}<br>
-                                    {{cmp1.city}},
-                                    {{cmp1.state}}<br>
-                                    {{cmp1.pincode}}<br>
-                                    {{cmp1.cemail}}<br>
-                                    {{cmp1.phone}}<br>
-                                </p> 
-                            </div> -->
-                            <div class="col-md-8">
-                                <p class="mb-2 text-dark">
-                                    <span style="font-weight: bold;">Challan Type: </span>
-                                    <span>{{estimate.challan_type}}</span>
-                                </p>
+    <!-- Template section  Print-template -->
+    <div id="templatesToPrintSection">
+        <!-- Template Number-1 -->
 
-                                <p class="mb-2 text-dark">
-                                    <span style="font-weight: bold;">Ref No: </span>
-                                    <span>{{estimate.ref}}</span>
-                                </p>
-
-                            </div>
-                            <div class="col-md-4">
-                                <div class="top-left">
-                                    <div class="graphic-path">
-                                        <p style="color: #000;">Challan #:<b>{{estimate.chal_no }}</b></p>
-                                    </div>
-                                    <div class="mt-2">
-                                        
-                                        <p style="color: #000;">Date : <b>{{ estimate.challan_date | date:'d-m-Y' }}</b></p>
-                                        <!-- <p style="color: #000;">Excpected Date : <b>{{ pbill.deliver_date | date:'d-m-Y' }}</b></p> -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <section class="top-content bb d-flex justify-content-between">
-                            <div class="logo">
-                               
-                            </div>
-                           
-                        </section>
-            
-                        <section class="store-user">
-                            <div class="col-12">
-                                <div class="row bb pb-2 mt-3">
-                                    <div class="col-4 pl-0">
-                                        <label class="text-white bg-info w-100 p-1"><b>From,</b></label>
-                                        <h5 class="text-info" style="font-weight: bold;">{{cmp1.cname }}</h5>
-                                        <p class="address" style="font-weight: bold;color: #000;"> {{cmp1.caddress}}<br>
-                                            {{cmp1.city}},
-                                            {{cmp1.state}}<br>
-                                            {{cmp1.pincode}}<br>
-                                            {{cmp1.cemail}}<br>
-                                            {{cmp1.phone}}<br>
-                                        </p> 
-                                    </div>
-                                    <div class="col-4"></div>
-                                    <div class="col-4 pr-0">
-                                        <label class="text-white bg-info w-100 p-1"><b>To,</b></label>
-                                        <h5 class="text-info" style="font-weight: bold;">{{estimate.customer.firstname}} {{estimate.customer.firstname}}</h5>
-                                        <p class="address" style="font-weight: bold;color: #000;">{{ estimate.billto|linebreaksbr }} </p>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </section>
-            
-                        <section class="product-area mt-2">
-                            <table class="table table-hover table-bordered table-primary" id="template1table">
-                                <thead>
-                                    <tr class="table-primary">
-                                        <th class="text-center" style="color:#000">Items</th>
-                                        <th class="text-center" style="color:#000">HSN Code</th>
-                                        <th class="text-center" style="color:#000">Quantity</th>
-                                        <th class="text-center" style="color:#000">Rate</th>
-                                        <th class="text-center" style="color:#000">Tax</th>
-                                        <th class="text-center" style="color:#000">Discount</th>
-                                        <th class="text-center" style="color:#000">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for itm in estitem %}
-                                        <tr>
-                                            <td class="text-center" style="color:#000">{{ itm.product }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.hsn }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.quantity }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.rate  }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.tax  }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.discount  }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.total }}</td>
-                                        </tr>
-                                    {% endfor %} 
-                                </tbody>
-                            </table>
-                        </section>
-            
-                        <section class="balance-info">
-                            <div class="row mt-3">
-                                <div class="col-4">
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            
-                                            <!-- <tr >
-                                                <td style="color: #000;text-align: left;">Payment Type</td>
-                                                <td style="color: #000;text-align: left;">:</td>
-                                                {% if bank %}
-                                                <th style="color: #000;text-align: center;">{{bank.bankname}}</th>
-                                                {% else %}
-                                                <th style="color: #000;text-align: center;">{{pbill.payment_type}}</th>
-                                                {% endif %}
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                
-                                            </tr> -->
-                                            {% if estimate.note %}
-                                            <tr >
-                                                <td style="color: #000;text-align: left;">Note</td>
-                                                <td style="color: #000;text-align: left;">:</td>
-                                                <th style="color: #000;text-align: center;">{{estimate.note}}</th>
-                                            </tr>
-                                            {% endif %}
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="col-4"></div>
-                                <div class="col-4">
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            <tr >
-                                                <td style="color: #000;">Sub Total</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.subtotal}}</td>
-                                            </tr>
-                                            
-                                            {% if estimate.igst != 0.0 %}
-                                            <tr >
-                                                <td style="color: #000;">IGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.igst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            {% if estimate.cgst != 0.0 %}
-                                            <tr>
-                                                <td style="color: #000;">CGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.cgst}}</td>
-                                                
-                                            </tr>
-                                            {% endif %}
-                                            {% if estimate.sgst != 0.0 %}
-                                            <tr>
-                                                <td style="color: #000;">SGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.sgst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            <tr >
-                                                <td style="color: #000;">Shipping Charge</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.shipping}}</td>
-                                            </tr>
-                                            {% if estimate.adjustment != 0.0 %}
-                                            <tr >
-                                                <td style="color: #000;">Adjustment</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.adjustment}}</td>
-                                            </tr>
-                                            {%endif%}
-                                            {% if estimate.tcs != "0.00" %}
-                                            <tr style="display: none;">
-                                                <td style="color:black">TCS:</td>
-                                                <td style="color:black">{{estimate.tcs}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            
-                                        </tbody>
-
-                                    </table>
-                                    <hr>
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            <tr >
-                                                <th style="color: #000;">Grand Total</th>
-                                                <th style="color: #000;">:</th>
-                                                <th class="text-center" style="color: #000;">{{estimate.grand}}</th>
-                                            </tr>
-                                            <!-- <tr >
-                                                <td style="color: #000;">Paid Amount</td>
-                                                <td style="color: #000;">:</td>
-                                                <th class=" text-center" style="color: #000;">{{pbill.paid_amount}}</th>
-                                            </tr>
-                                            <tr >
-                                                <td style="color: #000;">Balance Amount</td>
-                                                <td style="color: #000;">:</td>
-                                                <th class="text-center" style="color: #000;">{{pbill.balance_amount}}</th>
-                                            </tr> -->
-
-                                        </tbody>
-                                    </table>
-                                </div> 
-                            </div>
-                            <div class="row container-fluid  p-2 m-0">
-                                <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
-                                <div class="col-sm-4 m-0 p-0 text-dark">________________________</div>
-                                <div class="col-sm-4 m-0 p-0"></div>
-                            </div>
-                        </section>
-                           
+        <div id="whatToPrint1" class="printTemplates template1">
+            <div class="my-5 page" size="A4" id="selecteArea1">
+                <div class="p-5">
+                    <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                        <div class=" ribbon-inner ribbon-open">{{estimate.status}}</div>
                     </div>
+                    <section class="top-content bb d-flex justify-content-between">
+                        <div class="logo">
+
+                        </div>
+                        <div class="top-left">
+                            <div class="graphic-path">
+                                <p>DELIVERY CHALLAN</p>
+                            </div>
+                            <div class="position-relative">
+                                <p>Challan No. <span>{{estimate.chal_no}}</span></p>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="store-user mt-5">
+                        <div class="col-12">
+                            <div class="row bb pb-3">
+                                <div class="col-7">
+                                    <p>FROM,</p>
+                                    <h5>{{cmp1.cname}}</h5>
+                                    <p class="address">{{cmp1.caddress}}<br>
+                                        {{cmp1.city}},{{cmp1.state}}<br>
+                                        {{cmp1.pincode}}
+                                    </p>
+                                    <p>{{cmp1.cemail}}</p>
+                                    <p>{{cmp1.phone}}</p>
+                                </div>
+                                <div class="col-5">
+                                    <p>TO,</p>
+                                    <h5>{{estimate.customer.title}} {{estimate.customer.firstname}}
+                                        {{estimate.customer.lastname}}</h5>
+                                    <p class="address col-9" style="margin-left: -14px;">
+                                        {{estimate.billto|linebreaksbr}}</p>
+                                    <p>{{estimate.customer.email}}</p>
+                                    <p>{{estimate.customer.mobile}}</p>
+                                </div>
+                            </div>
+                            <div class="row extra-info pt-3">
+                                <div class="col-7">
+                                    {% if estimate.customer.gstin %}
+                                    <p>GSTIN : <span>{{estimate.customer.gstin}}</span></p>
+                                    {% endif %}
+                                </div>
+                                <div class="col-5">
+                                    <p>Challan Date : <span>{{estimate.challan_date | date:'d-m-Y'}}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="product-area mt-4">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <td style="text-align: center; font-weight:bold; color:black ">Items</td>
+                                    <td style="font-weight:bold; color:black ">HSN</td>
+                                    <td style="font-weight:bold; color:black ">Quantity</td>
+                                    <td style="font-weight:bold; color:black">Rate</td>
+                                    <td style="font-weight:bold; color:black">Discount</td>
+                                    <td style="font-weight:bold; color:black">Tax</td>
+                                    <td style="font-weight:bold; color:black">Total</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for j in estitem %}
+                                <tr>
+                                    <td style="color:black; text-align: center;">
+                                        {{j.product}}
+                                    </td>
+                                    <td style="color:black">{{j.hsn}}</td>
+                                    <td style="color:black">{{j.quantity}}</td>
+                                    <td style="color:black">{{j.rate}}</td>
+                                    <td style="color:black">{{j.discount}} </td>
+                                    <td style="color:black">{{j.tax}} % </td>
+                                    <td style="color:black">{{j.total}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </section>
+                    <section class="balance-info">
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-4">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td style="color: #000;">Sub Total</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.subtotal}}</td>
+                                        </tr>
+                                        {% if estimate.igst != 0.0 %}
+                                        <tr>
+                                            <td style="color: #000;">IGST</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.igst}}</td>
+                                        </tr>
+                                        {% else %}
+                                        <tr>
+                                            <td style="color: #000;">CGST</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.cgst}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #000;">SGST</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.sgst}}</td>
+                                        </tr>
+                                        {% endif %}
+                                        <tr>
+                                            <td style="color: #000;">Tax Amount</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.taxamount}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #000;">Shipping Charge</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.shipping}}</td>
+                                        </tr>
+                                        {% if estimate.adjustment != 0 %}
+                                        <tr>
+                                            <td style="color: #000;">Adjustment</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.adjustment}}</td>
+                                        </tr>
+                                        {%endif%}
+                                    </tbody>
+                                </table>
+                                <hr style="background-color: #000000;">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th style="color: #000;">Grand Total</th>
+                                            <th style="color: #000;">:</th>
+                                            <th class="text-right" style="color: #000;">{{estimate.grand}}</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
             </div>
+        </div>
 
-            <!-- Template Number-2 -->
+        <!-- Template Number-2 -->
 
-            <div  id="whatToPrint2" style="display: none;" class="printTemplates template2">
-                <div class="my-3 page" size="A4" >
-                    <div class="p-5">
-                        <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
-                            <div class="bg-info px-3 ribbon-inner ribbon-open" style="width: fit-content;">{{estimate.status}}<!----></div>
-                        </div>
-                        <div>
-                            <center class="h3" style="color:var(--dark);"><b>DELIVERY CHALLAN</b></center>
-                        </div>
-                        <div class="row mt-5">
-                            <div class="col-md-8">
-                                <h4 class="text-dark" style="font-weight: bold;">{{cmp1.cname }}</h4>
-                                <p class="address" style="font-weight: bold;color: #000;"> {{cmp1.caddress}}<br>
-                                    {{cmp1.city}},
-                                    {{cmp1.state}}<br>
-                                    {{cmp1.pincode}}<br>
-                                    {{cmp1.cemail}}<br>
-                                    {{cmp1.phone}}<br>
-                                </p> 
-                            </div>
-                            <div class="col-md-4">
-                                <div class="top-left">
-                                    <div class="graphic-path">
-                                        <p class="text-dark">Challan #:<b>{{estimate.chal_no }}</b></p>
-                                    </div>
-                                    <div class="mt-2">
-                                        
-                                        <p style="color: #000;">Date: <b>{{ estimate.challan_date | date:'d-m-Y' }}</b></p>
-                                        <p class="text-dark mt-2" style="color: #000;">Challan Type: <b>{{ estimate.challan_type}}</b></p>
-                                        <p class="text-dark" style="color: #000;">Ref. No: <b>{{ estimate.ref}}</b></p>
-                                    </div>
-                                </div>
+        <div id="whatToPrint2" style="display: none;" class="printTemplates template2">
+            <div class="my-3 page" size="A4" id="selecteArea2">
+                <div id="printdiv2">
+                    <div class="row px-5 py-4" style="background-color:#268ddd;">
+                        <div id="ember2512"
+                            class="col-md-4 d-flex justify-content-start tooltip-container ember-view ribbon text-ellipsis">
+                            <div class="text-white d-flex align-items-center px-5"
+                                style="border-radius: 1vh; background-color:#999999">{{estimate.status}}<!---->
                             </div>
                         </div>
-                        <section class="top-content bb d-flex justify-content-between">
-                            <div class="logo">
-                               
-                            </div>
-                           
-                        </section>
-            
-                        <section class="store-user">
-                            <div class="col-12">
-                                <div class="row bb pb-2 mt-3">
-                                    <div class="col-4 pl-0">
-                                        <label class="text-white bg-secondary w-100 p-1"><b>BILL TO</b></label>
-                                        <h5 class="" style="font-weight: bold; color: var(--dark);">{{estimate.customer.firstname}} {{estimate.customer.lastname}}</h5>
-                                        <p class="address" style="font-weight: bold;color: #000;">
-                                            {{estimate.customer.email}}
-                                            <br>
-                                            {{estimate.customer.street}}
-                                            <br>
-                                            {{estimate.customer.city}}
-                                            <br>
-                                            {{estimate.customer.state}} - {{estimate.customer.pincode}}
-                                            <br>
-                                            <span>Mob: </span><b>{{estimate.customer.mobile}}</b>
-                                        </p>  
-                                    </div>
-                                    <div class="col-4"></div>
-                                    <div class="col-4 pr-0">
-                                        <!-- <label class="text-white bg-secondary w-100 p-1"><b>DELIVER TO</b></label>
-                                        <h5 class="" style="font-weight: bold; color: var(--dark);">{{ewbill.customer_name}}</h5>
-                                        <p class="address" style="font-weight: bold;color: #000;">{{ ewbill.delivery_address|linebreaksbr }} </p> -->
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </section>
-            
-                        <section class="product-area mt-2">
-                            <table class="table table-striped table-bordered table-info">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center" style="color:#000">Items</th>
-                                        <th class="text-center" style="color:#000">HSN Code</th>
-                                        <th class="text-center" style="color:#000">Quantity</th>
-                                        <th class="text-center" style="color:#000">Rate</th>
-                                        <th class="text-center" style="color:#000">Tax</th>
-                                        <th class="text-center" style="color:#000">Discount</th>
-                                        <th class="text-center" style="color:#000">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for itm in estitem %}
-                                        <tr>
-                                            <td class="text-center" style="color:#000">{{ itm.product }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.hsn }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.quantity }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.rate  }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.tax  }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.discount  }}</td>
-                                            <td class="text-center" style="color:#000">{{ itm.total }}</td>
-                                        </tr>
-                                    {% endfor %} 
-                                </tbody>
-                            </table>
-                        </section>
-            
-                        <section class="balance-info">
-                            <div class="row mt-3">
-                                <div class="col-4">
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            
-                                            <!-- <tr >
-                                                <td style="color: #000;text-align: left;">Payment Type</td>
-                                                <td style="color: #000;text-align: left;">:</td>
-                                                {% if bank %}
-                                                <th style="color: #000;text-align: center;">{{bank.bankname}}</th>
-                                                {% else %}
-                                                <th style="color: #000;text-align: center;">{{pbill.payment_type}}</th>
-                                                {% endif %}
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                
-                                            </tr> -->
-                                            {% if estimate.note %}
-                                            <tr >
-                                                <td style="color: #000;text-align: left;">Note</td>
-                                                <td style="color: #000;text-align: left;">:</td>
-                                                <th style="color: #000;text-align: center;">{{estimate.note}}</th>
-                                            </tr>
-                                            {% endif %}
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="col-4"></div>
-                                <div class="col-4">
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            <tr >
-                                                <td style="color: #000;">Sub Total</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.subtotal}}</td>
-                                            </tr>
-                                            
-                                            {% if estimate.igst != 0.0 %}
-                                            <tr >
-                                                <td style="color: #000;">IGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.igst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            {% if estimate.cgst != 0.0 %}
-                                            <tr>
-                                                <td style="color: #000;">CGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.cgst}}</td>
-                                                
-                                            </tr>
-                                            {% endif %}
-                                            {% if estimate.sgst != 0.0 %}
-                                            <tr>
-                                                <td style="color: #000;">SGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.sgst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            <tr >
-                                                <td style="color: #000;">Shipping Charge</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.shipping}}</td>
-                                            </tr>
-                                            {% if estimate.adjustment != 0.0 %}
-                                            <tr >
-                                                <td style="color: #000;">Adjustment</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.adjustment}}</td>
-                                            </tr>
-                                            {%endif%}
-                                            {% if estimate.tcs != "0.00" %}
-                                            <tr style="display: none;">
-                                                <td style="color:black">TCS:</td>
-                                                <td style="color:black">{{estimate.tcs}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            
-                                        </tbody>
-
-                                    </table>
-                                    <hr>
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            <tr >
-                                                <th style="color: #000;">Grand Total</th>
-                                                <th style="color: #000;">:</th>
-                                                <th class="text-center" style="color: #000;">{{estimate.grand}}</th>
-                                            </tr>
-                                            <!-- <tr >
-                                                <td style="color: #000;">Paid Amount</td>
-                                                <td style="color: #000;">:</td>
-                                                <th class=" text-center" style="color: #000;">{{pbill.paid_amount}}</th>
-                                            </tr>
-                                            <tr >
-                                                <td style="color: #000;">Balance Amount</td>
-                                                <td style="color: #000;">:</td>
-                                                <th class="text-center" style="color: #000;">{{pbill.balance_amount}}</th>
-                                            </tr> -->
-
-                                        </tbody>
-                                    </table>
-                                </div> 
-                            </div>
-                            <div class="row container-fluid  p-2 m-0">
-                                <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
-                                <div class="col-sm-4 m-0 p-0 text-dark">________________________</div>
-                                <div class="col-sm-4 m-0 p-0"></div>
-                            </div>
-                        </section>
-                           
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Number-3 -->
-            <div  id="whatToPrint3" style="display: none;"  class="printTemplates template3">
-                <div class="my-3 page" size="A4" >
-
-                    <div class="row px-5 py-4" style="background-color: #433f42;">
-                          <div id="ember2512" class="col-md-4 d-flex justify-content-start tooltip-container ember-view ribbon text-ellipsis">
-                            <div class="text-white d-flex align-items-center px-5" style="background-color: #919191ba;">{{estimate.status}}<!----></div>
+                        <div class="col-md-4 d-flex justify-content-center">
+                            <center class="text-white" style="font-size: 20px;"><b>DELIVERY CHALLAN</b></center>
                         </div>
-                        <div class="col-md-4 d-flex align-items-center justify-content-center">
-                            <center class="h5 text-white font-weight-bold">DELIVERY CHALLAN</center>
-                        </div>  
                         <div class="col-md-4 d-flex justify-content-end">
                             <div class="text-white">
-                                <p class="mb-0">Challan #: <b>{{estimate.chal_no }}</b></p>
-                                <p class="mb-0">Date: <b>{{ estimate.challan_date | date:'d-m-Y' }}</b></p>
+                                <p class="mb-0 mt-2">Challan No. #: <b>{{estimate.chal_no }}</b></p>
                             </div>
-                            <!-- <div class="mt-2">
-                                <p style="color: #000;">Date : <b>{{ ewbill.bill_date | date:'d-m-Y' }}</b></p>
-                            </div> -->
                         </div>
-                        </div>
+
+                    </div>
                     <div class="px-5 py-1">
-                        <div class="row mt-5">
-                            <div class="col-md-8">
-                                <h5 class="text-secondary" style="font-weight: bold;">{{cmp1.cname }}</h5>
-                                <p class="address" style="font-weight: normal; color: #000;"> {{cmp1.caddress}}<br>
-                                    {{cmp1.city}},
-                                    {{cmp1.state}}<br>
-                                    {{cmp1.pincode}}<br>
-                                    {{cmp1.cemail}}<br>
-                                    {{cmp1.phone}}<br>
-                                </p> 
-                            </div>
-                            <div class="col-md-4">
-                                <div>
-                                    <p class="text-muted mt-2 mb-0" style="color: #000;">Challan Type: <span style="float: right;"><b>{{ estimate.challan_type}}</b></span></p>
-                                    <p class="text-muted mb-0" style="color: #000;">Ref. No: <span style="float: right;"><b>{{ estimate.ref}}</b></span></p>
-                                    <!-- <p class="text-muted mb-0" style="color: #000;">Trns. sub type: <span style="float: right;"><b>{{ ewbill.transaction_subtype}}</b></span></p> -->
-                                </div>
-                                <!-- <div class="top-left">
-                                    <div class="graphic-path">
-                                        <p style="color: #000;">Bill NO : <b>{{ewbill.invoice_no }}</b></p>
-                                    </div>
-                                    <div class="mt-2">
-                                        
-                                        <p style="color: #000;">Date : <b>{{ ewbill.bill_date | date:'d-m-Y' }}</b></p>
-                                        
-                                    </div>
-                                </div> -->
-                            </div>
-                        </div>
-                        <section class="top-content bb d-flex justify-content-between">
-                            <div class="logo">
-                               
-                            </div>
-                           
-                        </section>
-            
-                        <section class="store-user">
+                        <section class="store-user"><br><br>
                             <div class="col-12">
                                 <div class="row bb pb-2 mt-3">
                                     <div class="col-4 pl-0">
-                                        <label class="text-white bg-grey w-100 p-1"><b>BILLING ADDRESS</b></label>
-                                        <h5 class="text-secondary" style="font-weight: bold;">{{estimate.customer.firstname}} {{estimate.customer.lastname}}</h5>
+                                        <label class="text-white w-100 p-1"
+                                            style="background-color: #999999; border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;"><b>BILLING
+                                                ADDRESS</b></label>
                                         <p class="address" style="font-weight: bold;color: #000;">
-                                            {{estimate.customer.email}}
+                                            {{cmp1.cname}}
                                             <br>
-                                            {{estimate.customer.street}}
+                                            {{cmp1.caddress}}
                                             <br>
-                                            {{estimate.customer.city}}
+                                            {{cmp1.city}}
                                             <br>
-                                            {{estimate.customer.state}} - {{estimate.customer.pincode}}
+                                            {{cmp1.state}} - {{cmp1.pincode}}
                                             <br>
-                                            <span>Mob: </span><b>{{estimate.customer.mobile}}</b>
-                                        </p>  
+                                            <span>Mob: </span><b>{{cmp1.phone}}</b><br>
+                                            <span>Email: </span><b>{{cmp1.cemail}}</b>
+                                        </p>
                                     </div>
                                     <div class="col-4"></div>
                                     <div class="col-4 pr-0">
-                                        <!-- <label class="text-white bg-grey w-100 p-1"><b>SHIPPING ADDRESS</b></label>
-                                        <h5 class="text-secondary" style="font-weight: bold;">{{ewbill.customer_name}}</h5>
-                                        <p class="address" style="font-weight: bold;color: #000;">{{ ewbill.delivery_address|linebreaksbr }} </p> -->
+                                        <label class="text-white w-100 p-1"
+                                            style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #999999;"><b>SHIPPING
+                                                ADDRESS</b></label>
+                                        <h5 class="text-secondary" style="font-weight: bold;">
+                                            {{estimate.customer.title}} {{estimate.customer.firstname}}
+                                            {{estimate.customer.lastname}}
+                                        </h5>
+                                        <p class="address" style="font-weight: bold;color: #000;">
+                                            {{estimate.billto |linebreaksbr}}</p> <br>
+                                        <span class="text-dark">Mob: </span><b
+                                            class="text-dark">{{estimate.customer.mobile}}</b><br>
+                                        <span class="text-dark">Email: </span><b
+                                            class="text-dark">{{estimate.customer.email}}</b>
                                     </div>
                                 </div>
-                                
+
+                            </div>
+                            <div class="col-12">
+                                <div class="row bb pb-2 mt-3">
+                                    <div class="col-4 pl-0">
+                                        <label class="text-white w-100 p-1"
+                                            style="background-color: #999999; border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;"><b>
+                                                GST Details</b></label>
+                                        <p class="address" style="font-weight: bold;color: #000;">
+
+                                            <span>GST Treatment: </span><b>{{estimate.customer.gsttype}}</b><br>
+                                            {% if estimate.customer.gstin %}
+                                            <span>GSTIN: </span><b>{{estimate.customer.gstin}}</b>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-4"></div>
+                                    <div class="col-4 pr-0">
+                                        <span class="text-dark">Challan Date : </span><b
+                                            class="text-dark">{{estimate.challan_date | date:'d-m-Y'}}</b><br>
+
+                                    </div>
+                                </div>
                             </div>
                         </section>
-            
+
                         <section class="product-area mt-2">
-                            <table class="table table-striped table-bordered table-secondary template3table">
-                                <thead class="">
+                            <table class="table table-hover table-bordered  template2table" id="table2">
+                                <thead>
                                     <tr class="template3tablehead">
-                                        <th class="text-center text-dark">Items</th>
-                                        <th class="text-center text-dark">HSN Code</th>
-                                        <th class="text-center text-dark">Quantity</th>
-                                        <th class="text-center text-dark">Rate</th>
-                                        <th class="text-center text-dark">Tax</th>
-                                        <th class="text-center text-dark">Discount</th>
-                                        <th class="text-center text-dark">Total</th>
+                                        <th class="text-center bg-dark" style="color:black">Items</th>
+                                        <th class="text-center bg-dark" style="color:black">HSN</th>
+                                        <th class="text-center bg-dark" style="color:black">Quantity</th>
+                                        <th class="text-center bg-dark" style="color:black">Rate</th>
+                                        <th class="text-center bg-dark" style="color:black">Discount</th>
+                                        <th class="text-center bg-dark" style="color:black">Tax</th>
+                                        <th class="text-center bg-dark" style="color:black">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="background-color: #999999;">
+                                    {% for itm in estitem %}
+                                    <tr>
+                                        <td class="text-center" style="color:black">{{ itm.product}}</td>
+                                        <td class="text-center" style="color:black">{{ itm.hsn }}</td>
+                                        <td class="text-center" style="color:black">{{ itm.quantity }}</td>
+                                        <td class="text-center" style="color:black">{{ itm.rate }}</td>
+                                        <td class="text-center" style="color:black">{{ itm.discount }}</td>
+                                        <td class="text-center" style="color:black">{{ itm.tax }} %</td>
+                                        <td class="text-center" style="color:black">{{ itm.total }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <section class="balance-info">
+                            <div class="row mt-3">
+                                <div class="col-4"></div>
+                                <div class="col-4"></div>
+                                <div class="col-4"><br><br>
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <td style="color: #000;">Sub Total</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-right" style="color: #000;">{{estimate.subtotal}}
+                                                </td>
+                                            </tr>
+
+                                            {% if estimate.igst != 0.0 %}
+                                            <tr>
+                                                <td style="color: #000;">IGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-right" style="color: #000;">{{estimate.igst}}</td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td style="color: #000;">CGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-right" style="color: #000;">{{estimate.cgst}}</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="color: #000;">SGST</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-right" style="color: #000;">{{estimate.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td style="color: #000;">Tax Amount</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-right" style="color: #000;">{{estimate.taxamount}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color: #000;">Shipping Charge</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-right" style="color: #000;">{{estimate.shipping}}
+                                                </td>
+                                            </tr>
+                                            {% if estimate.adjustment != 0 %}
+                                            <tr>
+                                                <td style="color: #000;">Adjustment</td>
+                                                <td style="color: #000;">:</td>
+                                                <td class="text-right" style="color: #000;">{{estimate.adjustment}}
+                                                </td>
+                                            </tr>
+                                            {%endif%}
+                                        </tbody>
+                                    </table>
+                                    <hr style="background-color: #000000;">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <th style="color: #000;">Grand Total</th>
+                                                <th style="color: #000;">:</th>
+                                                <th class="text-right" style="color: #000;">{{estimate.grand}}</th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template Number-3 -->
+        <div id="whatToPrint3" style="display: none;" class="printTemplates template3">
+            <div class="my-3 page" size="A4" id="selectedArea3">
+                <div class="" id="printdiv3">
+                    <div class="row">
+                        <div class="col-sm-12" style="background-image: linear-gradient(#1b83e8, black); color: white;">
+                            <p style="font-size: 4vh; text-align: center;">Delivery Challan</p>
+                            <p style=" text-align: center;"> {{cmp1.cname}} <br>
+                                {{cmp1.caddress}} <br>
+                                {{cmp1.city}},
+                                {{cmp1.state}}<br>
+                                {{cmp1.cemail}}<br>
+                                {{cmp1.phone}}
+                                <br>
+                            </p>
+                        </div>
+                        <div class="row col-12">
+                            <div class="col-md-1"></div>
+                            <div class="col-5">
+                                <br><br><br>
+                                <p style="color:black;"> <span style=" font-weight: bold;">To: </span><br>
+                                    {{estimate.customer.title}} {{estimate.customer.firstname}}
+                                    {{estimate.customer.lastname}}<br>
+                                    {{estimate.billto|linebreaksbr }}
+                                </p>
+                                <p class="text-dark">{{estimate.customer.mobile}}</p>
+
+                            </div>
+                            <div class="col-5">
+                                <br><br><br>
+                                <table class="table table-borderless">
+                                    <tbody>
+
+                                        <tr>
+                                            <td style="color: #000;">E-Mail</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.customer.email}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #000;">Challan No.</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.chal_no}}</td>
+                                        </tr>
+
+                                        {% if estimate.customer.gstin %}
+                                        <tr>
+                                            <td style="color: #000; ">GSTIN</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">
+                                                {{estimate.customer.gstin}}
+                                            <td>
+                                        </tr>
+                                        {% endif %}
+
+                                        <tr>
+                                            <td style="color: #000;">Challan Date :</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">
+                                                {{estimate.challan_date | date:'d-m-Y'}}
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10"><br>
+                            <table class="table table-hover table-bordered  template3table" id="table3">
+                                <thead>
+                                    <tr class="template3tablehead">
+                                        <th class="text-center bg-dark" style="color:black">Items</th>
+                                        <th class="text-center bg-dark" style="color:black">HSN</th>
+                                        <th class="text-center bg-dark" style="color:black">Quantity</th>
+                                        <th class="text-center bg-dark" style="color:black">Rate</th>
+                                        <th class="text-center bg-dark" style="color:black">Discount</th>
+                                        <th class="text-center bg-dark" style="color:black">Tax</th>
+                                        <th class="text-center bg-dark" style="color:black">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for itm in estitem %}
-                                        <tr>
-                                            <td class="text-center text-dark">{{ itm.product }}</td>
-                                            <td class="text-center text-dark">{{ itm.hsn }}</td>
-                                            <td class="text-center text-dark">{{ itm.quantity }}</td>
-                                            <td class="text-center text-dark">{{ itm.rate  }}</td>
-                                            <td class="text-center text-dark">{{ itm.tax  }}</td>
-                                            <td class="text-center text-dark">{{ itm.discount  }}</td>
-                                            <td class="text-center text-dark">{{ itm.total }}</td>
-                                        </tr>
-                                    {% endfor %} 
+                                    <tr>
+                                        <td class="text-center" style="color: black;">{{ itm.product}}</td>
+                                        <td class="text-center" style="color: black;">{{ itm.hsn }}</td>
+                                        <td class="text-center" style="color: black;">{{ itm.quantity }}</td>
+                                        <td class="text-center" style="color: black;">{{ itm.rate }}</td>
+                                        <td class="text-center" style="color: black;">{{ itm.discount }}</td>
+                                        <td class="text-center" style="color: black;">{{ itm.tax }} %</td>
+                                        <td class="text-center" style="color: black;">{{ itm.total }}</td>
+                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
-                        </section>
-            
-                        <section class="balance-info">
-                            <div class="row mt-3">
-                                <div class="col-4">
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            
-                                            <!-- <tr >
-                                                <td style="color: #000;text-align: left;">Payment Type</td>
-                                                <td style="color: #000;text-align: left;">:</td>
-                                                {% if bank %}
-                                                <th style="color: #000;text-align: center;">{{bank.bankname}}</th>
-                                                {% else %}
-                                                <th style="color: #000;text-align: center;">{{pbill.payment_type}}</th>
-                                                {% endif %}
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                
-                                            </tr> -->
-                                            {% if estimate.note %}
-                                            <tr >
-                                                <td style="color: #000;text-align: left;">Note</td>
-                                                <td style="color: #000;text-align: left;">:</td>
-                                                <th style="color: #000;text-align: center;">{{estimate.note}}</th>
-                                            </tr>
-                                            {% endif %}
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="col-4"></div>
-                                <div class="col-4">
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            <tr >
-                                                <td style="color: #000;">Sub Total</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.subtotal}}</td>
-                                            </tr>
-                                            
-                                            {% if estimate.igst != 0.0 %}
-                                            <tr >
-                                                <td style="color: #000;">IGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.igst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            {% if estimate.cgst != 0.0 %}
-                                            <tr>
-                                                <td style="color: #000;">CGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.cgst}}</td>
-                                                
-                                            </tr>
-                                            {% endif %}
-                                            {% if estimate.sgst != 0.0 %}
-                                            <tr>
-                                                <td style="color: #000;">SGST</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.sgst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            <tr >
-                                                <td style="color: #000;">Shipping Charge</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.shipping}}</td>
-                                            </tr>
-                                            {% if estimate.adjustment != 0.0 %}
-                                            <tr >
-                                                <td style="color: #000;">Adjustment</td>
-                                                <td style="color: #000;">:</td>
-                                                <td class="text-center" style="color: #000;">{{estimate.adjustment}}</td>
-                                            </tr>
-                                            {%endif%}
-                                            {% if estimate.tcs != "0.00" %}
-                                            <tr style="display: none;">
-                                                <td style="color:black">TCS:</td>
-                                                <td style="color:black">{{estimate.tcs}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            
-                                        </tbody>
-
-                                    </table>
-                                    <hr>
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            <tr >
-                                                <th style="color: #000;">Grand Total</th>
-                                                <th style="color: #000;">:</th>
-                                                <th class="text-center" style="color: #000;">{{estimate.grand}}</th>
-                                            </tr>
-                                            <!-- <tr >
-                                                <td style="color: #000;">Paid Amount</td>
-                                                <td style="color: #000;">:</td>
-                                                <th class=" text-center" style="color: #000;">{{pbill.paid_amount}}</th>
-                                            </tr>
-                                            <tr >
-                                                <td style="color: #000;">Balance Amount</td>
-                                                <td style="color: #000;">:</td>
-                                                <th class="text-center" style="color: #000;">{{pbill.balance_amount}}</th>
-                                            </tr> -->
-
-                                        </tbody>
-                                    </table>
-                                </div> 
-                            </div>
-                            <div class="row container-fluid  p-2 m-0">
-                                <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
-                                <div class="col-sm-4 m-0 p-0 text-dark">________________________</div>
-                                <div class="col-sm-4 m-0 p-0"></div>
-                            </div>
-                        </section>
-                           
-                    </div>
-                </div>
-            </div>
-            <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
-                <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
-                <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
-                <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
-            </div>
-        </div>
-
-    </div>
-
-
-
-
-    <div id="slip" style="display: none;">
-        <div class="card radius-15">
-            <div class="card-body" id="card">
-                <div class="card-title">
-                    <center><h2 class="mb-0">VIEW DELIVERY CHALLAN</h2> <h4></h4></center>
-                    <hr>
-                </div>
-                <div class="btn-group" style="float: left; ">
-
-
-                    <a style="padding: 10px; cursor: pointer;" onclick="Overview()"> Overview</a>
-
-                    <a style="padding: 10px; cursor: pointer;" onclick="Statment()"> Statement</a>
-                    <a style="padding: 10px; cursor: pointer;" onclick="Slip()"> Slip</a>
-                </div>
-                <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarScroll">
-                        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                          <li class="nav-item mx-1">
-                            <a href="{% url 'editchallan' estimate.id %}" role="button" class=" btn btn-outline-info rounded-pill text-grey p-1"> &nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
-
-                          </li>
-                          <li class="nav-item mx-1">
-                            <a  href="{% url 'deletechallan' estimate.id %}" role="button"id="deleteButton" class=" btn btn-outline-info rounded-pill text-grey p-1">&nbsp;&nbsp;Delete&nbsp;&nbsp; 
-                            </a>
-                          </li>
-                            <li class="nav-item active mx-1" >
-                            <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" id="printslip" onclick="printSpecificArea('print_slip')">&nbsp;&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
-                            </li>
-      
-                            <li class="nav-item mx-1">
-                              <a class="btn btn-outline-info rounded-pill text-grey p-1" role="button" href="{% url 'render_pdfchallan_view' estimate.id %}" id="downloadButton" >&nbsp;&nbsp;PDF&nbsp;&nbsp;</a>
-                            </li>
-                            {% if estimate.status != 'Saved' %}
-                                <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
-                                    <li  class="btn btn-outline-info rounded-pill text-grey p-1  dropdown-toggle  "data-toggle="dropdown"> &nbsp;&nbsp;Convert&nbsp;&nbsp;</li>
-                                        <ul class="dropdown-menu" style="background-color: black;">
-                                        <a class="dropdown-item " href="{% url 'challan_draftToSave' estimate.id %}"> &nbsp;Saved </a>
-                                    
-                                        </ul>
-                              
-                                </div>
-                            {% endif %}
-
-                            <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;" onclick="uplodfile()">
-                              <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;&nbsp;Share&nbsp;&nbsp;</li>
-                              <ul class="dropdown-menu" style="background-color: black;">
-      
-                                  <!-- <li style="margin-left: 50px;"  ></i>{% post_to_facebook object_or_url "Facebook!" %}</li> -->
-                                  <li style="margin-left: 50px;" > {% post_to_whatsapp object_or_url "WhatsApp" %}</li>
-                                  <li style="margin-left: 50px;" >{% send_email object.title "New Song: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
-                                  
-                              </ul>
-                            </div>
-  
-                            <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
-                                <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
-                                <ul class="dropdown-menu" style="background-color: black;">
-                                    <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
-                                    {% if estimate.file != "default.jpg" %}
-                                        <a class="dropdown-item fa fa-download" style="cursor: pointer;"download  href="{{estimate.file.url}}" >&nbsp; Download file</a>
-                                    {% endif %}
-                                </ul>
-                            </div>
-                        </ul>
-                    </div>
-                </nav>
-            
-                
-            </div>
-        </div>
-
-        <!-- slip -->
-        <div id="dlchln_slip">
-            <div class="p-3 mt-3" style="background-color: #8888889d;">
-                <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-12">
-                        <div id="outer" style="width: 100%;border-radius: 15px;background-color: rgba(31, 31, 31, 0.774);">
-                            <div class="row">
-                                <div class="col-sm-3 col-md-3 col-lg-3"></div>
-                                <div class="col-sm-6 col-md-6 col-lg-6">
-                                    <div id="print_slip" class="p-3 pb-5" style="width: 100%;background-color: beige;">
-                                        <div class="row">
-                                            <div class="col-sm-12 col-lg-12 col-md-12">
-                                              <h5 class="text-dark font-weight-bold" style="text-align: center;">Delivery Challan</h5>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-lg-12 col-md-12">
-                                                <h6 class="text-dark mt-1" style="text-transform: uppercase;text-align: center;">{{ cmp1.cname }}</h6>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-lg-12 col-md-12">                            
-                                                <!-- <p class="text-dark mb-0 font-weight-bold" style="text-align: center;"> {{ cmp1.cname }}</p> -->
-                                                <p class="text-dark mb-0" style="text-align: center;"> {{ cmp1.caddress }} , {{ cmp1.city }} ,{{ cmp1.state }}  </p>
-                                            </div>
-                                      </div>
-                                      <div class="row mt-2">
-                                        <div class="col-sm-6 col-lg-6 col-md-6">
-                                            <p class="text-dark font-weight-bold mb-0">Bill to : </p>
-                                            <p class="text-dark">{{ estimate.billto|linebreaksbr }}</p>
-                                        </div>
-                                        <div class="col-sm-6 col-lg-6 col-md-6">
-                                             <div class="challan_no d-flex justify-content-end pr-2">
-                                                 <p class="text-dark">Challan No: {{estimate.chal_no }}</p>
-                                             </div>
-                                             <div class="chdate d-flex justify-content-end pr-2">
-                                                 <p class="text-dark">Date: {{estimate.challan_date }}</p>
-                                             </div>
-                                        </div>
-                                        <!-- <div class="col-sm-2 col-md-2 col-lg-2"></div>
-                                        <div class="col-sm-4 col-md-4 col-lg-4">
-                                        </div> -->
-                                      </div>
-                                      
-                                      <div class="row ">
-                                        <div class="col-sm-12 col-md-12 col-lg-12">
-                                            <table class="table-bordered mb-3" style="margin-top: 8%;">
-                                                <thead style="background: none;">
-                                                    <tr>
-                                                        <th scope="col" class="col-1 text-dark text-center">#</th>
-                                                        <th scope="col" class="col-2 text-dark text-center">Item</th>
-                                                        <th scope="col" class="col-2 text-dark text-center">Hsn</th>
-                                                        <th scope="col" class="col-1 text-dark text-center">Qty</th>
-                                                        <th scope="col" class="col-2 text-dark text-center">Rate</th>
-                                                        <th scope="col" class="col-1 text-dark text-center">Discount</th>
-                                                        <th scope="col" class="col-1 text-dark text-center">Tax</th>
-                                                        <th scope="col" class="col-2 text-dark text-center">Amount</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for item in estitem %}
-                                                    <tr>
-                                                        <td class="text-center" style="color: black;font-size: smaller;">{{ forloop.counter }}</td>
-                                                        <td class="text-center" style="color: black;font-size: smaller;">{{ item.product }}</td>
-                                                        <td class="text-center" style="color: black;font-size: smaller;">{{ item.hsn }}</td>
-                                                        <td class="text-center" style="color: black;font-size: smaller;">{{ item.quantity }}</td>
-                                                        <td class="text-center" style="color: black;font-size: smaller;">{{ item.rate|floatformat:1 }}</td>
-                                                        <td class="text-center" style="color: black;font-size: smaller;">{{ item.discount|floatformat:1 }}</td>
-                                                        <td class="text-center" style="color: black;font-size: smaller;">{{ item.tax }}</td>
-                                                        <td class="text-center" style="color: black;font-size: smaller;">{{ item.total|floatformat:1 }}</td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12 col-lg-12 col-md-12">
-                                            <table style="margin-right: 2%; float: right;">
-                                                <tr>
-                                                    <td class=" text-dark" style="font-size: smaller;">Sub-Total:</td>
-                                                    
-                                                    <td class="text-right text-dark" style="text-align: end;font-size: smaller;"> {{estimate.subtotal|floatformat:1}}</td>
-                                                </tr>
-                                                {% if estimate.cgst != 0 %}
-                                                <tr>
-                                                    <td class="text-dark" tyle="font-size: smaller;">CGST:</td>
-                                                    <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{ estimate.cgst|floatformat:1}}</td>
-                                                </tr>
-                                                {% endif %}
-                                                {% if estimate.sgst != 0 %}
-                                                <tr>
-                                                    <td class="text-dark" style="font-size: smaller;">SGST:</td>
-                                                    <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{ estimate.sgst|floatformat:1}}</td>
-                                                </tr>
-                                                {% endif %}
-                                                {% if estimate.igst != 0 %}
-                                                <tr>
-                                                    <td class="text-dark" style="font-size: smaller;">IGST:</td>
-                                                    <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{ estimate.igst|floatformat:1}}</td>
-                                                </tr>
-                                                {% endif %}
-                                                {% if estimate.shipping_charge != 0 %}
-                                                <tr>
-                                                    <td class="text-dark" style="font-size: smaller;">Shipping Charge:</td>
-                                                    <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{ estimate.shipping|floatformat:1}}</td>
-                                                </tr>
-                                                {% endif %}
-                                                {% if estimate.adjustment != 0 %}
-                                                <tr>
-                                                    <td class="text-dark" style="font-size: smaller;">Adjustment:</td>
-                                                    <td class="text-right text-dark" style="text-align: end;font-size: smaller;">{{ estimate.adjustment|floatformat:1}}</td>
-                                                </tr>
-                                                {% endif %}
-                                                <tr>
-                        
-                                                    <td class="text-dark" style="font-weight: bold;">Total:</td>
-                                                    <!-- <td class="text-right text-dark "></td>
-                                                    <td class="text-right text-dark"></td>
-                                                    <td class="text-right text-dark"></td> -->
-                                                    <td class="text-right text-dark " style="font-weight: bold;text-align: end;font-weight: bold;">{{ estimate.grand|floatformat:1}}</td>
-                                                </tr>
-                        
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-3 col-md-3 col-lg-3"></div>
-            
                         </div>
-            
                     </div>
+                    <section class="balance-info">
+                        <div class="row">
+                            <div class="col-md-7"></div>
+                            <div class="col-md-4">
+                                <br>
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td style="color: #000;">Sub Total</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.subtotal}}</td>
+                                        </tr>
+
+                                        {% if estimate.igst != 0.0 %}
+                                        <tr>
+                                            <td style="color: #000;">IGST</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.igst}}</td>
+                                        </tr>
+                                        {% else %}
+                                        <tr>
+                                            <td style="color: #000;">CGST</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.cgst}}</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #000;">SGST</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.sgst}}</td>
+                                        </tr>
+                                        {% endif %}
+                                        <tr>
+                                            <td style="color: #000;">Tax Amount</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.taxamount}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #000;">Shipping Charge</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.shipping}}
+                                            </td>
+                                        </tr>
+                                        {% if estimate.adjustment != 0 %}
+                                        <tr>
+                                            <td style="color: #000;">Adjustment</td>
+                                            <td style="color: #000;">:</td>
+                                            <td class="text-right" style="color: #000;">{{estimate.adjustment}}</td>
+                                        </tr>
+                                        {%endif%}
+                                    </tbody>
+
+                                </table>
+                                <hr style="background-color: #000000;">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th style="color: #000;">Grand Total</th>
+                                            <th style="color: #000;">:</th>
+                                            <th class="text-right" style="color: #000;">{{estimate.grand}}</th>
+                                        </tr>
+                                        <tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
+        </div>
+        <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+            <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')"
+                class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
+            <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')"
+                class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+            <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')"
+                class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
+        </div>
+
 
     </div>
+</div>
 
 
 
+
+<div id="slip" style="display: none;">
+    <div class="card radius-15">
+        <div class="card-body" id="card">
+            <div class="card-title">
+                <center>
+                    <h2 class="mb-0">VIEW DELIVERY CHALLAN</h2>
+                    <h4></h4>
+                </center>
+                <hr>
+            </div>
+            <div class="btn-group" style="float: left; ">
+
+
+                <a style="padding: 10px; cursor: pointer;" onclick="Overview()"> Overview</a>
+
+                <a style="padding: 10px; cursor: pointer;" onclick="Statment()"> Statement</a>
+                <a style="padding: 10px; cursor: pointer;" onclick="Slip()"> Slip</a>
+            </div>
+            <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll"
+                    aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarScroll">
+                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                        <li class="nav-item mx-1">
+                            <a href="{% url 'editchallan' estimate.id %}" role="button"
+                                class=" btn btn-outline-info rounded-pill text-grey p-1">
+                                &nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
+
+                        </li>
+                        <li class="nav-item mx-1">
+                            <a href="{% url 'deletechallan' estimate.id %}" role="button" id="deleteButton"
+                                class=" btn btn-outline-info rounded-pill text-grey p-1">&nbsp;&nbsp;Delete&nbsp;&nbsp;
+                            </a>
+                        </li>
+                        <li class="nav-item active mx-1">
+                            <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1"
+                                role="button" id="printslip"
+                                onclick="printSelectedArea4()">&nbsp;&nbsp;Print&nbsp;&nbsp;<span
+                                    class="sr-only">(current)</span></a>
+                        </li>
+
+                        <li class="nav-item mx-1">
+                            <a class="btn btn-outline-info rounded-pill text-grey p-1" role="button" href="#"
+                                onclick="exportToPDF4()">&nbsp;&nbsp;PDF&nbsp;&nbsp;</a>
+                        </li>
+                        {% if estimate.status != 'Saved' %}
+                        <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
+                            <li class="btn btn-outline-info rounded-pill text-grey p-1  dropdown-toggle  "
+                                data-toggle="dropdown"> &nbsp;&nbsp;Convert&nbsp;&nbsp;</li>
+                            <ul class="dropdown-menu" style="background-color: black;">
+                                <a class="dropdown-item " href="{% url 'challan_draftToSave' estimate.id %}">
+                                    &nbsp;Saved </a>
+
+                            </ul>
+
+                        </div>
+                        {% endif %}
+
+                        <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;" onclick="uplodfile()">
+                            <a class="btn btn-outline-info rounded-pill text-grey p-1" data-toggle="dropdown">
+                                &nbsp;&nbsp;Share&nbsp;&nbsp;
+                            </a>
+                            <div class="dropdown-menu ">
+                                <a class="dropdown-item" data-target="#shareBillEmail" data-toggle="modal">GMAIL</a>
+                                <a class="dropdown-item" href="javascript:void(0);"
+                                    onclick="shareOnWhatsApp()">WhatsApp</a>
+                            </div>
+                        </div>
+
+                        <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
+                            <li class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"
+                                data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
+                            <ul class="dropdown-menu" style="background-color: black;">
+                                <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal"
+                                    data-target="#exampleModal">Attach file</a>
+                                {% if estimate.file != "default.jpg" %}
+                                <a class="dropdown-item fa fa-download" style="cursor: pointer;" download
+                                    href="{{estimate.file.url}}">&nbsp; Download file</a>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+            </nav>
+
+
+        </div>
+    </div>
+
+    <!-- slip -->
+    <div id="" style="background-color: #243e54; border-radius: 2vh; ">
+
+        <div class="p-5" id="printslip">
+            <div class="my-5 page" size="A4">
+                <div class="row" style="margin-top: 20%;" id="dlchln_slip">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6 ml-3">
+                        <div class="card bg-white" style="border: 1px dotted black;">
+                            <div class="mt-2" style="text-align: center;">
+                                <div class="text-center" style="font-size: 3vh; color: black;">
+                                    <b>{{cmp1.cname}} </b>
+                                </div>
+                                <span style="font-size: x-small; color: black;">{{ cmp1.caddress }} <br>
+                                    {{cmp1.city}},
+                                    {{cmp1.state}},
+                                    {{cmp1.pincode}} <br>
+                                    {{ cmp1.phone }} <br>{{ cmp1.cemail }}
+                                </span>
+                            </div>
+                            <div class="ml-4 mt-2" style="color: black;">
+                                <div class="row">
+                                    <div class="col-md-6 text-left">Challan No:</div>
+                                    <div class="col-md-5 text-right">{{estimate.chal_no}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 text-left">Customer Name:</div>
+                                    <div class="col-md-5 text-right">
+                                        {{estimate.customer.title}} {{estimate.customer.firstname}}
+                                        {{estimate.customer.lastname}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 text-left">Challan Date :</div>
+                                    <div class="col-md-5 text-right">{{estimate.challan_date | date:'d-m-Y'}}</div>
+                                </div>
+                                {% if estimate.customer.gstin %}
+                                <div class="row">
+                                    <div class="col-md-6 text-left">GSTIN:</div>
+                                    <div class="col-md-5 text-right">{{estimate.customer.gstin}}</div>
+                                </div>
+                                {% endif %}
+
+                            </div>
+                            <div><br>
+                                <div class="equal-length-container" style="color: black; font-weight: bold;">
+                                    <div class="equal-length-item" style=" text-align: center;">
+                                        Item
+                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
+                                    </div>
+                                    <div class="equal-length-item ml-2" style=" text-align:center;">
+                                        HSN
+                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;">
+                                    </div>
+                                    <div class="equal-length-item" style=" text-align: center; ">
+                                        Qty
+                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                    </div>
+                                    <div class="equal-length-item" style=" text-align: center; ">
+                                        Rate
+                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                    </div>
+                                    <div class="equal-length-item" style=" text-align: center; ">
+                                        Discount
+                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                    </div>
+                                    <div class="equal-length-item" style=" text-align: center; ">
+                                        tax
+                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                    </div>
+                                    <div class="equal-length-item" style=" text-align: center; ">
+                                        Total
+                                        <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                {% for j in estitem %}
+                                <div class="equal-length-container"
+                                    style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
+                                    <div class="equal-length-item" style="text-align: center; margin-left: 2px;">
+                                        {{j.product}}
+                                    </div>
+                                    <div class="equal-length-item" style="text-align: right;">
+                                        {{j.hsn}}
+                                    </div>
+                                    <div class="equal-length-item" style="text-align: center; ">
+                                        {{j.quantity}}
+                                    </div>
+                                    <div class="equal-length-item" style="text-align: center; ">
+                                        {{j.rate}}
+                                    </div>
+                                    <div class="equal-length-item" style="text-align: center; ">
+                                        {{j.discount}}
+                                    </div>
+                                    <div class="equal-length-item" style="text-align: center; ">
+                                        {{j.tax}}%
+                                    </div>
+                                    <div class="equal-length-item" style="text-align: center; ">
+                                        {{j.total}}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div><br>
+                                <div class="row ml-1">
+                                    <div class="col-md-5 text-left" style=" color: black;">
+                                        Sub Total
+                                    </div>
+                                    <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        {{estimate.subtotal}}
+                                    </div>
+                                </div>
+                                {% if estimate.igst != 0.0 %}
+                                <div class="row ml-1">
+                                    <div class="col-md-5 text-left " style=" color: black;">
+                                        IGST
+                                    </div>
+                                    <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        {{estimate.igst}}
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="row ml-1">
+                                    <div class="col-md-5 text-left" style=" color: black;">
+                                        CGST
+                                    </div>
+                                    <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        {{estimate.cgst}}
+                                    </div>
+                                </div>
+                                <div class="row ml-1">
+                                    <div class="col-md-5 text-left" style=" color: black;">
+                                        SGST
+                                    </div>
+                                    <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        {{estimate.sgst}}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="row ml-1">
+                                    <div class="col-md-5 text-left" style=" color: black;">
+                                        Tax Amount
+                                    </div>
+                                    <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        {{estimate.taxamount}}
+                                    </div>
+                                </div>
+                                <div class="row ml-1">
+                                    <div class="col-md-5 text-left" style=" color: black;">
+                                        Shipping Charge
+                                    </div>
+                                    <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        {{estimate.shipping}}
+                                    </div>
+                                </div>
+                                {% if estimate.adjustment != 0 %}
+                                <div class="row ml-1">
+                                    <div class="col-md-5 text-left" style=" color: black;">
+                                        Adjustment
+                                    </div>
+                                    <div class="col-md-6 text-right ml-2" style="color: black;">
+                                        {{estimate.adjustment}}
+                                    </div>
+                                </div>
+                                {%endif%}
+
+                                <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
+                            </div>
+
+                            <div class="mb-2">
+                                <div class="row">
+                                    <div class="col-md-5 text-left ml-2"
+                                        style=" font-size: large; color: black; font-weight: bold;">
+                                        Grand Total
+                                    </div>
+                                    <div class="col-md-6 text-right ml-2"
+                                        style="font-size: large; color: black; font-weight: bold;">
+                                        {{estimate.grand}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 
 <script>
+
+$(document).ready(function () {
+    $('#share_with_email').on('click', function () {
+      var emailsInput = document.getElementById('emailIds');
+      var emailsString = emailsInput.value.trim();
+
+      var emails = emailsString.split(',').map(function (email) {
+        return email.trim();
+      });
+
+      var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+      var invalidEmails = []
+      if (emailsString == "") {
+        alert('Enter valid email addresses..')
+      }
+      else {
+        for (var i = 0; i < emails.length; i++) {
+          var currentEmail = emails[i];
+
+          if (currentEmail != "" && !emailRegex.test(currentEmail)) {
+            console.log(currentEmail + ' is invalid!');
+            invalidEmails.push(currentEmail)
+          }
+        }
+
+        if (invalidEmails.length > 0) {
+          alert('Invalid emails..Please check!\n' + invalidEmails)
+          // alert(invalidEmails)
+        } else {
+          $('#share_to_email_form').submit();
+        }
+      }
+    })
+  });
+
+    function shareOnWhatsApp() {
+        var url = window.location.href;
+        var text = url;
+        text = encodeURIComponent(text);
+        var whatsappUrl = "whatsapp://send?text=" + text;
+        window.location.href = whatsappUrl;
+    }
 
     $('.delete').click(function (event) {
         var form = $(this).closest("form");
@@ -2746,42 +2737,140 @@ transform: rotate(-45deg); */
 </script>
 <style>
     @media only print {
-        body{
-            visibility: hidden;
+        @media print {
+
+            body {
+                visibility: hidden !important;
+            }
+
+            .printContainer {
+                visibility: visible !important;
+                /* Override the rule above to only show the printables*/
+                z-index: 99999;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 99%;
+                height: auto;
+                color: #000;
+            }
+
+            .printContainer .table-borderless td,
+            .printContainer .table-borderless th {
+                text-align: right;
+            }
+
         }
-        
-        .card {
-            display: none;
-        }
-        #whatToPrint{
-            visibility: visible;
-            
-            
-        }
-        
+
     }
 </style>
 <script>
-    function printSpecificArea(sectionId) {
-        var printContents = document.getElementById(sectionId).innerHTML;
-        var originalContents = document.body.innerHTML;
-        // document.getElementById('card').style.display='none'
-        document.body.style.backgroundColor = 'white';
-        $('.page-content-wrapper').css('background-color','white');
-        document.body.innerHTML = printContents;
-        // printContents.window.print();
-        window.print();
-        document.body.innerHTML = originalContents;
-    }
-//     function printFunction() {
-//             var divContents = document.getElementById("whatToPrint").innerHTML;
-//             var prnt = window.open('', '', 'height=2000px, width=2000px');
-//              prnt .document.write(divContents);
-//             prnt .document.close();
-//             prnt.window.print();
-// }
 
-  
+    function exportToPDF4() {
+        var content = document.getElementById('dlchln_slip');
+        html2pdf()
+            .from(content)
+            .save('{{estimate.chal_no}}' + '.pdf')
+    }
+
+
+    function printSelectedArea4(area) {
+
+        var printContents = document.getElementById("dlchln_slip").innerHTML;
+        var $printerDiv = $('<div class="printContainer bg-white"></div>'); // create the div that will contain the stuff to be printed
+        $printerDiv.html(printContents); // add the content to be printed
+        $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+        window.print(); // call print
+        $printerDiv.remove(); // remove the div
+        $('body').removeClass("printingContent");
+
+    }
+
+    var rdx = '1';
+    var p = rdx;
+
+    function toggleTemplate(templateId, buttonId) {
+        $('.printTemplates').css('display', 'none');
+        $('#' + templateId).css('display', 'block');
+        $('.templateToggleButtons').removeClass('active');
+        $('#' + buttonId).addClass('active');
+        $("#templatePrintButton").attr("onclick", "printSpecificArea('" + templateId + "')");
+        document.getElementById('statment').scrollIntoView();
+        var lastChar = templateId.substring(templateId.length - 1);
+        rdx = lastChar;
+    }
+
+    function printSelectedArea(p) {
+        console.log(p);
+
+        if (p === '1') {
+            var printContents = document.getElementById("selecteArea1").innerHTML;
+            var $printerDiv = $('<div class="printContainer bg-white style="display:block !important;"></div>'); // create the div that will contain the stuff to be printed
+            $printerDiv.html(printContents); // add the content to be printed
+            $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+            window.print(); // call print
+            $printerDiv.remove(); // remove the div
+            $('body').removeClass("printingContent");
+        } if (p === '2') {
+            var printContents = document.getElementById("selecteArea2").innerHTML;
+            var $printerDiv = $('<div class="printContainer bg-white style="display:block !important;"></div>'); // create the div that will contain the stuff to be printed
+            $printerDiv.html(printContents); // add the content to be printed
+            $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+            window.print(); // call print
+            $printerDiv.remove(); // remove the div
+            $('body').removeClass("printingContent");
+        } if (p === '3') {
+            var printContents = document.getElementById("selectedArea3").innerHTML;
+            var $printerDiv = $('<div class="printContainer bg-white style="display:block !important;"></div>'); // create the div that will contain the stuff to be printed
+            $printerDiv.html(printContents); // add the content to be printed
+            $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+            window.print(); // call print
+            $printerDiv.remove(); // remove the div
+            $('body').removeClass("printingContent");
+        }
+    }
+
+    var printButton = document.getElementById("templatePrintButton");
+
+
+    // Add an event listener to the button for the click event
+    printButton.addEventListener("click", function () {
+        printSelectedArea(rdx); // Call the printSelectedArea function on button click
+    });
+
+    function exportToPDF(p) {
+        if (p === '1') {
+            var content = document.getElementById('selecteArea1');
+            html2pdf()
+                .from(content)
+                .save('{{estimate.chal_no}}' + '.pdf')
+        }
+        if (p === '2') {
+            var content = document.getElementById('selecteArea2');
+            html2pdf()
+                .from(content)
+                .save('{{estimate.chal_no}}' + '.pdf')
+        }
+        if (p === '3') {
+            var content = document.getElementById('selectedArea3');
+            html2pdf()
+                .from(content)
+                .save('{{estimate.chal_no}}' + '.pdf')
+        }
+
+    }
+
+    var pdftButton = document.getElementById("downloadButton");
+
+    // Add an event listener to the button for the click event
+    pdftButton.addEventListener("click", function () {
+        exportToPDF(rdx); // Call the printSelectedArea function on button click
+    });
+
 
 
     function Overview() {
@@ -2789,7 +2878,7 @@ transform: rotate(-45deg); */
         document.getElementById('overview').style.display = 'block';
         document.getElementById('statment').style.display = 'none';
         document.getElementById('slip').style.display = 'none';
-        
+
         // document.getElementById('statment').style.display = 'none';
 
 
@@ -2809,39 +2898,18 @@ transform: rotate(-45deg); */
         document.getElementById('overview').style.display = 'none';
         document.getElementById('statment').style.display = 'none';
         document.getElementById('slip').style.display = 'block';
-        
+
 
     }
 
-    function toggleTemplate(templateId,buttonId){
-        // alert(templateId)
-        // $('#whatToPrint1','#whatToPrint2','#whatToPrint3').css('display','none')
-        // document.getElementById(templateId).style.display = 'block';
-        $('.printTemplates').css('display','none');
-        $('#'+templateId).css('display','block');
-        $('.templateToggleButtons').removeClass('active');
-        $('#'+buttonId).addClass('active');
-        $("#templatePrintButton").attr("onclick","printSpecificArea('"+templateId+"')");
-        // $(this).addClass('active');
-        // $(window).scrollTop(0); 
-        document.getElementById('statment').scrollIntoView();
-    }
-    
- 
-    function printSelectedArea1() 
-    {
-      var selectedArea = document.getElementById("print_slip");
-      var printWindow = window.open('', 'PrintWindow');
-      printWindow.document.write('<html><head><title>Print Selected Area</title></head><body>' + selectedArea.innerHTML + '</body></html>');
-      printWindow.print();
-    //   printWindow.close();
-    }
-   
-   
-   
-//    $(function() {
-//        $("#printslip").click(printSelectedArea1); 
-//    });
+
+
+
+
+
+
+
+
 </script>
 
 

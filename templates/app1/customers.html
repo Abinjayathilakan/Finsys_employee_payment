@@ -113,13 +113,14 @@ body{
                     </div>
                 </div>
                 <div class="btn-group col-md-2">
-                    <a href="{% url 'goaddcust' %}" id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="width: 40%; margin-top: 8px;" role="button"> Add Customer</a>
+                    <a href="{% url 'goaddcust' %}" id="myBtn" class="btn btn-outline-info text-grey" style=" margin-top: 8px;" > <i class="fa fa-plus"></i>&nbsp; Add Customer</a>
                 </div>
             </div>
             <div class="container-fluid">
                 <table class="table table-responsive-md mt-4 table-hover text-center" id="tbl_exporttable_to_xls">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>CUSTOMER</th>
                             <th>GST TYPE</th>
                             <th>GSTIN</th>
@@ -133,6 +134,7 @@ body{
                         {% for customer in customers %}
                             {% if customer.cid_id == cmp1.cid %}
                                 <tr  class="table-row clickable-row text-center" data-href="customer_profile/{{ customer.customerid }}">
+                                    <td>{{forloop.counter}}</td>
                                     <td>{{ customer.firstname }} {{ customer.lastname }}</td>
                                     <td>{{ customer.gsttype }}</td>
                                     <td>{{ customer.gstin }}</td>
@@ -140,7 +142,6 @@ body{
                                     <td>{{customer.opening_balance}}</td>
                                     <td>{{customer.status}}</td>
                                     <td>{{customer.opening_balance}}</td>
-                                    <td style="display: none;">{{ customer.customerid }}</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}
@@ -234,8 +235,8 @@ body{
             rows = table.rows;
             for (i = 1; i < rows.length - 1; i++) {
                 shouldSwitch = false;
-                x = rows[i].getElementsByTagName("td")[0];
-                y = rows[i + 1].getElementsByTagName("td")[0];
+                x = rows[i].getElementsByTagName("td")[1];
+                y = rows[i + 1].getElementsByTagName("td")[1];
                 if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
                     shouldSwitch = true;
                     break;
@@ -257,8 +258,8 @@ body{
             rows = table.rows;
             for (i = 1; i < rows.length - 1; i++) {
                 shouldSwitch = false;
-                x = rows[i].getElementsByTagName("td")[4];
-                y = rows[i + 1].getElementsByTagName("td")[4];
+                x = rows[i].getElementsByTagName("td")[7];
+                y = rows[i + 1].getElementsByTagName("td")[7];
                 if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {
                     shouldSwitch = true;
                     break;

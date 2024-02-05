@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django_countries.fields import CountryField
-from decimal import Decimal
+
 
 class sign(models.Model):
     sid = models.AutoField(('SID'), primary_key=True)
@@ -1056,15 +1056,17 @@ class customize(models.Model):
 class estimate(models.Model):
     estimateid = models.AutoField(('ESTIMATEID'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
-    customer = models.ForeignKey(customer, on_delete=models.CASCADE,null=True)
-    customer_name = models.CharField(max_length=100,null=True)
+    customer = models.CharField(max_length=100,null=True)
     email = models.EmailField(max_length=100,null=True)
     billingaddress = models.CharField(max_length=100,null=True)
     estimatedate = models.DateField(null=True)
     expirationdate = models.DateField(null=True)
     estimateno = models.CharField(max_length=100,null=True)
     placeofsupply = models.CharField(max_length=100,null=True)
-    term_days = models.IntegerField(null=True)
+
+    
+   
+
     taxamount = models.CharField(max_length=100, default='')
     reference_number = models.CharField(max_length=100, default='')
     note = models.TextField(null=True)
@@ -1073,27 +1075,15 @@ class estimate(models.Model):
     SGST =  models.CharField(max_length=100,null=True)
     TCS =  models.CharField(max_length=100,null=True)
     shipping_charge = models.CharField(max_length=100,null=True,default=0)
-    adjust = models.CharField(null=True,blank=True,max_length=255)
-    subtotal = subtotal=models.FloatField(default=0)
+    subtotal = models.CharField(max_length=100,null=True)
     estimatetotal = models.CharField(max_length=100,null=True)
-    balance = models.FloatField(null=True, blank=True)
     file = models.FileField(upload_to='estimate',default="default.jpg")
     file_share = models.FileField(upload_to='estimate', default='')
-    is_converted = models.BooleanField(default=False, null=True)
-    converted_inv = models.CharField(max_length = 1000,null = True)
-    converted_rec = models.CharField(max_length = 1000,null = True)
-    converted_sales = models.CharField(max_length = 1000,null = True)
-    converted_invoice_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    converted_recurring_invoice_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    converted_sales_order_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    convert_invoice = models.CharField(max_length=100,null=True)
-    convert_reinvoice = models.CharField(max_length=100,null=True)
-    convert_salesorder = models.CharField(max_length=100,null=True)
-    
+
     estimate_status = (
         ('Draft','Draft'),
-        ('Sent','Sent'),
-       
+        ('Approved','Approved'),
+        ('Invoice','Invoice'),
 
     )
     
@@ -1410,7 +1400,6 @@ class vendor(models.Model):
     opening_balance_type = models.CharField(max_length=10,null=True,blank=True)
     attachment = models.ImageField(upload_to="vendor-files/", null=True)
     is_active =models.BooleanField(default=True)
-    balance_amount = models.CharField(max_length=100,null=True)
 
 
 
@@ -1425,7 +1414,6 @@ class purchaseorder(models.Model):
     vendor_gstin = models.CharField(max_length=100, default='')
     puchaseorder_no = models.IntegerField(default=1000)
     sourceofsupply = models.CharField(max_length=100, null=True)
-    csourceofsupply = models.CharField(max_length=100, null=True)
     destiofsupply = models.CharField(max_length=100, null=True)
     branch = models.CharField(max_length=100, null=True)
     reference = models.CharField(max_length=100, null=True)
@@ -1447,7 +1435,7 @@ class purchaseorder(models.Model):
     round_off = models.CharField(max_length=100,null=True)
     tax_amount = models.CharField(max_length=100,null=True)
     balance_due = models.CharField(max_length=100,null=True)
-    grand_total = models.FloatField(max_length=100,null=True)
+    grand_total = models.CharField(max_length=100,null=True)
     note = models.CharField(max_length=255,null=True)
     file = models.FileField(upload_to='purchase/purchaseorder',default="default.png")
     total_discount = models.CharField(max_length=100,null=True)
@@ -1493,7 +1481,6 @@ class purchasebill(models.Model):
     customer_gstin = models.CharField(max_length=100, default='')
     bill_no = models.IntegerField(default=1000)
     sourceofsupply = models.CharField(max_length=100, null=True)
-    csourceofsupply = models.CharField(max_length=100, null=True)
     destiofsupply = models.CharField(max_length=100, null=True)
     branch = models.CharField(max_length=100, null=True)
     reference = models.IntegerField(default=0)
@@ -1513,7 +1500,7 @@ class purchasebill(models.Model):
     round_off = models.CharField(max_length=100,null=True)
     tax_amount = models.CharField(max_length=100,null=True)
     grand_total = models.FloatField(blank=True,null=True)
-    balance_due = models.FloatField(max_length=100,null=True)
+    balance_due = models.CharField(max_length=100,null=True)
     amtrecvd = models.CharField(max_length=100,null=True)
     note = models.CharField(max_length=255,null=True)
     file = models.FileField(upload_to='purchase/bill',default="default.png")
@@ -1601,10 +1588,14 @@ class purchasepayment1(models.Model):
     billamount = models.CharField(max_length=100,null=True)
     duedate = models.CharField(max_length=100,null=True)
     amountdue = models.FloatField(null=True)
-    payments = models.FloatField(null=True) # Payment field
+    payments = models.CharField(max_length=100,default='0') # Payment field
     payment_id = models.IntegerField(null=True)
     payment_type = models.CharField(max_length=100,null=True)
-    
+   
+class DeletedPaymentMade(models.Model):
+    cid = models.ForeignKey(company,on_delete=models.CASCADE,null=True)
+    reference = models.CharField(max_length=50)
+ 
 class paymentmethod(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
     newmethod = models.CharField(max_length=100,null=True) 
@@ -1612,7 +1603,7 @@ class paymentmethod(models.Model):
 class purchasedebit(models.Model):
     pdebitid = models.AutoField(('pdid'), primary_key=True)
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
-    debit_no = models.CharField(max_length=100,null=True)
+    debit_no = models.CharField(max_length=100,null=True, default='')
     vendor = models.CharField(max_length=100,null=True)
     address = models.TextField(null=True)
     debitdate = models.DateField(null=True)
@@ -1630,12 +1621,12 @@ class purchasedebit(models.Model):
     tcs_amount = models.FloatField(blank=True,null=True)
     round_off = models.CharField(max_length=100,null=True)
     balance_due = models.CharField(max_length=100,null=True)
-    amtrecvd = models.FloatField(max_length=100,null=True)
+    amtrecvd = models.CharField(max_length=100,null=True)
     total_discount = models.CharField(max_length=100,null=True)
     ship_charge = models.CharField(max_length=100,null=True)
     adjustment = models.FloatField(default=0,null=True,blank=True)
-    paid_amount = models.FloatField(max_length=100,blank=True,null=True)
-    balance_amount = models.FloatField(max_length=100,blank=True,null=True)
+    paid_amount = models.FloatField(blank=True,null=True)
+    balance_amount = models.FloatField(blank=True,null=True)
     payment_type = models.CharField(max_length=100,null=True)
     cheque_no=models.CharField(null=True,blank=True,max_length=255,default='')
     upi_no=models.CharField(null=True,blank=True,max_length=255,default='')
@@ -1772,7 +1763,7 @@ class salescreditnote(models.Model):
     subtotal = models.CharField(max_length=100,null=True)
     cgst=models.TextField(max_length=100,null=True,blank=True)
     sgst=models.TextField(max_length=100,null=True,blank=True)
-    igst=models.TextField(max_length=100,null=True,blank=True) 
+    igst=models.TextField(max_length=100,null=True,blank=True)
     shipping_charge = models.CharField(max_length=100,null=True,blank=True)
     adjustment = models.CharField(max_length=100,null=True,blank=True)
     taxamount = models.CharField(max_length=100,null=True)
@@ -1940,7 +1931,6 @@ class pricelist_individual(models.Model):
     customrate=models.CharField(max_length=100,null=True,blank=True,default=0)
 
 class BankAccountHolder(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True,blank=True)
     name = models.CharField(max_length=100)
     alias = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20)
@@ -1950,7 +1940,7 @@ class BankAccountHolder(models.Model):
         ('BA', 'Bank Account'),
     ]
     account_type = models.CharField(
-        max_length=20,
+        max_length=2,
         choices=ACCOUNT_TYPE_CHOICES,
         default='BA',
     )
@@ -1961,7 +1951,7 @@ class BankAccountHolder(models.Model):
     
 
 class BankAccount(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True,blank=True)
+    
     holder = models.ForeignKey(BankAccountHolder, on_delete=models.CASCADE)
     
     def __str__(self):
@@ -2005,7 +1995,7 @@ class BankAccount(models.Model):
     
     
 class BankConfiguration(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True,blank=True)
+    
     holder = models.ForeignKey(BankAccountHolder, related_name='bank_configurations',  on_delete=models.CASCADE)
     set_cheque_book_range = models.BooleanField(default=False)
     enable_cheque_printing = models.BooleanField(default=False)
@@ -2013,7 +2003,6 @@ class BankConfiguration(models.Model):
     
     
 class MailingAddress(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True,blank=True)
     holder = models.ForeignKey(BankAccountHolder, on_delete=models.CASCADE)
     mailing_name = models.CharField(max_length=100)
     address = models.TextField()
@@ -2055,7 +2044,7 @@ class MailingAddress(models.Model):
 ]
 
     state = models.CharField(
-        max_length=100,
+        max_length=2,
         choices=STATE_CHOICES,
     )
     pin = models.CharField(max_length=6)
@@ -2063,14 +2052,13 @@ class MailingAddress(models.Model):
 
 
 class BankingDetails(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True,blank=True)
     holder = models.ForeignKey(BankAccountHolder, on_delete=models.CASCADE)
     REGISTRATION_TYPE_CHOICES = [
         ('regular', 'Regular'),
         ('composition', 'Composition'),
         ('consumer', 'Consumer'),
         ('unregistered', 'Unregistered'),
-       
+        ('unknown', 'Unknown'),
     ]
 
     pan_it_number = models.CharField(max_length=10, blank=True)
@@ -2080,13 +2068,11 @@ class BankingDetails(models.Model):
     
     
 class OpeningBalance(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True,blank=True)
     holder = models.ForeignKey(BankAccountHolder, on_delete=models.CASCADE)
     date = models.DateField(default=datetime.date.today)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    types =[('CREDIT', 'CREDIT'),
-        ('DEBIT', 'DEBIT'),]
-    Open_type = models.CharField(max_length=20, choices=types, default='unknown')
+    
+    
     
 class payrollemployee(models.Model):
     employeeid = models.AutoField(('EMPLOYEEID'), primary_key=True)
@@ -2400,7 +2386,6 @@ class holidays(models.Model):
 # reshna attendence#
 class attendance(models.Model):
     cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
-    employeeid = models.ForeignKey(payrollemployee, on_delete=models.CASCADE, null=True, blank=True,default='')
     atid = models.AutoField(('hid'), primary_key=True)
     date = models.DateField(null=True,blank=True)
     employee= models.CharField(max_length=100,null=True,blank=True)
@@ -2428,13 +2413,6 @@ class loan_account(models.Model):
     balance=models.IntegerField(default=0)    
     date=models.DateField(blank=True,null=True)
     recieved_amount=models.IntegerField(default=0)   
-    paid_cheque = models.TextField(max_length=100,null=True,blank=True)
-    paid_upi = models.TextField(max_length=100,null=True,blank=True)
-    paid_bank_acc_number = models.TextField(max_length=100,null=True,blank=True)
-
-    recieved_cheque = models.TextField(max_length=100,null=True,blank=True)
-    recieved_upi = models.TextField(max_length=100,null=True,blank=True)
-    bank_acc_number = models.TextField(max_length=100,null=True,blank=True)
     
     
 class loan_transaction(models.Model):
@@ -2450,10 +2428,6 @@ class loan_transaction(models.Model):
     balance=models.IntegerField(default=0)   
     type=models.TextField(max_length=100)
     total = models.IntegerField(default=0)
-    
-    recieved_cheque = models.TextField(max_length=100,null=True,blank=True)
-    recieved_upi = models.TextField(max_length=100,null=True,blank=True)
-    bank_acc_number = models.TextField(max_length=100,null=True,blank=True)
     
     
 class repeatevry(models.Model):
@@ -2541,49 +2515,8 @@ class deletedcreditnotes(models.Model):
 class DeletedPaymentReceived(models.Model):
     cid = models.ForeignKey(company,on_delete=models.CASCADE,null=True)
     referno = models.CharField(max_length=50)
-    
-class DeletedPaymentMade(models.Model):
-    cid = models.ForeignKey(company,on_delete=models.CASCADE,null=True)
-    reference = models.CharField(max_length=50)
 
 class DeletedChallan(models.Model):
     cid = models.ForeignKey(company,on_delete=models.CASCADE,null=True)
     ref = models.CharField(max_length=50)
     
-    
-class SalaryDetails1(models.Model):
-    employee = models.ForeignKey('payrollemployee', on_delete=models.CASCADE)
-    cid = models.ForeignKey('company', on_delete=models.CASCADE, null=True)
-    salary_date = models.DateField()
-    month = models.CharField(max_length=20)
-    year = models.PositiveIntegerField()
-    casual_leave = models.DecimalField(max_digits=10, decimal_places=2,default=0)
-    leave = models.DecimalField(max_digits=10, decimal_places=2,default=0)  
-    working_days = models.IntegerField(default=0,null=False) 
-    holiday = models.IntegerField(default=0,null=False)
-    other_cuttings = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    add_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    description = models.TextField(blank=True, null=True)
-    total_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    status = models.CharField(max_length=20, default='Draft')
-    leave_deduction = models.DecimalField(max_digits=10, decimal_places=2, default=0) 
-  
-    
-
-    def monthly_salary(self):
-        try:
-            employee_amount = Decimal(self.employee_amount)
-            leave = int(self.leave)
-            other_cuttings = Decimal(self.other_cuttings)
-            add_bonus = Decimal(self.add_bonus)
-            casual_leave =Decimal(self.casual_leave)
-            month_days = monthrange(self.year, self.month)[1]
-            wg = employee_amount / Decimal(month_days)
-            s1 = wg * leave
-            leave_deduction = round((leave - casual_leave) * wg, 2)
-            monthly_salary = (employee_amount - s1 - other_cuttings) + add_bonus
-            monthly_salary += (Decimal(self.casual_leave) * wg) if leave != 0 else 0
-
-            return monthly_salary
-        except (ValueError, Decimal.InvalidOperation):
-            return Decimal(0)

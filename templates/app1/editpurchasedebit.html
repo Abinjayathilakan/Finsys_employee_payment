@@ -1084,11 +1084,15 @@
                         <div class="col-md-8">
                             <div class="row">
                                 <div class="col-md-5 mt-3">
+
+                                   
+
+
                                     
                                         <label for="validationCustom01">Select Vendor</label>
                                         <!-- <input type="text"  name="vendor" class="form-control"> -->
                                         <select class="form-control select2 vendor " data-width="100%" id="selected" style="background-color: #243e54; color: white;">
-                                            <option selected disabled value="{{ pdebt.vendor }}" hidden> {{ pdebt.vendor }}</option>
+                                            <option selected  value="{{ pdebt.vendor }}" > {{ pdebt.vendor }}</option>
                                             {% for v in vndr %}
                                             <option value="{{ v.firstname }} {{ v.lastname }}" data-tokens="{{ v.firstname }} {{ v.lastname }}" >{{ v.firstname }} {{ v.lastname }}</option>
                                             {% endfor %}
@@ -1131,13 +1135,32 @@
                 }).done(function(response) {
                 var json_data = JSON.parse(response);
                 for (key in json_data) {
+
+                    var gstNumDiv = $('#gstDiv');
+                    var showdiv1 = $('#showdiv1');
+
+
                     console.log(json_data[key]['email'])
                     document.getElementById('email').value = json_data[key]['email'];
                     document.getElementById('mailaddr').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
                     document.getElementById('plosu').value = json_data[key]['sourceofsupply'];
                     document.getElementById('gst_type').value = json_data[key]['gsttype'];
-                    document.getElementById('gst_num').value = json_data[key]['gstin'];
                 console.log(json_data[key]['vendorid']);
+
+
+                if (json_data[key]['gsttype'] === 'unregistered Business' ){
+                                        gstNumDiv.hide();
+                                        showdiv1.show()  
+                
+                                    }
+                                    else{
+                                        gstNumDiv.show();  
+                                        document.getElementById('gst_num').value = json_data[key]['gstin'];
+                                        showdiv1.hide()  
+                                    }
+
+
+
                 
                 reloadbill(json_data[key]['vendorid']) ;
                 }
@@ -1165,15 +1188,31 @@
                                 </div>
                                 <div class="col-md-5 mt-3"></div>
                                 <div class="col-md-5 mt-3">
-                                    <label for="validationCustom02">GST Treatment</label>
+
+                                    <label for="validationCustom02" >GST Treatment</label>
                                     
                                     <input type="text" class="form-control" name="gst_type" id="gst_type" value="{{ pdebt.gsttype }}" required>
                                 </div>
-                                <div class="col-md-5 mt-3">
+
+
+                              
+
+                                <div class="col-md-5 mt-3" id="gstDiv">
+                                    
+                                    
                                     <label for="validationCustom02">GST Number</label>
                                     
-                                    <input type="text" class="form-control" name="gst_num" id="gst_num" value="{{ pdebt.gstnumber }}" required>
+                                    <input type="text" class="form-control" name="gst_num" id="gst_num"  required >
+
+
+
+
+                                    
                                 </div>
+                                
+                                <div class="col-md-5 mt-3" id="showdiv1" style="display: none;">
+                                </div>
+                               
                                 <div class="col-md-5 mt-3">
                                     <label for="validationCustom02">Debit Note Date</label>
                                     <input type="date" class="form-control" value="{{ pdebt.debitdate| date:'Y-m-d' }}" name="debitdate">
@@ -1285,7 +1324,7 @@
                                                 <select name='items[]' id="product{{forloop.counter}}" class="form-control select2">
                                                     <option selected>{{pro.items}}</option>
                                                     {% for i in item %}
-                                                        <option value="{{ i.name }}">
+                                                        <option value="{{ i.name }}" data-tokens="{{ i.name }}">
                                                             {{ i.name }}
                                                         </option>
                                                     {% endfor %}
@@ -1305,6 +1344,35 @@
                                             
 
                                         </td>
+
+
+                                        <script>
+
+                                            
+var initialAvailableQuantity = 0;
+
+function qtychange1(inputElement) {
+    var enteredQuantity = parseFloat(inputElement.value) || 0;
+
+    if (initialAvailableQuantity === 0) {
+       
+        initialAvailableQuantity = parseFloat(document.getElementById('qtyspan').innerText) || 0;
+    }
+    var difference = initialAvailableQuantity - enteredQuantity;
+
+    if (enteredQuantity > initialAvailableQuantity) {
+       
+        alert('Error: Entered quantity cannot be greater than the available quantity'); 
+        difference = 0;
+    }
+    document.getElementById('qtyspan').innerText = difference;
+    
+}
+
+
+                                        </script>
+
+
                                         <td>
                                             <input type="text" name='price[]' id="unit1{{forloop.counter}}" placeholder='Enter Unit Price' value="{{pro.price}}"
                                             class="form-control price" step="0.00" min="0"/>

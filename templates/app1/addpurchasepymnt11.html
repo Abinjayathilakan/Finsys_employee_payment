@@ -34,12 +34,9 @@
                             <div class="d-flex">
                                 <select name="vendor" id="select" class="custom-select">
                                     <option selected disabled>Select Vendor</option>
-                                    {% for cust in vndr %}
-                                    {% if cust.cid_id == cmp1.cid %}
-                                        <option text="{{ cust.vendorid }}"
-                                                value="{{ cust.firstname }} {{ cust.lastname }}">{{ cust.firstname }} {{ cust.lastname }}</option>
-                                    {% endif %}
-                                {% endfor %}
+                                    {% for v in vndr %}
+                                    <option value="{{ v.firstname }} {{ v.lastname }}">{{ v.firstname }} {{ v.lastname }}</option>
+                                    {% endfor %}
                                 </select>
                                 
                             </div>   
@@ -71,7 +68,7 @@
                     
                         <div class="col-md-4 mt-3">
                             <label for="">Reference</label>
-                            <input type="text" name="reference" value="{{ reference   }}" class="form-control" readonly>
+                            <input type="text" name="reference" value="{{ ref_no   }}" class="form-control" readonly>
                         </div>
                         
                         

@@ -52,9 +52,9 @@
               <select name="customername" id="customer" class="form-control" style="background-color: #43596c; color: white;">
                 <option value="{{ recinvoice.customername }}" selected hidden>{{cust.title}} {{cust.firstname}} {{cust.lastname}}</option>
                 {% for c in customers %}
-                {% if c.cid_id == cmp1.cid %}
+              
                     <option value="{{ c.customerid }} {{ c.firstname }} {{ c.lastname }}">{{c.title}} {{ c.firstname }} {{ c.lastname }}</option>
-                {% endif %}
+           
                 {% endfor %}
               </select>
               <a data-toggle="modal" href="#customercreation">
@@ -306,9 +306,8 @@
                         <option value="{{ j.product }}" selected hidden>{{ j.product }}</option>
                         <option value=" "  hidden>Select Product</option>
                         {% for i in item %}
-                        {% if i.cid_id == cmp1.cid %}
                             <option value="{{ i.name }}">{{ i.name  }} </option>
-                        {% endif %}
+                      
                         {% endfor %}
                          
                       </select>
@@ -2191,9 +2190,7 @@ $(document).ready(function() {
                                 <option value=" " selected hidden>Select Product</option>
                             
                                 {% for i in item %}
-                                    {% if i.cid_id == cmp1.cid %}
-                                        <option  value="{{ i.name  }}">{{ i.name  }} </option>
-                                    {% endif %}
+                                    <option  value="{{ i.name  }}">{{ i.name  }} </option>
                                 {% endfor %}
                                    
                             </select>

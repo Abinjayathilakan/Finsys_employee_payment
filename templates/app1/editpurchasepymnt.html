@@ -34,9 +34,12 @@
                             <div class="d-flex">
                                 <select name="vendor" id="select" class="custom-select">
                                     <option value="{{ paymt.vendor }}">{{ paymt.vendor }}</option>
-                                    {% for v in vndr %}
-                                    <option value="{{ v.firstname }} {{ v.lastname }}">{{ v.firstname }} {{ v.lastname }}</option>
+                                    {% for cust in customers %}
+                                        {% if cust.cid_id == cmp1.cid %}
+                                            <option text="{{ cust.vendorid }}" value="{{ cust.firstname }} {{ cust.lastname }}">{{ cust.firstname }} {{ cust.lastname }}</option>
+                                        {% endif %}
                                     {% endfor %}
+
                                 </select>
                                 
                             </div>   
@@ -145,11 +148,11 @@
                                     <tbody id='billdata'>
                                         {% for p in paymt1 %}
                                             <tr id='addr1'>
-                                                <td>{{ forloop.counter }}
-                                                    <input type="text" name="id[]" value="{{p.id}}" hidden>
-                                                </td>
-                                                <td><input type="text" name="billdate[]" id="billdate{{forloop.counter}}" value="{{ p.billdate | date:'Y-m-d' }}" class="form-control"/></td>
-                                                <td><input type="text" name='billno[]' id="billno{{forloop.counter}}" value="{{ p.billno }}" class="form-control"/></td>
+                                                <td>{{ forloop.counter }}<input type="text" name="id[]" value="{{p.id}}" hidden></td>
+                                                <td>
+                                                    <!-- <h1>{{p.id}}</h1> -->
+                                                    <input type="hidden" name='payment1[]' value="{{p.payment_type}}"/><input type="text" name="billdate[]" id="billdate{{forloop.counter}}" value="{{ p.billdate | date:'Y-m-d' }}" class="form-control"/></td>
+                                                <td><input type="hidden" name='payment2[]' value="{{p.payment_id}}"/><input type="text" name='billno[]' id="billno{{forloop.counter}}" value="{{ p.billno }}" class="form-control"/></td>
                                                 <td><input type="text" name='billamount[]' value="{{ p.billamount }}" id="billamount{{forloop.counter}}"
                                                     class="form-control qty" step="0" min="0"/>
                                                 </td>
@@ -297,7 +300,7 @@
                             // Display opening balance bill
                             $('#tab_logic #vendordata').append(
                                 `<tr id='addr1'>
-                                    <td>1</td>
+                                    <td><input type="text" name="id[]" value=0 hidden>1</td>
                                     <td><input type="hidden" name='payment1[]' value="vendor_balance"/><input type="text" name="billdate[]" value="${response.date}" class="form-control"/></td>
                                     <td><input type="hidden" name='payment2[]' value="${response.vendorid}" ><input type="text" name='billno[]' value="Vendor Opening Balance" class="form-control"/></td>
                                     <td><input type="text" name='billamount[]' value="${response.opb}" class="form-control qty" step="0" min="0"/></td>
@@ -312,7 +315,7 @@
                         for (let i = 0; i < response.purchase_bills.length; i++) {
                             $('#tab_logic #billdata').append(
                                 `<tr id='addr${i + 2}'>
-                                    <td>${i + 2}</td>
+                                    <td><input type="text" name="id[]" value=0 hidden>${i + 2}</td>
     
                                     <td><input type="hidden" name='payment1[]' value="purchasebill_balance"/><input type="text" name="billdate[]" value="${response.purchase_bills[i].date}" class="form-control"/></td>
                                     <td><input type="hidden" name='payment2[]' value="${response.purchase_bills[i].billid}" ><input type="text" name='billno[]' value="${response.purchase_bills[i].bill_no}" class="form-control"/></td>

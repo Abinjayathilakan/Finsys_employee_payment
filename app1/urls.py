@@ -1368,5 +1368,21 @@ urlpatterns = [
     
     path('debit_add_file/<int:id>/', views.debit_add_file, name='debit_add_file'),
     path('shareGstrToEmail',views.shareGstrToEmail, name='shareGstrToEmail'),
+    
+    path('purchaseDebitToEmail/<int:id>/',views.purchaseDebitToEmail,name='purchaseDebitToEmail'),
+    
+    path('payment_term_for_cust',views.payment_term_for_cust,name='payment_term_for_cust'),
+    path('shareDeliveryChallanToEmail/<int:id>',views.shareDeliveryChallanToEmail, name='shareDeliveryChallanToEmail'), 
+    path('covert_challan_to_recinvoice/<int:id>',views.covert_challan_to_recinvoice, name='covert_challan_to_recinvoice'), 
+    path('shareTransactionStatementToEmail/<int:id>',views.shareTransactionStatementToEmail, name='shareTransactionStatementToEmail'), 
+    
+    #akshaya
+    path('shareholidaysToEmail/<int:year>/<str:month>/',views.shareholidaysToEmail,name="shareholidaysToEmail"),
+    path('sort_employeename_attendance',views.sort_employeename_attendance,name="sort_employeename_attendance"),
+    path('shareattendanceToEmail/<int:year>/<str:month>/<str:employee>/',views.shareattendanceToEmail,name="shareattendanceToEmail"),
+    path('AddEmployeeInAttendance',views.AddEmployeeInAttendance,name="AddEmployeeInAttendance"),
+    
+    #end
+    re_path(r'^create_item4/(?P<pdebit_id>\d+)/$', views.create_item4, name='create_item4'),
  
 ]

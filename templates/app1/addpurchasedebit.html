@@ -79,7 +79,7 @@ input[name="service-city"] {
                                     <label for="validationCustom02">Vendor</label>
                                     <div class="d-flex"  >
                                       
-<select class="form-control select2 vendor " data-width="100%" id="selected" style="background-color: #243e54; color: white;">
+<select class="form-control select2 vendor " data-width="100%" id="selected" style="background-color: #243e54; color: white;" name="vendor">
     <option selected disabled hidden>Select Vendor</option>
     {% for v in vndr %}
     <option value="{{ v.firstname }} {{ v.lastname }}" data-tokens="{{ v.firstname }} {{ v.lastname }}" >{{ v.firstname }} {{ v.lastname }}</option>
@@ -121,12 +121,31 @@ input[name="service-city"] {
                 }).done(function(response) {
                 var json_data = JSON.parse(response);
                 for (key in json_data) {
+
+                    var gstNumDiv = $('#gstDiv');
+                    var showdiv1 = $('#showdiv1');
+
+
                     console.log(json_data[key]['email'])
+                    console.log(json_data[key]['gsttype'])
                     document.getElementById('email').value = json_data[key]['email'];
                     document.getElementById('mailaddr').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
                     document.getElementById('plosu').value = json_data[key]['sourceofsupply'];
+
+                    if (json_data[key]['gsttype'] === 'unregistered Business' ){
+                        gstNumDiv.hide();
+                        showdiv1.show()  
+
+                    }
+                    else{
+                        gstNumDiv.show();  
+                        document.getElementById('gst_num').value = json_data[key]['gstin'];
+                        showdiv1.hide()  
+                    }
+
+
                     document.getElementById('gst_type').value = json_data[key]['gsttype'];
-                    document.getElementById('gst_num').value = json_data[key]['gstin'];
+                    
                 console.log(json_data[key]['vendorid']);
                 
                 reloadbill(json_data[key]['vendorid']) ;
@@ -163,7 +182,7 @@ input[name="service-city"] {
 </script>                               -->
 
                                                
-                                        <a class="btn btn-outline-secondary ml-1" role="button" data-target="#newvendor" data-toggle="modal">+</a>
+                                        <!-- <a class="btn btn-outline-secondary ml-1" role="button" data-target="#newvendor" data-toggle="modal">+</a> -->
                                     </div>
                                 </div>
                                 <div class="col-md-5 mt-3">
@@ -182,10 +201,13 @@ input[name="service-city"] {
                                     
                                     <input type="text" class="form-control" name="gst_type" id="gst_type" required>
                                 </div>
-                                <div class="col-md-5 mt-3">
+                                <div class="col-md-5 mt-3" id="gstDiv">
                                     <label for="validationCustom02">GST Number</label>
                                     
                                     <input type="text" class="form-control" name="gst_num" id="gst_num" required>
+                                </div>
+
+                                <div class="col-md-5 mt-3" id="showdiv1" style="display: none;">
                                 </div>
 
                                 <div class="col-md-5 mt-3">
@@ -254,12 +276,13 @@ input[name="service-city"] {
                                     <label for="validationCustom02">Bill Number</label>
                                     <select name="billno" id="billno" class="form-control">
                                         <option selected>No Bill</option>
-                                        {% for r in rbill %}
+                                        <option ></option>
+                                        <!-- {% for r in rbill %}
                                         <option>{{ r.billno }}</option>
                                         {% endfor %}
                                         {% for p in pbill %}
                                         <option>{{ p.billno }}</option>
-                                        {% endfor %}
+                                        {% endfor %}  -->
                                     </select>
                                 </div>
                             </div>
@@ -415,6 +438,7 @@ input[name="service-city"] {
                                                vid: vid
                                            },
                                            success: function (response) {
+                                            console.log(response,'res')
                                             
                                                if (response.error_flag === 1) {
                                                    // Show error message in a label
@@ -462,6 +486,7 @@ input[name="service-city"] {
                         id:vid
                     },
                     success: function(data) {
+                        console.log(data,'hie')
                         var dropdow = $('#billno');
                         dropdow.empty();
                         $.each(data, function(key, value) {
@@ -494,7 +519,7 @@ input[name="service-city"] {
                                 <select class="form-control my-select" name="paytype" id="pay_method" required style="width:70%;">
                                     <option value="" hidden>Select</option>
                                     
-                                    <option value="cash">Cash</option>
+                                    <option value="Cash">Cash</option>
                                     <option value="cheque">Cheque</option>
                                     <option value="upi">UPI</option>
                                     {% for i in bank %}
@@ -787,6 +812,9 @@ input[name="service-city"] {
                                 <hr>
                                 <center><h4><b>Other Options</b></h4></center>
                                 <hr>
+
+
+                                
                                 <div class="row">
                                     <div class="col-md-4 mt-3">
                                         <label for="validationCustom04">GST Treatment</label>
@@ -822,6 +850,8 @@ input[name="service-city"] {
                                     </div>
         
                                 </div>
+
+
                                 <div class="row">
                                     <div class="col-md-3 mt-2">
                                        <label for="">Place of Supply</label>
@@ -1247,20 +1277,67 @@ input[name="service-city"] {
                                     required>
                                     
                                 </div>
-                                <div class="col-md-3 mt-5"><label for="">Tax Preference : </label></div>
-                                <div class="col-md-2 mt-5">
-                                    <div class="form-check">
-                                        <input class="form-check-input" name="taxref" type="checkbox" value="Taxable" 
-                                        id="inclusive" checked>Taxable
-                                    </div>
-                                </div>
-                                <div class="col-md-2 mt-5">
-                                    <div class="form-check">
-                                        <input class="form-check-input" name="taxref" type="checkbox" value="Non Taxable" >Non Taxable
-                                    </div>
-                                </div>
+                               
                                 
                             </div>
+                            <div class="row">
+                            <div class="col-md-3 mt-5"><label for="">Tax Preference : </label></div>
+                            <div class="col-md-2 mt-5">
+                                <div class="form-check">
+                                    <input class="form-check-input" name="taxref" type="radio" value="Taxable" 
+                                    id="inclusive" onclick="showdiv()" >Taxable
+                                </div>
+                            </div>
+                            <div class="col-md-2 mt-5">
+                                <div class="form-check">
+                                    <input class="form-check-input" name="taxref" type="radio" value="Non Taxable" onclick="hidediv()" >Non Taxable
+                                </div>
+                            </div>
+
+                          
+
+
+                        </div>
+
+                        <div class="row" id="taxableDiv" style="display: none;">
+                            <div class="col-md-5 mt-2">
+                                <label for="">Intra State Tax Rate</label>
+                                <select name="intra_st" class="form-control">
+                                    <option selected >Choose...</option>
+                                    <option value=0>GST 0 (0%)</option>
+                                    <option value=5>GST 5 (5%)</option>
+                                    <option value=12>GST 12 (12%)</option>
+                                    <option value=18>GST 18 (18%)</option>
+                                    <option value=28>GST 28 (28%)</option>
+                                    <option value=0>Out of Scope(0%)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5 mt-2">
+                                <label for="">Inter State Tax Rate</label>
+                                <select name="inter_st" class="form-control">
+                                    <option selected>Choose...</option>
+                                    <option value=0>IGST 0 (0%)</option>
+                                    <option value=5>IGST 5 (5%)</option>
+                                    <option value=12>IGST 12 (12%)</option>
+                                    <option value=18>IGST 18 (18%)</option>
+                                    <option value=28>IGST 28 (28%)</option>
+                                    <option value=0>Out of Scope(0%)</option>
+                                </select>   
+                            </div>
+                        </div>
+                        
+
+                        <script>
+                            function showdiv() {
+                              document.getElementById('taxableDiv').style.display = 'block';
+                            }
+                        
+                            function hidediv() {
+                              document.getElementById('taxableDiv').style.display = 'none';
+                            }
+                          </script>
+
+
                             <hr>
                             <div class="row">
                                 <div class="col-md-4 mt-2">
@@ -1318,39 +1395,8 @@ input[name="service-city"] {
                                 </div>
                             </div>   
                             <hr> 
-                            <div class="row">
-                                <div class="col-md-4 mt-2">
-                                    <h5>Tax Rate Details</h5>
-                                </div>
-                            </div>
-                            <div class="row">
-                                
-                                <div class="col-md-6 mt-2">
-                                    <label for="">Intra State Tax Rate</label>
-                                    <select name="intra_st" class="form-control">
-                                        <option selected >Choose...</option>
-                                        <option value=0>GST 0 (0%)</option>
-                                        <option value=5>GST 5 (5%)</option>
-                                        <option value=12>GST 12 (12%)</option>
-                                        <option value=18>GST 18 (18%)</option>
-                                        <option value=28>GST 28 (28%)</option>
-                                        <option value=0>Out of Scope(0%)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mt-2">
-                                    <label for="">Inter State Tax Rate</label>
-                                    <select name="inter_st" class="form-control">
-                                        <option selected>Choose...</option>
-                                        <option value=0>IGST 0 (0%)</option>
-                                        <option value=5>IGST 5 (5%)</option>
-                                        <option value=12>IGST 12 (12%)</option>
-                                        <option value=18>IGST 18 (18%)</option>
-                                        <option value=28>IGST 28 (28%)</option>
-                                        <option value=0>Out of Scope(0%)</option>
-                                    </select>   
-                                </div>
-                            </div>
-                            <hr>
+                           
+                
                             <div class="row">
                                 <div class="col-md-4 mt-2">
                                     <h5>Inventory</h5>
@@ -1495,7 +1541,7 @@ input[name="service-city"] {
     $(document).ready(function() {
       $("#pay_method").change(function() {
         var x=$('#pay_method').val();
-        if(x==='cash'){
+        if(x==='Cash'){
           $('#chequediv').hide()
           $('#bnkdiv').hide()
           $('#upidiv').hide()
@@ -1636,13 +1682,28 @@ input[name="service-city"] {
                 }
                 }).done(function(response) {
                 var json_data = JSON.parse(response);
+                
                 for (key in json_data) {
+                    
+
+
+                    
+
                     console.log(json_data[key]['email'])
                     document.getElementById('email').value = json_data[key]['email'];
                     document.getElementById('mailaddr').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
                     document.getElementById('plosu').value = json_data[key]['sourceofsupply'];
+
                     document.getElementById('gst_type').value = json_data[key]['gsttype'];
                     document.getElementById('gst_num').value = json_data[key]['gstin'];
+                   
+                    // document.getElementById('gst_type').value = json_data[key]['gsttype'];
+                    // console.log('GST Type:', json_data[key]['gsttype']);
+
+                    
+
+               document.getElementById('gst_num').value = json_data[key]['gstin'];
+
                 console.log(json_data[key]['vendorid']);
                 
                 reloadbill(json_data[key]['vendorid']) ;
@@ -2109,6 +2170,9 @@ function qtychange2(incval,roinc) {
             // $('.select2').select2(); 
 
 
+            // show taxable options
+
+
      
 console.log('product1') 
       $(document).on('change','#product1',function(){
@@ -2348,6 +2412,10 @@ console.log('product1')
                     vid: vid 
                     },
                     success:function(response){
+
+                        $('#errorLabel2').text("");
+
+
                     if (response.error_flag === 1) {
                
                 $('#errorLabel2').text("Item is not purchased for this bill number");
@@ -2380,6 +2448,7 @@ console.log('product1')
                             } 
                             document.getElementById('ta52').innerHTML  = data4 + ' % IGST';
                             document.getElementById('ta52').value=data4
+
                     }
                 });
             });

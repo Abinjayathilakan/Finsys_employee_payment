@@ -148,6 +148,7 @@
                                     <th>Payment Date</th>
                                     <th>Payment Method</th>
                                     <th>Reference</th>
+                                    <th>Amount</th>
                                     <th>Balance Amount</th>
                                     <th>Status</th>
                                 </tr>
@@ -164,6 +165,7 @@
                                     
 
                                     <td>{{ p.reference }}</td>
+                                    <td>{{ p.paymentamount }}</td>
                                     <!-- <td>
                                         {% for a1 in p.purchasepayment1_set.all %}
                                             {{ a1.billamount }}

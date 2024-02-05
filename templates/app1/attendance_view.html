@@ -428,7 +428,7 @@
                     <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="Calender()">Calender</a>
                     <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="Overview()" >Overview</a>
                     <a style="padding: 10px; cursor: pointer; font-size: large;" onclick="Template()" >Template</a>
-                   
+<!--                    
                     <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                           <span class="navbar-toggler-icon"></span>
@@ -446,19 +446,75 @@
                                     </a>
                                 </li>
                                 
-                                <!-- <li class="nav-item">
+                            <li class="nav-item">
                                     <a class="nav-link text-light btn" role="button" href=""><i class=" fa fa-pencil">Edit</i></a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-light btn" role="button" href=""><i class="fa fa-trash-o delete">Delete</i></a>
                                 </li>
-                                -->
-                            </ul>
+                        
+                        </ul>
                         </div>
-                    </nav>
+                    </nav> -->
+                    <!-- ################# akshaya    ####################### -->
+                    <div class="bar pt-4 px-2">
+                        <div class="right" style="margin-left: 1000px;">
+
+                            <a role="button" href="{% url 'pdf_attendance' year=year month=month employee=employee %}"><button class="btn btn_pdf btn-outline-info">PDF</button></a>
+                            <button class="btn btn_print btn-outline-info" role="button" onclick="printSection('whatToPrint')">PRINT</button>
+                            <button class="btn btn-outline-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                SHARE
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" style="cursor: pointer;" onclick="shareOnWhatsApp()">Whatsapp</a>
+                                <a class="dropdown-item" style="cursor: pointer;" data-target="#shareBillEmail" data-toggle="modal">Email</a>
+                                
+                            </div>
+                    <!--  -->
+                    <div class="modal fade" id="shareBillEmail">
+                        <div class="modal-dialog modal-xl">
+                          <div class="modal-content" style="background: #243e54;border-radius: 20px;">
+                            <div class="modal-header" style="background: #243e54;">
+                              <h5 class="m-3 text-uppercase" id="shareBillEmailLabel">Share Holidays report Via Email</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                  aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body" style="background: #243e54;">
+                              <div class="card p-3 m-3">
+                                <form action="{% url 'shareattendanceToEmail' year=year month=month employee=employee %}" method="post" class="needs-validation"
+                                  id="share_to_email_form" autocomplete="off">
+                                  {% csrf_token %}
+                                  <input name="FromD" class="inputdate form-control"  id="date1"  type="date" hidden >
+                                  <input name="ToD" class="inputdate form-control"  id="date2" type="date" hidden>
+                                  <div class="form-group">
+                                    
+                                    <label for="emailIds">Email IDs</label>
+                                    <textarea class="form-control text-light" name="email_ids" id="emailIds" rows="5"
+                                      placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                                  </div>
+                                  <div class="form-group mt-2">
+                                    <label for="item_unitname">Message(optional)</label>
+                                    <textarea name="email_message" id="email_message" class=" form-control text-light" cols=""
+                                      rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                                  </div>
+                                
+                              </div>
+                              <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffff;">
+                                <input type="submit" id="generateAndSendPdf" class="submitShareEmailBtn rounded-pill text-grey w-50 my-4 mx-3" style="background-color: #0d2b46;padding: 7px 0;" value="SEND MAIL">
+                              </div>
+                            </div></form>
+            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+             
+
                 </div>
             </div>
         </div>
+        <!-- end akshaya -->
     
         <div class="card card-registration card-registration-2 " style="border-radius: 15px;"  >
             <div class="card-body p-0" >
@@ -475,14 +531,16 @@
                 <!-- <h4 class="text-center">Attendance for {{ employee_attendance.employee_name }} - {{ employee_attendance.month }} {{ employee_attendance.year }}</h4> -->
             <h4 style="color: #000000; text-align: center;">Attendance for {{ employee_attendance.employee_name }} - {{ employee_attendance.month }} {{ employee_attendance.year }}</h4>
             <p style="color: #000000; text-align: center;">Total Holidays: {{ employee_attendance.holidays }} | Working Days: {{ employee_attendance.working_days }}|
-                Absent Days: {{ employee_attendance.absent_days }}</p>
+                Leave : {{ employee_attendance.absent_days }}</p>
         </div>
-    
+    <!-- reason adding akshaya -->
         <table class="table table-hover table-bordered">
             <thead>
                 <tr>
                     <th class="text-center" style="color:#000">Date</th>
                     <th class="text-center" style="color:#000">Status</th>
+                    <th class="text-center" style="color:#000">Reason</th> 
+
                 </tr>
             </thead>
             <tbody>
@@ -490,6 +548,7 @@
                 <tr>
                     <td class="text-center" style="color:#000">{{ entry.date }}</td>
                     <td class="text-center" style="color:#000">{{ entry.status }}</td>
+                    <td class="text-center" style="color:#000">{{ entry.reason }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -505,7 +564,7 @@
                 <p class="text-center">
                     Total Holidays: {{ employee_attendance.holidays }} |
                     Working Days: {{ employee_attendance.working_days }} |
-                    Absent Days: {{ employee_attendance.absent_days }}
+                    Leave : {{ employee_attendance.absent_days }}
                 </p>
            </div>
         
@@ -515,6 +574,7 @@
                       
                         <th class="text-center" >Date</th>
                         <th class="text-center" >Status</th>
+                        <th class="text-center" >Reason</th>
                         <th class="text-center" >Actions</th>
                       
                     </tr>
@@ -525,6 +585,7 @@
                         <tr>
                             <td class="text-center" >{{ entry.date }}</td>
                             <td class="text-center" >{{ entry.status }}</td>
+                            <td class="text-center" >{{ entry.reason }}</td>
                             <td class="text-center">
                                 <a href="{% url 'edit_attendance' attendance_id=entry.atid %}" class="btn btn-sm btn-info">Edit</a>
                                 <a href="{% url 'delete_attendance' attendance_id=entry.atid %}" class="btn btn-sm btn-danger">Delete</a>
@@ -603,13 +664,15 @@
                 start: "{{ holiday.start_date|date:'Y-m-d' }}",
                 end: "{{ holiday.end_date|date:'Y-m-d' }}",
                 // color: 'red',  // Set a color for holidays
+                backgroundColor: "rgb(205,51,51)",
                 textColor: 'white'  // Set text color
+                
             },
             {% endfor %}
             // Add absent days as events
             {% for entry in attendance_data %}
             {
-                title: "Absent",
+                title: "Leave",
                 start: "{{ entry.date|date:'Y-m-d' }}",
                 color: 'blue',  // Set a color for absent days
                 textColor: 'white'  // Set text color
@@ -631,10 +694,57 @@
         calendar.render();
     });
 </script>
+<!-- akshaya -->
+<script>
 
 
+    function shareViaGmail() {
+       // Collect data from the table or any other relevant information
+       var tableData = getTableData(); // Implement the function to fetch table data
+   
+       // Create email subject and body
+       var emailSubject = "Attendance Report Details";
+       var emailBody = "Check out the Attendance Report Details:\n" + tableData;
+   
+       // Create a mailto link with subject and body for Gmail
+       var gmailLink = "https://mail.google.com/mail/?view=cm&fs=1&to=&su=" + encodeURIComponent(emailSubject) + "&body=" + encodeURIComponent(emailBody);
+   
+       // Open the link in a new tab or window
+       window.open(gmailLink, "_blank");
+   }
+   
+   function getTableData() {
+       // Implement this function to fetch and format your table data
+       // You can iterate through the table rows and cells to collect the necessary information
+       // Return a formatted string containing the data you want to share
+       var table = document.getElementById('myTable');
+       var data = "";
+       // Example: Iterate through rows and cells
+       for (var i = 0; i < table.rows.length; i++) {
+           for (var j = 0; j < table.rows[i].cells.length; j++) {
+               data += table.rows[i].cells[j].textContent + "\t";
+           }
+           data += "\n";
+       }
+       return data;
+   }
+   
+   </script> 
+   
+   
+       <script>
+         
+   function shareOnWhatsApp() {
+                   var url = window.location.href;
+                   var text = url;
+                   text = encodeURIComponent(text);
+                   var whatsappUrl = "whatsapp://send?text=" + text;
+                   window.location.href = whatsappUrl;
+               }
+   
 
-
+</script>
+<!--end akshaya -->
 
 {% endif %}
 {% endblock %}

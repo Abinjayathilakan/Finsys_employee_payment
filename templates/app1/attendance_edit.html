@@ -56,8 +56,12 @@
                             <label for="status">Status</label>
                             <select class="form-control" id="status" name="status" required>
                                 <!-- <option value="Present" {% if attendance_record and attendance_record.status == 'Present' %}selected{% endif %}>Present</option> -->
-                                <option value="Absent" {% if attendance_record and attendance_record.status == 'Absent' %}selected{% endif %}>Absent</option>
+                                <option value="Leave" {% if attendance_record and attendance_record.status == 'Leave' %}selected{% endif %}>Leave</option>
                             </select>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label for="reason">Reason</label>
+                            <input type="reason" name="reason" id="reason" class="custom-select-md form-control w-100" value="{% if attendance_record %}{{ attendance_record.reason }}{% endif %}">
                         </div>
                     </div>
                    

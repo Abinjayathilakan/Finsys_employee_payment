@@ -40,18 +40,16 @@
                         <div class="col-md-2">
                           
                             <div class="btn-group">
-                                <button type="button" class="btn btn-outline-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button type="button" class="btn btn-outline-info dropdown-toggle" data-toggle="dropdown"  id="sortByDropdown"  aria-haspopup="true" aria-expanded="false">
                                     Sort By
                                 </button>
-                                <div class="dropdown-menu">
+                                <div class="dropdown-menu" aria-labelledby="sortByDropdown">
                                     <a class="dropdown-item" href="{%url 'attendancepagee'%}">All</a>
-                                    <!-- <a class="dropdown-item" href="">Month</a>
-                                    <a class="dropdown-item" href="">Year</a>-->
-                                    <!-- <a id="sort-by-month" class="dropdown-item" href="#">Month</a>
-                                    <a id="sort-by-year" class="dropdown-item" href="#">Year</a> -->
-                
+                                    <!-- akshaya -->
+                                    <a class="dropdown-item	" href="{% url 'sort_employeename_attendance' %}"> Employee Name</a> 
+                <!-- end akshaya -->
                                         <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableByMonthAsc();">Month</a>
-                                        <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableByYearAsc();">Year</a>
+                                        <!-- <a class="dropdown-item" href="javascript:void(0);" onclick="sortTableByYearAsc();">Year</a> -->
                                    
                                 </div>
                             </div>
@@ -67,11 +65,12 @@
                             <thead>
                                 <tr><th class="text-center">#</th>
                                     <th class="text-center">Employee Name</th>
-                                    <th class="text-center">Year</th>
                                     <th class="text-center">Month</th>
+                                    <th class="text-center">Year</th>
+                                    
                                     <th class="text-center">Working Days</th>
                                     <th class="text-center">Holidays Days</th>
-                                    <th class="text-center">Total Absent</th>
+                                    <th class="text-center">Total Leave</th>
                                 </tr>
                             </thead>
                             <tbody id="table">
@@ -80,8 +79,9 @@
                                     <tr data-employee="{{ entry.employee }}" data-year="{{ entry.year }}" data-month="{{ entry.month }}" class="attendance-row">
                                     <td class="text-center">{{ forloop.counter }}</td>
                                     <td class="text-center">{{ entry.employee }}</td>
-                                    <td class="text-center">{{ entry.year }}</td>
                                     <td class="text-center">{{ entry.month }}</td>
+                                    <td class="text-center">{{ entry.year }}</td>
+                                    
                                     <td class="text-center">{{ entry.working_days }}</td>
                                     <td class="text-center">{{ entry.holidays }}</td>
                                     <td class="text-center">{{ entry.absent_days }}</td>
@@ -116,7 +116,7 @@
         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
         return dl ?
             XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-            XLSX.writeFile(wb, fn || ('holidays.' + (type || 'xlsx')));
+            XLSX.writeFile(wb, fn || ('Attendance.' + (type || 'xlsx')));
     }
 </script>
 

@@ -475,7 +475,7 @@
                                                 <!-- <td style="text-align: center;">{{ sale.bill.bill_no }}</td> -->
                                                
                                                 <td style="text-align: center;"> {{ i.stock  }} </td>
-                                                <td style="text-align: center;"> - </td>
+                                                <td style="text-align: center;"> {{ i.stock_rate  }}  </td>
                                                 <!-- <td style="text-align: center;">{{ sale.amount }}</td> -->
                                                 <td style="text-align: center;">{{i.status}} </td>
                                               
@@ -855,6 +855,18 @@
         </div>
     </div>
 
+    <script>
+
+          var stock = {{ a.stock }};
+        var minStock = {{ a.min_stock }}; 
+
+        if (stock < minStock) {
+            setTimeout(function() {
+                alert('Stock is less than the minimum stock to maintain. Please check.');
+            }, 3000); // 
+        }
+    </script>
+
     
     <script>
    
@@ -882,34 +894,46 @@
 
         }
         </script> -->
+
+        
+
+
         <script>
-            function printSpecificArea() {
-              const contentToPrint = document.getElementById('whatToPrint');
-              const clonedContent = contentToPrint.cloneNode(true);
+
+function printSpecificArea() {
+            const contentToPrint = document.getElementById('whatToPrint');
+            const clonedContent = contentToPrint.cloneNode(true);
           
-              // Find all the elements with the class "text" within the cloned content
-              const textElements = clonedContent.querySelectorAll('.text');
-              const tableElements = clonedContent.querySelectorAll('.table','.row');
-              
-              // Set the text color to black for each element with the class "text"
-              textElements.forEach(element => {
-                element.style.color = '#000000';  // Text color (black)
-              });
-              tableElements.forEach(element => {
-                element.style.color = '#000000';
-                
-                element.style.width ='100%'
-                
-              });
-             
-            
+            // Find all the elements with the class "text" within the cloned content
+            const textElements = clonedContent.querySelectorAll('.text');
+            const tableElements = clonedContent.querySelectorAll('.table, .row');
           
-              // Print the cloned content
-              const printWindow = window.open('', '_blank');
-              printWindow.document.body.appendChild(clonedContent);
-              printWindow.print();
-              printWindow.close();
-            }
+            // Set the text color to black for each element with the class "text"
+            textElements.forEach(element => {
+              element.style.color = '#000000';  // Text color (black)
+            });
+          
+            // Set the text color and background color to black for table elements
+            tableElements.forEach(element => {
+              element.style.color = '#000000';
+              element.style.backgroundColor = '#000000';
+              element.style.width = '100%';
+            });
+          
+            // Print the cloned content
+            const printWindow = window.open('', '_blank');
+            printWindow.document.body.appendChild(clonedContent);
+            printWindow.print();
+            printWindow.close();
+          }
+
+
+          if (a.stock < a.min_stock) {
+    setTimeout(function() {
+        alert('Stock is less than the minimum threshold. Please reorder.');
+    }, 3000); // 3000 milliseconds (3 seconds)
+}
+
           </script>
              {% endfor %}
 
